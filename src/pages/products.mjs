@@ -31,6 +31,11 @@ ${pageHero(ctx, {
   crumbs: [['Products']],
   actions: html`<a class="btn" href="${ctx.u('quote/')}">Request a quote ${icon('arrow', { size: 18 })}</a>`,
 })}
+<nav class="jump" aria-label="Jump to a product line">
+  <div class="wrap jump__row">
+    ${CATEGORIES.map((c) => html`<a href="#${c.slug}">${c.short}</a>`)}
+  </div>
+</nav>
 <section class="section">
   <div class="wrap">
     <div class="catalog">
@@ -80,6 +85,10 @@ ${pageHero(ctx, {
         ${c.items.map(([name, note]) => html`<div><dt>${name}</dt><dd>${note}</dd></div>`)}
       </dl>
       ${c.brands.length ? html`<div class="brandchips" aria-label="Brands">${c.brands.map((b) => html`<span>${b}</span>`)}</div>` : ''}
+      ${c.literature ? html`<div class="lit">
+        <h2 class="lit__title">${icon('file', { size: 18 })} Specs &amp; literature</h2>
+        <ul>${c.literature.map(([label, url]) => html`<li><a href="${url}" target="_blank" rel="noopener">${label} ${icon('arrow-up-right', { size: 16 })}<span class="sr-only"> (opens the manufacturer’s site)</span></a></li>`)}</ul>
+      </div>` : ''}
     </div>
     ${askAside(ctx, c)}
   </div>
@@ -97,14 +106,4 @@ ${quoteBand(ctx)}
   }),
 });
 
-// The old site's URL, kept alive for bookmarks and search results.
-const legacy = {
-  path: 'products-services/',
-  redirect: true,
-  render: (ctx) => html`<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Products</title>
-<meta name="robots" content="noindex"><link rel="canonical" href="https://www.uresco.com/products/">
-<meta http-equiv="refresh" content="0; url=${ctx.u('products/')}"></head>
-<body><p>This page moved to <a href="${ctx.u('products/')}">Products</a>.</p></body></html>`,
-};
-
-export default [index, ...CATEGORIES.map(category), legacy];
+export default [index, ...CATEGORIES.map(category)];

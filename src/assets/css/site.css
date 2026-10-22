@@ -633,6 +633,33 @@ dialog::backdrop { background: rgba(8,8,7,.6); -webkit-backdrop-filter: blur(4px
 .phero--plain { min-height: auto; }
 .phero--plain .phero__inner { padding-block: clamp(3.5rem, 3rem + 3vw, 6rem) clamp(2.5rem, 2rem + 2vw, 4rem); }
 
+/* Manufacturer literature */
+.lit { margin-top: 2.5rem; padding: 1.5rem; border: 1px solid var(--sand); border-radius: var(--radius); background: var(--paper); }
+.lit__title { display: flex; align-items: center; gap: .5rem; font-size: 1.1rem; font-weight: 750; font-stretch: 86%; margin-bottom: .75rem; }
+.lit ul { list-style: none; margin: 0; padding: 0; display: grid; gap: .25rem; }
+.lit a { display: inline-flex; align-items: center; gap: .4rem; padding: .35rem 0; font-weight: 600; text-decoration-color: var(--yellow); text-decoration-thickness: 2px; }
+.lit a .i { color: var(--stone); }
+
+/* Products index: sticky jump bar */
+.jump { position: sticky; top: var(--mast); z-index: 30; background: rgba(250,248,243,.94); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
+.jump__row { display: flex; gap: .4rem; overflow-x: auto; padding-block: .7rem; scrollbar-width: none; }
+.jump__row::-webkit-scrollbar { display: none; }
+.jump a { flex: none; padding: .5rem .9rem; border: 1.5px solid var(--line); border-radius: 999px; font-weight: 650; font-size: .88rem; text-decoration: none; background: var(--paper); }
+.jump a:hover { border-color: var(--ink); }
+.catalog__row { scroll-margin-top: calc(var(--mast) + 4.5rem); }
+
+/* Home: contractor accounts band */
+.acband { background: var(--ink-2); color: var(--bone); border-top: 4px solid var(--yellow); }
+.acband__row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1.5rem 3rem; padding-block: clamp(2.5rem, 2rem + 2.5vw, 4rem); }
+.acband .h2 { font-size: clamp(1.9rem, 1.2rem + 2.4vw, 3.25rem); }
+.acband p:not(.stamp) { color: var(--mist); margin: 1rem 0 0; max-width: 56ch; }
+.acband .stamp { color: var(--yellow); }
+.acband .h2 em { color: var(--yellow); background: none; padding: 0; }
+
+.yard__quote { display: inline-flex; align-items: center; gap: .4rem; margin-top: 1rem; font-weight: 650; font-size: .92rem; text-decoration-color: var(--yellow); text-decoration-thickness: 2px; }
+.utility .status { margin-left: .2rem; color: #8A8479; font-size: .62rem; }
+.utility .status.is-open { color: #7FD69D; }
+
 /* ---------- Pull quote / mission ---------- */
 .mission { font-size: clamp(1.6rem, 1.1rem + 2vw, 3rem); line-height: 1.15; font-weight: 600; font-stretch: 85%; letter-spacing: -.01em; max-width: 30ch; text-wrap: balance; }
 .mission::before { content: '“'; display: block; font-size: 1.8em; line-height: .5; color: var(--yellow); margin-bottom: .2em; font-weight: 900; }

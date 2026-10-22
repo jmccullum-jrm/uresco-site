@@ -35,7 +35,7 @@ const header = (ctx) => html`
   <div class="utility" role="region" aria-label="Call a yard">
     <div class="wrap utility__row">
       <ul class="utility__yards" aria-label="Call a yard">
-        ${LOCATIONS.map((l) => html`<li><span class="utility__city">${l.city}</span><a href="${tel(l.phone)}">${l.phone}</a></li>`)}
+        ${LOCATIONS.map((l) => html`<li><span class="utility__city">${l.city}</span><a href="${tel(l.phone)}">${l.phone}</a>${openStatus(l, { short: true })}</li>`)}
       </ul>
       <a class="utility__mail" href="mailto:${SITE.email}">${icon('mail', { size: 15 })}${SITE.email}</a>
     </div>

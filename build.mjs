@@ -84,6 +84,8 @@ writeFileSync(join(OUT, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>
 ${listed.map((p) => `  <url><loc>${SITE.url}/${p.path}</loc></url>`).join('\n')}
 </urlset>
 `);
+// The live build also tells GitHub Pages which domain it serves.
+if (!SITE.preview) writeFileSync(join(OUT, 'CNAME'), new URL(SITE.url).host + '\n');
 // GitHub Pages runs Jekyll unless told not to; we ship finished HTML.
 writeFileSync(join(OUT, '.nojekyll'), '');
 

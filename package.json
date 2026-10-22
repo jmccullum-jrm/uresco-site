@@ -8,6 +8,8 @@
     "images": "python3 scripts/images.py",
     "brand": "node scripts/brand.mjs",
     "serve": "python3 -m http.server 8080 --directory docs",
-    "check": "node build.mjs && node tests/check.mjs"
+    "check": "node build.mjs && node tests/check.mjs",
+    "build:live": "PREVIEW=0 BASE=/ node build.mjs",
+    "fonts": "python3 scripts/fonts.py"
   }
 }

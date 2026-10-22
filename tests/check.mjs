@@ -20,7 +20,12 @@ const pages = walk(DOCS).filter((f) => f.endsWith('.html'));
 for (const file of pages) {
   const rel = relative(DOCS, file);
   const src = readFileSync(file, 'utf8');
-  if (/http-equiv="refresh"/.test(src)) continue; // legacy redirect stubs
+  // Redirect stubs: only check that they point at a real page.
+  const refresh = src.match(/http-equiv="refresh" content="0; url=([^"]+)"/);
+  if (refresh) {
+    if (!existsSync(join(resolve(dirname(file), refresh[1]), 'index.html'))) fail(rel, `redirects to missing page ${refresh[1]}`);
+    continue;
+  }
   if (!/<title>[^<]{10,}<\/title>/.test(src)) fail(rel, 'missing or short <title>');
   if (!/<meta name="description" content="[^"]{50,}"/.test(src)) fail(rel, 'missing or short meta description');
   const h1 = (src.match(/<h1[\s>]/g) || []).length;
@@ -57,7 +62,7 @@ const server = createServer((req, res) => {
 }).listen(0);
 const base = `http://127.0.0.1:${server.address().port}/`;
 const browser = await chromium.launch(existsSync('/opt/pw-browsers/chromium') ? { executablePath: '/opt/pw-browsers/chromium' } : {});
-const paths = pages.map((f) => relative(DOCS, f)).filter((r) => r !== '404.html' && !r.startsWith('products-services'))
+const paths = pages.filter((f) => !/http-equiv="refresh"/.test(readFileSync(f, 'utf8'))).map((f) => relative(DOCS, f)).filter((r) => r !== '404.html')
   .map((r) => r.replace(/index\.html$/, ''));
 
 for (const [name, viewport, mobile] of [['phone', { width: 390, height: 844 }, true], ['desktop', { width: 1440, height: 900 }, false]]) {

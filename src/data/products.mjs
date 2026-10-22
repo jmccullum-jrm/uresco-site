@@ -1,6 +1,7 @@
 // Product categories. The item lists are the lines uresco.com says Uresco carries;
 // the one-line notes describe what each product is, not specific stock or sizes.
 // Availability varies by yard, so pages tell people to call rather than promise.
+// literature: manufacturer pages for spec sheets and installation guides (opened in a new tab).
 
 export const CATEGORIES = [
   {
@@ -31,6 +32,7 @@ export const CATEGORIES = [
       ['DensGlass® Gold sheathing', 'Fiberglass-mat gypsum exterior sheathing by Georgia-Pacific.'],
     ],
     brands: ['Georgia-Pacific'],
+    literature: [['DensGlass® sheathing — Georgia-Pacific', 'https://www.buildgp.com/densglass-sheathing']],
   },
   {
     slug: 'engineered-wood',
@@ -47,6 +49,7 @@ export const CATEGORIES = [
       ['Truss packages', 'Roof and floor trusses engineered to your plans.'],
     ],
     brands: ['Parallam®'],
+    literature: [['Parallam® PSL — Weyerhaeuser', 'https://www.weyerhaeuser.com/woodproducts/engineered-lumber/parallam-psl/']],
   },
   {
     slug: 'concrete-forming',
@@ -90,6 +93,7 @@ export const CATEGORIES = [
       ['House wraps', 'Weather-resistive barriers for walls.'],
     ],
     brands: ['James Hardie', 'CertainTeed'],
+    literature: [['James Hardie® siding & trim', 'https://www.jameshardie.com/'], ['CertainTeed siding & trim', 'https://www.certainteed.com/products/siding-trim']],
   },
   {
     slug: 'insulation-drywall',
@@ -133,6 +137,7 @@ export const CATEGORIES = [
       ['Caulking & adhesives', 'Sealants and construction adhesives.'],
     ],
     brands: ['Simpson Strong-Tie'],
+    literature: [['Simpson Strong-Tie® connectors & catalogs', 'https://www.strongtie.com/']],
   },
 ];
 

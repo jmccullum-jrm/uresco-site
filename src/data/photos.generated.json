@@ -13,7 +13,8 @@
   "focal": "60% 50%",
   "credit": "Joseph Corl / Unsplash",
   "page": "https://unsplash.com/photos/OVKRxZub9f4",
-  "standIn": false
+  "standIn": false,
+  "color": "#818f89"
  },
  "lumber-stack": {
   "widths": [
@@ -29,7 +30,8 @@
   "focal": null,
   "credit": "Georg Eiermann / Unsplash",
   "page": "https://unsplash.com/photos/6j3laFTi8wg",
-  "standIn": false
+  "standIn": false,
+  "color": "#81654b"
  },
  "pine-racking": {
   "widths": [
@@ -45,7 +47,8 @@
   "focal": "60% 50%",
   "credit": "PJ Wallace / Unsplash",
   "page": "https://unsplash.com/photos/EFR6ICYBMN0",
-  "standIn": false
+  "standIn": false,
+  "color": "#754c27"
  },
  "timber-ends": {
   "widths": [
@@ -60,7 +63,8 @@
   "focal": null,
   "credit": "roselino rocha / Unsplash",
   "page": "https://unsplash.com/photos/07hBSBN9XC0",
-  "standIn": false
+  "standIn": false,
+  "color": "#82764c"
  },
  "plywood": {
   "widths": [
@@ -75,7 +79,8 @@
   "focal": "50% 40%",
   "credit": "LUCIA LU / Unsplash",
   "page": "https://unsplash.com/photos/BimFx6m5XqU",
-  "standIn": false
+  "standIn": false,
+  "color": "#867a6a"
  },
  "framer": {
   "widths": [
@@ -90,7 +95,8 @@
   "focal": "35% 40%",
   "credit": "Josh Olalde / Unsplash",
   "page": "https://unsplash.com/photos/EWoU3snzadU",
-  "standIn": false
+  "standIn": false,
+  "color": "#959688"
  },
  "framing-joists": {
   "widths": [
@@ -105,7 +111,8 @@
   "focal": null,
   "credit": "Troy Mortier / Unsplash",
   "page": "https://unsplash.com/photos/kkdfOe0iRu8",
-  "standIn": false
+  "standIn": false,
+  "color": "#77716c"
  },
  "unloading": {
   "widths": [
@@ -120,7 +127,8 @@
   "focal": "55% 55%",
   "credit": "Indraadityan Logamurugan / Unsplash",
   "page": "https://unsplash.com/photos/TIL-dnIjK8E",
-  "standIn": false
+  "standIn": false,
+  "color": "#4d483c"
  },
  "combilift": {
   "widths": [
@@ -135,7 +143,8 @@
   "focal": "50% 45%",
   "credit": "PJ Wallace / Unsplash",
   "page": "https://unsplash.com/photos/Do5rGlcZnuQ",
-  "standIn": false
+  "standIn": false,
+  "color": "#343028"
  },
  "valdez-port": {
   "widths": [
@@ -151,7 +160,8 @@
   "focal": "55% 60%",
   "credit": "Mich / Unsplash",
   "page": "https://unsplash.com/photos/1TilbaZ3ALA",
-  "standIn": false
+  "standIn": false,
+  "color": "#484f5f"
  },
  "juneau-freight": {
   "widths": [
@@ -166,7 +176,8 @@
   "focal": "50% 60%",
   "credit": "Jonah Townsley / Unsplash",
   "page": "https://unsplash.com/photos/dCNcbGYssNY",
-  "standIn": false
+  "standIn": false,
+  "color": "#8599a2"
  },
  "anchorage": {
   "widths": [
@@ -182,7 +193,8 @@
   "focal": "70% 50%",
   "credit": "Yuhan Du / Unsplash",
   "page": "https://unsplash.com/photos/8UCTwY4mrVA",
-  "standIn": false
+  "standIn": false,
+  "color": "#757e87"
  },
  "chugach": {
   "widths": [
@@ -198,7 +210,8 @@
   "focal": null,
   "credit": "Paxson Woelber / Unsplash",
   "page": "https://unsplash.com/photos/x91Jq_UDbL0",
-  "standIn": false
+  "standIn": false,
+  "color": "#586470"
  },
  "tacoma-port": {
   "widths": [
@@ -214,7 +227,8 @@
   "focal": "55% 50%",
   "credit": "fr0ggy5 / Unsplash",
   "page": "https://unsplash.com/photos/7wrKEqA2qu8",
-  "standIn": false
+  "standIn": false,
+  "color": "#869baf"
  },
  "cedar": {
   "widths": [
@@ -229,7 +243,8 @@
   "focal": "65% 50%",
   "credit": "Jonathan Majam / Unsplash",
   "page": "https://unsplash.com/photos/vHKomsqKtqo",
-  "standIn": false
+  "standIn": false,
+  "color": "#756046"
  },
  "cranes-dusk": {
   "widths": [
@@ -244,7 +259,8 @@
   "focal": "60% 50%",
   "credit": "Nicolas Beuret / Unsplash",
   "page": "https://unsplash.com/photos/8i19Rm2EFUM",
-  "standIn": false
+  "standIn": false,
+  "color": "#3a4f65"
  },
  "timber-weathered": {
   "widths": [
@@ -259,7 +275,8 @@
   "focal": null,
   "credit": "Chris / Unsplash",
   "page": "https://unsplash.com/photos/yrqoWErSElA",
-  "standIn": false
+  "standIn": false,
+  "color": "#877f79"
  },
  "tug-barge": {
   "widths": [
@@ -275,7 +292,8 @@
   "focal": "55% 60%",
   "credit": "Royce Fonseca / Unsplash",
   "page": "https://unsplash.com/photos/hvgb3lXdOKw",
-  "standIn": false
+  "standIn": false,
+  "color": "#acb0b5"
  },
  "forklift-yard": {
   "widths": [
@@ -290,7 +308,8 @@
   "focal": "50% 55%",
   "credit": "Sergej / Unsplash",
   "page": "https://unsplash.com/photos/V5YPZo528n4",
-  "standIn": false
+  "standIn": false,
+  "color": "#918577"
  },
  "uresco-truck": {
   "widths": [
@@ -302,7 +321,8 @@
   "focal": null,
   "credit": "Uresco Construction Materials",
   "page": null,
-  "standIn": false
+  "standIn": false,
+  "color": "#39312e"
  },
  "uresco-yard": {
   "widths": [
@@ -314,7 +334,8 @@
   "focal": null,
   "credit": "Uresco Construction Materials",
   "page": null,
-  "standIn": false
+  "standIn": false,
+  "color": "#756c67"
  },
  "uresco-stack": {
   "widths": [
@@ -326,7 +347,8 @@
   "focal": null,
   "credit": "Uresco Construction Materials",
   "page": null,
-  "standIn": false
+  "standIn": false,
+  "color": "#80614b"
  },
  "uresco-woodpile": {
   "widths": [
@@ -338,7 +360,8 @@
   "focal": null,
   "credit": "Uresco Construction Materials",
   "page": null,
-  "standIn": false
+  "standIn": false,
+  "color": "#b18c6f"
  },
  "concrete-forms": {
   "widths": [
@@ -353,7 +376,8 @@
   "focal": "60% 40%",
   "credit": "M\u00e9lyna C\u00f4t\u00e9 / Unsplash",
   "page": "https://unsplash.com/photos/NxwMP5V57Zg",
-  "standIn": false
+  "standIn": false,
+  "color": "#b4ae9f"
  },
  "siding": {
   "widths": [
@@ -368,7 +392,8 @@
   "focal": "70% 50%",
   "credit": "Erik Mclean / Unsplash",
   "page": "https://unsplash.com/photos/msXwTmJjvb8",
-  "standIn": false
+  "standIn": false,
+  "color": "#5a8281"
  },
  "insulation": {
   "widths": [
@@ -383,7 +408,8 @@
   "focal": "40% 50%",
   "credit": "Erik Mclean / Unsplash",
   "page": "https://unsplash.com/photos/aCshJn3y93s",
-  "standIn": false
+  "standIn": false,
+  "color": "#845f5e"
  },
  "windows": {
   "widths": [
@@ -398,7 +424,8 @@
   "focal": "55% 60%",
   "credit": "Ernie Journeys / Unsplash",
   "page": "https://unsplash.com/photos/r5WU0B6OUws",
-  "standIn": false
+  "standIn": false,
+  "color": "#646d78"
  },
  "hardware": {
   "widths": [
@@ -413,7 +440,8 @@
   "focal": "50% 75%",
   "credit": "Konstantin Evdokimov / Unsplash",
   "page": "https://unsplash.com/photos/JALUvPLUde8",
-  "standIn": false
+  "standIn": false,
+  "color": "#bfa90e"
  },
  "blueprints": {
   "widths": [
@@ -429,7 +457,8 @@
   "focal": "45% 55%",
   "credit": "Daniel McCullough / Unsplash",
   "page": "https://unsplash.com/photos/-FPFq_trr2Y",
-  "standIn": false
+  "standIn": false,
+  "color": "#797675"
  },
  "deck": {
   "widths": [
@@ -444,7 +473,8 @@
   "focal": "50% 65%",
   "credit": "Eli Chamoun / Unsplash",
   "page": "https://unsplash.com/photos/R5ExRDtg_BM",
-  "standIn": false
+  "standIn": false,
+  "color": "#878469"
  },
  "remote-village": {
   "widths": [
@@ -460,7 +490,8 @@
   "focal": "45% 60%",
   "credit": "Deborah Schildt / Unsplash",
   "page": "https://unsplash.com/photos/8O-KsnJ2Yds",
-  "standIn": false
+  "standIn": false,
+  "color": "#8d8b89"
  },
  "institutional": {
   "widths": [
@@ -475,7 +506,8 @@
   "focal": "50% 55%",
   "credit": "Troy Mortier / Unsplash",
   "page": "https://unsplash.com/photos/Ll9JCsrSC4U",
-  "standIn": false
+  "standIn": false,
+  "color": "#928f82"
  },
  "multifamily": {
   "widths": [
@@ -490,7 +522,8 @@
   "focal": "50% 60%",
   "credit": "Salvador Rios / Unsplash",
   "page": "https://unsplash.com/photos/3GdHDDtHJ-4",
-  "standIn": false
+  "standIn": false,
+  "color": "#7892a8"
  },
  "custom-home": {
   "widths": [
@@ -505,7 +538,8 @@
   "focal": null,
   "credit": "Nate Johnston / Unsplash",
   "page": "https://unsplash.com/photos/QtF2v8BP46I",
-  "standIn": false
+  "standIn": false,
+  "color": "#c59d73"
  },
  "north-slope": {
   "widths": [
@@ -520,7 +554,8 @@
   "focal": "65% 60%",
   "credit": "Dennis Zhang / Unsplash",
   "page": "https://unsplash.com/photos/sf8cIlT1t5g",
-  "standIn": false
+  "standIn": false,
+  "color": "#7892b3"
  },
  "export": {
   "widths": [
@@ -535,7 +570,8 @@
   "focal": "40% 50%",
   "credit": "Elijah Mears / Unsplash",
   "page": "https://unsplash.com/photos/sI2eENXdoBI",
-  "standIn": false
+  "standIn": false,
+  "color": "#768d9f"
  },
  "yard-kent": {
   "widths": [
@@ -550,7 +586,8 @@
   "focal": "50% 55%",
   "credit": "Sergej / Unsplash",
   "page": "https://unsplash.com/photos/V5YPZo528n4",
-  "standIn": true
+  "standIn": true,
+  "color": "#918577"
  },
  "fairbanks": {
   "widths": [
@@ -565,7 +602,8 @@
   "focal": "50% 40%",
   "credit": "Yuhan Du / Unsplash",
   "page": "https://unsplash.com/photos/F_p4UZUe_xo",
-  "standIn": false
+  "standIn": false,
+  "color": "#21595d"
  },
  "rainier-tacoma": {
   "widths": [
@@ -581,7 +619,8 @@
   "focal": "50% 45%",
   "credit": "Gantavya Bhatt / Unsplash",
   "page": "https://unsplash.com/photos/ytPJ4kppYWE",
-  "standIn": false
+  "standIn": false,
+  "color": "#696384"
  },
  "floatplane": {
   "widths": [
@@ -596,6 +635,7 @@
   "focal": "50% 70%",
   "credit": "Brandy Willetts / Unsplash",
   "page": "https://unsplash.com/photos/TFpqCU4b2dw",
-  "standIn": false
+  "standIn": false,
+  "color": "#8d99ac"
  }
 }

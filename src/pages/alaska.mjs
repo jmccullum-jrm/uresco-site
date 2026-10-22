@@ -1,4 +1,4 @@
-import { html } from '../lib/html.mjs';
+import { html, raw } from '../lib/html.mjs';
 import { icon } from '../lib/icons.mjs';
 import { layout } from '../lib/layout.mjs';
 import { preloadFor, sectionHead, pageHero, quoteBand, yardCard, deliveryMap, stamp } from '../lib/components.mjs';
@@ -12,7 +12,7 @@ const MODES = [
 ];
 
 const FAQ = [
-  ['Can you deliver to my community?', 'Delivery is available anywhere in Alaska, from Sitka to Utqiaġvik. Tell us where the job is and we will work out the route — road, ocean freight, barge or air — and price it.'],
+  ['Can you deliver to my community?', 'Delivery is available anywhere in Alaska, from Sitka to Utqiaġvik (Barrow). Tell us where the job is and we will work out the route — road, ocean freight, barge or air — and price it.'],
   ['When should I order for barge season?', 'Barge service to western and northern Alaska runs only in the ice-free months, and the last sailings fill up. Call early in the year: we plan backward from the sailing you need so the package is built, crated and at the dock in time.'],
   ['Do you ship complete building packages?', 'Yes. We are fully equipped to handle remote-location and export building packages — framing, envelope, openings and hardware — so the whole job ships together.'],
   ['Can you work from my plans?', 'Send drawings or a materials list. We will build the take-off, check it for gaps and quote it. Design services are available for projects with unique needs.'],
@@ -25,6 +25,10 @@ export default {
     title: 'Alaska Delivery — Anchorage & Fairbanks',
     description: 'Building materials delivered anywhere in Alaska, from Sitka to Utqiaġvik. Remote and export building packages, shipping coordination and dock delivery from Uresco’s Anchorage and Fairbanks distribution centers.',
     preload: [preloadFor(ctx, 'chugach')],
+    jsonLd: html`<script type="application/ld+json">${raw(JSON.stringify({
+      '@context': 'https://schema.org', '@type': 'FAQPage',
+      mainEntity: FAQ.map(([q, a]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a } })),
+    }))}</script>`,
     body: html`
 ${pageHero(ctx, {
   eyebrow: 'Alaska · Anchorage · Fairbanks',

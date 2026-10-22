@@ -58,6 +58,17 @@ ${pageHero(ctx, {
     </div>
   </div>
 </section>
+<section class="section section--bone">
+  <div class="wrap split">
+    <div class="split__media">${picture(ctx, 'combilift', { sizes: '(min-width: 860px) 50vw, 100vw' })}${stamp('Work with us')}</div>
+    <div>
+      ${stamp('Careers', { no: '04' })}
+      <h2 class="h2">Good people <em>move good lumber.</em></h2>
+      <p class="lede">Yard crew, drivers, estimators and inside sales — we’re always glad to hear from people who take pride in getting the order right. Call or email the yard nearest you and ask about openings.</p>
+      <div class="actions"><a class="btn btn--dark" href="${ctx.u('locations/')}">Find your nearest yard ${icon('arrow', { size: 18 })}</a></div>
+    </div>
+  </div>
+</section>
 ${quoteBand(ctx, { title: 'Let’s build <em>something.</em>', body: 'Call your Uresco team today for your building-material needs, or send plans and we’ll quote the job.' })}
 `,
   }),

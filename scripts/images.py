@@ -63,6 +63,8 @@ def main(force=False):
             'credit': base.get('credit'),
             'page': base.get('page'),
             'standIn': bool(alias),
+            # Average colour, painted behind the image while it loads.
+            'color': '#%02x%02x%02x' % im.resize((1, 1), Image.LANCZOS).getpixel((0, 0)),
         }
     # Drop renditions no longer referenced.
     keep = {f'{k}-{w}.webp' for k, v in out.items() for w in v['widths']}

@@ -18,7 +18,7 @@ export const picture = (ctx, key, { sizes = '100vw', cls = '', eager = false, al
   const p = photo(key);
   const srcset = p.widths.map((w) => `${ctx.u(`assets/img/${key}-${w}.webp`)} ${w}w`).join(', ');
   const mid = p.widths.find((w) => w >= 1200) || p.widths[p.widths.length - 1];
-  return html`<img class="${cls}" src="${ctx.u(`assets/img/${key}-${mid}.webp`)}" srcset="${srcset}" sizes="${sizes}" width="${p.width}" height="${p.height}" alt="${alt ?? p.alt}"${raw(eager ? ' fetchpriority="high"' : ' loading="lazy"')} decoding="async"${raw(p.focal ? ` style="object-position:${p.focal}"` : '')}>`;
+  return html`<img class="${cls}" src="${ctx.u(`assets/img/${key}-${mid}.webp`)}" srcset="${srcset}" sizes="${sizes}" width="${p.width}" height="${p.height}" alt="${alt ?? p.alt}"${raw(eager ? ' fetchpriority="high"' : ' loading="lazy"')} decoding="async"${raw(` style="${p.focal ? `object-position:${p.focal};` : ''}background-color:${p.color || '#22211e'}"`)}>`;
 };
 
 export const preloadFor = (ctx, key, sizes = '100vw') => {
@@ -101,6 +101,7 @@ export const yardCard = (ctx, l, { showPhoto = true, headingLevel = 3 } = {}) =>
         <a class="btn btn--sm" href="${tel(l.phone)}">${icon('phone', { size: 16 })} Call</a>
         <a class="btn btn--sm btn--line" href="${mapsUrl(l)}" target="_blank" rel="noopener">${icon('directions', { size: 16 })} Directions</a>
       </div>
+      <a class="yard__quote" href="${ctx.u('quote/')}?yard=${l.id}">Get a quote from ${l.city} ${icon('arrow', { size: 16 })}</a>
     </div>
   </article>`;
 };
