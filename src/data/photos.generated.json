@@ -1,0 +1,641 @@
+{
+ "hero-truck-denali": {
+  "widths": [
+   640,
+   960,
+   1280,
+   1920,
+   2400
+  ],
+  "width": 2400,
+  "height": 1600,
+  "alt": "A freight truck on a highway through spruce forest with Denali rising behind it",
+  "focal": "60% 50%",
+  "credit": "Joseph Corl / Unsplash",
+  "page": "https://unsplash.com/photos/OVKRxZub9f4",
+  "standIn": false,
+  "color": "#818f89"
+ },
+ "lumber-stack": {
+  "widths": [
+   640,
+   960,
+   1280,
+   1920,
+   2400
+  ],
+  "width": 2400,
+  "height": 1602,
+  "alt": "Ends of stacked dimensional lumber in a yard",
+  "focal": null,
+  "credit": "Georg Eiermann / Unsplash",
+  "page": "https://unsplash.com/photos/6j3laFTi8wg",
+  "standIn": false,
+  "color": "#81654b"
+ },
+ "pine-racking": {
+  "widths": [
+   640,
+   960,
+   1280,
+   1920,
+   2400
+  ],
+  "width": 2400,
+  "height": 1600,
+  "alt": "Bundles of lumber on cantilever racking in a warehouse",
+  "focal": "60% 50%",
+  "credit": "PJ Wallace / Unsplash",
+  "page": "https://unsplash.com/photos/EFR6ICYBMN0",
+  "standIn": false,
+  "color": "#754c27"
+ },
+ "timber-ends": {
+  "widths": [
+   480,
+   800,
+   1200,
+   1600
+  ],
+  "width": 1600,
+  "height": 2214,
+  "alt": "Ends of pressure-treated timbers stacked in a bundle",
+  "focal": null,
+  "credit": "roselino rocha / Unsplash",
+  "page": "https://unsplash.com/photos/07hBSBN9XC0",
+  "standIn": false,
+  "color": "#82764c"
+ },
+ "plywood": {
+  "widths": [
+   480,
+   800,
+   1200,
+   1600
+  ],
+  "width": 1600,
+  "height": 2400,
+  "alt": "Bundled stacks of plywood panels in a warehouse",
+  "focal": "50% 40%",
+  "credit": "LUCIA LU / Unsplash",
+  "page": "https://unsplash.com/photos/BimFx6m5XqU",
+  "standIn": false,
+  "color": "#867a6a"
+ },
+ "framer": {
+  "widths": [
+   480,
+   800,
+   1200,
+   1600
+  ],
+  "width": 1600,
+  "height": 1066,
+  "alt": "A framer in a hard hat nailing a wall frame",
+  "focal": "35% 40%",
+  "credit": "Josh Olalde / Unsplash",
+  "page": "https://unsplash.com/photos/EWoU3snzadU",
+  "standIn": false,
+  "color": "#959688"
+ },
+ "framing-joists": {
+  "widths": [
+   480,
+   800,
+   1200,
+   1600
+  ],
+  "width": 1600,
+  "height": 1066,
+  "alt": "Roof trusses and wall framing on a new house",
+  "focal": null,
+  "credit": "Troy Mortier / Unsplash",
+  "page": "https://unsplash.com/photos/kkdfOe0iRu8",
+  "standIn": false,
+  "color": "#77716c"
+ },
+ "unloading": {
+  "widths": [
+   480,
+   800,
+   1200,
+   1600
+  ],
+  "width": 1600,
+  "height": 2400,
+  "alt": "Two workers in safety vests unloading lumber from a flatbed truck",
+  "focal": "55% 55%",
+  "credit": "Indraadityan Logamurugan / Unsplash",
+  "page": "https://unsplash.com/photos/TIL-dnIjK8E",
+  "standIn": false,
+  "color": "#4d483c"
+ },
+ "combilift": {
+  "widths": [
+   480,
+   800,
+   1200,
+   1600
+  ],
+  "width": 1600,
+  "height": 2846,
+  "alt": "A forklift operator moving lumber in a warehouse",
+  "focal": "50% 45%",
+  "credit": "PJ Wallace / Unsplash",
+  "page": "https://unsplash.com/photos/Do5rGlcZnuQ",
+  "standIn": false,
+  "color": "#343028"
+ },
+ "valdez-port": {
+  "widths": [
+   640,
+   960,
+   1280,
+   1920,
+   2400
+  ],
+  "width": 2400,
+  "height": 1500,
+  "alt": "A port crane at the foot of snow-covered mountains in Valdez, Alaska",
+  "focal": "55% 60%",
+  "credit": "Mich / Unsplash",
+  "page": "https://unsplash.com/photos/1TilbaZ3ALA",
+  "standIn": false,
+  "color": "#484f5f"
+ },
+ "juneau-freight": {
+  "widths": [
+   480,
+   800,
+   1200,
+   1600
+  ],
+  "width": 1600,
+  "height": 2400,
+  "alt": "Shipping containers in a freight yard in Juneau, Alaska",
+  "focal": "50% 60%",
+  "credit": "Jonah Townsley / Unsplash",
+  "page": "https://unsplash.com/photos/dCNcbGYssNY",
+  "standIn": false,
+  "color": "#8599a2"
+ },
+ "anchorage": {
+  "widths": [
+   640,
+   960,
+   1280,
+   1920,
+   2400
+  ],
+  "width": 2400,
+  "height": 1351,
+  "alt": "The Anchorage skyline beneath the snow-covered Chugach Mountains",
+  "focal": "70% 50%",
+  "credit": "Yuhan Du / Unsplash",
+  "page": "https://unsplash.com/photos/8UCTwY4mrVA",
+  "standIn": false,
+  "color": "#757e87"
+ },
+ "chugach": {
+  "widths": [
+   640,
+   960,
+   1280,
+   1920,
+   2400
+  ],
+  "width": 2400,
+  "height": 1601,
+  "alt": "Glaciers and peaks of the Chugach Mountains, Alaska",
+  "focal": null,
+  "credit": "Paxson Woelber / Unsplash",
+  "page": "https://unsplash.com/photos/x91Jq_UDbL0",
+  "standIn": false,
+  "color": "#586470"
+ },
+ "tacoma-port": {
+  "widths": [
+   640,
+   960,
+   1280,
+   1920,
+   2400
+  ],
+  "width": 2400,
+  "height": 1600,
+  "alt": "Container cranes at the Port of Tacoma across Commencement Bay",
+  "focal": "55% 50%",
+  "credit": "fr0ggy5 / Unsplash",
+  "page": "https://unsplash.com/photos/7wrKEqA2qu8",
+  "standIn": false,
+  "color": "#869baf"
+ },
+ "cedar": {
+  "widths": [
+   480,
+   800,
+   1200,
+   1600
+  ],
+  "width": 1600,
+  "height": 1066,
+  "alt": "A building clad in vertical cedar siding under a deep roof overhang",
+  "focal": "65% 50%",
+  "credit": "Jonathan Majam / Unsplash",
+  "page": "https://unsplash.com/photos/vHKomsqKtqo",
+  "standIn": false,
+  "color": "#756046"
+ },
+ "cranes-dusk": {
+  "widths": [
+   480,
+   800,
+   1200,
+   1600
+  ],
+  "width": 1600,
+  "height": 899,
+  "alt": "Tower cranes over a construction site at dusk",
+  "focal": "60% 50%",
+  "credit": "Nicolas Beuret / Unsplash",
+  "page": "https://unsplash.com/photos/8i19Rm2EFUM",
+  "standIn": false,
+  "color": "#3a4f65"
+ },
+ "timber-weathered": {
+  "widths": [
+   480,
+   800,
+   1200,
+   1600
+  ],
+  "width": 1600,
+  "height": 1200,
+  "alt": "Weathered ends of stacked timbers showing growth rings",
+  "focal": null,
+  "credit": "Chris / Unsplash",
+  "page": "https://unsplash.com/photos/yrqoWErSElA",
+  "standIn": false,
+  "color": "#877f79"
+ },
+ "tug-barge": {
+  "widths": [
+   640,
+   960,
+   1280,
+   1920,
+   2400
+  ],
+  "width": 2400,
+  "height": 1601,
+  "alt": "A tug pushing a loaded freight barge",
+  "focal": "55% 60%",
+  "credit": "Royce Fonseca / Unsplash",
+  "page": "https://unsplash.com/photos/hvgb3lXdOKw",
+  "standIn": false,
+  "color": "#acb0b5"
+ },
+ "forklift-yard": {
+  "widths": [
+   480,
+   800,
+   1200,
+   1600
+  ],
+  "width": 1600,
+  "height": 2400,
+  "alt": "A forklift driving through a building-supply yard",
+  "focal": "50% 55%",
+  "credit": "Sergej / Unsplash",
+  "page": "https://unsplash.com/photos/V5YPZo528n4",
+  "standIn": false,
+  "color": "#918577"
+ },
+ "uresco-truck": {
+  "widths": [
+   314
+  ],
+  "width": 314,
+  "height": 322,
+  "alt": "A Uresco delivery truck lettered \u201cLumber by UCM Uresco\u201d",
+  "focal": null,
+  "credit": "Uresco Construction Materials",
+  "page": null,
+  "standIn": false,
+  "color": "#39312e"
+ },
+ "uresco-yard": {
+  "widths": [
+   357
+  ],
+  "width": 357,
+  "height": 322,
+  "alt": "Wrapped lumber bundles and a forklift in a Uresco yard",
+  "focal": null,
+  "credit": "Uresco Construction Materials",
+  "page": null,
+  "standIn": false,
+  "color": "#756c67"
+ },
+ "uresco-stack": {
+  "widths": [
+   357
+  ],
+  "width": 357,
+  "height": 322,
+  "alt": "Stacked lumber at a Uresco yard",
+  "focal": null,
+  "credit": "Uresco Construction Materials",
+  "page": null,
+  "standIn": false,
+  "color": "#80614b"
+ },
+ "uresco-woodpile": {
+  "widths": [
+   214
+  ],
+  "width": 214,
+  "height": 200,
+  "alt": "Timber ends stacked in a Uresco yard",
+  "focal": null,
+  "credit": "Uresco Construction Materials",
+  "page": null,
+  "standIn": false,
+  "color": "#b18c6f"
+ },
+ "concrete-forms": {
+  "widths": [
+   480,
+   800,
+   1200,
+   1600
+  ],
+  "width": 1600,
+  "height": 1066,
+  "alt": "A crew in hi-vis guiding a concrete pump hose beside freshly poured foundation walls",
+  "focal": "60% 40%",
+  "credit": "M\u00e9lyna C\u00f4t\u00e9 / Unsplash",
+  "page": "https://unsplash.com/photos/NxwMP5V57Zg",
+  "standIn": false,
+  "color": "#b4ae9f"
+ },
+ "siding": {
+  "widths": [
+   480,
+   800,
+   1200,
+   1600
+  ],
+  "width": 1600,
+  "height": 1066,
+  "alt": "Dark green lap siding and white-trimmed windows on a two-story house",
+  "focal": "70% 50%",
+  "credit": "Erik Mclean / Unsplash",
+  "page": "https://unsplash.com/photos/msXwTmJjvb8",
+  "standIn": false,
+  "color": "#5a8281"
+ },
+ "insulation": {
+  "widths": [
+   480,
+   800,
+   1200,
+   1600
+  ],
+  "width": 1600,
+  "height": 1068,
+  "alt": "A worker fitting fiberglass batt insulation between wall studs",
+  "focal": "40% 50%",
+  "credit": "Erik Mclean / Unsplash",
+  "page": "https://unsplash.com/photos/aCshJn3y93s",
+  "standIn": false,
+  "color": "#845f5e"
+ },
+ "windows": {
+  "widths": [
+   480,
+   800,
+   1200,
+   1600
+  ],
+  "width": 1600,
+  "height": 1076,
+  "alt": "New windows stacked in front of a house wrapped and sheathed for installation",
+  "focal": "55% 60%",
+  "credit": "Ernie Journeys / Unsplash",
+  "page": "https://unsplash.com/photos/r5WU0B6OUws",
+  "standIn": false,
+  "color": "#646d78"
+ },
+ "hardware": {
+  "widths": [
+   480,
+   800,
+   1200,
+   1600
+  ],
+  "width": 1600,
+  "height": 1063,
+  "alt": "A pile of black construction screws against a yellow background",
+  "focal": "50% 75%",
+  "credit": "Konstantin Evdokimov / Unsplash",
+  "page": "https://unsplash.com/photos/JALUvPLUde8",
+  "standIn": false,
+  "color": "#bfa90e"
+ },
+ "blueprints": {
+  "widths": [
+   640,
+   960,
+   1280,
+   1920,
+   2400
+  ],
+  "width": 2400,
+  "height": 1350,
+  "alt": "Hands marking up construction drawings with a scale ruler",
+  "focal": "45% 55%",
+  "credit": "Daniel McCullough / Unsplash",
+  "page": "https://unsplash.com/photos/-FPFq_trr2Y",
+  "standIn": false,
+  "color": "#797675"
+ },
+ "deck": {
+  "widths": [
+   480,
+   800,
+   1200,
+   1600
+  ],
+  "width": 1600,
+  "height": 1066,
+  "alt": "A sunlit wood deck beside a dark-stained house",
+  "focal": "50% 65%",
+  "credit": "Eli Chamoun / Unsplash",
+  "page": "https://unsplash.com/photos/R5ExRDtg_BM",
+  "standIn": false,
+  "color": "#878469"
+ },
+ "remote-village": {
+  "widths": [
+   640,
+   960,
+   1280,
+   1920,
+   2400
+  ],
+  "width": 2400,
+  "height": 1605,
+  "alt": "Snow-drifted buildings and a boat at sunset over sea ice in Utqia\u0121vik, Alaska",
+  "focal": "45% 60%",
+  "credit": "Deborah Schildt / Unsplash",
+  "page": "https://unsplash.com/photos/8O-KsnJ2Yds",
+  "standIn": false,
+  "color": "#8d8b89"
+ },
+ "institutional": {
+  "widths": [
+   480,
+   800,
+   1200,
+   1600
+  ],
+  "width": 1600,
+  "height": 1066,
+  "alt": "A single-story building framed with roof trusses and sheathing behind site fencing",
+  "focal": "50% 55%",
+  "credit": "Troy Mortier / Unsplash",
+  "page": "https://unsplash.com/photos/Ll9JCsrSC4U",
+  "standIn": false,
+  "color": "#928f82"
+ },
+ "multifamily": {
+  "widths": [
+   480,
+   800,
+   1200,
+   1600
+  ],
+  "width": 1600,
+  "height": 1066,
+  "alt": "A four-story wood-frame apartment building in house wrap with a tower crane",
+  "focal": "50% 60%",
+  "credit": "Salvador Rios / Unsplash",
+  "page": "https://unsplash.com/photos/3GdHDDtHJ-4",
+  "standIn": false,
+  "color": "#7892a8"
+ },
+ "custom-home": {
+  "widths": [
+   480,
+   800,
+   1200,
+   1600
+  ],
+  "width": 1600,
+  "height": 1067,
+  "alt": "Looking up through new wood framing and trusses at a blue sky",
+  "focal": null,
+  "credit": "Nate Johnston / Unsplash",
+  "page": "https://unsplash.com/photos/QtF2v8BP46I",
+  "standIn": false,
+  "color": "#c59d73"
+ },
+ "north-slope": {
+  "widths": [
+   480,
+   800,
+   1200,
+   1600
+  ],
+  "width": 1600,
+  "height": 900,
+  "alt": "A loaded pickup parked in snow beneath hoarfrost-covered spruce in Interior Alaska",
+  "focal": "65% 60%",
+  "credit": "Dennis Zhang / Unsplash",
+  "page": "https://unsplash.com/photos/sf8cIlT1t5g",
+  "standIn": false,
+  "color": "#7892b3"
+ },
+ "export": {
+  "widths": [
+   480,
+   800,
+   1200,
+   1600
+  ],
+  "width": 1600,
+  "height": 900,
+  "alt": "A container ship berthed beneath gantry cranes",
+  "focal": "40% 50%",
+  "credit": "Elijah Mears / Unsplash",
+  "page": "https://unsplash.com/photos/sI2eENXdoBI",
+  "standIn": false,
+  "color": "#768d9f"
+ },
+ "yard-kent": {
+  "widths": [
+   480,
+   800,
+   1200,
+   1600
+  ],
+  "width": 1600,
+  "height": 2400,
+  "alt": "A forklift in a building-supply yard",
+  "focal": "50% 55%",
+  "credit": "Sergej / Unsplash",
+  "page": "https://unsplash.com/photos/V5YPZo528n4",
+  "standIn": true,
+  "color": "#918577"
+ },
+ "fairbanks": {
+  "widths": [
+   480,
+   800,
+   1200,
+   1600
+  ],
+  "width": 1600,
+  "height": 1066,
+  "alt": "Green aurora over a snowbanked road and frosted birches near Fairbanks, Alaska",
+  "focal": "50% 40%",
+  "credit": "Yuhan Du / Unsplash",
+  "page": "https://unsplash.com/photos/F_p4UZUe_xo",
+  "standIn": false,
+  "color": "#21595d"
+ },
+ "rainier-tacoma": {
+  "widths": [
+   640,
+   960,
+   1280,
+   1920,
+   2400
+  ],
+  "width": 2400,
+  "height": 1600,
+  "alt": "Mount Rainier in alpenglow above the Tacoma waterfront",
+  "focal": "50% 45%",
+  "credit": "Gantavya Bhatt / Unsplash",
+  "page": "https://unsplash.com/photos/ytPJ4kppYWE",
+  "standIn": false,
+  "color": "#696384"
+ },
+ "floatplane": {
+  "widths": [
+   480,
+   800,
+   1200,
+   1600
+  ],
+  "width": 1600,
+  "height": 2134,
+  "alt": "Skiffs on a gravel beach below a volcanic peak as a floatplane passes, Port Alsworth, Alaska",
+  "focal": "50% 70%",
+  "credit": "Brandy Willetts / Unsplash",
+  "page": "https://unsplash.com/photos/TFpqCU4b2dw",
+  "standIn": false,
+  "color": "#8d99ac"
+ }
+}
