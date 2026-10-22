@@ -1,7 +1,8 @@
 import { html, raw, esc } from './html.mjs';
 import { icon, mark } from './icons.mjs';
 import { SITE } from '../config.mjs';
-import { LOCATIONS, tel, address, mapsUrl } from '../data/locations.mjs';
+import { LOCATIONS, tel, address, mapsUrl, hoursLines, openingHoursLd } from '../data/locations.mjs';
+import { openStatus } from './components.mjs';
 import { CATEGORIES } from '../data/products.mjs';
 
 export const NAV = [
@@ -14,9 +15,9 @@ export const NAV = [
 ];
 
 export const brand = (ctx, { cls = '' } = {}) => html`
-  <a class="brand ${cls}" href="${ctx.u('')}" aria-label="${SITE.name}, home">
+  <a class="brand ${cls}" href="${ctx.u('')}">
     <span class="brand__mark">${mark({ id: 'mk' + ctx.uid() })}</span>
-    <span class="brand__word"><span class="brand__name">Uresco</span><span class="brand__desc">Construction Materials</span></span>
+    <span class="brand__word"><span class="brand__name">Uresco</span> <span class="brand__desc">Construction Materials</span></span>
   </a>`;
 
 const isCurrent = (ctx, href) => (href === '' ? ctx.path === '' : ctx.path.startsWith(href));
@@ -31,7 +32,7 @@ const productMenu = (ctx) => html`
 
 const header = (ctx) => html`
   <a class="skip" href="#main">Skip to content</a>
-  <div class="utility">
+  <div class="utility" role="region" aria-label="Call a yard">
     <div class="wrap utility__row">
       <ul class="utility__yards" aria-label="Call a yard">
         ${LOCATIONS.map((l) => html`<li><span class="utility__city">${l.city}</span><a href="${tel(l.phone)}">${l.phone}</a></li>`)}
@@ -67,6 +68,7 @@ const header = (ctx) => html`
         <li><a href="${ctx.u('')}">Home</a></li>
         ${NAV.map((n) => html`<li><a href="${ctx.u(n.href)}"${raw(isCurrent(ctx, n.href) ? ' aria-current="page"' : '')}>${n.label}</a></li>`)}
         <li><a href="${ctx.u('pacific-northwest/')}">Pacific Northwest</a></li>
+        <li><a href="${ctx.u('accounts/')}">Contractor accounts</a></li>
       </ul>
     </nav>
     <a class="btn btn--block" href="${ctx.u('quote/')}">Request a quote ${icon('arrow', { size: 18 })}</a>
@@ -83,7 +85,7 @@ const callSheet = () => html`
     </div>
     <ul class="sheet__list">
       ${LOCATIONS.map((l) => html`<li class="sheet__yard">
-        <span><b>${l.city}, ${l.state}</b><small>${l.street}</small></span>
+        <span><b>${l.city}, ${l.state}</b><small>${l.street}</small>${openStatus(l)}</span>
         <span class="sheet__acts">
           <a class="sheet__dir" href="${mapsUrl(l)}" target="_blank" rel="noopener" aria-label="Directions to ${l.city} yard">${icon('directions', { size: 18 })}</a>
           <a class="sheet__num" href="${tel(l.phone)}">${icon('phone', { size: 18 })}${l.phone}</a>
@@ -117,6 +119,7 @@ const footer = (ctx) => html`
             <a href="${tel(l.phone)}">${l.phone}</a>
             ${l.tollFree ? html`<a href="${tel(l.tollFree)}">${l.tollFree} <small>toll-free</small></a>` : ''}
             <a href="mailto:${l.email}">${l.email}</a>
+            ${l.hours ? html`<small class="footer__hours">${hoursLines(l).join(' · ')}</small>` : ''}
           </div>`)}
         <nav class="footer__nav" aria-label="Footer">
           <h3 class="stamp stamp--dark">Explore</h3>
@@ -127,6 +130,8 @@ const footer = (ctx) => html`
           <a href="${ctx.u('projects/')}">Projects</a>
           <a href="${ctx.u('about/')}">About</a>
           <a href="${ctx.u('locations/')}">Locations</a>
+          <a href="${ctx.u('accounts/')}">Contractor accounts</a>
+          <a href="${ctx.u('quote/')}">Request a quote</a>
         </nav>
       </div>
       <div class="footer__legal">
@@ -160,9 +165,20 @@ export const orgJsonLd = (ctx) => {
       email: l.email,
       address: { '@type': 'PostalAddress', streetAddress: l.street, addressLocality: l.city, addressRegion: l.state, postalCode: l.zip, addressCountry: 'US' },
       geo: { '@type': 'GeoCoordinates', latitude: l.geo.lat, longitude: l.geo.lng },
+      openingHoursSpecification: openingHoursLd(l),
     })),
   };
   return html`<script type="application/ld+json">${raw(JSON.stringify(org).replace(/</g, '\\u003c'))}</script>`;
+};
+
+// BreadcrumbList for inner pages: Home › (Products ›) page.
+const crumbsLd = (ctx, title) => {
+  if (!ctx.path || ctx.path === '404/') return '';
+  const parts = [['Home', '']];
+  if (ctx.path.startsWith('products/') && ctx.path !== 'products/') parts.push(['Products', 'products/']);
+  parts.push([title, ctx.path]);
+  const ld = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: parts.map(([name, p], i) => ({ '@type': 'ListItem', position: i + 1, name, item: `${SITE.url}/${p}` })) };
+  return html`<script type="application/ld+json">${raw(JSON.stringify(ld))}</script>`;
 };
 
 export const layout = (ctx, { title, description, body, overlay = false, jsonLd = '', preload = [] }) => {
@@ -190,11 +206,12 @@ ${SITE.preview ? raw('<meta name="robots" content="noindex, nofollow">') : ''}
 <link rel="icon" href="${ctx.u('favicon-32.png')}" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="${ctx.u('apple-touch-icon.png')}">
 <link rel="manifest" href="${ctx.u('site.webmanifest')}">
-<link rel="preload" href="${ctx.u('assets/fonts/archivo-100-900-latin.woff2')}" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="${ctx.u('assets/fonts/archivo-var.woff2')}" as="font" type="font/woff2" crossorigin>
 ${preload.map((p) => html`<link rel="preload" as="image" href="${p.src}" imagesrcset="${p.srcset}" imagesizes="${p.sizes}" fetchpriority="high">`)}
 <link rel="stylesheet" href="${ctx.u('assets/css/site.css')}?v=${ctx.version}">
 <script src="${ctx.u('assets/js/site.js')}?v=${ctx.version}" defer></script>
 ${jsonLd}
+${crumbsLd(ctx, title)}
 </head>
 <body class="${overlay ? 'has-overlay' : ''}">
 ${header(ctx)}

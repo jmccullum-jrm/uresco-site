@@ -38,7 +38,7 @@ ${pageHero(ctx, {
 <section class="section section--dark">
   <div class="wrap">
     ${sectionHead({ eyebrow: 'Reach', no: '01', title: 'Built for places <em>without a lumber yard.</em>', lede: 'Two Alaska yards on the road system, a Kent yard on Puget Sound, and the freight lanes that connect them to the rest of the state.', dark: true })}
-    <div class="mapframe">${deliveryMap({ id: 'ak-map' })}</div>
+    <div class="mapframe">${deliveryMap(ctx)}</div>
   </div>
 </section>
 

@@ -16,8 +16,8 @@ MANIFEST = ROOT / 'scripts' / 'photos.json'
 CACHE = ROOT / '.cache' / 'photos'
 OUT = ROOT / 'src' / 'assets' / 'img'
 DATA = ROOT / 'src' / 'data' / 'photos.generated.json'
-WIDTHS = [640, 1024, 1600]
-HERO_WIDTHS = [640, 1024, 1600, 2400]
+WIDTHS = [480, 800, 1200, 1600]
+HERO_WIDTHS = [640, 960, 1280, 1920, 2400]
 QUALITY = 74
 
 

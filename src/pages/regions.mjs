@@ -80,7 +80,7 @@ ${pageHero(ctx, {
       <p class="lede">Building around Puget Sound? Call Kent. Southcentral Alaska or a remote site? Call Anchorage. The Interior and points north? Call Fairbanks. Not sure — call any of us. We work as one team.</p>
       <div class="actions"><a class="btn" href="${ctx.u('quote/')}">Request a quote ${icon('arrow', { size: 18 })}</a></div>
     </div>
-    <div class="mapframe">${deliveryMap({ id: 'loc-map', compact: true })}</div>
+    <div class="mapframe">${deliveryMap(ctx, { compact: true })}</div>
   </div>
 </section>
 `,

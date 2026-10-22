@@ -100,6 +100,31 @@ for (const [name, viewport, mobile] of [['phone', { width: 390, height: 844 }, t
     if (!(await page.isVisible('[data-done]'))) fail('desktop /quote/', 'confirmation not shown after submit');
     const to = await page.textContent('[data-mail-to]');
     if (to !== 'anchorage@uresco.com') fail('desktop /quote/', `request routed to ${to}, expected anchorage@uresco.com`);
+
+    // A product page's quote link starts the materials list with that product line.
+    await page.goto(base + 'quote/?product=Cedar%2C%20Decking%20%26%20Fencing', { waitUntil: 'networkidle' });
+    if (!(await page.inputValue('#materials')).startsWith('Cedar, Decking & Fencing:')) fail('desktop /quote/', 'product prefill missing');
+
+    // Credit application: required fields, consent box, routing to the home yard.
+    await page.goto(base + 'accounts/', { waitUntil: 'networkidle' });
+    await page.click('form[data-form=credit] button[type=submit]');
+    const bad = await page.$$eval('[aria-invalid="true"]', (els) => els.map((e) => e.id));
+    for (const id of ['company', 'address', 'name', 'phone', 'email', 'ref1_company', 'ref1_contact', 'agree', 'signature', 'signed'])
+      if (!bad.includes(id)) fail('desktop /accounts/', `required field ${id} not flagged`);
+    for (const [id, v] of [['company', 'Test Framing LLC'], ['address', '1 Main St, Kent WA'], ['name', 'Pat Builder'], ['phone', '253-555-0100'],
+      ['email', 'pat@example.com'], ['ref1_company', 'Acme Supply'], ['ref1_contact', 'Lee 253-555-0199'], ['signature', 'Pat Builder'], ['signed', '2026-10-22']]) await page.fill('#' + id, v);
+    await page.check('#agree');
+    await page.selectOption('form[data-form=credit] #yard', 'Fairbanks');
+    await page.click('form[data-form=credit] button[type=submit]');
+    await page.waitForTimeout(300);
+    if (!(await page.isVisible('[data-done]'))) fail('desktop /accounts/', 'confirmation not shown after submit');
+    const to2 = await page.textContent('[data-mail-to]');
+    if (to2 !== 'fairbanks@uresco.com') fail('desktop /accounts/', `application routed to ${to2}`);
+
+    // Open/closed status is filled in from each yard's hours.
+    await page.goto(base + 'locations/', { waitUntil: 'networkidle' });
+    const statuses = await page.$$eval('.yard [data-hours]', (els) => els.filter((e) => !e.hidden && /Open|Closed/.test(e.textContent)).length);
+    if (statuses !== 3) fail('desktop /locations/', `open/closed status shown for ${statuses} of 3 yards`);
   }
   await ctx.close();
 }
@@ -110,4 +135,4 @@ if (problems.length) {
   console.log(`\n${problems.length} problem(s):\n` + problems.map((p) => '  ✗ ' + p).join('\n'));
   process.exit(1);
 }
-console.log(`browser: ${paths.length} pages × 2 widths clean; quote form and dialogs work\nALL CHECKS PASSED`);
+console.log(`browser: ${paths.length} pages × 2 widths clean; quote form, credit application, hours and dialogs work\nALL CHECKS PASSED`);

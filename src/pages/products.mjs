@@ -6,15 +6,15 @@ import { CATEGORIES, BRANDS } from '../data/products.mjs';
 import { LOCATIONS, tel } from '../data/locations.mjs';
 
 const askAside = (ctx, c) => html`
-  <aside class="aside">
+  <div class="aside">
     ${stamp('Pricing & availability', { dark: true })}
     <h2>Get a price on ${c ? c.short.toLowerCase() : 'your list'}</h2>
     <p>Stock varies by yard and season. Send a list or plans for a delivered price, or call the yard nearest your job.</p>
-    <a class="btn btn--block" href="${ctx.u('quote/')}">Request a quote ${icon('arrow', { size: 18 })}</a>
+    <a class="btn btn--block" href="${ctx.u('quote/')}${c ? '?product=' + encodeURIComponent(c.name) : ''}">Request a quote ${icon('arrow', { size: 18 })}</a>
     <ul>
       ${LOCATIONS.map((l) => html`<li><a href="${tel(l.phone)}"><span>${l.city}</span><span>${l.phone}</span></a></li>`)}
     </ul>
-  </aside>`;
+  </div>`;
 
 const index = {
   path: 'products/',

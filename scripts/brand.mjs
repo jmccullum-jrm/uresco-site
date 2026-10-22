@@ -16,8 +16,8 @@ try { ({ chromium } = require('playwright')); } catch { ({ chromium } = require(
 
 const INK = '#0E0E0C', YELLOW = '#F5B800', BONE = '#F2EEE5';
 const fontCss = `
-@font-face{font-family:Archivo;src:url(${pathToFileURL(join(ROOT, 'src/assets/fonts/archivo-100-900-latin.woff2'))}) format('woff2');font-weight:100 900;font-stretch:62% 125%}
-@font-face{font-family:Plex;src:url(${pathToFileURL(join(ROOT, 'src/assets/fonts/ibmplexmono-500-latin.woff2'))}) format('woff2');font-weight:500}
+@font-face{font-family:Archivo;src:url(${pathToFileURL(join(ROOT, 'src/assets/fonts/archivo-var.woff2'))}) format('woff2');font-weight:400 900;font-stretch:62% 100%}
+@font-face{font-family:Plex;src:url(${pathToFileURL(join(ROOT, 'src/assets/fonts/plexmono-500.woff2'))}) format('woff2');font-weight:500}
 *{margin:0;box-sizing:border-box}`;
 
 // Vector files for print, signage and anyone who needs the logo.

@@ -83,7 +83,7 @@ export default {
       </ol>
       <div class="actions"><a class="btn" href="${ctx.u('alaska/')}">How remote delivery works ${icon('arrow', { size: 18 })}</a></div>
     </div>
-    <div class="mapframe reveal">${deliveryMap({ id: 'home-map' })}</div>
+    <div class="mapframe reveal">${deliveryMap(ctx)}</div>
   </div>
 </section>
 

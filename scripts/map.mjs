@@ -30,7 +30,7 @@ const path = d3.geoPath(projection).digits(0);
 const clip = (g) => path(g) || '';
 
 const yards = [
-  { id: 'kent', name: 'Kent', st: 'WA', lon: -122.2335, lat: 47.4277 },
+  { id: 'kent', name: 'Kent', st: 'WA', lon: -122.2335, lat: 47.4277, side: 'w' },
   { id: 'anchorage', name: 'Anchorage', st: 'AK', lon: -149.859, lat: 61.1105, side: 'w' },
   { id: 'fairbanks', name: 'Fairbanks', st: 'AK', lon: -147.784, lat: 64.8326 },
 ];

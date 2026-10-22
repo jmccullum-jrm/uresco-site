@@ -9,6 +9,7 @@ import { fileURLToPath, pathToFileURL } from 'url';
 import { createHash } from 'crypto';
 import { SITE } from './src/config.mjs';
 import { markSvg } from './src/lib/icons.mjs';
+import { mapSvg } from './src/lib/components.mjs';
 
 const ROOT = dirname(fileURLToPath(import.meta.url));
 const OUT = join(ROOT, 'docs');
@@ -35,6 +36,12 @@ const makeCtx = (path) => {
 rmSync(OUT, { recursive: true, force: true });
 mkdirSync(OUT, { recursive: true });
 cpSync(join(SRC, 'assets'), join(OUT, 'assets'), { recursive: true });
+writeFileSync(join(OUT, 'assets', 'map.svg'), mapSvg());
+// Light minification of the shipped CSS and JS (sources stay readable in src/).
+const minCss = (css) => css.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\s+/g, ' ').replace(/\s*([{};,>])\s*/g, '$1').replace(/;}/g, '}').trim();
+const minJs = (js) => js.split('\n').map((l) => l.trim()).filter((l) => l && !l.startsWith('//')).join('\n');
+writeFileSync(join(OUT, 'assets/css/site.css'), minCss(readFileSync(join(SRC, 'assets/css/site.css'), 'utf8')));
+writeFileSync(join(OUT, 'assets/js/site.js'), minJs(readFileSync(join(SRC, 'assets/js/site.js'), 'utf8')));
 
 const pages = [];
 for (const file of readdirSync(join(SRC, 'pages')).filter((f) => f.endsWith('.mjs')).sort()) {
