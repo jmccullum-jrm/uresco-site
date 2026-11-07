@@ -60,6 +60,7 @@ const curve = (pts) => {
 const out = {
   width: W, height: H,
   land: clip(land),
+  graticule: clip(d3.geoGraticule().step([10, 5])()),
   alaska: clip(ak), washington: clip(wa),
   borders: clip(topo.mesh(world, world.objects.countries, (a, b) => a !== b)) + clip(topo.mesh(us, us.objects.states, (a, b) => a !== b)),
   sea: curve(sea), road: curve(road), barge: curve(barge), barge2: curve(barge2),

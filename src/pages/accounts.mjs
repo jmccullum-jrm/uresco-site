@@ -1,9 +1,10 @@
 import { html } from '../lib/html.mjs';
-import { icon } from '../lib/icons.mjs';
+import { icon, mark } from '../lib/icons.mjs';
 import { layout } from '../lib/layout.mjs';
 import { preloadFor, pageHero, stamp, sectionHead } from '../lib/components.mjs';
 import { field, select, textarea, radios, yardSelect, fileDrop, formOpen, formFoot, doneNotice } from '../lib/forms.mjs';
 import { LOCATIONS, tel } from '../data/locations.mjs';
+import { SITE } from '../config.mjs';
 
 // Contractor charge accounts. Terms (limits, due dates) are set by Uresco per account
 // and are deliberately not published here.
@@ -33,7 +34,6 @@ ${pageHero(ctx, {
   title: 'Open a contractor <em>account.</em>',
   lede: 'Set up once, then order from any of our three yards on account. Apply online in about ten minutes.',
   photoKey: 'framer',
-  crumbs: [['Contractor accounts']],
   actions: html`<a class="btn" href="#apply">Start the application ${icon('arrow', { size: 18 })}</a><button type="button" class="btn btn--line" data-print>${icon('file', { size: 18 })} Print a paper copy</button>`,
 })}
 <section class="section section--bone">
@@ -46,7 +46,13 @@ ${pageHero(ctx, {
 <section class="section" id="apply">
   <div class="wrap qlayout">
     <div>
-      ${sectionHead({ eyebrow: 'Credit application', no: '01', title: 'Apply <em>for credit.</em>', lede: 'Fields marked * are required. We use this to review your account; credit limits and terms are confirmed by your yard once it’s approved.' })}
+      <div class="letterhead print-only">
+        <div class="letterhead__brand">${mark({ id: 'mkp' })}<div><p class="letterhead__title">Credit application</p><p>${SITE.legal}</p></div></div>
+        <div class="letterhead__return"><b>Return to your home yard:</b><br>
+          ${LOCATIONS.map((l) => html`${l.city}: fax ${l.fax} · ${l.email}<br>`)}
+        </div>
+      </div>
+      ${sectionHead({ eyebrow: 'Credit application', title: 'Apply <em>for credit.</em>', lede: 'Fields marked * are required. We use this to review your account; credit limits and terms are confirmed by your yard once it’s approved.' })}
       ${formOpen('credit', 'Credit application')}
         <fieldset class="fieldset">
           <legend><span>01</span>Business</legend>
@@ -73,13 +79,14 @@ ${pageHero(ctx, {
         <fieldset class="fieldset">
           <legend><span>03</span>Account</legend>
           ${yardSelect({ label: 'Home yard', hint: 'where you’ll buy most' })}
+          <div class="field field--full print-only"><span class="label">Home yard</span><div class="seg">${LOCATIONS.map((l) => html`<label><input type="checkbox" tabindex="-1">${l.city}</label>`)}</div></div>
           ${field({ id: 'limit', label: 'Requested credit limit', hint: 'USD', attrs: html` inputmode="numeric" placeholder="$"` })}
           ${field({ id: 'monthly', label: 'Expected monthly purchases', hint: 'USD', attrs: html` inputmode="numeric" placeholder="$"` })}
           ${radios('po', 'Purchase orders required on invoices?', [['No'], ['Yes']])}
           ${radios('tax', 'Tax status', [['Taxable'], ['Resale'], ['Tax-exempt']])}
         </fieldset>
 
-        <fieldset class="fieldset">
+        <fieldset class="fieldset fieldset--newpage">
           <legend><span>04</span>References</legend>
           <div class="field field--full refs">
             ${reference(1)}${reference(2)}${reference(3)}

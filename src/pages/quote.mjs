@@ -11,9 +11,8 @@ export default {
     title: 'Request a Quote',
     description: 'Send plans or a materials list to Uresco Construction Materials for a take-off and quote, with delivery to your job site or anywhere in Alaska.',
     body: html`
-<section class="phero phero--plain">
+<section class="phero phero--plain rings">
   <div class="wrap phero__inner">
-    <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="${ctx.u('')}">Home</a></li><li><span aria-current="page">Request a quote</span></li></ol></nav>
     ${stamp('Estimates & take-offs', { dark: true })}
     <h1 class="display">Request <em>a quote.</em></h1>
     <p class="phero__lede">Tell us about the job and attach plans or a list. The yard you choose will get back to you with a take-off and pricing.</p>

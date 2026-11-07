@@ -16,8 +16,11 @@ MANIFEST = ROOT / 'scripts' / 'photos.json'
 CACHE = ROOT / '.cache' / 'photos'
 OUT = ROOT / 'src' / 'assets' / 'img'
 DATA = ROOT / 'src' / 'data' / 'photos.generated.json'
-WIDTHS = [480, 800, 1200, 1600]
-HERO_WIDTHS = [640, 960, 1280, 1920, 2400]
+WIDTHS = [240, 480, 800, 1200, 1600]
+HERO_WIDTHS = [240, 640, 960, 1280, 1920, 2400]
+# Page heroes also get a 3:4 crop, so phones in portrait load a sharp, small file instead of
+# stretching a landscape one to fill a tall screen.
+PORTRAIT_WIDTHS = [640, 960, 1280]
 QUALITY = 74
 
 
@@ -34,6 +37,18 @@ def source(key, spec):
     return ROOT / src
 
 
+def crop_portrait(im, focal):
+    """Largest 3:4 crop, placed the way CSS object-position would place it."""
+    fx, fy = 0.5, 0.5
+    if focal:
+        parts = focal.replace('%', '').split()
+        fx, fy = float(parts[0]) / 100, float(parts[1]) / 100
+    w, h = im.size
+    cw, ch = (round(h * 3 / 4), h) if w / h > 3 / 4 else (w, round(w * 4 / 3))
+    left, top = round((w - cw) * fx), round((h - ch) * fy)
+    return im.crop((left, top, left + cw, top + ch))
+
+
 def main(force=False):
     photos = {k: v for k, v in json.loads(MANIFEST.read_text()).items() if not k.startswith('_')}
     OUT.mkdir(parents=True, exist_ok=True)
@@ -48,12 +63,26 @@ def main(force=False):
             w, h = im.size
             im = im.crop((round(crop[0] * w), round(crop[1] * h), round(crop[2] * w), round(crop[3] * h)))
         hero = spec.get('hero', base.get('hero', False))
-        widths = [w for w in (HERO_WIDTHS if hero else WIDTHS) if w <= im.width] or [im.width]
+        widths = [w for w in (HERO_WIDTHS if hero else WIDTHS) if w <= im.width]
+        # Small originals (the old site's photos) keep their native size as the largest file.
+        if not widths or (im.width < 1200 and im.width > widths[-1] * 1.1):
+            widths.append(im.width)
         for w in widths:
             dest = OUT / f'{key}-{w}.webp'
             if force or not dest.exists():
                 h = round(im.height * w / im.width)
                 im.resize((w, h), Image.LANCZOS).save(dest, 'WEBP', quality=QUALITY, method=6)
+        portrait, pw, ph = [], None, None
+        if spec.get('art', base.get('art')):
+            crop_im = crop_portrait(im, spec.get('focal') or base.get('focal'))
+            pw, ph = crop_im.size
+            portrait = [w for w in PORTRAIT_WIDTHS if w <= pw]
+            if not portrait or pw > portrait[-1] * 1.1:
+                portrait.append(pw)
+            for w in portrait:
+                dest = OUT / f'{key}-p-{w}.webp'
+                if force or not dest.exists():
+                    crop_im.resize((w, round(ph * w / pw)), Image.LANCZOS).save(dest, 'WEBP', quality=QUALITY, method=6)
         out[key] = {
             'widths': widths,
             'width': widths[-1],
@@ -63,11 +92,15 @@ def main(force=False):
             'credit': base.get('credit'),
             'page': base.get('page'),
             'standIn': bool(alias),
+            'portrait': portrait,
+            'pwidth': portrait[-1] if portrait else None,
+            'pheight': round(ph * portrait[-1] / pw) if portrait else None,
             # Average colour, painted behind the image while it loads.
             'color': '#%02x%02x%02x' % im.resize((1, 1), Image.LANCZOS).getpixel((0, 0)),
         }
     # Drop renditions no longer referenced.
     keep = {f'{k}-{w}.webp' for k, v in out.items() for w in v['widths']}
+    keep |= {f'{k}-p-{w}.webp' for k, v in out.items() for w in v['portrait']}
     for f in OUT.glob('*.webp'):
         if f.name not in keep:
             f.unlink()

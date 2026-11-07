@@ -5,6 +5,19 @@ import { picture, preloadFor, sectionHead, pageHero, quoteBand, stamp } from '..
 import { CATEGORIES, BRANDS } from '../data/products.mjs';
 import { LOCATIONS, tel } from '../data/locations.mjs';
 
+// What tends to land on the same truck as each line.
+const RELATED = {
+  'framing-lumber': ['engineered-wood', 'panels-sheathing', 'hardware-supplies'],
+  'panels-sheathing': ['framing-lumber', 'siding-exterior', 'insulation-drywall'],
+  'engineered-wood': ['framing-lumber', 'panels-sheathing', 'hardware-supplies'],
+  'concrete-forming': ['framing-lumber', 'hardware-supplies', 'panels-sheathing'],
+  'cedar-decking': ['siding-exterior', 'hardware-supplies', 'framing-lumber'],
+  'siding-exterior': ['cedar-decking', 'windows-doors-cabinets', 'insulation-drywall'],
+  'insulation-drywall': ['panels-sheathing', 'siding-exterior', 'windows-doors-cabinets'],
+  'windows-doors-cabinets': ['siding-exterior', 'insulation-drywall', 'framing-lumber'],
+  'hardware-supplies': ['framing-lumber', 'engineered-wood', 'cedar-decking'],
+};
+
 const askAside = (ctx, c) => html`
   <div class="aside">
     ${stamp('Pricing & availability', { dark: true })}
@@ -28,7 +41,6 @@ ${pageHero(ctx, {
   title: 'Quality materials to <em>get the job built.</em>',
   lede: 'Our distribution centers carry a full range of products for the commercial and residential builder. Here’s what we stock, line by line.',
   photoKey: 'pine-racking',
-  crumbs: [['Products']],
   actions: html`<a class="btn" href="${ctx.u('quote/')}">Request a quote ${icon('arrow', { size: 18 })}</a>`,
 })}
 <nav class="jump" aria-label="Jump to a product line">
@@ -71,7 +83,6 @@ const category = (c) => ({
     preload: [preloadFor(ctx, c.photo)],
     body: html`
 ${pageHero(ctx, {
-  eyebrow: 'Products',
   title: c.name,
   lede: c.lede,
   photoKey: c.photo,
@@ -95,10 +106,14 @@ ${pageHero(ctx, {
 </section>
 <section class="section section--bone">
   <div class="wrap">
-    ${sectionHead({ eyebrow: 'More products', title: 'The rest of <em>the load.</em>' })}
-    <nav class="cat-nav" aria-label="Product categories">
-      ${CATEGORIES.map((x) => html`<a href="${ctx.u('products/' + x.slug + '/')}"${x.slug === c.slug ? html` aria-current="page"` : ''}>${x.short}${icon('arrow', { size: 16 })}</a>`)}
-    </nav>
+    ${sectionHead({ eyebrow: 'Often ordered with', title: 'The rest of <em>the load.</em>', action: html`<a class="link" href="${ctx.u('products/')}">All products ${icon('arrow', { size: 16 })}</a>` })}
+    <div class="tiles tiles--3">
+      ${(RELATED[c.slug] || []).map((slug) => CATEGORIES.find((x) => x.slug === slug)).map((x) => html`
+        <a class="tile" href="${ctx.u('products/' + x.slug + '/')}">
+          ${picture(ctx, x.photo, { sizes: '(min-width: 700px) 33vw, 100vw', alt: '' })}
+          <span class="tile__body"><span class="tile__name">${x.short}</span><span class="tile__go">${icon('arrow', { size: 18 })}</span></span>
+        </a>`)}
+    </div>
   </div>
 </section>
 ${quoteBand(ctx)}

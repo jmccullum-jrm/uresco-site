@@ -1,7 +1,7 @@
 import { html } from '../lib/html.mjs';
 import { icon } from '../lib/icons.mjs';
 import { layout } from '../lib/layout.mjs';
-import { picture, preloadFor, pageHero, quoteBand, stamp } from '../lib/components.mjs';
+import { picture, preloadFor, pageHero, quoteBand } from '../lib/components.mjs';
 import { SERVICES } from '../data/services.mjs';
 
 // Photo and the points under each service row. Points restate what uresco.com says.
@@ -26,17 +26,16 @@ ${pageHero(ctx, {
   title: 'The service is <em>the product.</em>',
   lede: 'A knowledgeable and resourceful sales staff, committed to professional and prompt service — from the first take-off to the last delivery.',
   photoKey: 'unloading',
-  crumbs: [['Services']],
   actions: html`<a class="btn" href="${ctx.u('quote/')}">Request a quote ${icon('arrow', { size: 18 })}</a>`,
 })}
 <section class="section">
   <div class="wrap">
     ${SERVICES.map((s, i) => html`
-      <div class="split ${i % 2 ? 'split--flip' : ''} reveal" id="${s.id}">
-        <div class="split__media">${picture(ctx, DETAIL[s.id].photo, { sizes: '(min-width: 860px) 50vw, 100vw' })}${stamp(String(i + 1).padStart(2, '0') + ' · ' + s.name.split(' ')[0])}</div>
+      <div class="split ${i % 2 ? 'split--flip' : ''}" id="${s.id}">
+        <div class="split__media">${picture(ctx, DETAIL[s.id].photo, { sizes: '(min-width: 860px) 50vw, 100vw' })}</div>
         <div>
-          <div class="svc__icon">${icon(s.icon, { size: 26 })}</div>
-          <h2 class="h2">${s.name}</h2>
+          <span class="split__no">${String(i + 1).padStart(2, '0')}</span>
+          <h2 class="h2 h2--sm">${s.name}</h2>
           <p class="lede">${s.body}</p>
           <ul class="ticks">${DETAIL[s.id].points.map((pt) => html`<li>${icon('check', { size: 16 })}${pt}</li>`)}</ul>
         </div>

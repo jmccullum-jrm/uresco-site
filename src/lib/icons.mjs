@@ -40,3 +40,9 @@ export const markSvg = ({ tile = '#F5B800', ink = '#0E0E0C', rings = [10, 19, 28
   `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><defs><clipPath id="${id}"><rect width="64" height="64" rx="8"/></clipPath></defs><rect width="64" height="64" rx="8" fill="${tile}"/><g clip-path="url(#${id})" fill="none" stroke="${ink}" stroke-width="${w}">${rings.map((r) => `<path d="M${32 - r} 10V26A${r} ${r} 0 0 0 ${32 + r} 26V10"/>`).join('')}</g></svg>`;
 
 export const mark = (opts) => raw(markSvg(opts).replace('<svg ', '<svg aria-hidden="true" focusable="false" '));
+
+// The mark's rings at poster scale, used as a CSS mask so each section can colour it.
+export const ringsSvg = () => {
+  const rings = [100, 190, 280, 370, 460, 550, 640];
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 1000"><g fill="none" stroke="#000" stroke-width="55">${rings.map((r) => `<path d="M${700 - r} 0V300A${r} ${r} 0 0 0 ${700 + r} 300V0"/>`).join('')}</g></svg>`;
+};

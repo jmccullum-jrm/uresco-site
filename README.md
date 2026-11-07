@@ -8,7 +8,7 @@ It is a fast, static, mobile-first site. There is no CMS, database or plugin to 
 
 | Page | URL | Purpose |
 |---|---|---|
-| Home | `/` | Hero, the three yards' phone numbers, product lines, delivery map, services, take-off prompt, who we build for, brands, yards |
+| Home | `/` | Hero, the three yards' phone numbers, product lines and brands, delivery map, services, take-off prompt, who we build for, contractor accounts, yards |
 | Products | `/products/` + 9 category pages | Every product line, brands, and a price/availability panel with each yard's number |
 | Services | `/services/` | Take-offs and estimates, design, job-site delivery, remote and export packages, shipping, crating |
 | Alaska delivery | `/alaska/` | Map, how a remote package works, road/sea/air, barge season, Anchorage and Fairbanks yards, FAQ |
@@ -27,8 +27,10 @@ The old `/products-services/` URL redirects to `/products/`, `/contact/` redirec
 
 - **Identity.** The new mark is the end grain of a flat-sawn board. When a board is cut below the log's heart, its growth rings show as U shapes, so the mark is literally wood and literally a **U**. It keeps the UCM yellow and black. Files are in `src/assets/brand/`: SVG marks, PNG lockups, app icons and the social-share card. The original logo is kept in `originals/uresco/logo-original.png`.
 - **Type.** Archivo (condensed, heavy) for headlines; IBM Plex Mono for the "grade stamp" labels, set like the ink stamp on a stick of lumber. Both are self-hosted, with no Google request.
-- **Color.** Ink `#0E0E0C`, bone `#F2EEE5`, UCM yellow `#F5B800`. Yellow is used for fills and on dark backgrounds only; on light backgrounds emphasis is a yellow underline, so text contrast stays above WCAG AA.
-- **Map.** A real projection of Natural Earth data (`scripts/map.mjs`): the three yards, the freight lanes, and example destinations from Ketchikan to Utqiaġvik.
+- **Color.** Ink `#0E0E0C`, bone `#F2EEE5`, UCM yellow `#F5B800`, and a blue-black `#0C1417` for the map sections, so the page background is the water. Yellow is used for fills and on dark backgrounds only; on light backgrounds emphasis is a hand-drawn yellow crayon stroke under the words, so text contrast stays above WCAG AA.
+- **Rings.** The logo's rings return at poster scale behind the footer, the account band and the plain page heroes. The same drawing reads as a tree's end grain and an Alaska topo sheet (`ringsSvg` in `src/lib/icons.mjs`).
+- **Map.** A real projection of Natural Earth data (`scripts/map.mjs`) with a graticule: the three yards (each name links to its details), the freight lanes, and example destinations from Ketchikan to Utqiaġvik.
+- **Photos on phones.** Hero photos have a separate 3:4 crop, so a phone downloads a smaller file and still sees the subject. The headline sits on solid ink below the photo, so it stays readable over any picture.
 
 ## Working on it
 
@@ -38,7 +40,7 @@ Requirements: Node 18+ and Python 3 with Pillow (`pip install pillow`). Playwrig
 npm run build       # src/ → docs/ (preview: noindex)
 npm run build:live  # the same, for uresco.com: indexable, base '/', writes docs/CNAME
 npm run serve       # http://localhost:8080
-npm run check       # build + link/SEO checks + every page in Chromium at phone and desktop width
+npm run check       # build + link/SEO checks + every page in Chromium at 5 widths, plus the forms
 npm run images      # after changing scripts/photos.json
 npm run brand       # after changing the logo
 npm run fonts       # re-subset the fonts (needs: pip install fonttools brotli)
@@ -56,6 +58,7 @@ Every pull request runs `.github/workflows/check.yml`. It rebuilds the site, fai
 - **Photos**: `scripts/photos.json` lists every photo with its alt text and credit. Run `npm run images` after editing it. Credits are in `PHOTO-CREDITS.md`.
   - **To use Uresco's own photos:** put the originals in `originals/uresco/`. Point an entry's `src` at the file, for example `"yard-kent": { "src": "originals/uresco/kent-yard.jpg", "alt": "…" }`, then run `npm run images && npm run build`.
   - Large, unedited camera files are best; the script handles resizing.
+  - A photo used as a full-width hero needs `"hero": true, "art": true`, which adds the larger sizes and the phone crop. Add `"focal": [x, y]` (0 to 1) if the crop misses the subject.
   - The first ones to replace: `yard-kent`, `framer` (accounts and design), `unloading` (job-site delivery) and `tug-barge` (remote packages).
 - **Manufacturer literature links**: the `literature` field on each category in `src/data/products.mjs`.
 - **Pages**: `src/pages/*.mjs`. **Styles**: `src/assets/css/site.css`. **Behavior**: `src/assets/js/site.js`, no frameworks.

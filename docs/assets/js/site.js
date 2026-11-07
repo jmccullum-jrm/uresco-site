@@ -27,6 +27,10 @@ const onScroll = () => mast.toggleAttribute('data-scrolled', window.scrollY > 24
 onScroll();
 window.addEventListener('scroll', onScroll, { passive: true });
 }
+/* The phone action bar steps aside while the keyboard is up. */
+const TYPING = 'input:not([type=radio],[type=checkbox],[type=file]), textarea, select';
+document.addEventListener('focusin', (e) => { if (e.target.matches?.(TYPING)) document.body.classList.add('is-typing'); });
+document.addEventListener('focusout', (e) => { if (e.target.matches?.(TYPING)) document.body.classList.remove('is-typing'); });
 /* Open / closed, computed in each yard's own time zone.
 data-hours = {"tz":"America/Anchorage","week":[null,[420,990],…]}  (Sunday first, minutes after midnight) */
 const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -65,6 +69,7 @@ if (!b) return;
 const f = b.dataset.filter;
 $$('button', filters).forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
 $$('[data-sector]').forEach((card) => { card.hidden = f !== 'all' && card.dataset.sector !== f; });
+$('.proj-grid').classList.toggle('is-filtered', f !== 'all');
 });
 }
 /* Forms: the quote request and the credit application share this. */
@@ -77,9 +82,10 @@ const DRAFT = 'uresco.draft.' + kind;
 const MAX = 25 * 1024 * 1024;
 let bag = new DataTransfer();
 const fields = () => $$('input, select, textarea', form).filter((el) => el.name && el.type !== 'file' && el.type !== 'hidden');
+const PRIVATE = /^(ein|bank|bank_contact|signature|signed|agree)$/;
 const save = () => {
 const d = {};
-fields().forEach((el) => {
+fields().filter((el) => !PRIVATE.test(el.name)).forEach((el) => {
 if (el.type === 'radio') { if (el.checked) d[el.name] = el.value; } else if (el.type === 'checkbox') d[el.name] = el.checked; else d[el.name] = el.value;
 });
 try { localStorage.setItem(DRAFT, JSON.stringify(d)); } catch { /* private mode */ }

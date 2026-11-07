@@ -1,7 +1,7 @@
 import { html, raw } from '../lib/html.mjs';
 import { icon } from '../lib/icons.mjs';
 import { layout } from '../lib/layout.mjs';
-import { preloadFor, sectionHead, pageHero, quoteBand, yardCard, deliveryMap, stamp } from '../lib/components.mjs';
+import { preloadFor, sectionHead, pageHero, quoteBand, yardCard, deliveryMap, stamp, interlude } from '../lib/components.mjs';
 import { LOCATIONS } from '../data/locations.mjs';
 
 // How freight moves in Alaska, in general terms. Uresco coordinates it; it does not run the carriers.
@@ -35,14 +35,13 @@ ${pageHero(ctx, {
   title: 'Anywhere <em>in Alaska.</em>',
   lede: 'From Sitka to Utqiaġvik. Our Alaska distribution centers offer a full range of products and services for the commercial and residential builder — and we specialize in remote location delivery.',
   photoKey: 'chugach',
-  crumbs: [['Alaska delivery']],
   actions: html`<a class="btn" href="${ctx.u('quote/')}">Quote a remote job ${icon('arrow', { size: 18 })}</a><button type="button" class="btn btn--line" data-open="call-sheet">${icon('phone', { size: 18 })} Call Anchorage or Fairbanks</button>`,
 })}
 
-<section class="section section--dark">
+<section class="section section--sea">
   <div class="wrap">
-    ${sectionHead({ eyebrow: 'Reach', no: '01', title: 'Built for places <em>without a lumber yard.</em>', lede: 'Two Alaska yards on the road system, a Kent yard on Puget Sound, and the freight lanes that connect them to the rest of the state.', dark: true })}
-    <div class="mapframe">${deliveryMap(ctx)}</div>
+    ${sectionHead({ eyebrow: 'Reach', title: 'Built for places <em>without a lumber yard.</em>', lede: 'Two Alaska yards on the road system, a Kent yard on Puget Sound, and the freight lanes that connect them to the rest of the state.', dark: true })}
+    ${deliveryMap(ctx)}
   </div>
 </section>
 
@@ -62,9 +61,11 @@ ${pageHero(ctx, {
   </div>
 </section>
 
+${interlude(ctx, 'remote-village', { line: 'Utqiaġvik. <em>71° north.</em> Still on our map.', note: 'Snow-drifted buildings on the Arctic coast. Delivery is available anywhere in Alaska.' })}
+
 <section class="section section--dark">
   <div class="wrap">
-    ${sectionHead({ eyebrow: 'Ways we move freight', no: '03', title: 'Road, sea <em>or air.</em>', dark: true })}
+    ${sectionHead({ eyebrow: 'Ways we move freight', title: 'Road, sea <em>or air.</em>', dark: true })}
     <div class="modes">
       ${MODES.map((m) => html`<div class="mode"><div class="svc__icon">${icon(m.icon, { size: 26 })}</div><h3 class="h3">${m.name}</h3><p>${m.body}</p></div>`)}
     </div>
@@ -74,14 +75,14 @@ ${pageHero(ctx, {
 
 <section class="section">
   <div class="wrap">
-    ${sectionHead({ eyebrow: 'Alaska yards', no: '04', title: 'Anchorage <em>& Fairbanks.</em>', lede: 'Our friendly, knowledgeable sales staff is here to help. Give us a call, email or stop by today.' })}
-    <div class="yards" style="grid-template-columns:repeat(auto-fit,minmax(320px,1fr))">${LOCATIONS.filter((l) => l.state === 'AK').map((l) => yardCard(ctx, l))}</div>
+    ${sectionHead({ eyebrow: 'Alaska yards', title: 'Anchorage <em>& Fairbanks.</em>', lede: 'Our friendly, knowledgeable sales staff is here to help. Give us a call, email or stop by today.' })}
+    <div class="yards yards--2">${LOCATIONS.filter((l) => l.state === 'AK').map((l) => yardCard(ctx, l, { photoSizes: '(min-width: 1000px) 50vw, 100vw' }))}</div>
   </div>
 </section>
 
 <section class="section section--bone">
   <div class="wrap">
-    ${sectionHead({ eyebrow: 'Questions', no: '05', title: 'Remote delivery, <em>answered.</em>' })}
+    ${sectionHead({ eyebrow: 'Questions', title: 'Remote delivery, <em>answered.</em>' })}
     <div class="faq">
       ${FAQ.map(([q, a], i) => html`<details${i === 0 ? html` open` : ''}><summary>${q}</summary><p>${a}</p></details>`)}
     </div>

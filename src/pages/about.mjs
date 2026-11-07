@@ -23,7 +23,6 @@ ${pageHero(ctx, {
   title: 'Quality materials. <em>Trusted service.</em>',
   lede: `For more than ${SITE.years} years, Uresco has been a trusted source for quality building materials throughout the Pacific Northwest and all of Alaska.`,
   photoKey: 'lumber-stack',
-  crumbs: [['About']],
 })}
 <section class="section">
   <div class="wrap split">
@@ -33,13 +32,13 @@ ${pageHero(ctx, {
       <p class="lede">As one of the largest independent building-material suppliers serving Alaska and the Pacific Northwest, Uresco offers institutional, commercial and residential builders the best selection, pricing and service.</p>
       <p>Our reliable service includes dependable delivery to job sites down the road or across an ocean. From our headquarters in Kent and our distribution centers in Anchorage and Fairbanks, we supply everything from framing lumber and engineered beams to siding, insulation, windows, cabinets and the hardware that holds it all together.</p>
     </div>
-    <div class="split__media">${picture(ctx, 'uresco-truck', { sizes: '(min-width: 860px) 50vw, 100vw' })}${stamp('Lumber by UCM')}</div>
+    <div class="split__media">${picture(ctx, 'valdez-port', { sizes: '(min-width: 860px) 60vw, 100vw' })}</div>
   </div>
 </section>
 
 <section class="section section--dark rings">
   <div class="wrap">
-    ${stamp('Our mission', { dark: true, no: '02' })}
+    ${stamp('Our mission', { dark: true })}
     <p class="mission">Uresco provides a trusted and dependable source of quality construction materials, a knowledgeable and resourceful sales staff, and we are committed to professional and prompt service.</p>
     <p class="lede">That commitment lets our customers buy their materials with confidence that they will receive the best products at the best prices.</p>
     <div class="values">
@@ -50,17 +49,17 @@ ${pageHero(ctx, {
 
 <section class="section">
   <div class="wrap">
-    ${sectionHead({ eyebrow: 'From our yards', no: '03', title: 'The <em>UCM</em> yards.', lede: 'Photos from Uresco’s own yards and trucks.' })}
+    ${sectionHead({ eyebrow: 'From our yards', title: 'Lumber <em>by UCM.</em>', lede: 'From Uresco’s own yards and trucks.' })}
     <div class="archive">
-      <figure>${picture(ctx, 'uresco-truck', { sizes: '(min-width: 760px) 33vw, 50vw' })}<figcaption>UCM delivery truck</figcaption></figure>
-      <figure>${picture(ctx, 'uresco-yard', { sizes: '(min-width: 760px) 33vw, 50vw' })}<figcaption>Wrapped bundles in the yard</figcaption></figure>
-      <figure>${picture(ctx, 'uresco-stack', { sizes: '(min-width: 760px) 33vw, 50vw' })}<figcaption>Stacked and stickered</figcaption></figure>
+      <figure>${picture(ctx, 'uresco-truck', { sizes: '(min-width: 760px) 300px, 50vw' })}<figcaption>UCM delivery truck</figcaption></figure>
+      <figure>${picture(ctx, 'uresco-yard', { sizes: '(min-width: 760px) 300px, 50vw' })}<figcaption>Wrapped bundles in the yard</figcaption></figure>
+      <figure>${picture(ctx, 'uresco-stack', { sizes: '(min-width: 760px) 300px, 50vw' })}<figcaption>Stacked and stickered</figcaption></figure>
     </div>
   </div>
 </section>
 <section class="section section--bone">
   <div class="wrap split">
-    <div class="split__media">${picture(ctx, 'combilift', { sizes: '(min-width: 860px) 50vw, 100vw' })}${stamp('Work with us')}</div>
+    <div class="split__media">${picture(ctx, 'combilift', { sizes: '(min-width: 860px) 50vw, 100vw' })}</div>
     <div>
       ${stamp('Careers', { no: '04' })}
       <h2 class="h2">Good people <em>move good lumber.</em></h2>

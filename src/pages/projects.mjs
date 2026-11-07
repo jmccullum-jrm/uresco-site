@@ -4,6 +4,9 @@ import { layout } from '../lib/layout.mjs';
 import { picture, preloadFor, pageHero, quoteBand } from '../lib/components.mjs';
 import { PROJECTS, SECTORS } from '../data/projects.mjs';
 
+// Which cards span two columns: wide-narrow-narrow, narrow-narrow-wide, wide-wide.
+const WIDE = [0, 5, 6, 7];
+
 export default {
   path: 'projects/',
   render: (ctx) => {
@@ -18,7 +21,6 @@ ${pageHero(ctx, {
   title: 'What our materials <em>become.</em>',
   lede: 'Institutional, commercial and residential builders across the Northwest and Alaska — from a custom home in Kent to a full package on a barge.',
   photoKey: 'cranes-dusk',
-  crumbs: [['Projects']],
 })}
 <section class="section section--bone">
   <div class="wrap">
@@ -27,9 +29,9 @@ ${pageHero(ctx, {
       ${SECTORS.map((s) => html`<button type="button" data-filter="${s}" aria-pressed="false">${s}</button>`)}
     </div>
     <div class="proj-grid">
-      ${list.map((p) => html`
-        <article class="proj" data-sector="${p.sector}">
-          <div class="proj__media">${picture(ctx, p.photo, { sizes: '(min-width: 1100px) 25vw, (min-width: 600px) 50vw, 100vw' })}<span class="proj__tag">${p.sector}</span></div>
+      ${list.map((p, i) => html`
+        <article class="proj${WIDE.includes(i) ? ' proj--wide' : ''}" data-sector="${p.sector}">
+          <div class="proj__media">${picture(ctx, p.photo, { sizes: WIDE.includes(i) ? '(min-width: 1100px) 50vw, 100vw' : '(min-width: 1100px) 25vw, (min-width: 600px) 50vw, 100vw' })}<span class="proj__tag">${p.sector}</span></div>
           <div class="proj__body">
             <h2 class="h3">${p.title}</h2>
             ${p.real && (p.place || p.year) ? html`<p class="kicker">${[p.place, p.year].filter(Boolean).join(' · ')}</p>` : ''}

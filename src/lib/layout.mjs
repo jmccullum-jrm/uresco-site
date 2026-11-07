@@ -25,7 +25,7 @@ const isCurrent = (ctx, href) => (href === '' ? ctx.path === '' : ctx.path.start
 const productMenu = (ctx) => html`
   <div class="megamenu" role="group" aria-label="Product categories">
     <div class="megamenu__grid">
-      ${CATEGORIES.map((c) => html`<a href="${ctx.u('products/' + c.slug + '/')}"><span>${c.short}</span>${icon('chevron', { size: 16 })}</a>`)}
+      ${CATEGORIES.map((c) => html`<a href="${ctx.u('products/' + c.slug + '/')}"><img src="${ctx.u(`assets/img/${c.photo}-240.webp`)}" width="56" height="56" alt="" loading="lazy" decoding="async"><span>${c.short}</span></a>`)}
     </div>
     <a class="megamenu__all" href="${ctx.u('products/')}">All products ${icon('arrow', { size: 16 })}</a>
   </div>`;
@@ -37,7 +37,10 @@ const header = (ctx) => html`
       <ul class="utility__yards" aria-label="Call a yard">
         ${LOCATIONS.map((l) => html`<li><span class="utility__city">${l.city}</span><a href="${tel(l.phone)}">${l.phone}</a>${openStatus(l, { short: true })}</li>`)}
       </ul>
-      <a class="utility__mail" href="mailto:${SITE.email}">${icon('mail', { size: 15 })}${SITE.email}</a>
+      <div class="utility__links">
+        <a href="${ctx.u('accounts/')}">Contractor accounts</a>
+        <a class="utility__mail" href="mailto:${SITE.email}">${icon('mail', { size: 15 })}${SITE.email}</a>
+      </div>
     </div>
   </div>
   <header class="masthead ${ctx.overlay ? 'masthead--overlay' : ''}" data-masthead>
@@ -65,10 +68,11 @@ const header = (ctx) => html`
     </div>
     <nav aria-label="Mobile">
       <ul class="drawer__nav">
-        <li><a href="${ctx.u('')}">Home</a></li>
         ${NAV.map((n) => html`<li><a href="${ctx.u(n.href)}"${raw(isCurrent(ctx, n.href) ? ' aria-current="page"' : '')}>${n.label}</a></li>`)}
-        <li><a href="${ctx.u('pacific-northwest/')}">Pacific Northwest</a></li>
+      </ul>
+      <ul class="drawer__minor">
         <li><a href="${ctx.u('accounts/')}">Contractor accounts</a></li>
+        <li><a href="${ctx.u('pacific-northwest/')}">Pacific Northwest</a></li>
       </ul>
     </nav>
     <a class="btn btn--block" href="${ctx.u('quote/')}">Request a quote ${icon('arrow', { size: 18 })}</a>
@@ -102,7 +106,7 @@ const actionBar = (ctx) => html`
   </div>`;
 
 const footer = (ctx) => html`
-  <footer class="footer">
+  <footer class="footer rings">
     <div class="wrap">
       <div class="footer__lead">
         <div>
@@ -207,7 +211,7 @@ ${SITE.preview ? raw('<meta name="robots" content="noindex, nofollow">') : ''}
 <link rel="apple-touch-icon" href="${ctx.u('apple-touch-icon.png')}">
 <link rel="manifest" href="${ctx.u('site.webmanifest')}">
 <link rel="preload" href="${ctx.u('assets/fonts/archivo-var.woff2')}" as="font" type="font/woff2" crossorigin>
-${preload.map((p) => html`<link rel="preload" as="image" href="${p.src}" imagesrcset="${p.srcset}" imagesizes="${p.sizes}" fetchpriority="high">`)}
+${preload.flat().map((p) => html`<link rel="preload" as="image" imagesrcset="${p.srcset}" imagesizes="${p.sizes}"${p.media ? html` media="${p.media}"` : ''} fetchpriority="high">`)}
 <link rel="stylesheet" href="${ctx.u('assets/css/site.css')}?v=${ctx.version}">
 <script src="${ctx.u('assets/js/site.js')}?v=${ctx.version}" defer></script>
 ${jsonLd}

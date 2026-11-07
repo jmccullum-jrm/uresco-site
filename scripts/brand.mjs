@@ -56,7 +56,7 @@ await shot('uresco-lockup-dark.png', 640, 192, lockup(BONE, INK));
 await shot('uresco-lockup-light.png', 640, 192, lockup(INK, BONE));
 
 // Social card.
-const photo = pathToFileURL(join(ROOT, 'src/assets/img/hero-truck-denali-1600.webp'));
+const photo = pathToFileURL(join(ROOT, 'src/assets/img/hero-truck-denali-1920.webp'));
 await shot('og.jpg', 1200, 630, `
 <div style="position:relative;width:1200px;height:630px;background:${INK};color:${BONE};overflow:hidden;font-family:Archivo">
   <img src="${photo}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:60% 50%">

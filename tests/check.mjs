@@ -1,8 +1,8 @@
 // Site checks: run after `node build.mjs`.  npm run check
 //  1. Static: every page has a title, description, one <h1>, alt on every <img>, unique ids,
 //     and every internal link, image and asset resolves to a file in docs/.
-//  2. Browser: every page loads in Chromium at phone and desktop widths with no errors,
-//     no horizontal scroll, and the quote form validates and hands off.
+//  2. Browser: every page loads in Chromium at five widths with no errors, no horizontal
+//     scroll and no stretched hero photo, and both forms validate and hand off.
 import { readFileSync, readdirSync, statSync, existsSync } from 'fs';
 import { join, dirname, resolve, relative } from 'path';
 import { fileURLToPath } from 'url';
@@ -65,7 +65,8 @@ const browser = await chromium.launch(existsSync('/opt/pw-browsers/chromium') ? 
 const paths = pages.filter((f) => !/http-equiv="refresh"/.test(readFileSync(f, 'utf8'))).map((f) => relative(DOCS, f)).filter((r) => r !== '404.html')
   .map((r) => r.replace(/index\.html$/, ''));
 
-for (const [name, viewport, mobile] of [['phone', { width: 390, height: 844 }, true], ['desktop', { width: 1440, height: 900 }, false]]) {
+// Every width that has ever broken something stays in this list.
+for (const [name, viewport, mobile] of [['small phone', { width: 360, height: 740 }, true], ['phone', { width: 390, height: 844 }, true], ['tablet', { width: 768, height: 1024 }, true], ['small laptop', { width: 1024, height: 768 }, false], ['desktop', { width: 1440, height: 900 }, false]]) {
   const ctx = await browser.newContext({ viewport, isMobile: mobile, hasTouch: mobile });
   const page = await ctx.newPage();
   const errs = [];
@@ -77,9 +78,20 @@ for (const [name, viewport, mobile] of [['phone', { width: 390, height: 844 }, t
     await page.goto(base + p, { waitUntil: 'networkidle' });
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
     if (overflow > 0) fail(`${name} /${p}`, `scrolls sideways by ${overflow}px`);
+    // A hero photo must not be drawn much bigger than the file the browser picked for it.
+    const stretched = await page.evaluate(() => {
+      const img = document.querySelector('.hero__media img, .phero__media img');
+      if (!img) return null;
+      const box = img.getBoundingClientRect();
+      const file = +(img.currentSrc.match(/-(\d+)\.webp/) || [])[1];
+      const ratio = img.naturalWidth / img.naturalHeight;
+      const drawn = Math.max(box.width, box.height * ratio);
+      return file && drawn > file * 1.2 ? `${img.currentSrc.split('/').pop().split('?')[0]} (${file}px file drawn at ${Math.round(drawn)}px)` : null;
+    });
+    if (stretched) fail(`${name} /${p}`, `hero photo stretched: ${stretched}`);
     errs.forEach((e) => fail(`${name} /${p}`, e));
   }
-  if (mobile) {
+  if (name === 'phone') {
     // Call sheet opens from the action bar and closes again.
     await page.goto(base, { waitUntil: 'networkidle' });
     await page.click('.actionbar [data-open="call-sheet"]');
@@ -89,7 +101,13 @@ for (const [name, viewport, mobile] of [['phone', { width: 390, height: 844 }, t
     // Menu drawer.
     await page.click('.masthead__menu');
     if (!(await page.isVisible('#drawer'))) fail('phone /', 'menu drawer did not open');
-  } else {
+    // The action bar steps aside while typing.
+    await page.goto(base + 'quote/', { waitUntil: 'networkidle' });
+    await page.focus('#name');
+    await page.waitForTimeout(350);
+    const barTop = await page.$eval('.actionbar', (el) => el.getBoundingClientRect().top);
+    if (barTop < 844) fail('phone /quote/', 'action bar still on screen while typing');
+  } else if (name === 'desktop') {
     // Quote form: empty submit flags the required fields; a filled one hands off to email.
     await page.goto(base + 'quote/', { waitUntil: 'networkidle' });
     await page.click('button[type=submit]');
@@ -103,6 +121,7 @@ for (const [name, viewport, mobile] of [['phone', { width: 390, height: 844 }, t
     await page.click('button[type=submit]');
     await page.waitForTimeout(300);
     if (!(await page.isVisible('[data-done]'))) fail('desktop /quote/', 'confirmation not shown after submit');
+    if (await page.isVisible('form[data-form]')) fail('desktop /quote/', 'form still on screen after submit');
     const to = await page.textContent('[data-mail-to]');
     if (to !== 'anchorage@uresco.com') fail('desktop /quote/', `request routed to ${to}, expected anchorage@uresco.com`);
 
@@ -123,8 +142,17 @@ for (const [name, viewport, mobile] of [['phone', { width: 390, height: 844 }, t
     await page.click('form[data-form=credit] button[type=submit]');
     await page.waitForTimeout(300);
     if (!(await page.isVisible('[data-done]'))) fail('desktop /accounts/', 'confirmation not shown after submit');
+    if (await page.isVisible('form[data-form]')) fail('desktop /accounts/', 'form still on screen after submit');
     const to2 = await page.textContent('[data-mail-to]');
     if (to2 !== 'fairbanks@uresco.com') fail('desktop /accounts/', `application routed to ${to2}`);
+    const leftBehind = await page.evaluate(() => localStorage.getItem('uresco.draft.credit'));
+    if (leftBehind) fail('desktop /accounts/', 'draft left in the browser after submit');
+    // Sensitive fields are never kept in a draft.
+    await page.goto(base + 'accounts/', { waitUntil: 'networkidle' });
+    await page.fill('#company', 'Draft Co'); await page.fill('#ein', '12-3456789');
+    const draft = await page.evaluate(() => localStorage.getItem('uresco.draft.credit'));
+    if (!draft || !draft.includes('Draft Co') || draft.includes('12-3456789')) fail('desktop /accounts/', `draft handling wrong: ${draft}`);
+    await page.evaluate(() => localStorage.clear());
 
     // Open/closed status is filled in from each yard's hours.
     await page.goto(base + 'locations/', { waitUntil: 'networkidle' });
@@ -140,4 +168,4 @@ if (problems.length) {
   console.log(`\n${problems.length} problem(s):\n` + problems.map((p) => '  ✗ ' + p).join('\n'));
   process.exit(1);
 }
-console.log(`browser: ${paths.length} pages × 2 widths clean; quote form, credit application, hours and dialogs work\nALL CHECKS PASSED`);
+console.log(`browser: ${paths.length} pages × 5 widths clean; quote form, credit application, hours and dialogs work\nALL CHECKS PASSED`);
