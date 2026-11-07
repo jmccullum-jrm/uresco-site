@@ -161,6 +161,22 @@ for (const [name, viewport, mobile] of [['small phone', { width: 360, height: 74
   }
   await ctx.close();
 }
+
+// The yard phone numbers are the point of the hero: on common screens they show without scrolling.
+for (const [w, h] of [[1024, 768], [1280, 720], [1280, 800], [1366, 768], [1440, 900], [1536, 864], [1920, 1080]]) {
+  const ctx = await browser.newContext({ viewport: { width: w, height: h } });
+  const page = await ctx.newPage();
+  await page.goto(base, { waitUntil: 'networkidle' });
+  const low = await page.$$eval('.ystrip__num', (els) => Math.max(...els.map((e) => e.getBoundingClientRect().bottom)));
+  if (low > h) fail(`${w}x${h} /`, `yard phone numbers cut off at the fold by ${Math.ceil(low - h)}px`);
+  const crowded = await page.$$eval('.ystrip__item', (els) => els.some((e) => {
+    const city = e.querySelector('.ystrip__city').getBoundingClientRect();
+    const num = e.querySelector('.ystrip__num').getBoundingClientRect();
+    return num.top < city.bottom - 2 && num.left < city.right + 8;
+  }));
+  if (crowded) fail(`${w}x${h} /`, 'yard name and phone number collide');
+  await ctx.close();
+}
 await browser.close();
 server.close();
 
@@ -168,4 +184,4 @@ if (problems.length) {
   console.log(`\n${problems.length} problem(s):\n` + problems.map((p) => '  ✗ ' + p).join('\n'));
   process.exit(1);
 }
-console.log(`browser: ${paths.length} pages × 5 widths clean; quote form, credit application, hours and dialogs work\nALL CHECKS PASSED`);
+console.log(`browser: ${paths.length} pages × 5 widths clean; quote form, credit application, hours, dialogs and the fold work\nALL CHECKS PASSED`);
