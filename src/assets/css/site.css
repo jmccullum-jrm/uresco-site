@@ -316,8 +316,8 @@ dialog::backdrop { background: rgba(8,8,7,.6); -webkit-backdrop-filter: blur(4px
 }
 .hero__inner { align-self: end; min-width: 0; padding-top: calc(var(--mast) + 4rem); padding-bottom: 0; display: grid; grid-template-columns: minmax(0, 1fr); gap: 0; }
 .hero__copy { max-width: 1180px; }
-.hero__copy .hero__lede { max-width: 52ch; }
-.hero__lede { font-size: clamp(1.1rem, 1rem + .5vw, 1.35rem); line-height: 1.5; max-width: 52ch; color: #DCD6CA; margin-top: 1.6rem; }
+.hero__copy .hero__lede { max-width: 58ch; text-wrap: balance; }
+.hero__lede { font-size: clamp(1.1rem, 1rem + .5vw, 1.35rem); line-height: 1.5; color: #DCD6CA; margin-top: 1.6rem; }
 .hero .display { font-size: clamp(2.5rem, min(11.5vw, 1.2rem + 7.6vw), 8.25rem); }
 /* Stamps over photographs carry their own dark ground, so they read on snow and bright wood. */
 .hero .stamp, .phero .stamp { color: var(--yellow); background: rgba(14,14,12,.62); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); }
@@ -350,7 +350,7 @@ dialog::backdrop { background: rgba(8,8,7,.6); -webkit-backdrop-filter: blur(4px
 /* Wide screens have room for each yard on one line. */
 @media (min-width: 1320px) { .ystrip__item { flex-direction: row; justify-content: space-between; align-items: center; gap: 1rem; } }
 /* Short laptop screens: less air, so the phones still clear the fold. */
-@media (min-width: 900px) and (max-height: 760px) {
+@media (min-width: 900px) and (max-height: 800px) {
   .hero__inner { padding-top: calc(var(--mast) + 1.5rem); }
   .ystrip { margin-top: 2.25rem; }
   .ystrip__item { padding-block: .8rem .9rem; }

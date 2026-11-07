@@ -163,20 +163,26 @@ for (const [name, viewport, mobile] of [['small phone', { width: 360, height: 74
 }
 
 // The yard phone numbers are the point of the hero: on common screens they show without scrolling.
-for (const [w, h] of [[1024, 768], [1280, 720], [1280, 800], [1366, 768], [1440, 900], [1536, 864], [1920, 1080]]) {
-  const ctx = await browser.newContext({ viewport: { width: w, height: h } });
-  const page = await ctx.newPage();
-  await page.goto(base, { waitUntil: 'networkidle' });
-  const low = await page.$$eval('.ystrip__num', (els) => Math.max(...els.map((e) => e.getBoundingClientRect().bottom)));
-  if (low > h) fail(`${w}x${h} /`, `yard phone numbers cut off at the fold by ${Math.ceil(low - h)}px`);
-  const crowded = await page.$$eval('.ystrip__item', (els) => els.some((e) => {
-    const city = e.querySelector('.ystrip__city').getBoundingClientRect();
-    const num = e.querySelector('.ystrip__num').getBoundingClientRect();
-    return num.top < city.bottom - 2 && num.left < city.right + 8;
-  }));
-  if (crowded) fail(`${w}x${h} /`, 'yard name and phone number collide');
-  await ctx.close();
+// Hinted text runs wider and wraps sooner, so check with font hinting on as well. Only the
+// headless shell (Playwright's default browser) obeys this flag; full Chromium ignores it.
+const hinted = await chromium.launch({ args: ['--font-render-hinting=full'] });
+for (const [mode, b] of [['', browser], [' hinted', hinted]]) {
+  for (const [w, h] of [[1024, 768], [1280, 720], [1280, 800], [1366, 768], [1440, 900], [1536, 864], [1920, 1080]]) {
+    const ctx = await b.newContext({ viewport: { width: w, height: h } });
+    const page = await ctx.newPage();
+    await page.goto(base, { waitUntil: 'networkidle' });
+    const low = await page.$$eval('.ystrip__num', (els) => Math.max(...els.map((e) => e.getBoundingClientRect().bottom)));
+    if (low > h) fail(`${w}x${h}${mode} /`, `yard phone numbers cut off at the fold by ${Math.ceil(low - h)}px`);
+    const crowded = await page.$$eval('.ystrip__item', (els) => els.some((e) => {
+      const city = e.querySelector('.ystrip__city').getBoundingClientRect();
+      const num = e.querySelector('.ystrip__num').getBoundingClientRect();
+      return num.top < city.bottom - 2 && num.left < city.right + 8;
+    }));
+    if (crowded) fail(`${w}x${h}${mode} /`, 'yard name and phone number collide');
+    await ctx.close();
+  }
 }
+await hinted.close();
 await browser.close();
 server.close();
 
