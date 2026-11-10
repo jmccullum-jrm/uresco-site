@@ -83,7 +83,8 @@ button { font: inherit; color: inherit; }
    .compact at step 4); the media queries below are the no-JavaScript baseline and apply the same steps at
    cautious widths. Keep the two lists in step.
      1 tools as icons   2 no sub-line; "Featured" becomes a star   3 no title
-     4 compact: the four names share the whole row, and "open" and "send" move down into the description row */
+     4 compact: the four names share the whole row, and "open" and "send" move down into the description row
+     5 and 6 (script only): slightly smaller type in the names, before the row is finally allowed to scroll */
 .bar.f1 .tool { width: 40px; padding: 0; justify-content: center; }
 .bar.f1 .tool span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .bar.f2 .bar__title span, .bar.f2 .pick__tag { display: none; }
@@ -96,6 +97,12 @@ button { font: inherit; color: inherit; }
 .bar.f4 .pick { justify-content: center; gap: 5px; padding: 0 9px; font-size: 13px; }
 .bar.f4 .pick__n, .bar.f4 .tool:not(#info) { display: none; }
 .bar.f4 #info[aria-expanded="true"] { display: none; }
+.bar.f5 .picks { gap: 3px; }
+.bar.f5 .pick { gap: 4px; padding: 0 7px; font-size: 12px; }
+.bar.f6 { padding-inline: 6px; }
+.bar.f6 .picks { gap: 2px; padding-inline: 0; }
+.bar.f6 .pick { gap: 3px; padding: 0 5px; font-size: 11px; }
+.bar.f6 .pick__star { font-size: 10px; }
 body.compact .about__actions { display: flex; }
 body.compact .about__long { display: none; }
 body.compact .about__short { display: inline; }
@@ -119,5 +126,5 @@ body.compact .about__short { display: inline; }
   .about__long { display: none; }
   .about__short { display: inline; }
 }
-@media (max-width: 359px) { .pick, .bar.f4 .pick { padding: 0 6px; font-size: 12.5px; } }
+@media (max-width: 359px) { .pick { padding: 0 6px; font-size: 12px; } }
 @media (prefers-reduced-motion: reduce) { .pick { transition: none; } }

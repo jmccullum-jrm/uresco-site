@@ -226,9 +226,9 @@ const settled = (page, key, path = '') => page.waitForFunction(([k, p, b]) => {
         if (!r.currentInView) fail(`${at}: the design that is showing is scrolled out of view in the bar`);
         if (r.small) fail(`${at}: controls smaller than 40px: ${r.small}`);
         if (!r.star) fail(`${at}: nothing marks the featured design`);
-        // In the normal font every name is readable at once from 360px up; in a much wider font the row may scroll on phones.
-        if (!wide && w >= 360 && (r.scrolls || r.names !== keys.length)) fail(`${at}: only ${r.names} of ${keys.length} design names are visible without scrolling`);
-        if (wide && w >= 600 && r.names !== keys.length) fail(`${at}: only ${r.names} of ${keys.length} design names are visible`);
+        // Every name is readable at once from 360px up, in the normal font and in the widened one
+        // (the bar shrinks its type a little before it lets the row scroll).
+        if (w >= 360 && (r.scrolls || r.names !== keys.length)) fail(`${at}: only ${r.names} of ${keys.length} design names are visible without scrolling`);
       }
     }
   }

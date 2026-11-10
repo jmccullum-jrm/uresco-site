@@ -40,8 +40,8 @@
     stage.style.setProperty('--s', String(Math.max(0.3, s)));
   };
   const fit = () => {
-    for (let i = 1; i <= 4; i++) bar.classList.remove(`f${i}`);
-    for (let i = 1; i <= 4 && cramped(); i++) bar.classList.add(`f${i}`);
+    for (let i = 1; i <= 6; i++) bar.classList.remove(`f${i}`);
+    for (let i = 1; i <= 6 && cramped(); i++) bar.classList.add(`f${i}`);
     document.body.classList.toggle('compact', bar.classList.contains('f4'));
     const cur = strip.querySelector('[aria-current="true"]');
     if (cur && strip.scrollWidth > strip.clientWidth + 0.5) {
