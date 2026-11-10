@@ -1,0 +1,82 @@
+/* ==========================================================================
+   NORTHBOUND — tokens
+   Everything a page should reach for instead of a raw value. See DESIGN.md.
+   ========================================================================== */
+
+@font-face { font-family: "Fraunces"; src: url("../fonts/fraunces-var.woff2") format("woff2"); font-weight: 300 560; font-style: normal; font-display: swap; }
+@font-face { font-family: "Fraunces"; src: url("../fonts/fraunces-italic-var.woff2") format("woff2"); font-weight: 300 500; font-style: italic; font-display: swap; }
+@font-face { font-family: "Instrument Sans"; src: url("../fonts/instrument-sans-var.woff2") format("woff2"); font-weight: 400 700; font-style: normal; font-display: swap; }
+@font-face { font-family: "DM Mono"; src: url("../fonts/dm-mono-400.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: swap; }
+/* Fallbacks cut to the web fonts' measure, so text holds its lines while they load. */
+@font-face { font-family: "Fraunces Fallback"; src: local("Georgia"), local("Times New Roman"), local("Liberation Serif"), local("DejaVu Serif"); size-adjust: 96%; ascent-override: 98%; descent-override: 26%; line-gap-override: 0%; }
+@font-face { font-family: "Instrument Fallback"; src: local("Helvetica Neue"), local("Arial"), local("Liberation Sans"), local("DejaVu Sans"); size-adjust: 101%; ascent-override: 97%; descent-override: 25%; line-gap-override: 0%; }
+
+:root {
+  /* Colour. Paper and ink carry the page; yellow is a signal, never a field; the cold tones come from the water. */
+  --paper: #F4EFE6;      /* the page */
+  --paper-2: #EBE4D6;    /* a deeper sheet: bands, the dateline, hovers */
+  --paper-3: #FBF8F2;    /* a brighter sheet: cards, menus, the manifest */
+  --ink: #12201B;        /* spruce-black: text, rules, the footer */
+  --ink-2: #36443E;      /* body copy on paper */
+  --ink-3: #59645E;      /* captions, labels (4.5:1 on every paper) */
+  --rule: rgba(18, 32, 27, .16);
+  --rule-2: rgba(18, 32, 27, .34);
+  --yellow: #F5B800;     /* UCM yellow: buttons, the needle, a rule under a current link */
+  --yellow-2: #E0A600;   /* yellow, pressed */
+  --sea: #1E4A57;        /* cold accent, deep: links on paper, map linework */
+  --deep: #0F242C;       /* the crossing: a dark sea section */
+  --deep-2: #17323C;
+  --glacier: #A9C6C8;    /* cold accent, light: labels and rules on dark */
+  --ice: #E2EAE8;        /* the last mile: a pale, cold sheet */
+  --water: #DCE6E4;      /* map water */
+  --open: #1C6B45;
+  --on-dark: #F4EFE6;
+  --on-dark-2: #C4CFCC;
+  --rule-dark: rgba(244, 239, 230, .2);
+
+  /* Type */
+  --serif: "Fraunces", "Fraunces Fallback", Georgia, "Times New Roman", serif;
+  --sans: "Instrument Sans", "Instrument Fallback", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --mono: "DM Mono", ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+  --t-display: clamp(2.9rem, 1.35rem + 6.6vw, 7.5rem);
+  --t-h1: clamp(2.75rem, 1.5rem + 5.4vw, 6.5rem);
+  --t-h2: clamp(2.125rem, 1.4rem + 3.1vw, 4.375rem);
+  --t-h3: clamp(1.5rem, 1.25rem + 1.05vw, 2.25rem);
+  --t-h4: 1.375rem;
+  --t-lede: clamp(1.125rem, 1.04rem + .38vw, 1.375rem);
+  --t-body: 1.0625rem;
+  --t-small: .9375rem;
+  --t-caption: .8125rem;
+  --t-label: .75rem;
+
+  /* Space: a 4px scale, and one fluid value for the gap between sections. */
+  --s-1: .25rem; --s-2: .5rem; --s-3: .75rem; --s-4: 1rem; --s-5: 1.5rem; --s-6: 2rem; --s-7: 3rem; --s-8: 4rem; --s-9: 6rem; --s-10: 8rem;
+  --section: clamp(4.5rem, 2.6rem + 7.4vw, 10rem);
+  --gutter: clamp(1.125rem, .1rem + 4.2vw, 3.5rem);
+  --col-gap: clamp(1rem, .6rem + 1.1vw, 1.75rem);
+  --max: 82.5rem;        /* 1320px of content */
+  --rail: 0px;           /* the margin column: 4rem from 1000px up */
+  --mast: 3.75rem;       /* masthead height */
+  --bar: 0px;            /* phone action bar height */
+
+  /* Shape. Print has square corners. */
+  --r-0: 0;
+  --r-1: 2px;
+  --r-pill: 99px;
+  --shadow-1: 0 1px 0 rgba(18, 32, 27, .08);
+  --shadow-2: 0 24px 48px -24px rgba(18, 32, 27, .35);
+
+  /* Motion: slow and photographic. Things settle; nothing bounces. */
+  --ease: cubic-bezier(.2, .7, .2, 1);
+  --ease-io: cubic-bezier(.6, 0, .25, 1);
+  --d-1: .18s;   /* hover, press */
+  --d-2: .42s;   /* menus, sheets */
+  --d-3: .9s;    /* reveals */
+  --d-4: 1.5s;   /* a lane drawing on the map */
+}
+@media (min-width: 1000px) {
+  :root { --rail: 4rem; --mast: 4.5rem; }
+}
+@media (max-width: 999px) {
+  :root { --bar: calc(3.75rem + env(safe-area-inset-bottom, 0px)); }
+}

@@ -1,0 +1,11 @@
+/* ================= Alaska delivery =================
+   The page is built from shared components (pageHero, routeStage, modes, steps, interlude, yard cards,
+   FAQ, quoteBand). Only its own adjustments live here. */
+
+/* The finder section: its headline belongs to the stage below it, so the two sit closer together. */
+#finder { padding-bottom: 0; }
+#finder .shead { margin-bottom: clamp(1.75rem, 1rem + 2vw, 3rem); }
+
+/* Two yard cards side by side are wide: a lower photograph keeps the numbers near the top. */
+.ycards--2 .ycard__media { aspect-ratio: 2 / 1; }
+@media (max-width: 699px) { .ycards--2 .ycard__media { aspect-ratio: 5 / 2; } }

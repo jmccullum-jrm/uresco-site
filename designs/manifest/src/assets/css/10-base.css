@@ -1,0 +1,109 @@
+/* ---------- Base ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-padding-top: calc(var(--mast) + 1.25rem); background: var(--paper); }
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+body {
+  margin: 0; background: var(--paper); color: var(--ink);
+  font-family: var(--font); font-size: var(--fs-body); line-height: 1.55; font-weight: 400;
+  -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+  padding-bottom: var(--bar);
+}
+img, svg { display: block; max-width: 100%; }
+img { height: auto; }
+a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: .22em; }
+p { margin: 0 0 1em; text-wrap: pretty; }
+/* An element's own display rule must never beat the hidden attribute. */
+[hidden] { display: none !important; }
+h1, h2, h3, h4 { margin: 0; font-weight: 600; text-wrap: balance; }
+address { font-style: normal; }
+button { font: inherit; color: inherit; cursor: pointer; }
+:where(ul[class], ol[class]) { list-style: none; margin: 0; padding: 0; }
+:focus-visible { outline: 3px solid var(--blue); outline-offset: 3px; border-radius: 1px; }
+::selection { background: var(--yellow); color: var(--ink); }
+.sr-only { position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+.skip { position: absolute; left: 1rem; top: -100px; z-index: 100; background: var(--yellow); color: var(--ink); padding: .75rem 1rem; font-weight: 600; border: var(--line) solid var(--ink); }
+.skip:focus { top: 1rem; }
+.i { flex: none; }
+/* Things that only mean something once the script has run. */
+html:not(.js) .js-only { visibility: hidden; }
+
+/* ---------- Grid ---------- */
+.wrap { width: 100%; max-width: calc(var(--wrap) + var(--margin) * 2); margin-inline: auto; padding-inline: var(--margin); }
+.grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gap); }
+
+/* ---------- Type ---------- */
+.display { font-size: var(--fs-display); line-height: .94; font-weight: 600; letter-spacing: -.045em; }
+.h2 { font-size: var(--fs-h2); line-height: .98; font-weight: 600; letter-spacing: -.04em; }
+.h2--sm { font-size: clamp(1.625rem, 1.2rem + 1.6vw, 2.5rem); letter-spacing: -.035em; }
+.h3 { font-size: var(--fs-h3); line-height: 1.12; font-weight: 600; letter-spacing: -.02em; }
+.lede { font-size: var(--fs-lede); line-height: 1.45; color: var(--ink-2); max-width: 34em; }
+/* Emphasis in a headline is a stroke of highlighter, the way a take-off gets marked up. */
+.display em, .h2 em, .hl {
+  font-style: normal;
+  background: linear-gradient(transparent 0 58%, var(--yellow) 58% 93%, transparent 93%);
+  -webkit-box-decoration-break: clone; box-decoration-break: clone;
+  padding-inline: .06em; margin-inline: -.06em;
+}
+.on-ink .display em, .on-ink .h2 em { background: none; color: var(--yellow); padding: 0; margin: 0; }
+
+/* Mono label: the lettering on a drawing. `.stamp` is the same thing under its old name. */
+.label, .stamp {
+  font-family: var(--mono); font-size: var(--fs-label); line-height: 1.35; font-weight: 500;
+  letter-spacing: .07em; text-transform: uppercase; color: var(--ink-3); margin: 0;
+}
+.label--blue { color: var(--blue); }
+.on-ink .label, .on-ink .stamp, .stamp--dark { color: var(--board-mute); }
+.num { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+
+/* ---------- Buttons ---------- */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: .65rem;
+  min-height: 48px; padding: .5rem 1.15rem;
+  font-family: var(--mono); font-size: .8125rem; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; line-height: 1.15;
+  text-decoration: none; text-align: center; white-space: nowrap;
+  color: var(--ink); background: var(--yellow); border: var(--line) solid var(--ink); border-radius: var(--radius);
+}
+.btn .i { transition: transform var(--t-ui) linear; }
+.btn:hover { background: var(--ink); color: var(--yellow); }
+.btn:hover .i:last-child { transform: translateX(3px); }
+.btn--line { background: transparent; }
+.btn--line:hover { background: var(--ink); color: var(--paper); }
+.btn--dark { background: var(--ink); color: var(--paper); }
+.btn--dark:hover { background: var(--yellow); color: var(--ink); }
+.btn--sm { min-height: 40px; padding: .35rem .85rem; font-size: .75rem; gap: .5rem; }
+.btn--block { display: flex; width: 100%; }
+.on-ink .btn { border-color: var(--yellow); }
+.on-ink .btn:hover { background: var(--paper); border-color: var(--paper); color: var(--ink); }
+.on-ink .btn--line { border-color: var(--board-mute); color: var(--paper); }
+.on-ink .btn--line:hover { background: var(--paper); color: var(--ink); border-color: var(--paper); }
+.on-ink :focus-visible, .board :focus-visible, .footer :focus-visible, .utility :focus-visible, .actionbar :focus-visible { outline-color: var(--yellow); }
+.actions { display: flex; flex-wrap: wrap; gap: .75rem; }
+
+/* Text link with an arrow: mono, ruled underneath; on hover the rule rises into a stroke of highlighter. */
+.link {
+  position: relative; isolation: isolate; display: inline-flex; align-items: center; gap: .5rem;
+  font-family: var(--mono); font-size: .8125rem; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; text-decoration: none;
+  padding-block: .35rem; border-bottom: var(--line) solid currentColor;
+}
+.link::before { content: ''; position: absolute; inset: 0; z-index: -1; background: var(--yellow); transform: scaleY(0); transform-origin: bottom; transition: transform var(--t-ui) linear; }
+.link:hover::before { transform: scaleY(1); }
+.link .i { transition: transform var(--t-ui) linear; }
+.link:hover .i { transform: translateX(3px); }
+.on-ink .link, .takeoff .link { border-bottom-color: var(--yellow); }
+.on-ink .link:hover, .takeoff .link:hover { color: var(--ink); }
+
+/* Live open/closed status (filled in by the script from the yard's hours, in its own time zone). */
+.status { display: inline-flex; align-items: center; gap: .45em; font-family: var(--mono); font-size: var(--fs-label); font-weight: 500; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); white-space: nowrap; }
+.status::before { content: ''; width: .62em; height: .62em; border-radius: 50%; border: 1.5px solid currentColor; flex: none; }
+.status.is-open { color: var(--ink); }
+.status.is-open::before { background: var(--yellow); border-color: var(--ink); }
+.on-ink .status, .board .status, .utility .status, .footer .status, .drawer__yards .status { color: var(--board-mute); }
+.on-ink .status.is-open, .board .status.is-open, .utility .status.is-open, .footer .status.is-open { color: var(--paper); }
+.on-ink .status.is-open::before, .board .status.is-open::before, .utility .status.is-open::before, .footer .status.is-open::before { background: var(--yellow); border-color: var(--yellow); }
+
+/* ---------- Sections ---------- */
+.section { padding-block: var(--section); }
+.section--tight { padding-block: calc(var(--section) * .6); }
+.section--flush { padding-top: 0; }
+.section--panel, .section--bone { background: var(--paper-2); }
+.section--ink, .section--dark, .section--sea { background: var(--ink); color: var(--paper); }

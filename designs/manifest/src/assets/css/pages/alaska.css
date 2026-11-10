@@ -1,0 +1,59 @@
+/* ---------- Alaska: ways in ---------- */
+.ways { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border: var(--line) solid var(--ink); background: var(--sheet); }
+.way { position: relative; padding: clamp(1.25rem, 2.2vw, 2rem); border-right: 1px solid var(--rule-2); }
+.way:last-child { border-right: 0; }
+.way__tag { position: absolute; right: clamp(1.25rem, 2.2vw, 2rem); top: clamp(1.25rem, 2.2vw, 2rem); display: flex; align-items: baseline; gap: .5rem; margin: 0; }
+.way__tag b { font-size: 1rem; font-weight: 600; color: var(--blue); }
+.way__icon { display: grid; place-items: center; width: 52px; height: 52px; border: var(--line) solid var(--ink); border-radius: 50%; background: var(--yellow); margin-bottom: 1.5rem; }
+.way .h3 { font-size: clamp(1.5rem, 1.2rem + 1.2vw, 2.125rem); letter-spacing: -.04em; }
+.way__where { margin: .5rem 0 1rem; color: var(--ink); }
+.way p:last-child { margin: 0; color: var(--ink-2); }
+@media (max-width: 899px) {
+  .ways { grid-template-columns: minmax(0, 1fr); }
+  .way { border-right: 0; border-bottom: 1px solid var(--rule-2); display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 1.1rem; }
+  .way:last-child { border-bottom: 0; }
+  .way__icon { grid-row: 1 / span 2; margin: 0; }
+  .way .h3 { align-self: end; } .way__where { margin: .25rem 0 0; } .way p:last-child { grid-column: 1 / -1; margin-top: 1rem; }
+}
+
+/* ---------- Alaska: RFI log (questions) ---------- */
+.rfi { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); column-gap: var(--gap); align-items: start; }
+.rfi__head { display: grid; gap: 1.25rem; justify-items: start; position: sticky; top: calc(var(--mast) + 2rem); }
+.rfi__head .shead { margin: 0; width: 100%; }
+.rfi__head .lede { margin: 0; }
+.rfi__log { border-top: var(--line) solid var(--ink); }
+.rfi__item { border-bottom: 1px solid var(--rule-2); }
+.rfi__item:last-child { border-bottom: var(--line) solid var(--ink); }
+.rfi__item summary { display: grid; grid-template-columns: 4.25rem minmax(0, 1fr) 1.5rem; gap: 1rem; align-items: center; min-height: 68px; padding-block: 1rem; cursor: pointer; list-style: none; }
+.rfi__item summary::-webkit-details-marker { display: none; }
+.rfi__item summary .num { font-size: var(--fs-label); font-weight: 600; letter-spacing: .06em; color: var(--blue); }
+.rfi__q { font-size: var(--fs-h3); font-weight: 600; letter-spacing: -.028em; line-height: 1.15; }
+.rfi__item summary:hover .rfi__q { text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: .18em; }
+.rfi__mark { position: relative; width: 14px; height: 14px; justify-self: end; }
+.rfi__mark::before, .rfi__mark::after { content: ''; position: absolute; left: 0; right: 0; top: 6px; border-top: var(--line) solid var(--ink); transition: transform var(--t-ui) linear; }
+.rfi__mark::after { transform: rotate(90deg); }
+.rfi__item[open] .rfi__mark::after { transform: rotate(0); }
+.rfi__a { display: grid; grid-template-columns: 4.25rem minmax(0, 1fr); gap: 1rem; padding-bottom: 1.5rem; }
+.rfi__a .label { padding-top: .3rem; font-size: .625rem; }
+.rfi__a p:last-child { margin: 0; color: var(--ink-2); max-width: 40em; }
+@media (max-width: 999px) { .rfi { grid-template-columns: minmax(0, 1fr); row-gap: 2rem; } .rfi__head { position: static; } }
+@media (max-width: 599px) { .rfi__item summary { grid-template-columns: minmax(0, 1fr) 1.5rem; } .rfi__item summary .num { grid-column: 1 / -1; margin-bottom: -.6rem; } .rfi__a { grid-template-columns: minmax(0, 1fr); gap: .35rem; } }
+
+/* The latitude rule under the hero, with the delivery range highlighted. */
+.phero .latrule { margin-top: .5rem; }
+
+/* ---------- Alaska: the package drawing under the four steps ---------- */
+.pack { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); column-gap: var(--gap); align-items: stretch; margin-top: clamp(2.5rem, 5vw, 4.5rem); }
+.pack__dwg { margin: 0; }
+.pack__note { display: flex; flex-direction: column; justify-content: center; gap: .9rem; padding: clamp(1.25rem, 3vw, 2.5rem); border: 1px solid var(--blue); border-left-width: 5px; background: var(--sheet); }
+.pack__note p { margin: 0; color: var(--ink-2); }
+.pack__note .h3 { font-size: clamp(1.5rem, 1.2rem + 1.2vw, 2.125rem); letter-spacing: -.04em; text-wrap: balance; }
+.pack__list { margin-top: .5rem !important; border-top: 1px solid var(--rule-2); }
+.pack__list li { position: relative; padding: .55rem 0 .55rem 1.4rem; border-bottom: 1px solid var(--rule-2); font-size: .9375rem; font-weight: 500; }
+.pack__list li::before { content: ''; position: absolute; left: 0; top: 1.1em; width: 10px; border-top: var(--line) solid var(--ink); }
+@media (max-width: 899px) { .pack { grid-template-columns: minmax(0, 1fr); row-gap: var(--gap); } }
+@media (prefers-reduced-motion: no-preference) {
+  html.js .pack__dwg[data-reveal]:not(.is-in) .dw-obj, html.js .pack__dwg[data-reveal]:not(.is-in) .dw-ann { clip-path: inset(-3% 103% -3% -3%); }
+  .pack__dwg.is-in .dw-obj { animation: plot 460ms linear backwards; }
+  .pack__dwg.is-in .dw-ann { animation: plot 360ms linear 260ms backwards; }
+}

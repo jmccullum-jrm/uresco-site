@@ -1,0 +1,105 @@
+// Builds the static site from src/ into docs/ (what GitHub Pages, or any static host, serves).
+//   node build.mjs
+// Pages are modules in src/pages that export { path, render(ctx) } or an array of them.
+// Every link is written relative to the page, so the same output works on
+// jmccullum-jrm.github.io/uresco-site/, on uresco.com, or from a local server.
+import { readdirSync, mkdirSync, writeFileSync, rmSync, cpSync, existsSync, readFileSync } from 'fs';
+import { join, dirname, resolve } from 'path';
+import { fileURLToPath, pathToFileURL } from 'url';
+import { createHash } from 'crypto';
+import { SITE } from './src/config.mjs';
+import { markSvg, ringsSvg } from './src/lib/icons.mjs';
+import { mapSvg } from './src/lib/components.mjs';
+
+const ROOT = dirname(fileURLToPath(import.meta.url));
+// OUT=<dir> builds somewhere else, so several builds can run side by side without clobbering docs/.
+const OUT = process.env.OUT ? resolve(process.env.OUT) : join(ROOT, 'docs');
+const SRC = join(ROOT, 'src');
+
+// Styles and behaviour are written as small files and shipped as one of each.
+//   src/assets/css/*.css, then src/assets/css/pages/*.css   → assets/css/site.css
+//   src/assets/js/*.js,   then src/assets/js/modules/*.js   → assets/js/site.js
+// Files are joined in name order, so a numeric prefix (00-tokens.css) sets the cascade.
+// SKIP_CSS=<file>[,<file>] leaves stylesheets out: used to check that a rebuilt page no longer leans on placeholder rules.
+const SKIP = (process.env.SKIP_CSS || '').split(',').filter(Boolean);
+const bundle = (dir, ext, sub) => [dir, join(dir, sub)]
+  .filter(existsSync)
+  .flatMap((d) => readdirSync(d).filter((f) => f.endsWith(ext) && !SKIP.includes(f)).sort().map((f) => join(d, f)))
+  .map((f) => readFileSync(f, 'utf8')).join('\n');
+const CSS = bundle(join(SRC, 'assets/css'), '.css', 'pages');
+const JS = bundle(join(SRC, 'assets/js'), '.js', 'modules');
+
+// Cache-busting token for CSS and JS: changes whenever either does.
+const version = createHash('sha1').update(CSS).update(JS).digest('hex').slice(0, 8);
+
+const makeCtx = (path) => {
+  let n = 0;
+  const depth = path.split('/').filter(Boolean).length;
+  return {
+    path,
+    version,
+    base: SITE.base,
+    u: (to) => ('../'.repeat(depth) + to) || './',
+    uid: () => ++n,
+  };
+};
+
+rmSync(OUT, { recursive: true, force: true });
+mkdirSync(OUT, { recursive: true });
+cpSync(join(SRC, 'assets'), join(OUT, 'assets'), { recursive: true });
+writeFileSync(join(OUT, 'assets', 'map.svg'), mapSvg());
+writeFileSync(join(OUT, 'assets', 'rings.svg'), ringsSvg());
+// Light minification of the shipped CSS and JS (sources stay readable in src/).
+const minCss = (css) => css.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\s+/g, ' ').replace(/\s*([{};,>])\s*/g, '$1').replace(/;}/g, '}').trim();
+const minJs = (js) => js.split('\n').map((l) => l.trim()).filter((l) => l && !l.startsWith('//')).join('\n');
+for (const d of ['assets/css', 'assets/js']) { rmSync(join(OUT, d), { recursive: true, force: true }); mkdirSync(join(OUT, d), { recursive: true }); }
+writeFileSync(join(OUT, 'assets/css/site.css'), minCss(CSS));
+writeFileSync(join(OUT, 'assets/js/site.js'), minJs(JS));
+
+const pages = [];
+for (const file of readdirSync(join(SRC, 'pages')).filter((f) => f.endsWith('.mjs')).sort()) {
+  const mod = (await import(pathToFileURL(join(SRC, 'pages', file)))).default;
+  pages.push(...(Array.isArray(mod) ? mod : [mod]));
+}
+
+for (const page of pages) {
+  const ctx = makeCtx(page.path);
+  const out = String(page.render(ctx));
+  const file = page.file ? join(OUT, page.file) : join(OUT, page.path, 'index.html');
+  mkdirSync(dirname(file), { recursive: true });
+  writeFileSync(file, out);
+}
+
+// Icons and manifest. PNG icons are rendered by scripts/brand.mjs into src/assets/brand
+// and copied to the root here, where browsers look for them.
+writeFileSync(join(OUT, 'favicon.svg'), markSvg({ rings: [11, 22], w: 8 }));
+for (const [name, to] of [['favicon-32.png', 'favicon-32.png'], ['apple-touch-icon.png', 'apple-touch-icon.png'], ['icon-192.png', 'icon-192.png'], ['icon-512.png', 'icon-512.png']]) {
+  const from = join(SRC, 'assets/brand', name);
+  if (existsSync(from)) cpSync(from, join(OUT, to));
+}
+writeFileSync(join(OUT, 'site.webmanifest'), JSON.stringify({
+  name: SITE.name, short_name: SITE.short, start_url: './', scope: './', display: 'standalone',
+  background_color: '#F5B800', theme_color: '#F5B800',
+  icons: [
+    { src: 'icon-192.png', sizes: '192x192', type: 'image/png' },
+    { src: 'icon-512.png', sizes: '512x512', type: 'image/png' },
+    { src: 'icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
+  ],
+}, null, 2));
+
+// Search engines: blocked entirely while the site is a preview.
+const listed = pages.filter((p) => !p.file && !p.redirect);
+writeFileSync(join(OUT, 'robots.txt'), SITE.preview
+  ? 'User-agent: *\nDisallow: /\n'
+  : `User-agent: *\nAllow: /\n\nSitemap: ${SITE.url}/sitemap.xml\n`);
+writeFileSync(join(OUT, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${listed.map((p) => `  <url><loc>${SITE.url}/${p.path}</loc></url>`).join('\n')}
+</urlset>
+`);
+// The live build also tells GitHub Pages which domain it serves.
+if (!SITE.preview) writeFileSync(join(OUT, 'CNAME'), new URL(SITE.url).host + '\n');
+// GitHub Pages runs Jekyll unless told not to; we ship finished HTML.
+writeFileSync(join(OUT, '.nojekyll'), '');
+
+console.log(`Built ${pages.length} pages into ${process.env.OUT || 'docs/'} (assets v${version})${SITE.preview ? ' — PREVIEW: noindex' : ''}`);

@@ -1,0 +1,87 @@
+/* Uresco Construction Materials — BOREAL
+   Calm, cool and map-first. Tokens first; then base, chrome, components, pages.
+   The system is described in DESIGN.md at the repository root. */
+
+@font-face { font-family: 'Geist'; src: url(../fonts/geist-var.woff2) format('woff2'); font-weight: 400 700; font-display: swap; }
+@font-face { font-family: 'Geist Mono'; src: url(../fonts/geistmono-var.woff2) format('woff2'); font-weight: 400 600; font-display: swap; }
+/* Fallbacks sized to Geist, so the swap does not move the page. */
+@font-face { font-family: 'Geist Fallback'; src: local('Arial'); size-adjust: 104%; ascent-override: 92%; descent-override: 22%; line-gap-override: 0%; }
+
+/* The camera zoom of the map: registered so it can ease, and labels can counter-scale against it. */
+@property --z { syntax: '<number>'; inherits: true; initial-value: 1; }
+
+:root {
+  /* Light: snow, ice and mist. Text is a deep spruce ink. */
+  --snow: #F4F6F6;
+  --white: #FFFFFF;
+  --ice: #E8EEEF;
+  --mist: #D9E1E3;
+  --fog: #B4C1C5;
+  --slate: #51636A;        /* muted text: 5.9:1 on snow, 6.4:1 on white */
+  --ink: #0A1B20;
+  --spruce: #12393A;
+
+  /* Dark: the night the map and other "screens" sit in. */
+  --night: #071419;
+  --night-2: #0C2229;
+  --night-3: #14313A;
+  --night-line: rgba(207, 234, 241, .14);
+  --frost: #CFEAF1;        /* text on night */
+  --haze: #9DBCC5;         /* muted text on night: 8.6:1 */
+
+  /* Accents from the north. Yellow is UCM yellow: the primary action and the freight line, nothing else. */
+  --glacier: #7FC4D9;
+  --glacier-ink: #17657E;  /* glacier for text on light: 5.9:1 on snow */
+  --aurora: #5FE0B0;
+  --aurora-ink: #0A7250;   /* "open" on light: 5.7:1 on white */
+  --yellow: #F5B800;
+  --yellow-hi: #FFC829;
+
+  --font: 'Geist', 'Geist Fallback', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --mono: 'Geist Mono', ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+
+  /* Type scale */
+  --t-display: clamp(2.5rem, 1.6rem + 3.6vw, 4.5rem);
+  --t-h2: clamp(1.875rem, 1.35rem + 2.2vw, 3.25rem);
+  --t-h3: clamp(1.25rem, 1.15rem + .4vw, 1.5rem);
+  --t-lede: clamp(1.0625rem, 1rem + .3vw, 1.25rem);
+  --t-body: 1rem;
+  --t-small: .875rem;
+  --t-micro: .75rem;
+
+  /* Space: a 4px base. */
+  --s1: .25rem; --s2: .5rem; --s3: .75rem; --s4: 1rem; --s5: 1.5rem; --s6: 2rem; --s7: 3rem; --s8: 4rem; --s9: 6rem;
+  --section: clamp(4.5rem, 3rem + 6.5vw, 9rem);
+
+  /* The grid */
+  --wrap: 1280px;
+  --gutter: clamp(1rem, .1rem + 3.4vw, 2.5rem);
+  --inset: 12px;           /* how far the big rounded surfaces sit from the edge of the screen */
+  --surface: 1900px;       /* and how wide they may grow; beyond this they stay centred */
+  --edge: max(var(--inset), calc(50vw - var(--surface) / 2 + var(--inset)));
+  /* Inside a surface, the padding that lines its content up with the page column. */
+  --column: max(calc(var(--gutter) - var(--inset)), calc(min(100vw, var(--surface)) / 2 - var(--wrap) / 2 - var(--inset)));
+
+  /* Radius */
+  --r-sm: 10px; --r-md: 14px; --r-lg: 22px; --r-xl: 28px; --r-2xl: 32px;
+
+  /* Depth: fine borders first, shadows second. */
+  --line: 0 0 0 1px rgba(10, 27, 32, .07);
+  --sh-1: 0 0 0 1px rgba(10, 27, 32, .06), 0 1px 2px rgba(10, 27, 32, .05);
+  --sh-2: 0 0 0 1px rgba(10, 27, 32, .06), 0 2px 4px rgba(10, 27, 32, .04), 0 12px 28px -8px rgba(10, 27, 32, .14);
+  --sh-3: 0 0 0 1px rgba(10, 27, 32, .06), 0 4px 8px rgba(10, 27, 32, .05), 0 28px 56px -16px rgba(10, 27, 32, .32);
+
+  /* Motion */
+  --ease: cubic-bezier(.2, .7, .2, 1);
+  --ease-map: cubic-bezier(.45, 0, .15, 1);
+  --fast: .16s; --ui: .32s; --slow: .7s; --camera: 1.1s;
+
+  /* Chrome heights */
+  --util: 36px;
+  --mast: 68px;
+  --bar: 0px;
+  --ring: var(--ink);
+  color-scheme: light;
+}
+@media (max-width: 999px) { :root { --util: 0px; --mast: 60px; } }
+@media (max-width: 699px) { :root { --inset: 8px; --bar: 76px; --r-xl: 22px; --r-2xl: 24px; --r-lg: 20px; } }

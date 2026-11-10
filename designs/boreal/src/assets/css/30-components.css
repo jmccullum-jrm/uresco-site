@@ -1,0 +1,363 @@
+/* ---------- The stage: a dark, rounded "screen" holding the map and the finder ----------
+   Three layouts, by width:
+     wide  (≥1100)  words and finder on the left over open sea, the map filling the rest
+     band  (700–1099) the map as a band with the words over its sea; the finder below it
+     phone (<700)   words, then the map cropped to Alaska and the lane south, then the finder   */
+.stage {
+  --ring: var(--yellow); --pad: clamp(1.25rem, 2.6vw, 2.25rem);
+  position: relative; isolation: isolate; overflow: hidden; display: flex; align-items: center;
+  margin-inline: var(--edge); border-radius: var(--r-2xl); background: var(--night); color: #fff;
+}
+.stage__sky {
+  position: absolute; inset: 0; z-index: 0;
+  background:
+    radial-gradient(52% 46% at 64% -6%, rgba(95, 224, 176, .26), transparent 72%),
+    radial-gradient(40% 46% at 98% 2%, rgba(127, 196, 217, .22), transparent 72%),
+    radial-gradient(60% 70% at 0% 100%, rgba(20, 70, 80, .5), transparent 70%),
+    linear-gradient(180deg, #0B222A 0%, #071419 100%);
+}
+/* The aurora breathes, slowly. */
+.stage__sky::after { content: ''; position: absolute; inset: 0; background: radial-gradient(38% 30% at 44% -4%, rgba(95, 224, 176, .2), transparent 70%); opacity: .4; }
+@media (prefers-reduced-motion: no-preference) {
+  .stage__sky::after { animation: aurora 16s ease-in-out infinite alternate; }
+  @keyframes aurora { to { opacity: 1; transform: translateX(14%); } }
+}
+/* The map is as tall as the stage, unless that would push Alaska under the finder: then it shrinks to fit beside it. */
+.stage__map { position: absolute; z-index: 1; right: 0; top: 50%; transform: translateY(-50%); height: min(100%, calc((100vw - 36rem) * .99)); aspect-ratio: 1.8; }
+/* Its left edge lines up with the page's column, however wide the screen. */
+.stage__ui { position: relative; z-index: 3; display: grid; gap: 1.5rem; width: min(100%, 29rem); padding: var(--pad) 0 var(--pad) var(--column); box-sizing: content-box; }
+.stage__copy .eyebrow { color: var(--haze); }
+.stage__copy .display { color: #fff; }
+.stage--hero { min-height: clamp(34rem, calc(100svh - var(--util) - var(--mast) - var(--inset)), 56rem); }
+.stage--hero .display { font-size: clamp(2.75rem, 1.5rem + 2.6vw, 3.875rem); }
+.hero__lede { margin: 1rem 0 0; max-width: 26em; text-wrap: balance; font-size: clamp(1.0625rem, 1rem + .25vw, 1.1875rem); line-height: 1.45; color: var(--frost); }
+.stage--embed { min-height: 40rem; }
+.stage--embed .finder__label { font-size: 1.25rem; letter-spacing: -.02em; }
+.stage__reset { position: absolute; z-index: 4; top: 1.1rem; right: 1.1rem; display: inline-flex; align-items: center; gap: .45rem; height: 36px; padding: 0 .8rem; border-radius: 10px; border: 1px solid rgba(255, 255, 255, .18); background: rgba(7, 20, 25, .7); color: #fff; font-size: .8125rem; font-weight: 500; }
+.stage__reset:hover { background: rgba(7, 20, 25, .9); }
+
+/* A little night under the legend, so it reads when the camera brings land beneath it. */
+.stage::after { content: ''; position: absolute; z-index: 2; left: 0; right: 0; bottom: 0; height: 6rem; background: linear-gradient(180deg, rgba(7, 20, 25, 0), rgba(7, 20, 25, .88)); pointer-events: none; }
+.legend { position: absolute; z-index: 3; right: 1.5rem; bottom: 1.1rem; display: flex; flex-wrap: wrap; justify-content: flex-end; gap: .35rem 1.1rem; list-style: none; font-family: var(--mono); font-size: .6875rem; font-weight: 500; letter-spacing: .05em; text-transform: uppercase; color: var(--haze); }
+.legend li { display: inline-flex; align-items: center; gap: .45rem; white-space: nowrap; }
+.legend__note { opacity: .7; }
+.lg { display: inline-block; width: 18px; height: 0; border-top: 2px solid var(--yellow); }
+.lg--yard { width: 9px; height: 9px; border: 0; border-radius: 50%; background: var(--yellow); box-shadow: 0 0 0 2px var(--night), 0 0 0 3px rgba(245, 184, 0, .5); }
+.lg--road { border-color: rgba(221, 241, 245, .7); border-top-width: 1.5px; }
+.lg--barge { border-top-style: dotted; border-top-width: 2.5px; }
+
+/* ---------- The map plate ---------- */
+.map { position: relative; width: 100%; height: 100%; overflow: hidden;
+  -webkit-mask-image: linear-gradient(to right, transparent 0, #000 16%), linear-gradient(to bottom, transparent 0, #000 6%, #000 94%, transparent 100%); -webkit-mask-composite: source-in;
+  mask-image: linear-gradient(to right, transparent 0, #000 16%), linear-gradient(to bottom, transparent 0, #000 6%, #000 94%, transparent 100%); mask-composite: intersect; }
+.map__cam { position: absolute; inset: 0; transform-origin: 0 0; transform: translate3d(var(--tx, 0px), var(--ty, 0px), 0) scale(var(--z)); }
+.map__base, .map__lanes, .map__pins { position: absolute; inset: 0; width: 100%; height: 100%; }
+.map__lanes { overflow: visible; }
+@media (prefers-reduced-motion: no-preference) {
+  .map__cam.is-flying { transition: transform var(--camera) var(--ease-map), --z var(--camera) var(--ease-map); }
+}
+
+.lane, .lane path { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.lane--road path { stroke: #DDF1F5; stroke-opacity: .5; stroke-width: calc(1.9px / var(--z)); }
+.lane--barge path { stroke: var(--yellow); stroke-opacity: .62; stroke-width: calc(2.6px / var(--z)); stroke-dasharray: .1 7.5; }
+.lane--inside { stroke: var(--yellow); stroke-opacity: .5; stroke-width: calc(1.7px / var(--z)); stroke-dasharray: 5 6; }
+.lane--sea { stroke: var(--yellow); stroke-width: calc(2.8px / var(--z)); }
+.lane--pulse { stroke: #FFF6D6; stroke-width: calc(3.4px / var(--z)); stroke-dasharray: 4 96; stroke-dashoffset: 5; opacity: 0; }
+.map__arc { fill: none; stroke: #fff; stroke-width: calc(2.2px / var(--z)); stroke-linecap: round; stroke-dasharray: 1 1; stroke-dashoffset: 0; }
+[data-mode='road'] .lane--road path, [data-mode='local'] .lane--road path { stroke-opacity: .85; }
+[data-mode='seasonal'] .lane--barge path { stroke-opacity: 1; }
+[data-mode='coastal'] .lane--inside { stroke-opacity: .95; }
+@media (prefers-reduced-motion: no-preference) {
+  /* On arrival the ocean lane draws itself from Puget Sound to Anchorage, once. */
+  .js .lane--sea { animation: lane-in 1.9s var(--ease-map) .25s both; }
+  .map__arc.is-drawing { animation: arc-draw 1.2s var(--ease-map) both; }
+  .is-paused .lane--pulse, .is-paused .lane--barge path, .is-paused .map__beacon::after, .is-paused .map__dest i::after { animation-play-state: paused; }
+}
+/* A light travelling up the lane, and the barge dots drifting: only where there is a pointer and
+   the room to see them. Dash animations repaint every frame, which a phone should not pay for. */
+@media (prefers-reduced-motion: no-preference) and (min-width: 700px) {
+  .lane--pulse { opacity: 1; animation: lane-pulse 8s linear 2.4s infinite backwards; }
+  .lane--barge path { animation: lane-drift 60s linear infinite; }
+}
+@keyframes lane-in { from { stroke-dasharray: 100 100; stroke-dashoffset: 100; } to { stroke-dasharray: 100 100; stroke-dashoffset: 0; } }
+@keyframes lane-pulse { from { stroke-dashoffset: 5; } to { stroke-dashoffset: -95; } }
+@keyframes lane-drift { to { stroke-dashoffset: -152; } }
+@keyframes arc-draw { from { stroke-dashoffset: 1; } }
+
+/* Everything pinned to the map keeps its size while the camera zooms. */
+.map__pins > * { position: absolute; transform: translate(-50%, -50%) scale(calc(1 / var(--z))); }
+.map__grat { font-family: var(--mono); font-size: .625rem; font-weight: 500; letter-spacing: .06em; color: rgba(169, 220, 232, .4); white-space: nowrap; }
+.map__dot { width: 20px; height: 20px; padding: 0; border: 0; border-radius: 50%; background: none; }
+.map__dot::before { content: ''; position: absolute; left: 50%; top: 50%; width: 5px; height: 5px; margin: -2.5px; border-radius: 50%; background: var(--frost); opacity: .8; transition: transform var(--ui) var(--ease), opacity var(--fast); }
+.map__dot:hover::before { transform: scale(2); opacity: 1; background: #fff; }
+.map__dot:hover { z-index: 3; }
+.map__name { position: absolute; font-size: .6875rem; font-weight: 500; line-height: 1; letter-spacing: .01em; color: rgba(214, 236, 242, .74); white-space: nowrap; pointer-events: none; text-shadow: 0 0 6px var(--night), 0 0 2px var(--night); transition: color var(--fast); }
+.map__dot:hover .map__name { color: #fff; }
+.js .map__dot.is-dest { visibility: hidden; }
+html:not(.js) .map__dest, html:not(.js) .map__arc { display: none; }
+.map__name[data-side='e'] { left: 100%; top: 50%; transform: translateY(-50%); margin-left: -2px; }
+.map__name[data-side='w'] { right: 100%; top: 50%; transform: translateY(-50%); margin-right: -2px; }
+.map__name[data-side='n'] { bottom: 100%; left: 50%; transform: translateX(-50%); margin-bottom: -3px; }
+.map__name[data-side='s'] { top: 100%; left: 50%; transform: translateX(-50%); margin-top: -3px; }
+
+.map__yard { display: block; width: 0; height: 0; z-index: 4; text-decoration: none; }
+.map__beacon { position: absolute; left: -7px; top: -7px; width: 14px; height: 14px; border-radius: 50%; background: var(--yellow); box-shadow: 0 0 0 3px var(--night), 0 0 0 4.5px rgba(245, 184, 0, .55); }
+.map__beacon::after { content: ''; position: absolute; inset: -4px; border-radius: 50%; border: 1.5px solid var(--yellow); opacity: 0; }
+@media (prefers-reduced-motion: no-preference) {
+  .map__beacon::after { animation: beacon 3.2s var(--ease) infinite; }
+  .map__yard:nth-of-type(2) .map__beacon::after { animation-delay: 1s; }
+  .map__yard:nth-of-type(3) .map__beacon::after { animation-delay: 2s; }
+}
+@keyframes beacon { 0% { transform: scale(.6); opacity: .9; } 70%, 100% { transform: scale(2.6); opacity: 0; } }
+.map__tag { position: absolute; top: 50%; transform: translateY(-50%); display: inline-flex; align-items: center; gap: .5rem; height: 28px; padding: 0 .6rem; border-radius: 9px; background: rgba(7, 20, 25, .84); border: 1px solid rgba(255, 255, 255, .16); color: #fff; font-size: .8125rem; white-space: nowrap; transition: border-color var(--fast), background var(--fast); }
+.map__tag b { font-weight: 600; }
+[data-side='e'] > .map__tag { left: 17px; }
+[data-side='w'] > .map__tag { right: 17px; }
+.map__yard:hover .map__tag, .map__yard:focus-visible .map__tag { border-color: var(--yellow); background: var(--night); }
+.map__yard:focus-visible { outline: none; }
+/* Zoomed in, only the yard on the route keeps its label; the others would mostly be cut by the frame. */
+.map[data-zoomed] .map__yard:not([data-on]) .map__tag { visibility: hidden; }
+.map__yard:focus-visible .map__tag { outline: 2px solid var(--yellow); outline-offset: 2px; }
+.map__tag .status { color: var(--haze); font-size: .75rem; }
+.map__tag .status.is-open { color: var(--aurora); }
+.map__tag .status.is-open::before { background: var(--aurora); box-shadow: 0 0 0 3px rgba(95, 224, 176, .2); }
+
+.map__dest { z-index: 5; width: 0; height: 0; pointer-events: none; }
+.map__dest i { position: absolute; left: -6px; top: -6px; width: 12px; height: 12px; border-radius: 50%; background: #fff; box-shadow: 0 0 0 3px var(--night), 0 0 0 4.5px rgba(255, 255, 255, .6); }
+.map__dest i::after { content: ''; position: absolute; inset: -5px; border-radius: 50%; border: 1.5px solid #fff; opacity: 0; }
+@media (prefers-reduced-motion: no-preference) { .map__dest i::after { animation: beacon 2.4s var(--ease) infinite; } }
+.map__tag--dest { left: 16px; background: #fff; border-color: #fff; color: var(--ink); font-weight: 600; box-shadow: 0 6px 18px -4px rgba(0, 0, 0, .5); }
+.map__dest[data-side='w'] .map__tag--dest { left: auto; right: 16px; }
+
+/* ---------- The finder ---------- */
+.finder { --ring: var(--ink); position: relative; z-index: 3; border-radius: var(--r-lg); background: var(--white); color: var(--ink); box-shadow: var(--sh-3); }
+.finder__search { padding: 1rem 1rem .9rem; }
+.finder__label { display: block; margin: 0 0 .65rem; font-size: .9375rem; font-weight: 600; }
+.finder__field { position: relative; display: flex; align-items: center; }
+.finder__field > .i { position: absolute; left: .95rem; color: var(--slate); pointer-events: none; }
+.finder__input { width: 100%; height: 54px; padding: 0 2.9rem; border: 1.5px solid var(--mist); border-radius: var(--r-md); background: var(--snow); font: inherit; font-size: 1.0625rem; color: var(--ink); transition: border-color var(--fast), box-shadow var(--fast), background var(--fast); }
+.finder__input::placeholder { color: #66777E; }
+.finder__input:hover { border-color: var(--fog); }
+.finder__input:focus { outline: none; border-color: var(--ink); background: var(--white); box-shadow: 0 0 0 4px rgba(245, 184, 0, .45); }
+.finder__clear { position: absolute; right: .5rem; display: grid; place-items: center; width: 38px; height: 38px; border: 0; border-radius: 10px; background: none; color: var(--slate); }
+.finder__clear:hover { background: var(--ice); color: var(--ink); }
+.finder__list { position: absolute; left: 0; right: 0; top: calc(100% + 6px); z-index: 10; max-height: 17.5rem; overflow: auto; padding: .35rem; list-style: none; border-radius: var(--r-md); background: var(--white); box-shadow: var(--sh-3); overscroll-behavior: contain; }
+.finder__list li { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; padding: .62rem .7rem; border-radius: 9px; font-size: .9375rem; font-weight: 500; cursor: pointer; }
+.finder__list li small { font-size: .8125rem; font-weight: 400; color: var(--slate); text-align: right; }
+.finder__list li[aria-selected='true'], .finder__list li:hover { background: var(--ice); }
+.finder__list li.is-none { display: block; color: var(--slate); font-weight: 400; cursor: default; background: none; }
+.finder__list mark { background: none; color: inherit; font-weight: 700; }
+.finder__chips { display: flex; align-items: center; gap: .4rem; margin-top: .75rem; overflow-x: auto; scrollbar-width: none; }
+.finder__chips::-webkit-scrollbar { display: none; }
+.finder__try { margin-right: .15rem; font-family: var(--mono); font-size: .6875rem; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; color: var(--slate); }
+
+.route { display: grid; gap: .9rem; padding: 1rem; border-top: 1px solid var(--mist); }
+.route__head { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; }
+.route__name { margin: 0; font-size: 1.3125rem; font-weight: 600; letter-spacing: -.025em; line-height: 1.2; }
+.route__eg { display: inline-block; margin-left: .25rem; padding: .22rem .4rem; border-radius: 6px; background: var(--ice); color: var(--slate); font-family: var(--mono); font-size: .625rem; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; vertical-align: .2em; }
+.route__meta { display: flex; flex-wrap: wrap; align-items: center; gap: .2rem .55rem; margin: .3rem 0 0; font-size: .875rem; color: var(--slate); }
+.route__tag::before { content: '·'; margin-right: .55rem; }
+.route__coords { flex: none; margin: .35rem 0 0; font-family: var(--mono); font-size: .6875rem; font-weight: 500; letter-spacing: .02em; color: var(--slate); text-align: right; white-space: nowrap; }
+.route__lab { display: block; margin: 0; font-family: var(--mono); font-size: .6875rem; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; color: var(--slate); }
+.route__yard { padding: .7rem .7rem .7rem .95rem; border-radius: var(--r-md); background: var(--snow); box-shadow: inset 0 0 0 1px var(--mist); }
+.route__y { display: flex; justify-content: space-between; align-items: center; gap: .75rem; }
+.route__who { display: flex; flex-wrap: wrap; align-items: center; gap: .1rem .6rem; margin: 0; font-size: 1.0625rem; }
+.route__who .route__lab { width: 100%; }
+.route__who b { font-weight: 600; letter-spacing: -.01em; }
+.route__modes { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem; margin-top: .45rem; list-style: none; }
+.route__modes li { display: flex; align-items: center; gap: .6rem; font-size: .9375rem; font-weight: 500; line-height: 1.2; }
+.route__ic { display: grid; place-items: center; flex: none; width: 30px; height: 30px; border-radius: 9px; background: var(--ice); }
+.route__else { margin: 0; font-size: .9375rem; color: var(--slate); }
+.route__note { margin: -.15rem 0 0; font-size: .75rem; line-height: 1.45; color: var(--slate); }
+.route.is-swapping > * { opacity: .35; }
+@media (prefers-reduced-motion: no-preference) { .route > * { transition: opacity .25s var(--ease); } }
+
+.finder__nojs { padding: 1rem; }
+.finder__yards { list-style: none; margin-bottom: 1rem; }
+.finder__yards li { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: .7rem 0; border-bottom: 1px solid var(--mist); }
+.finder__yards span { display: grid; }
+.finder__yards b { font-weight: 600; }
+.finder__yards small { color: var(--slate); }
+.finder__yards a { font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+/* Short laptop screens: keep the whole card in view. */
+@media (min-width: 1100px) and (max-height: 860px) {
+  .stage--hero .display { font-size: clamp(2.5rem, 1.4rem + 2.2vw, 3.25rem); }
+  .stage--hero .stage__ui { gap: 1.1rem; padding-block: 1.5rem; }
+  .stage--hero .stage__copy .eyebrow { margin-bottom: .8rem; }
+  .stage--hero .hero__lede { display: none; }
+  .stage--hero .route { gap: .7rem; padding-block: .85rem; }
+}
+@media (min-width: 1100px) and (max-height: 740px) {
+  .stage--hero .route__note { display: none; }
+  .stage--hero .finder__search { padding-block: .8rem .7rem; }
+}
+
+/* Band: the map across the top with the words on its sea; the finder below, its route card in two columns. */
+@media (max-width: 1099px) {
+  .stage { display: block; }
+  .stage::after { display: none; }
+  .stage__map { position: relative; top: auto; right: auto; transform: none; width: 100%; height: auto; aspect-ratio: 1800 / 1000; }
+  .stage__ui { position: static; display: block; width: auto; padding: 0 var(--pad) var(--pad); margin-top: -3.5rem; }
+  .stage__copy { position: absolute; z-index: 3; top: var(--pad); left: var(--pad); width: min(23rem, 44%); }
+  .stage--hero, .stage--embed { min-height: 0; }
+  .stage--hero .display { font-size: clamp(2.25rem, 5.4vw, 3.25rem); }
+  .hero__lede { font-size: 1rem; }
+  /* The place and how freight gets there on the left; the yard and the quote on the right. */
+  .route { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 1.5rem; align-items: start; }
+  .route__head { display: block; }
+  .route__coords { text-align: left; }
+  .route__quote { align-self: end; }
+  .route__note { grid-column: 1 / -1; }
+  @media (min-width: 700px) and (max-width: 899px) { .eyebrow__more { display: none; } }
+  .legend { position: relative; right: auto; bottom: auto; justify-content: flex-start; padding: 0 var(--pad) 1.1rem; margin-top: -.25rem; }
+}
+/* Phone: words, then the map cropped to Alaska and the lane south, then the finder. */
+@media (max-width: 699px) {
+  .stage { --pad: 1.1rem; display: flex; flex-direction: column; align-items: stretch; }
+  .stage__ui { display: contents; }
+  .stage__copy { position: relative; order: 1; top: auto; left: auto; width: auto; padding: 1.5rem var(--pad) 0; z-index: 3; }
+  /* The crop is map x 740–1800, y 70–950 of the 1800 × 1000 canvas. */
+  .stage__map { order: 2; aspect-ratio: 1060 / 880; margin-top: -1rem; overflow: hidden; }
+  .stage__map .map { position: absolute; width: 169.8%; height: auto; aspect-ratio: 1.8; left: -69.8%; top: -7.95%; -webkit-mask-image: linear-gradient(to bottom, transparent 3%, #000 16%); mask-image: linear-gradient(to bottom, transparent 3%, #000 16%); }
+  .finder { order: 3; margin: -1.25rem .6rem .6rem; }
+  .map__dest .map__tag--dest, .map__dest[data-side='w'] .map__tag--dest { left: 50%; right: auto; top: auto; bottom: 13px; transform: translateX(-50%); }
+  .map__dest[data-vside='s'] .map__tag--dest { bottom: auto; top: 13px; }
+  .route { grid-template-columns: minmax(0, 1fr); }
+  .route__note { grid-column: auto; }
+  .legend { order: 4; padding: .5rem var(--pad) 1rem; margin: 0; gap: .3rem .9rem; font-size: .625rem; }
+  .legend__note { display: none; }
+  .finder__chips { margin-right: -1rem; padding-right: 1rem; }
+  .stage--hero .display { font-size: clamp(2.125rem, 9.6vw, 2.75rem); }
+  .stage__copy .eyebrow { font-size: .6875rem; letter-spacing: .04em; white-space: nowrap; }
+  @media (max-width: 379px) { .eyebrow__more { display: none; } }
+  .hero__lede { margin-top: .75rem; font-size: .9375rem; line-height: 1.45; }
+  .map__name, .map__grat { display: none; }
+  .map__dot { pointer-events: none; }
+  .map__dot::before { width: 4px; height: 4px; margin: -2px; opacity: .6; }
+  .map__tag { height: 26px; font-size: .75rem; padding: 0 .5rem; }
+  .lane--road path { stroke-width: calc(3.4px / var(--z)); }
+  .lane--barge path { stroke-width: calc(4.6px / var(--z)); stroke-dasharray: .1 12; }
+  .lane--inside { stroke-width: calc(3px / var(--z)); stroke-dasharray: 8 9; }
+  .lane--sea { stroke-width: calc(5px / var(--z)); }
+  .lane--pulse { stroke-width: calc(6px / var(--z)); }
+  .map__arc { stroke-width: calc(4px / var(--z)); }
+  .stage__reset { top: 1.6rem; right: .7rem; }
+}
+
+/* ---------- Live yard cards ---------- */
+.ycards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.25rem; }
+.ycards--2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.ycard { display: flex; flex-direction: column; border-radius: var(--r-xl); background: var(--white); box-shadow: var(--sh-1); scroll-margin-top: calc(var(--mast) + 1.5rem); transition: box-shadow var(--ui) var(--ease), transform var(--ui) var(--ease); }
+.ycard:hover { box-shadow: var(--sh-2); }
+.ycard:nth-child(2) { --i: 1; } .ycard:nth-child(3) { --i: 2; }
+.ycard__media { position: relative; overflow: hidden; margin: .5rem .5rem 0; aspect-ratio: 16 / 9; border-radius: calc(var(--r-xl) - .5rem); background: var(--ice); }
+.ycard__media img { width: 100%; height: 100%; object-fit: cover; filter: saturate(.86) contrast(1.03); }
+.ycard__lat, .ycard__note { position: absolute; z-index: 1; bottom: .6rem; padding: .35rem .5rem; border-radius: 7px; background: rgba(7, 20, 25, .62); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); color: #fff; font-family: var(--mono); font-size: .625rem; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; }
+.ycard__lat { right: .6rem; }
+.ycard__note { left: .6rem; color: var(--frost); }
+.ycard__body { display: flex; flex-direction: column; flex: 1; padding: 1.25rem 1.5rem 1.5rem; }
+.ycard__top { display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+.ycard__city { font-size: 1.625rem; font-weight: 600; letter-spacing: -.035em; }
+.ycard__city span { color: var(--slate); font-weight: 500; }
+.ycard__top .status { flex: none; height: 28px; padding: 0 .7rem 0 .6rem; border-radius: 999px; background: var(--ice); }
+.ycard__top .status.is-open { background: #E2F5EC; }
+.ycard__role { margin: .3rem 0 0; font-size: .9375rem; color: var(--slate); }
+.ycard__phone { display: block; margin: 1.1rem 0 1rem; font-size: clamp(1.75rem, 1.4rem + 1vw, 2.125rem); font-weight: 500; letter-spacing: -.04em; line-height: 1; font-variant-numeric: tabular-nums; text-decoration: none; }
+.ycard__phone:hover { text-decoration: underline; text-decoration-thickness: 2px; text-decoration-color: var(--yellow); }
+.ycard__facts { margin: 0 0 1.25rem; border-top: 1px solid var(--mist); font-size: .9375rem; }
+.ycard__facts > div { display: grid; grid-template-columns: 6.25rem minmax(0, 1fr); gap: .75rem; padding: .6rem 0; border-bottom: 1px solid var(--mist); }
+.ycard__facts dt { padding-top: .2rem; font-family: var(--mono); font-size: .6875rem; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; color: var(--slate); }
+.ycard__facts dd { margin: 0; overflow-wrap: anywhere; }
+.ycard__tz { color: var(--slate); }
+.ycard__acts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .5rem; margin-top: auto; }
+@media (max-width: 349px) { .ycard__acts { grid-template-columns: minmax(0, 1fr); } }
+.ycard__quote { align-self: flex-start; margin-top: 1.1rem; font-size: .9375rem; }
+@media (max-width: 1020px) { .ycards { grid-template-columns: minmax(0, 1fr); } .ycard { flex-direction: row; } .ycard__media { flex: 0 0 38%; aspect-ratio: auto; margin: .5rem 0 .5rem .5rem; } .ycard__media img { position: absolute; inset: 0; } }
+@media (max-width: 699px) {
+  .ycards, .ycards--2 { grid-template-columns: minmax(0, 1fr); gap: .75rem; }
+  .ycard { flex-direction: column; }
+  .ycard__media { flex: none; aspect-ratio: 5 / 2; margin: .4rem .4rem 0; }
+  .ycard__body { padding: 1rem 1.1rem 1.2rem; }
+  .ycard__facts > div { grid-template-columns: 5.5rem minmax(0, 1fr); }
+}
+
+/* ---------- Inner-page hero ---------- */
+.phero { padding-block: clamp(1.5rem, 1rem + 2vw, 3rem) clamp(2rem, 1rem + 4vw, 4.5rem); }
+.phero__grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: clamp(2rem, 5vw, 5rem); align-items: center; }
+.phero__copy { padding-block: 1rem; }
+.phero__lede { margin: 1.5rem 0 0; max-width: 30em; font-size: var(--t-lede); line-height: 1.5; color: var(--slate); }
+.phero__media { aspect-ratio: 5 / 4; border-radius: var(--r-2xl); }
+.crumbs { margin-bottom: 1.5rem; font-size: .875rem; color: var(--slate); }
+.crumbs ol { display: flex; flex-wrap: wrap; gap: .5rem; list-style: none; }
+.crumbs li + li::before { content: '/'; margin-right: .5rem; color: var(--fog); }
+.crumbs a { text-decoration: none; }
+.crumbs a:hover { text-decoration: underline; }
+@media (max-width: 999px) {
+  .phero__grid { grid-template-columns: minmax(0, 1fr); gap: 1.75rem; }
+  .phero__media { aspect-ratio: 3 / 2; order: 2; }
+  .phero__copy { padding: 0; }
+}
+
+/* ---------- Closing call to action ---------- */
+.cta { padding-inline: var(--edge); }
+.cta__card { --ring: var(--yellow); position: relative; isolation: isolate; overflow: hidden; display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: clamp(1.5rem, 4vw, 4rem); align-items: center; padding: clamp(1.5rem, 1rem + 3vw, 4rem) var(--column); border-radius: var(--r-2xl); color: #fff; background: radial-gradient(60% 80% at 20% -10%, rgba(95, 224, 176, .2), transparent 70%), radial-gradient(50% 70% at 100% 100%, rgba(127, 196, 217, .16), transparent 70%), var(--night); }
+.cta__card .eyebrow { color: var(--haze); }
+.cta__card .h2 em { color: var(--haze); }
+.cta__copy p:not(.eyebrow) { margin: 1.25rem 0 0; max-width: 32em; font-size: var(--t-lede); line-height: 1.5; color: var(--frost); }
+.cta__media { aspect-ratio: 4 / 3; border-radius: var(--r-xl); }
+@media (max-width: 860px) { .cta__card { grid-template-columns: minmax(0, 1fr); } .cta__media { aspect-ratio: 16 / 9; order: -1; } }
+@media (max-width: 699px) { .cta__card { padding: 1.1rem 1.1rem 1.5rem; } .cta .actions .btn { flex: 1 1 100%; } }
+
+/* ---------- Steps: a numbered rail ---------- */
+.steps { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1.25rem; list-style: none; counter-reset: none; }
+.steps li { position: relative; padding-top: 2.25rem; }
+.steps li::before { content: ''; position: absolute; top: .55rem; left: 0; right: -1.25rem; height: 1px; background: var(--fog); }
+.steps li:last-child::before { right: 0; }
+.steps li::after { content: ''; position: absolute; top: 0; left: 0; width: 19px; height: 19px; border-radius: 50%; background: var(--yellow); box-shadow: 0 0 0 5px var(--ice), inset 0 0 0 5px var(--yellow), inset 0 0 0 20px var(--ink); }
+.steps__no { display: block; margin-bottom: .6rem; font-family: var(--mono); font-size: var(--t-micro); font-weight: 500; letter-spacing: .06em; color: var(--slate); }
+.steps p { margin: .6rem 0 0; color: var(--slate); }
+@media (max-width: 860px) {
+  .steps { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  .steps li { padding: 0 0 1.75rem 2.75rem; }
+  .steps li::before { top: .5rem; bottom: -.5rem; left: 9px; right: auto; width: 1px; height: auto; }
+  .steps li:last-child::before { display: none; }
+  .steps li:last-child { padding-bottom: 0; }
+}
+
+/* ---------- Modes (how freight moves) and the season note ---------- */
+.modes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.25rem; }
+.mode { padding: 1.5rem 1.5rem 1.75rem; border-radius: var(--r-xl); background: var(--white); box-shadow: var(--sh-1); }
+.mode__icon { display: grid; place-items: center; width: 48px; height: 48px; margin-bottom: 2.5rem; border-radius: 14px; background: var(--night); color: var(--yellow); }
+.mode__where { margin: .5rem 0 .9rem; font-family: var(--mono); font-size: .6875rem; font-weight: 500; letter-spacing: .05em; text-transform: uppercase; color: var(--glacier-ink); }
+.mode p:last-child { margin: 0; color: var(--slate); }
+.callout { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem 1.25rem; margin-top: 1.25rem; padding: 1.1rem 1.5rem 1.1rem 1.1rem; border-radius: var(--r-xl); background: #E1EEF1; }
+.callout__icon { display: grid; place-items: center; flex: none; width: 44px; height: 44px; border-radius: 50%; background: var(--white); color: var(--glacier-ink); }
+.callout p { flex: 1 1 22rem; margin: 0; }
+.callout strong { font-weight: 600; }
+.brands { display: flex; flex-wrap: wrap; gap: .4rem; list-style: none; }
+.brands li { display: inline-flex; align-items: center; height: 32px; padding: 0 .8rem; border-radius: 999px; box-shadow: inset 0 0 0 1px var(--mist); font-size: .8125rem; font-weight: 500; color: var(--slate); white-space: nowrap; }
+
+@media (max-width: 860px) { .modes { grid-template-columns: minmax(0, 1fr); gap: .75rem; } .mode { display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 1rem; padding: 1.25rem; } .mode__icon { grid-row: span 3; margin: 0; } }
+
+/* ---------- FAQ ---------- */
+.faq-wrap { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 7fr); gap: 2rem clamp(2rem, 6vw, 6rem); align-items: start; }
+.faq-wrap .shead { margin: 0; position: sticky; top: calc(var(--mast) + 2rem); }
+.faq { display: grid; gap: .5rem; }
+.faq details { border-radius: var(--r-lg); background: var(--white); box-shadow: var(--sh-1); }
+.faq summary { display: flex; justify-content: space-between; align-items: center; gap: 1.5rem; padding: 1.15rem 1.15rem 1.15rem 1.5rem; list-style: none; cursor: pointer; font-size: clamp(1.0625rem, 1rem + .3vw, 1.1875rem); font-weight: 600; letter-spacing: -.015em; border-radius: var(--r-lg); }
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary::after { content: ''; flex: none; width: 36px; height: 36px; border-radius: 50%; background: var(--ice) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%230A1B20' stroke-width='1.8' stroke-linecap='round'%3E%3Cpath d='M8 3v10M3 8h10'/%3E%3C/svg%3E") center no-repeat; transition: transform var(--ui) var(--ease), background-color var(--fast); }
+.faq details[open] summary::after { transform: rotate(45deg); background-color: var(--yellow); }
+.faq details p { margin: 0; padding: 0 4.5rem 1.4rem 1.5rem; max-width: 62ch; color: var(--slate); }
+@media (max-width: 900px) { .faq-wrap { grid-template-columns: minmax(0, 1fr); } .faq-wrap .shead { position: static; } .faq details p { padding-right: 1.5rem; } }
+
+/* ---------- Interlude: one wide photograph and one line ---------- */
+.interlude { padding-inline: var(--edge); }
+.interlude__frame { aspect-ratio: 21 / 9; max-height: 46rem; width: 100%; border-radius: var(--r-2xl); }
+.interlude__frame::after { background: linear-gradient(180deg, rgba(7, 20, 25, 0) 35%, rgba(7, 20, 25, .72)); }
+.interlude__text { position: absolute; z-index: 2; left: var(--column); right: 1.5rem; bottom: clamp(1.5rem, 3.5vw, 3.25rem); color: #fff; }
+.interlude__line { margin: 0; max-width: 16em; font-size: var(--t-h2); font-weight: 500; line-height: 1.04; letter-spacing: -.035em; text-wrap: balance; }
+.interlude__line em { font-style: normal; color: var(--yellow); }
+.interlude__note { margin: 1rem 0 0; font-family: var(--mono); font-size: var(--t-micro); letter-spacing: .04em; color: var(--frost); }
+@media (max-width: 699px) { .interlude__frame { aspect-ratio: 4 / 5; } }

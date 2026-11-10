@@ -1,0 +1,131 @@
+/* ================= Alaska ================= */
+
+/* ---------- Hero: a question and a very large answer ---------- */
+.phero--yes { --Y: clamp(6rem, 17.6vw, calc(var(--wrap) * .192)); }
+.phero--yes .phero__copy { padding-top: clamp(1.75rem, 3.4vw, 3rem); }
+.phero--yes .phero__title { font-size: var(--Y); line-height: .78; letter-spacing: -.04em; margin-left: -.035em; white-space: nowrap; }
+/* The strap is set to the same measure as YES. */
+.yes__strap { display: block; margin: calc(var(--Y) * .03) 0 0 calc(var(--Y) * .04); font-size: calc(var(--Y) * .186); line-height: 1; letter-spacing: -.02em; }
+.phero--yes .motion-toggle { align-self: center; height: 46px; }
+/* The question: a speech sticker whose last word keeps changing. */
+.ask { --rot: -2.5deg; position: relative; z-index: 1; display: inline-grid; gap: .3rem; margin: .35rem 0 clamp(1.3rem, 2.6vw, 2.1rem); padding: .8rem 1.4rem .75rem 1.2rem; background: var(--white); border: var(--line) solid var(--black); border-radius: 24px 24px 24px 4px; box-shadow: var(--sh-sticker); transform: rotate(var(--rot)); transform-origin: 0 100%; }
+.ask__q { font-size: var(--t-label); font-weight: 800; font-stretch: 125%; letter-spacing: .07em; text-transform: uppercase; line-height: 1.2; }
+.ask__swap { display: grid; justify-content: start; overflow: hidden; overflow: clip; font-size: clamp(1.45rem, 1rem + 2vw, 2.6rem); line-height: 1; font-weight: 900; font-stretch: 125%; letter-spacing: -.028em; text-transform: uppercase; padding-block: .04em; }
+.ask__swap > span { grid-area: 1 / 1; opacity: 0; transform: translateY(105%); white-space: nowrap; }
+.ask__swap > .is-on { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: no-preference) {
+  .ask__swap > span { transition: transform .45s var(--spring), opacity .12s linear; }
+  .ask__swap > .was-on { opacity: 0; transform: translateY(-105%); transition: transform .3s cubic-bezier(.5, 0, .9, .4), opacity .2s linear .08s; }
+}
+@media (max-width: 899px) { .phero--yes { --Y: calc((100vw - var(--gutter) * 2) / 3.02); } .ask { margin-bottom: 1.25rem; } }
+
+/* ---------- Route finder ---------- */
+.finder { padding-top: calc(var(--section) + clamp(70px, 13vw, 210px)); }
+.finder__grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.35fr); grid-template-areas: "head map" "pick map"; gap: clamp(1.75rem, 3vw, 2.75rem) clamp(2rem, 5vw, 5.5rem); align-items: start; }
+.finder__head { grid-area: head; } .finder__head .lede { margin-top: 1.4rem; color: var(--paper); }
+.finder__map { grid-area: map; position: sticky; top: calc(var(--mast) + 1.25rem); }
+.finder__sticker { position: absolute; right: 1%; top: 7%; font-size: clamp(.7rem, .55rem + .5vw, 1rem); }
+.finder__pick { grid-area: pick; min-width: 0; }
+.finder__label { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .3rem 1rem; margin: 0 0 .85rem; font-size: var(--t-label); font-weight: 800; font-stretch: 125%; letter-spacing: .08em; text-transform: uppercase; color: var(--yellow); }
+.finder__label span { color: var(--ash); }
+.towns { display: flex; flex-wrap: wrap; gap: .4rem; margin-bottom: 1.25rem; }
+.town { min-height: 44px; padding: 0 1.05em; border-radius: var(--r-pill); border: var(--line) solid #77736A; background: transparent; color: var(--paper); font-size: .94rem; font-weight: 700; transition: background var(--t-tap) linear, color var(--t-tap) linear, border-color var(--t-tap) linear, transform var(--t-flip) var(--spring); }
+.town:hover { border-color: var(--paper); transform: translateY(-2px); }
+.town[aria-pressed="true"] { background: var(--yellow); border-color: var(--yellow); color: var(--black); }
+html:not(.js) .towns, html:not(.js) .finder__label { display: none; }
+/* The answer: a yellow card. */
+.way { display: grid; grid-template-columns: auto minmax(0, 1fr); grid-template-areas: "icon label" "icon name" "text text" "acts acts"; column-gap: 1.1rem; padding: clamp(1.25rem, 2.2vw, 1.9rem); background: var(--yellow); color: var(--black); border-radius: var(--r-l); }
+.way__icon { grid-area: icon; display: grid; place-items: center; width: 66px; height: 66px; border-radius: 50%; background: var(--black); color: var(--yellow); }
+.way__icon > span { display: none; } .way:not([data-ico]) [data-ico="route"], .way[data-ico="truck"] [data-ico="truck"], .way[data-ico="ship"] [data-ico="ship"], .way[data-ico="plane"] [data-ico="plane"] { display: block; }
+.way__label { grid-area: label; align-self: end; margin: 0 0 .3rem; font-size: var(--t-label); font-weight: 800; font-stretch: 125%; letter-spacing: .08em; text-transform: uppercase; }
+.way__name { grid-area: name; align-self: start; font-size: clamp(1.4rem, 1rem + 1.7vw, 2.3rem); line-height: .92; font-weight: 900; font-stretch: var(--wide); letter-spacing: -.025em; text-transform: uppercase; }
+.way__text { grid-area: text; margin: 1rem 0 0; font-weight: 500; line-height: 1.45; max-width: 52ch; }
+.way__acts { grid-area: acts; display: flex; flex-wrap: wrap; align-items: center; gap: .8rem 1.4rem; margin-top: 1.1rem; }
+@media (prefers-reduced-motion: no-preference) { .way.is-new { animation: way-new .45s var(--spring); } }
+@keyframes way-new { from { transform: scale(.94) rotate(-1.2deg); } }
+/* Buttons on a yellow card inside a black field go back to black. */
+.field-k .on-y .btn:not(.btn--line) { --bg: var(--black); --fg: var(--yellow); --bd: var(--black); --sh: rgba(14, 14, 12, .9); }
+.field-k .on-y :focus-visible { outline-color: var(--black); box-shadow: 0 0 0 3px var(--yellow); }
+@media (max-width: 999px) {
+  .finder__grid { grid-template-columns: minmax(0, 1fr); grid-template-areas: "head" "map" "pick"; }
+  .finder__map { position: relative; top: auto; }
+  .finder__sticker { top: .9rem; right: -.3rem; }
+}
+@media (max-width: 699px) { .finder__sticker { display: none; }
+}
+
+/* ---------- One call, every leg: four stops on a dashed lane ---------- */
+.legs { position: relative; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.legs::before { content: ''; position: absolute; left: 0; right: 12%; top: 35px; border-top: 3px dashed var(--black); }
+.leg { position: relative; padding-right: clamp(1rem, 2.6vw, 2.75rem); }
+.leg__icon { position: relative; display: grid; place-items: center; width: 72px; height: 72px; margin-bottom: 1.6rem; border-radius: 50%; background: var(--yellow); border: var(--line) solid var(--black); box-shadow: 0 0 0 8px var(--paper); }
+.leg:last-child .leg__icon { background: var(--black); color: var(--yellow); }
+.leg__no { position: absolute; left: 92px; top: 25px; padding: 0 .6rem; background: var(--paper); font-size: .8rem; font-weight: 800; font-stretch: 125%; letter-spacing: .05em; line-height: 1.3; }
+.leg__name { margin-bottom: .6rem; font-size: clamp(1.1rem, .8rem + 1vw, 1.65rem); line-height: .98; font-weight: 900; font-stretch: 118%; letter-spacing: -.02em; text-transform: uppercase; text-wrap: balance; }
+.leg__text { margin: 0; color: var(--stone); max-width: 30ch; }
+@media (max-width: 859px) {
+  .legs { grid-template-columns: minmax(0, 1fr); gap: 1.6rem; }
+  .legs::before { left: 29px; right: auto; top: 10px; bottom: 40px; border-top: 0; border-left: 3px dashed var(--black); }
+  .leg { display: grid; grid-template-columns: 60px minmax(0, 1fr); grid-template-areas: "icon name" "icon text"; column-gap: 1.1rem; padding-right: 0; }
+  .leg__icon { grid-area: icon; width: 60px; height: 60px; margin: 0; box-shadow: 0 0 0 6px var(--paper); } .leg__icon .i { width: 24px; height: 24px; }
+  .leg__no { position: static; grid-area: name; justify-self: start; align-self: start; padding: 0; background: none; font-size: .68rem; }
+  .leg__name { grid-area: name; margin-top: 1.15rem; } .leg__text { grid-area: text; max-width: none; }
+}
+
+/* ---------- 71° north, and the tape ---------- */
+.north { position: relative; padding-top: var(--section); }
+.north__grid { display: grid; grid-template-columns: minmax(0, 1.8fr) minmax(0, 1fr); gap: clamp(2rem, 6vw, 6rem); align-items: start; padding-bottom: clamp(2.75rem, 5vw, 4.5rem); }
+.north__big { margin: 0 0 clamp(1.25rem, 2.6vw, 2.25rem); font-size: clamp(3.4rem, 18vw, 8.5rem); line-height: .78; font-weight: 900; font-stretch: 125%; letter-spacing: -.045em; text-transform: uppercase; }
+.north__big span { display: block; }
+@media (min-width: 900px) { .north__big { font-size: clamp(6rem, 11vw, 10.4rem); } }
+.north__fig { position: relative; justify-self: center; width: min(100%, 360px); margin: calc(var(--section) * -1) 0 0; }
+.north__win { aspect-ratio: 4 / 5.2; }
+.north__fig figcaption { position: absolute; left: -8%; bottom: 14%; padding: .55em 1em .5em; background: var(--black); color: var(--yellow); border-radius: var(--r-pill); transform: rotate(-5deg); font-size: var(--t-label); font-weight: 800; font-stretch: 125%; letter-spacing: .06em; text-transform: uppercase; white-space: nowrap; }
+/* Latitude as a tape measure, 46° to 72° N, edge to edge. */
+.tape { --h: clamp(48px, 5.6vw, 76px); position: relative; height: calc(var(--h) + clamp(92px, 9vw, 124px)); }
+.tape::before { content: ''; position: absolute; left: 0; right: 0; top: 50%; height: var(--h); margin-top: calc(var(--h) / -2); border-block: var(--line) solid var(--black);
+  background: repeating-linear-gradient(90deg, var(--black) 0 2px, transparent 2px calc(100% / 26)) 0 0 / 100% 34% no-repeat, repeating-linear-gradient(90deg, var(--black) 0 1px, transparent 1px calc(100% / 130)) 0 0 / 100% 16% no-repeat, var(--white); }
+.tape__ticks span { position: absolute; left: var(--at); top: 50%; margin-top: calc(var(--h) / -2); height: var(--h); display: flex; align-items: flex-end; padding: 0 0 .28em .4em; border-left: 3px solid var(--black); font-size: clamp(.8rem, .5rem + .9vw, 1.35rem); font-weight: 900; font-stretch: 125%; letter-spacing: -.02em; line-height: 1; }
+.tape__stop { position: absolute; left: var(--at); top: 50%; display: grid; justify-items: center; gap: .1rem; width: max-content; transform: translate(-50%, calc(-100% - var(--h) / 2 - 12px)); }
+.tape__stop::after { content: ''; position: absolute; left: 50%; top: 100%; width: 3px; margin-left: -1.5px; height: calc(var(--h) / 2 + 12px); background: var(--black); }
+.tape__stop--low { transform: translate(-50%, calc(var(--h) / 2 + 12px)); }
+.tape__stop--low::after { top: auto; bottom: 100%; }
+.tape__stop b { padding: .45em .85em .4em; background: var(--white); border: var(--line) solid var(--black); border-radius: var(--r-pill); font-size: clamp(.6rem, .5rem + .3vw, .8rem); font-weight: 800; font-stretch: 125%; letter-spacing: .05em; text-transform: uppercase; line-height: 1; }
+.tape__stop--yard b { background: var(--black); color: var(--yellow); }
+.tape__stop i { font-style: normal; font-size: clamp(.62rem, .55rem + .2vw, .78rem); font-weight: 700; order: -1; }
+.tape__stop--low i { order: 1; }
+.tape__stop:first-of-type { transform: translate(-18%, calc(-100% - var(--h) / 2 - 12px)); } .tape__stop:first-of-type::after { left: 18%; }
+.tape__stop:last-of-type { transform: translate(-90%, calc(-100% - var(--h) / 2 - 12px)); } .tape__stop:last-of-type::after { left: 90%; }
+@media (max-width: 899px) {
+  .north__grid { grid-template-columns: minmax(0, 1fr); gap: 2.25rem; padding-bottom: 2rem; }
+  .north__fig { order: -1; width: min(56vw, 250px); margin: calc(var(--section) * -1) auto 0 0; }
+  .north__fig figcaption { left: auto; right: -34%; bottom: 20%; }
+}
+
+/* ---------- Road, sea or air ---------- */
+.modes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(.75rem, 1.5vw, 1.5rem); }
+.mode { position: relative; padding: 0 clamp(1.3rem, 2.4vw, 2.25rem) clamp(1.5rem, 2.6vw, 2.4rem); background: var(--black-2); border: var(--line) solid var(--black-3); border-radius: var(--r-l); }
+/* The icon hangs from the top edge in a small yellow U. */
+.mode__icon { display: grid; place-items: center; width: 96px; height: 118px; margin: -2px 0 1.7rem; padding-bottom: 10px; background: var(--yellow); color: var(--black); border-radius: 0 0 var(--r-pill) var(--r-pill); transition: transform .45s var(--spring); transform-origin: 50% 0; }
+.mode__icon .i { stroke-width: 1.9; }
+.mode:hover .mode__icon { transform: scaleY(1.08); }
+.mode__tag { position: absolute; right: clamp(1.3rem, 2.4vw, 2.25rem); top: 1.5rem; font-size: var(--t-label); font-weight: 800; font-stretch: 125%; letter-spacing: .09em; text-transform: uppercase; color: var(--yellow); }
+.mode__name { margin-bottom: .7rem; font-size: clamp(1.25rem, .9rem + 1.1vw, 1.8rem); line-height: .98; font-weight: 900; font-stretch: 118%; letter-spacing: -.02em; text-transform: uppercase; text-wrap: balance; }
+.mode p { margin: 0; color: var(--ash); }
+.season { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 1rem 1.5rem; margin-top: clamp(.75rem, 1.5vw, 1.5rem); padding: 1.2rem clamp(1.2rem, 2vw, 1.75rem); background: var(--yellow); color: var(--black); border-radius: var(--r-l); }
+.season__icon { display: grid; place-items: center; width: 60px; height: 60px; border-radius: 50%; background: var(--black); color: var(--yellow); }
+.season p { margin: 0; font-weight: 500; max-width: 70ch; } .season strong { font-weight: 900; font-stretch: 112%; text-transform: uppercase; letter-spacing: -.005em; }
+@media (max-width: 899px) {
+  .modes { grid-template-columns: minmax(0, 1fr); }
+  .mode { display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 1.2rem; padding: 0 1.2rem 1.3rem; border-radius: var(--r-m); }
+  .mode__icon { grid-row: 1 / span 2; width: 72px; height: 92px; margin-bottom: 0; } .mode__icon .i { width: 34px; height: 34px; }
+  .mode__tag { right: 1.2rem; top: 1.1rem; }
+  .mode__name { align-self: end; margin: 2.6rem 0 0; } .mode p { grid-column: 1 / -1; margin-top: 1rem; }
+  .season { grid-template-columns: auto minmax(0, 1fr); border-radius: var(--r-m); } .season .btn { grid-column: 1 / -1; }
+}
+
+/* ---------- FAQ ---------- */
+.faqsec { padding-top: calc(var(--section) + 1.5vw); }
+.faqsec__grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.35fr); gap: clamp(2rem, 6vw, 6.5rem); align-items: start; }
+.faqsec__head { position: sticky; top: calc(var(--mast) + 2rem); } .faqsec__head .lede { margin-top: 1.4rem; color: var(--stone); }
+@media (max-width: 899px) { .faqsec__grid { grid-template-columns: minmax(0, 1fr); } .faqsec__head { position: static; } }

@@ -1,0 +1,25 @@
+{
+  "featured": "manifest",
+  "designs": [
+    {
+      "key": "northbound",
+      "name": "Northbound",
+      "blurb": "Editorial and cinematic. A serif headline, big photography and a latitude ruler that follows you north from Kent to the Arctic coast."
+    },
+    {
+      "key": "manifest",
+      "name": "Manifest",
+      "blurb": "Engineered and precise. Drawn like a shipping document, with a live dispatch board for the three yards."
+    },
+    {
+      "key": "yellow",
+      "name": "Yellow",
+      "blurb": "Bold poster branding. UCM yellow and black, very large type, and the yard phone numbers right under the headline."
+    },
+    {
+      "key": "boreal",
+      "name": "Boreal",
+      "blurb": "Calm and map-first. Opens on a map of Alaska that asks where you are building and names the yard to call."
+    }
+  ]
+}

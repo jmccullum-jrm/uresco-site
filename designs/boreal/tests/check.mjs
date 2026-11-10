@@ -1,0 +1,230 @@
+// Site checks: run after `node build.mjs`.  npm run check
+//  1. Static: every page has a title, description, one <h1>, alt on every <img>, unique ids,
+//     and every internal link, image and asset resolves to a file in docs/.
+//  2. Browser: every page loads in Chromium at five widths with no errors, no horizontal
+//     scroll and no stretched hero photo; the finder answers by keyboard and hands the place
+//     to the quote form; both forms validate and hand off.
+import { readFileSync, readdirSync, statSync, existsSync } from 'fs';
+import { join, dirname, resolve, relative } from 'path';
+import { fileURLToPath } from 'url';
+import { createServer } from 'http';
+import { createRequire } from 'module';
+
+const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
+const DOCS = process.env.OUT ? resolve(process.env.OUT) : join(ROOT, 'docs');
+const problems = [];
+const fail = (page, msg) => problems.push(`${page}: ${msg}`);
+
+const walk = (d) => readdirSync(d).flatMap((f) => (statSync(join(d, f)).isDirectory() ? walk(join(d, f)) : [join(d, f)]));
+const pages = walk(DOCS).filter((f) => f.endsWith('.html'));
+
+for (const file of pages) {
+  const rel = relative(DOCS, file);
+  const src = readFileSync(file, 'utf8');
+  // Redirect stubs: only check that they point at a real page.
+  const refresh = src.match(/http-equiv="refresh" content="0; url=([^"]+)"/);
+  if (refresh) {
+    if (!existsSync(join(resolve(dirname(file), refresh[1]), 'index.html'))) fail(rel, `redirects to missing page ${refresh[1]}`);
+    continue;
+  }
+  if (!/<title>[^<]{10,}<\/title>/.test(src)) fail(rel, 'missing or short <title>');
+  if (!/<meta name="description" content="[^"]{50,}"/.test(src)) fail(rel, 'missing or short meta description');
+  const h1 = (src.match(/<h1[\s>]/g) || []).length;
+  if (h1 !== 1) fail(rel, `${h1} <h1> elements`);
+  for (const img of src.match(/<img\b[^>]*>/g) || []) if (!/\salt="/.test(img)) fail(rel, `img without alt: ${img.slice(0, 80)}`);
+  const ids = [...src.matchAll(/\sid="([^"]+)"/g)].map((m) => m[1]);
+  const dup = ids.filter((id, i) => ids.indexOf(id) !== i);
+  if (dup.length) fail(rel, `duplicate ids: ${[...new Set(dup)].join(', ')}`);
+  if (rel === '404.html') continue; // links are absolute to the deploy base
+  const refs = [...src.matchAll(/\s(?:href|src)="([^"]+)"/g), ...src.matchAll(/\ssrcset="([^"]+)"/g)].flatMap((m) =>
+    m[0].includes('srcset') ? m[1].split(',').map((s) => s.trim().split(/\s+/)[0]) : [m[1]]);
+  for (const ref of refs) {
+    if (/^(https?:|mailto:|tel:|#|data:)/.test(ref)) continue;
+    const clean = ref.split(/[?#]/)[0];
+    let target = resolve(dirname(file), clean);
+    if (clean.endsWith('/') || clean === '' || clean === '.' || clean === './') target = join(target, 'index.html');
+    if (!existsSync(target)) fail(rel, `broken link ${ref}`);
+  }
+}
+console.log(`static: ${pages.length} pages checked`);
+
+// ---- Browser pass ----
+const require = createRequire(import.meta.url);
+let chromium;
+try { ({ chromium } = require('playwright')); } catch { ({ chromium } = require('/opt/node22/lib/node_modules/playwright')); }
+const TYPES = { html: 'text/html', css: 'text/css', js: 'text/javascript', webp: 'image/webp', png: 'image/png', jpg: 'image/jpeg', svg: 'image/svg+xml', woff2: 'font/woff2', json: 'application/json', webmanifest: 'application/manifest+json', xml: 'application/xml', txt: 'text/plain' };
+const server = createServer((req, res) => {
+  let p = decodeURIComponent(req.url.split('?')[0]);
+  let f = join(DOCS, p);
+  if (p.endsWith('/')) f = join(f, 'index.html');
+  if (!existsSync(f)) { res.writeHead(404); return res.end('not found'); }
+  res.writeHead(200, { 'content-type': TYPES[f.split('.').pop()] || 'application/octet-stream' });
+  res.end(readFileSync(f));
+}).listen(0);
+const base = `http://127.0.0.1:${server.address().port}/`;
+const browser = await chromium.launch(existsSync('/opt/pw-browsers/chromium') ? { executablePath: '/opt/pw-browsers/chromium' } : {});
+const paths = pages.filter((f) => !/http-equiv="refresh"/.test(readFileSync(f, 'utf8'))).map((f) => relative(DOCS, f)).filter((r) => r !== '404.html')
+  .map((r) => r.replace(/index\.html$/, ''));
+
+// Every width that has ever broken something stays in this list.
+for (const [name, viewport, mobile] of [['small phone', { width: 360, height: 740 }, true], ['phone', { width: 390, height: 844 }, true], ['tablet', { width: 768, height: 1024 }, true], ['small laptop', { width: 1024, height: 768 }, false], ['desktop', { width: 1440, height: 900 }, false]]) {
+  const ctx = await browser.newContext({ viewport, isMobile: mobile, hasTouch: mobile });
+  const page = await ctx.newPage();
+  const errs = [];
+  page.on('pageerror', (e) => errs.push(e.message));
+  page.on('console', (m) => { if (m.type() === 'error') errs.push(m.text()); });
+  page.on('response', (r) => { if (r.status() >= 400 && r.url().startsWith(base)) errs.push(`${r.status()} ${r.url()}`); });
+  for (const p of paths) {
+    errs.length = 0;
+    await page.goto(base + p, { waitUntil: 'networkidle' });
+    const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+    if (overflow > 0) fail(`${name} /${p}`, `scrolls sideways by ${overflow}px`);
+    // A hero photo must not be drawn much bigger than the file the browser picked for it.
+    const stretched = await page.evaluate(() => {
+      const img = document.querySelector('.hero__media img, .phero__media img');
+      if (!img) return null;
+      const box = img.getBoundingClientRect();
+      const file = +(img.currentSrc.match(/-(\d+)\.webp/) || [])[1];
+      const ratio = img.naturalWidth / img.naturalHeight;
+      const drawn = Math.max(box.width, box.height * ratio);
+      return file && drawn > file * 1.2 ? `${img.currentSrc.split('/').pop().split('?')[0]} (${file}px file drawn at ${Math.round(drawn)}px)` : null;
+    });
+    if (stretched) fail(`${name} /${p}`, `hero photo stretched: ${stretched}`);
+    errs.forEach((e) => fail(`${name} /${p}`, e));
+  }
+  if (name === 'phone') {
+    // Call sheet opens from the action bar and closes again.
+    await page.goto(base, { waitUntil: 'networkidle' });
+    await page.click('.actionbar [data-open="call-sheet"]');
+    if (!(await page.isVisible('#call-sheet'))) fail('phone /', 'call sheet did not open');
+    await page.keyboard.press('Escape');
+    if (await page.isVisible('#call-sheet')) fail('phone /', 'call sheet did not close');
+    // Menu drawer.
+    await page.click('.masthead__menu');
+    if (!(await page.isVisible('#drawer'))) fail('phone /', 'menu drawer did not open');
+    // The action bar steps aside while typing.
+    await page.goto(base + 'quote/', { waitUntil: 'networkidle' });
+    await page.focus('#name');
+    await page.waitForTimeout(350);
+    const barTop = await page.$eval('.actionbar', (el) => el.getBoundingClientRect().top);
+    if (barTop < 844) fail('phone /quote/', 'action bar still on screen while typing');
+  } else if (name === 'desktop') {
+    // Quote form: empty submit flags the required fields; a filled one hands off to email.
+    await page.goto(base + 'quote/', { waitUntil: 'networkidle' });
+    await page.click('button[type=submit]');
+    const invalid = await page.$$eval('[aria-invalid="true"]', (els) => els.map((e) => e.id));
+    if (invalid.join() !== 'name,phone,email,location') fail('desktop /quote/', `validation flagged [${invalid}]`);
+    await page.fill('#name', 'Test Builder'); await page.fill('#phone', '907-555-0100');
+    await page.fill('#email', 'test@example.com'); await page.fill('#location', 'Bethel, AK');
+    await page.selectOption('#yard', 'Anchorage');
+    await page.setInputFiles('input[type=file]', { name: 'plans.pdf', mimeType: 'application/pdf', buffer: Buffer.from('%PDF-1.4') });
+    if ((await page.$$eval('[data-files] li', (l) => l.length)) !== 1) fail('desktop /quote/', 'uploaded file not listed');
+    await page.click('button[type=submit]');
+    await page.waitForTimeout(300);
+    if (!(await page.isVisible('[data-done]'))) fail('desktop /quote/', 'confirmation not shown after submit');
+    if (await page.isVisible('form[data-form]')) fail('desktop /quote/', 'form still on screen after submit');
+    const to = await page.textContent('[data-mail-to]');
+    if (to !== 'anchorage@uresco.com') fail('desktop /quote/', `request routed to ${to}, expected anchorage@uresco.com`);
+
+    // A product page's quote link starts the materials list with that product line.
+    await page.goto(base + 'quote/?product=Cedar%2C%20Decking%20%26%20Fencing', { waitUntil: 'networkidle' });
+    if (!(await page.inputValue('#materials')).startsWith('Cedar, Decking & Fencing:')) fail('desktop /quote/', 'product prefill missing');
+
+    // Credit application: required fields, consent box, routing to the home yard.
+    await page.goto(base + 'accounts/', { waitUntil: 'networkidle' });
+    await page.click('form[data-form=credit] button[type=submit]');
+    const bad = await page.$$eval('[aria-invalid="true"]', (els) => els.map((e) => e.id));
+    for (const id of ['company', 'address', 'name', 'phone', 'email', 'ref1_company', 'ref1_contact', 'agree', 'signature', 'signed'])
+      if (!bad.includes(id)) fail('desktop /accounts/', `required field ${id} not flagged`);
+    for (const [id, v] of [['company', 'Test Framing LLC'], ['address', '1 Main St, Kent WA'], ['name', 'Pat Builder'], ['phone', '253-555-0100'],
+      ['email', 'pat@example.com'], ['ref1_company', 'Acme Supply'], ['ref1_contact', 'Lee 253-555-0199'], ['signature', 'Pat Builder'], ['signed', '2026-10-22']]) await page.fill('#' + id, v);
+    await page.check('#agree');
+    await page.selectOption('form[data-form=credit] #yard', 'Fairbanks');
+    await page.click('form[data-form=credit] button[type=submit]');
+    await page.waitForTimeout(300);
+    if (!(await page.isVisible('[data-done]'))) fail('desktop /accounts/', 'confirmation not shown after submit');
+    if (await page.isVisible('form[data-form]')) fail('desktop /accounts/', 'form still on screen after submit');
+    const to2 = await page.textContent('[data-mail-to]');
+    if (to2 !== 'fairbanks@uresco.com') fail('desktop /accounts/', `application routed to ${to2}`);
+    const leftBehind = await page.evaluate(() => localStorage.getItem('uresco.draft.credit'));
+    if (leftBehind) fail('desktop /accounts/', 'draft left in the browser after submit');
+    // Sensitive fields are never kept in a draft.
+    await page.goto(base + 'accounts/', { waitUntil: 'networkidle' });
+    await page.fill('#company', 'Draft Co'); await page.fill('#ein', '12-3456789');
+    const draft = await page.evaluate(() => localStorage.getItem('uresco.draft.credit'));
+    if (!draft || !draft.includes('Draft Co') || draft.includes('12-3456789')) fail('desktop /accounts/', `draft handling wrong: ${draft}`);
+    await page.evaluate(() => localStorage.clear());
+
+    // Open/closed status is filled in from each yard's hours.
+    await page.goto(base + 'locations/', { waitUntil: 'networkidle' });
+    const statuses = await page.$$eval('.ycard__top [data-hours]', (els) => els.filter((e) => !e.hidden && /Open|Closed/.test(e.textContent)).length);
+    if (statuses !== 3) fail('desktop /locations/', `open/closed status shown for ${statuses} of 3 yards`);
+    const clocks = await page.$$eval('.ycard [data-clock]', (els) => els.filter((e) => /^\d{1,2}:\d\d [ap]\.m\.$/.test(e.textContent)).length);
+    if (clocks !== 3) fail('desktop /locations/', `local time shown for ${clocks} of 3 yards`);
+
+    // The finder: typed by keyboard, answered in the card, drawn on the map, handed to the quote form.
+    await page.goto(base, { waitUntil: 'networkidle' });
+    const before = await page.textContent('[data-r="name"]');
+    if (!/^Bethel, Alaska/.test(before)) fail('desktop /', `finder example is "${before}"`);
+    await page.focus('.finder__input');
+    await page.keyboard.type('utqiag');
+    if ((await page.getAttribute('.finder__input', 'aria-expanded')) !== 'true') fail('desktop /', 'finder list did not open while typing');
+    const first = await page.textContent('.finder__list [role=option]');
+    if (!first.startsWith('Utqiaġvik')) fail('desktop /', `"utqiag" suggested "${first}"`);
+    await page.keyboard.press('Enter');
+    await page.waitForTimeout(250);
+    const chosen = await page.textContent('[data-r="name"]');
+    if (chosen !== 'Utqiaġvik, Alaska') fail('desktop /', `finder chose "${chosen}"`);
+    if (!(await page.isVisible('.route__y[data-y="fairbanks"]'))) fail('desktop /', 'Utqiaġvik did not point to the Fairbanks yard');
+    const how = await page.textContent('.route__modes');
+    if (!/Barge in season/.test(how) || !/Air year-round/.test(how)) fail('desktop /', `Utqiaġvik freight reads "${how.trim()}"`);
+    const href = await page.getAttribute('[data-r="quote"]', 'href');
+    if (!href.includes('location=Utqia%C4%A1vik%2C%20AK') || !href.endsWith('yard=fairbanks')) fail('desktop /', `finder quote link is ${href}`);
+    if ((await page.textContent('.map__tag--dest')) !== 'Utqiaġvik' || await page.isHidden('.map__tag--dest')) fail('desktop /', 'chosen place not marked on the map');
+    // The old name still finds it.
+    await page.fill('.finder__input', 'Barrow');
+    const alias = await page.textContent('.finder__list [role=option]');
+    if (!alias.startsWith('Utqiaġvik (Barrow)')) fail('desktop /', `"Barrow" suggested "${alias}"`);
+    // A place that is not on the list still gets an answer and a way forward.
+    await page.fill('.finder__input', 'Chicken');
+    await page.keyboard.press('Enter');
+    await page.waitForTimeout(250);
+    if (!(await page.isVisible('[data-r="else"]')) || !(await page.isVisible('.route__y[data-y="any"]'))) fail('desktop /', 'unknown place got no answer');
+    await page.goto(base + 'quote/' + href.slice(href.indexOf('?')), { waitUntil: 'networkidle' });
+    if ((await page.inputValue('#location')) !== 'Utqiaġvik, AK') fail('desktop /quote/', 'place from the finder not filled in');
+    if ((await page.inputValue('#yard')) !== 'Fairbanks') fail('desktop /quote/', 'yard from the finder not selected');
+    await page.evaluate(() => localStorage.clear());
+  }
+  await ctx.close();
+}
+
+// The first screen has to answer the two things people come for: a yard's number and the finder.
+// On common laptop screens both show without scrolling. Hinted text runs wider and wraps sooner,
+// so check with font hinting on as well. Only the headless shell (Playwright's default browser)
+// obeys this flag; full Chromium ignores it.
+const hinted = await chromium.launch({ args: ['--font-render-hinting=full'] });
+for (const [mode, b] of [['', browser], [' hinted', hinted]]) {
+  for (const [w, h] of [[1024, 768], [1280, 720], [1280, 800], [1366, 768], [1440, 900], [1536, 864], [1920, 1080]]) {
+    const ctx = await b.newContext({ viewport: { width: w, height: h } });
+    const page = await ctx.newPage();
+    await page.goto(base, { waitUntil: 'networkidle' });
+    const phones = await page.$$eval('.utility__yards a', (els) => els.map((e) => e.getBoundingClientRect()).filter((r) => r.width && r.bottom > 0).length);
+    if (phones !== 3) fail(`${w}x${h}${mode} /`, `${phones} of 3 yard numbers on the first screen`);
+    const field = await page.$eval('.finder__input', (e) => e.getBoundingClientRect().bottom);
+    if (field > h) fail(`${w}x${h}${mode} /`, `finder field cut off at the fold by ${Math.ceil(field - h)}px`);
+    if (w >= 1100) {
+      const cta = await page.$eval('[data-r="quote"]', (e) => e.getBoundingClientRect().bottom);
+      if (cta > h) fail(`${w}x${h}${mode} /`, `route card cut off at the fold by ${Math.ceil(cta - h)}px`);
+    }
+    await ctx.close();
+  }
+}
+await hinted.close();
+await browser.close();
+server.close();
+
+if (problems.length) {
+  console.log(`\n${problems.length} problem(s):\n` + problems.map((p) => '  ✗ ' + p).join('\n'));
+  process.exit(1);
+}
+console.log(`browser: ${paths.length} pages × 5 widths clean; finder, quote form, credit application, hours, dialogs and the fold work\nALL CHECKS PASSED`);

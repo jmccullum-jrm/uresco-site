@@ -1,0 +1,43 @@
+/* Print: the credit application prints as a clean, blank paper form that says where to send it. */
+.print-only { display: none; }
+@media print {
+  @page { margin: 12mm 14mm; }
+  .utility, .masthead, .actionbar, .footer, dialog, .qband, .phero, .aside, .section--bone,
+  .form__foot, .drop, .files, [data-done], [data-failed], .shead, .skip, .field:has(#yard) { display: none !important; }
+  .print-only { display: block; }
+  body { background: #fff; color: #000; font-size: 9.5pt; line-height: 1.3; }
+  .section { padding: 0; }
+  .wrap { padding: 0; max-width: none; }
+  .qlayout { display: block; }
+  .letterhead { display: flex; justify-content: space-between; align-items: flex-start; gap: 16pt; padding-bottom: 8pt; margin-bottom: 10pt; border-bottom: 1.5pt solid #000; }
+  .letterhead__brand { display: flex; align-items: center; gap: 8pt; }
+  .letterhead__brand svg { width: 34pt; height: 34pt; }
+  .letterhead__title { font-size: 17pt; line-height: 1; font-weight: 850; font-stretch: 112%; text-transform: uppercase; }
+  .letterhead p:not(.letterhead__title) { margin: 2pt 0 0; font-size: 8.5pt; }
+  .letterhead__title { margin: 0; }
+  .letterhead__return { font-size: 8pt; line-height: 1.35; text-align: right; }
+  .form { gap: 14pt; }
+  .fieldset { break-inside: avoid; gap: 7pt 14pt; }
+  .fieldset legend { font-size: 11.5pt; margin-bottom: 4pt; gap: 5pt; }
+  .fieldset legend span { width: 14pt; height: 14pt; font-size: 7pt; background: #000; color: #fff; }
+  .field { gap: 1pt; }
+  .field label, .field .label { font-size: 8.5pt; }
+  .field .hint { font-size: 7.5pt; color: #333; }
+  .fieldset--newpage { break-before: page; }
+  .input, .field select, .field textarea { border: 0; border-bottom: .75pt solid #000; border-radius: 0; min-height: 23pt; padding: 0; background: #fff; box-shadow: none; font-size: 9pt; }
+  .field select { background-image: none; -webkit-appearance: none; color: transparent; }
+  .field textarea { min-height: 54pt; border: .75pt solid #000; resize: none; }
+  .input::placeholder { color: transparent; }
+  .input::-webkit-calendar-picker-indicator { display: none; }
+  input[type="date"]::-webkit-datetime-edit { color: transparent; }
+  .seg { display: flex; flex-wrap: wrap; gap: 3pt 14pt; }
+  .seg label, .seg label:has(input:checked) { border: 0; background: none; box-shadow: none; padding: 0; gap: 4pt; font-size: 8.5pt; font-weight: 500; }
+  .seg input { position: static; opacity: 1; appearance: none; -webkit-appearance: none; width: 9pt; height: 9pt; border: .75pt solid #000; border-radius: 2pt; margin: 0; }
+  .refs { grid-template-columns: repeat(3, 1fr); gap: 6pt; }
+  .ref { padding: 6pt 8pt; gap: 5pt; border: .75pt solid #000; border-radius: 2pt; background: #fff; }
+  .ref__title { font-size: 8.5pt; }
+  .check { padding: 4pt 6pt; border: .75pt solid #000; background: #fff; font-size: 8.5pt; }
+  .check:has(input:checked) { background: #fff; border-color: #000; }
+  .check input { width: 10pt; height: 10pt; appearance: none; -webkit-appearance: none; border: .75pt solid #000; border-radius: 2pt; }
+  a { text-decoration: none; }
+}

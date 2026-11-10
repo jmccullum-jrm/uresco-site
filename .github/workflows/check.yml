@@ -1,5 +1,5 @@
-# Builds the site and runs every check on each pull request and push to main.
-# Fails if docs/ wasn't rebuilt and committed after a change to src/.
+# Builds the design preview and runs every check on each pull request and push to main.
+# Fails if docs/ wasn't rebuilt and committed after a change to a design or the chooser.
 name: Site checks
 
 on:
@@ -8,7 +8,8 @@ on:
     branches: [main]
 
 jobs:
-  check:
+  build:
+    name: Build and chooser
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -19,14 +20,35 @@ jobs:
         run: node build.mjs
       - name: docs/ matches the source
         run: |
-          if ! git diff --quiet -- docs; then
+          if [ -n "$(git status --porcelain -- docs)" ]; then
             echo "::error::docs/ is out of date. Run 'npm run build' and commit the result."
-            git diff --stat -- docs
+            git status --short -- docs | head -40
             exit 1
           fi
       - name: Install Chromium for the browser checks
         run: |
           npm install --no-save --no-package-lock playwright@1.56.1
           npx playwright install --with-deps chromium
+      - name: Chooser checks
+        run: node tests/chooser.mjs
+
+  design:
+    name: ${{ matrix.design }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        design: [northbound, manifest, yellow, boreal]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Build
+        run: node build.mjs
+      - name: Install Chromium for the browser checks
+        run: |
+          npm install --no-save --no-package-lock playwright@1.56.1
+          npx playwright install --with-deps chromium
       - name: Link, SEO, accessibility and browser checks
-        run: node tests/check.mjs
+        run: node tests/all.mjs ${{ matrix.design }}

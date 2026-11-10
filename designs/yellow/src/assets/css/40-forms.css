@@ -1,0 +1,86 @@
+/* ---------- Forms: quote request and credit application ----------
+   Carried over from the previous design and re-tokenised (pills, keylines, yellow focus).
+   They work and pass their tests; they have not had a full pass in this system yet. */
+.qlayout { display: grid; grid-template-columns: minmax(0, 1fr) 380px; gap: clamp(2rem, 1rem + 4vw, 5rem); align-items: start; }
+@media (max-width: 1000px) { .qlayout { grid-template-columns: minmax(0, 1fr); } .qlayout .aside { position: static; } }
+.form { display: grid; gap: 2.5rem; }
+.fieldset { border: 0; padding: 0; margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 1rem 1.25rem; }
+.fieldset legend { grid-column: 1 / -1; display: flex; align-items: center; gap: .75rem; padding: 0; margin-bottom: 1.25rem; font-size: 1.5rem; font-weight: 900; font-stretch: 112%; text-transform: uppercase; }
+.fieldset legend span { font-size: .75rem; font-weight: 600; letter-spacing: .1em; width: 2rem; height: 2rem; display: inline-grid; place-items: center; background: var(--ink); color: var(--yellow); border-radius: 50%; }
+.field { display: grid; gap: .45rem; }
+.field--full { grid-column: 1 / -1; }
+@media (max-width: 640px) { .fieldset { grid-template-columns: 1fr; } }
+.field label, .field .label { font-weight: 650; font-size: .95rem; }
+.field .hint { font-size: .85rem; color: var(--stone); font-weight: 400; }
+.req { color: #A04000; margin-left: .15rem; }
+.input, .field select, .field textarea {
+  width: 100%; min-height: 52px; padding: .8rem 1rem; font: inherit; font-size: 1rem; color: var(--ink);
+  background: var(--paper); border: var(--line) solid var(--black); border-radius: var(--radius);
+  transition: border-color .15s, box-shadow .15s;
+}
+.field textarea { min-height: 150px; resize: vertical; }
+.field select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%230E0E0C' stroke-width='2'%3E%3Cpath d='m4 6 4 4 4-4'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 1rem center; padding-right: 2.75rem; }
+.input:hover, .field select:hover, .field textarea:hover { border-color: #B9B09C; }
+.input:focus, .field select:focus, .field textarea:focus { outline: none; border-color: var(--ink); box-shadow: 0 0 0 4px rgba(245,184,0,.45); }
+.field [aria-invalid="true"] { border-color: #B33A00; }
+.err { color: #A03300; font-size: .88rem; font-weight: 600; }
+.seg { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: .5rem; }
+.seg label { position: relative; display: flex; gap: .7rem; align-items: center; padding: .9rem 1rem; border: var(--line) solid var(--black); border-radius: var(--radius); background: var(--paper); cursor: pointer; font-weight: 600; font-size: .95rem; transition: border-color .15s, background .15s; }
+.seg input { position: absolute; opacity: 0; pointer-events: none; }
+.seg label:has(input:checked) { border-color: var(--ink); background: var(--bone); box-shadow: inset 0 0 0 1px var(--ink); }
+.seg label:has(input:focus-visible) { outline: 3px solid var(--yellow); outline-offset: 2px; }
+.seg .i { color: var(--stone); }
+.seg label:has(input:checked) .i { color: var(--ink); }
+.drop {
+  display: grid; place-items: center; text-align: center; gap: .5rem; padding: 2.25rem 1.5rem;
+  border: 2px dashed #BDB4A1; border-radius: 8px; background: var(--bone); cursor: pointer; transition: border-color .15s, background .15s;
+}
+.drop:hover, .drop.is-over { border-color: var(--ink); background: #ECE6D9; }
+.drop__icon { width: 56px; height: 56px; border-radius: 50%; background: var(--yellow); display: grid; place-items: center; }
+.drop b { font-size: 1.1rem; }
+.drop small { color: var(--stone); }
+.files { list-style: none; margin: .75rem 0 0; padding: 0; display: grid; gap: .4rem; }
+.files li { display: flex; align-items: center; gap: .6rem; padding: .6rem .8rem; background: var(--paper); border: 1px solid var(--sand); border-radius: var(--radius); font-size: .92rem; }
+.files li span { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.files button { background: none; border: 0; padding: .25rem; color: var(--stone); }
+.form__foot { display: flex; flex-wrap: wrap; gap: 1rem 1.5rem; align-items: center; padding-top: 1.5rem; border-top: var(--line) solid var(--black); }
+.form__foot p { margin: 0; color: var(--stone); font-size: .9rem; max-width: 46ch; }
+.notice { display: flex; gap: 1rem; align-items: flex-start; padding: 1.5rem; border-radius: 6px; background: var(--bone); border: var(--line) solid var(--black); }
+.notice .i { flex: none; background: var(--yellow); border-radius: 50%; padding: 6px; width: 36px; height: 36px; }
+.notice h2 { font-size: 1.5rem; font-weight: 900; font-stretch: 112%; text-transform: uppercase; margin-bottom: .35rem; }
+.notice p { margin: 0; color: var(--stone); }
+
+
+/* Accounts */
+.perks { display: grid; grid-template-columns: repeat(4, 1fr); gap: clamp(1rem, .5rem + 1.5vw, 2rem); }
+.perk p { color: var(--stone); margin: .5rem 0 0; }
+.perk .svc__icon { margin-bottom: 1rem; }
+@media (max-width: 900px) { .perks { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 520px) { .perks { grid-template-columns: 1fr; } }
+.refs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+.ref { display: grid; gap: .75rem; padding: 1rem; background: var(--bone); border: 1px solid var(--sand); border-radius: var(--radius); }
+.ref__title { margin: 0; font-weight: 750; font-stretch: 112%; }
+@media (max-width: 860px) { .refs { grid-template-columns: 1fr; } }
+.check { display: flex; gap: .8rem; align-items: flex-start; padding: 1rem; border: var(--line) solid var(--black); border-radius: var(--radius); background: var(--paper); font-weight: 450; font-size: .95rem; cursor: pointer; }
+.check input { width: 22px; height: 22px; margin: .1rem 0 0; accent-color: var(--ink); flex: none; }
+.check:has(input:checked) { border-color: var(--ink); background: var(--bone); }
+.aside__more { display: flex; align-items: center; gap: .6rem; margin-top: 1.5rem; padding: 1rem; border-radius: var(--radius); background: var(--ink-3); text-decoration: none; font-weight: 600; font-size: .95rem; }
+.aside__more .i:last-child { margin-left: auto; color: var(--yellow); }
+.aside__more:hover { background: var(--ink-line); }
+.aside li a span:first-child { display: inline-flex; align-items: center; gap: .6rem; }
+.aside .status { color: var(--mist); }
+.aside .status.is-open { color: #7FD69D; }
+
+.input, .field select, .field textarea { border-radius: var(--r-s); background: var(--white); }
+.fieldset legend { letter-spacing: -.015em; }
+.fieldset legend span { font-stretch: 125%; font-weight: 800; }
+.seg label { border-radius: var(--r-pill); background: var(--white); padding-inline: 1.2rem; }
+.seg label:has(input:checked) { background: var(--yellow); box-shadow: none; }
+.seg label:has(input:focus-visible) { outline-color: var(--black); }
+.drop { border-color: var(--black); border-radius: var(--r-m); background: var(--white); }
+.drop:hover, .drop.is-over { background: var(--yellow); }
+.notice { border-radius: var(--r-m); background: var(--white); border-width: var(--line); }
+.check { border-radius: var(--r-m); background: var(--white); }
+.check:has(input:checked) { background: var(--yellow); }
+.ref { border-radius: var(--r-m); background: var(--white); border: var(--line) solid var(--black); }
+.aside__more { border-radius: var(--r-m); }
