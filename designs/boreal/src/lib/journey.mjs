@@ -2,9 +2,8 @@ import { html, raw } from './html.mjs';
 import { icon } from './icons.mjs';
 
 // "How a building package travels": five steps, each with a line drawing.
-// The drawings share one 560 × 360 canvas and four classes (see pages/home.css):
-//   .l  line   .f  filled panel   .y  yellow line   .yf  yellow fill   .d  dim line   .t  small mono text
-const fig = (n, body) => `<svg class="jfig" data-fig="${n}" viewBox="0 0 560 360" aria-hidden="true" focusable="false">${body}</svg>`;
+// The drawings share one 560 × 360 canvas and the stroke classes of .fig (see 30-components.css).
+const fig = (n, body) => `<svg class="fig jfig" data-fig="${n}" viewBox="0 0 560 360" aria-hidden="true" focusable="false">${body}</svg>`;
 
 const plans = fig(1, `
 <rect class="f d" x="108" y="64" width="330" height="236" rx="12" transform="rotate(-5 273 182)"/>
@@ -66,9 +65,9 @@ export const FIGURES = [plans, takeoff, crate, freight, delivered];
 
 export const STEPS = [
   { rail: 'Plans', title: 'Send plans or a list', body: 'Drawings, a materials list or a rough scope. For projects that need more than a list, design services are available.', link: ['Design services', 'services/#design'] },
-  { rail: 'Take-off', title: 'We build the take-off', body: 'Every stick, panel and connector, checked for gaps and priced. On a remote job, that is what keeps a missing box of hangers from becoming a second freight bill.', link: ['Estimates & take-offs', 'services/#takeoffs'] },
-  { rail: 'Package', title: 'We package and crate it', body: 'The complete package is sorted, crated, banded and wrapped to survive the trip and every handoff along it.', link: ['Crating & packaging', 'services/#crating'] },
-  { rail: 'Freight', title: 'We coordinate the freight', body: 'Truck, ocean freight, barge or air. We work with you on shipping coordination and plan around the season, so the package is at the dock when the sailing is.', link: ['Shipping coordination', 'services/#shipping'] },
+  { rail: 'Take-off', title: 'We help with the take-off', body: 'We help with the take-off and the estimate. On a remote job, a complete list is what keeps a missing box of hangers from becoming a second freight bill.', link: ['Estimates & take-offs', 'services/#takeoffs'] },
+  { rail: 'Package', title: 'We package and crate it', body: 'The complete package comes together, with crating and packaging for the trip.', link: ['Crating & packaging', 'services/#crating'] },
+  { rail: 'Freight', title: 'We coordinate the freight', body: 'Truck, ocean freight, barge or air. We work with you on all aspects of shipping coordination, and we plan around the season.', link: ['Shipping coordination', 'services/#shipping'] },
   { rail: 'Delivered', title: 'It lands where you build', body: 'Dock delivery for a village off the road system, or a boom truck and Moffett forklift setting the load on a Puget Sound job site.', link: ['Job-site delivery', 'services/#delivery'] },
 ];
 

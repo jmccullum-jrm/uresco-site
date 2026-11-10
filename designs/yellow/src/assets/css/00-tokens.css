@@ -1,6 +1,6 @@
 /* Uresco — direction C, "Yellow".
    Tokens only. Everything else reads from here.
-   Bundled in filename order: 00-tokens, 10-base, 20-chrome, 30-components, 40-forms, 80-legacy, then pages/*. */
+   Bundled in filename order: 00-tokens, 10-base, 20-chrome, 30-components, 40-forms, 90-print, then pages/*. */
 
 /* One family carries both voices: wide and black for headlines, normal width for reading. */
 @font-face {
@@ -55,12 +55,12 @@
   --wide: 125%;             /* display width axis; eased to 112% on small phones */
   --t-d1: clamp(2.7rem, 1.1rem + 6.6vw, 7.25rem);   /* page headline */
   --t-d2: clamp(2.05rem, 1.1rem + 4.1vw, 5rem);     /* section headline */
-  --t-d3: clamp(1.3rem, 1rem + 1.3vw, 2.1rem);      /* card headline */
+  --t-d3: clamp(1.3rem, 1rem + 1.3vw, 2.1rem);      /* the failure notice on a form */
   --t-d4: clamp(1.02rem, .95rem + .3vw, 1.2rem);    /* small headline */
   --t-lede: clamp(1.1rem, 1rem + .5vw, 1.4rem);
   --t-body: 1.0625rem;
   --t-small: .9rem;
-  --t-label: .74rem;
+  --t-label: .75rem;
 
   /* Space: a 4px base. Sections breathe on a fluid scale. */
   --s1: .25rem; --s2: .5rem; --s3: .75rem; --s4: 1rem; --s5: 1.5rem; --s6: 2rem; --s7: 3rem; --s8: 4rem;
@@ -92,10 +92,3 @@
 @media (max-width: 420px) { :root { --wide: 116%; } }
 /* Very large screens get a wider column, so the poster grows with them. */
 @media (min-width: 1900px) { :root { --wrap: 1640px; } }
-
-/* Old names kept so pages not yet rebuilt in this system still resolve their colours. */
-:root {
-  --ink: var(--black); --ink-2: var(--black-2); --ink-3: var(--black-3); --ink-line: var(--black-3);
-  --bone: var(--paper); --sand: var(--paper-2); --mist: var(--ash); --sea: var(--black);
-  --radius: var(--r-s); --ease: var(--out); --mono: var(--font);
-}

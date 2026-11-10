@@ -8,7 +8,7 @@ import { join, dirname, resolve } from 'path';
 import { fileURLToPath, pathToFileURL } from 'url';
 import { createHash } from 'crypto';
 import { SITE } from './src/config.mjs';
-import { markSvg, ringsSvg } from './src/lib/icons.mjs';
+import { markSvg } from './src/lib/icons.mjs';
 import { mapSvg } from './src/lib/components.mjs';
 
 const ROOT = dirname(fileURLToPath(import.meta.url));
@@ -48,7 +48,6 @@ rmSync(OUT, { recursive: true, force: true });
 mkdirSync(OUT, { recursive: true });
 cpSync(join(SRC, 'assets'), join(OUT, 'assets'), { recursive: true });
 writeFileSync(join(OUT, 'assets', 'map.svg'), mapSvg());
-writeFileSync(join(OUT, 'assets', 'rings.svg'), ringsSvg());
 // Light minification of the shipped CSS and JS (sources stay readable in src/).
 const minCss = (css) => css.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\s+/g, ' ').replace(/\s*([{};,>])\s*/g, '$1').replace(/;}/g, '}').trim();
 const minJs = (js) => js.split('\n').map((l) => l.trim()).filter((l) => l && !l.startsWith('//')).join('\n');

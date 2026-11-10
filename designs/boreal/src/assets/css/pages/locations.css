@@ -1,0 +1,82 @@
+/* ================= Locations =================
+   The page people land on to call a yard. The opening is one screen that answers "which yard, and
+   what is the number?": the map, and a white switchboard over it whose rows are the guidance and the
+   numbers at once. Below it each yard has its full details on a card lying on its side. The finder's
+   white shell (.finder) and the stage (.stage) keep their own rules; everything here is prefixed lc-. */
+
+.lc-sw .stage__ui { width: min(100%, 31rem); gap: 1rem; }
+
+/* ---------- The switchboard ---------- */
+.lc-board { padding: 1.1rem 1.25rem .85rem; }
+.lc-board__title { font-size: 1.0625rem; font-weight: 600; letter-spacing: -.015em; line-height: 1.3; }
+.lc-rows { list-style: none; margin-top: .65rem; }
+.lc-row { padding-block: .7rem .55rem; border-top: 1px solid var(--mist); }
+.lc-row__q { margin: 0; font-family: var(--mono); font-size: var(--t-micro); font-weight: 500; letter-spacing: .05em; text-transform: uppercase; color: var(--slate); }
+.lc-row__yard { display: flex; align-items: center; justify-content: space-between; gap: .75rem; margin: .3rem 0 0; font-size: 1.1875rem; font-weight: 600; letter-spacing: -.025em; line-height: 1.2; }
+.lc-row__yard a { display: inline-block; padding-block: .2rem; text-decoration: none; }
+.lc-row__yard a span { color: var(--slate); font-weight: 500; }
+.lc-row__yard a:hover { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .2em; }
+.lc-row__yard .status { flex: none; font-size: .8125rem; font-weight: 500; letter-spacing: 0; }
+.lc-row__num { display: flex; align-items: center; justify-content: space-between; gap: .75rem; min-height: 48px; margin-top: .15rem; text-decoration: none; border-radius: 10px; }
+.lc-row__digits { font-size: clamp(1.625rem, 1.35rem + 1vw, 2.125rem); font-weight: 500; letter-spacing: -.04em; line-height: 1; font-variant-numeric: tabular-nums; }
+.lc-row__call { flex: none; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: var(--yellow); color: var(--ink); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .4), 0 1px 2px rgba(14, 14, 12, .18); transition: background var(--fast); }
+.lc-row__num:hover .lc-row__call { background: var(--yellow-hi); }
+.lc-row__num:hover .lc-row__digits { text-decoration: underline; text-decoration-thickness: 2px; text-decoration-color: var(--yellow); text-underline-offset: .18em; }
+.lc-board__foot { margin: .15rem 0 0; padding-top: .65rem; border-top: 1px solid var(--mist); font-size: .875rem; color: var(--slate); }
+
+/* A row under the pointer lights its yard on the map. */
+.lc-sw:has(.lc-row[data-yard='kent']:hover) .map__yard[data-yard='kent'] .map__tag,
+.lc-sw:has(.lc-row[data-yard='anchorage']:hover) .map__yard[data-yard='anchorage'] .map__tag,
+.lc-sw:has(.lc-row[data-yard='fairbanks']:hover) .map__yard[data-yard='fairbanks'] .map__tag { border-color: var(--yellow); background: var(--night); }
+
+/* Up to 1099px the numbers come first and the map follows them. */
+@media (max-width: 1099px) {
+  .lc-sw { display: flex; flex-direction: column; align-items: stretch; }
+  .lc-sw .stage__ui { order: 1; position: relative; display: grid; width: auto; margin: 0; padding: var(--pad) var(--pad) 0; box-sizing: border-box; }
+  .lc-sw .stage__copy { position: static; width: auto; padding: 0; }
+  .lc-sw .stage__map { order: 2; margin-top: 0; }
+  .lc-sw .legend { order: 3; }
+  .lc-board { margin: 0; }
+}
+/* Tablets: the three yards side by side; a narrower tablet reads them as rows with the number at the end. */
+@media (min-width: 900px) and (max-width: 1099px) {
+  .lc-rows { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.25rem; }
+  .lc-row { display: flex; flex-direction: column; }
+  .lc-row__q { flex: 1; }
+  .lc-row__digits { font-size: clamp(1.25rem, .95rem + .75vw, 1.5rem); white-space: nowrap; }
+}
+@media (min-width: 700px) and (max-width: 899px) {
+  .lc-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 1.25rem; align-items: center; padding-block: .6rem; }
+  .lc-row__q, .lc-row__yard { grid-column: 1; }
+  .lc-row__yard { justify-content: flex-start; }
+  .lc-row__num { grid-column: 2; grid-row: 1 / span 2; margin: 0; gap: 1rem; }
+  .lc-row__digits { font-size: 1.75rem; white-space: nowrap; }
+}
+@media (max-width: 699px) {
+  .lc-sw .stage__copy { order: 0; }
+  .lc-board { padding: .9rem 1rem .7rem; }
+  .lc-row__yard a { display: inline-flex; align-items: center; min-height: 40px; margin-block: -.3rem; }
+  .lc-row { padding-block: .6rem .4rem; }
+  .lc-row__yard { font-size: 1.125rem; }
+  .lc-row__digits { font-size: clamp(1.5rem, 7.2vw, 1.875rem); }
+  .lc-open .eyebrow { margin-bottom: .55rem; }
+}
+
+/* ---------- The yards: every detail, one wide card each ---------- */
+.lc-yards { display: grid; gap: 1.25rem; }
+.lc-yards .ycard:target { box-shadow: var(--sh-2), 0 0 0 2px var(--ink); }
+.lc-yards .ycard__phone { padding-block: .15rem; font-size: clamp(1.75rem, 1.3rem + 1.5vw, 2.5rem); white-space: nowrap; }
+@media (min-width: 1181px) {
+  .lc-yards .ycard__body { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); grid-template-rows: auto auto auto auto 1fr; column-gap: clamp(1.5rem, 3.5vw, 3rem); padding: 1.5rem 1.75rem; }
+  .lc-yards .ycard__top { grid-area: 1 / 1; }
+  .lc-yards .ycard__role { grid-area: 2 / 1; }
+  .lc-yards .ycard__phone { grid-area: 3 / 1; }
+  .lc-yards .ycard__acts { grid-area: 4 / 1; margin-top: .35rem; }
+  .lc-yards .ycard__links { grid-area: 5 / 1; align-self: end; }
+  .lc-yards .ycard__facts { grid-area: 1 / 2 / 6 / 3; margin: 0; }
+}
+@media (max-width: 699px) {
+  .lc-yards { gap: .75rem; }
+  .lc-yards .ycard__phone { font-size: clamp(1.75rem, 8vw, 2.125rem); }
+}
+.lc-yards + .callout { margin-top: 1.25rem; }

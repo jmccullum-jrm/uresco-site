@@ -1,21 +1,20 @@
 {
- "_readme": "Every photo on the site. `src` is a URL (downloaded once into .cache/) or a path under originals/. `focal` is the CSS object-position used when a photo is cropped. `crop` trims the source first as [left, top, right, bottom] fractions. `hero` photos get a 2400px size. `art` adds a 3:4 crop that phones get instead of the wide photo. Run `npm run images` after editing. `plate` stores the photo in greyscale, for hero plates (the stylesheet prints them in two inks).",
+ "_readme": "Every photo on the site. `src` is a URL (downloaded once into .cache/) or a path under originals/. `focal` is the CSS object-position used when a photo is cropped. `crop` trims the source first as [left, top, right, bottom] fractions. `hero` photos get a 2400px size. Run `npm run images` after editing. `plate` stores the photo in greyscale, for hero plates (the stylesheet prints them in two inks).",
  "hero-truck-denali": {
   "src": "https://images.unsplash.com/photo-1721930513258-887f010ef5a0?w=2600&q=85&auto=format&fit=crop",
-  "alt": "A freight truck on a highway through spruce forest with Denali rising behind it",
+  "alt": "A truck on a highway through spruce forest with Denali rising behind it",
   "credit": "Joseph Corl / Unsplash",
   "page": "https://unsplash.com/photos/OVKRxZub9f4",
   "focal": "60% 50%",
   "hero": true,
-  "art": true
+  "plate": true
  },
  "lumber-stack": {
   "src": "https://images.unsplash.com/photo-1681752972950-6229ca099fbc?w=2400&q=85&auto=format&fit=crop",
   "alt": "Ends of stacked dimensional lumber in a yard",
   "credit": "Georg Eiermann / Unsplash",
   "page": "https://unsplash.com/photos/6j3laFTi8wg",
-  "hero": true,
-  "art": true
+  "hero": true
  },
  "pine-racking": {
   "src": "https://images.unsplash.com/photo-1787422430123-344b233a0626?w=2400&q=85&auto=format&fit=crop",
@@ -23,8 +22,7 @@
   "credit": "PJ Wallace / Unsplash",
   "page": "https://unsplash.com/photos/EFR6ICYBMN0",
   "focal": "60% 50%",
-  "hero": true,
-  "art": true
+  "hero": true
  },
  "timber-ends": {
   "src": "https://images.unsplash.com/photo-1783887110442-19e7f98fc87a?w=2000&q=85&auto=format&fit=crop",
@@ -38,8 +36,7 @@
   "credit": "LUCIA LU / Unsplash",
   "page": "https://unsplash.com/photos/BimFx6m5XqU",
   "focal": "50% 40%",
-  "hero": true,
-  "art": true
+  "hero": true
  },
  "framer": {
   "src": "https://images.unsplash.com/photo-1646324554833-f0b6a479fa5d?w=2000&q=85&auto=format&fit=crop",
@@ -47,16 +44,14 @@
   "credit": "Josh Olalde / Unsplash",
   "page": "https://unsplash.com/photos/EWoU3snzadU",
   "focal": "35% 40%",
-  "hero": true,
-  "art": true
+  "hero": true
  },
  "framing-joists": {
   "src": "https://images.unsplash.com/photo-1676802037786-3697d60497ae?w=2000&q=85&auto=format&fit=crop",
   "alt": "Roof trusses and wall framing on a new house",
   "credit": "Troy Mortier / Unsplash",
   "page": "https://unsplash.com/photos/kkdfOe0iRu8",
-  "hero": true,
-  "art": true
+  "hero": true
  },
  "unloading": {
   "src": "https://images.unsplash.com/photo-1784354156146-824ba4214d39?w=2000&q=85&auto=format&fit=crop",
@@ -64,8 +59,7 @@
   "credit": "Indraadityan Logamurugan / Unsplash",
   "page": "https://unsplash.com/photos/TIL-dnIjK8E",
   "focal": "55% 55%",
-  "hero": true,
-  "art": true
+  "hero": true
  },
  "combilift": {
   "src": "https://images.unsplash.com/photo-1787422429934-abada474f7d9?w=2000&q=85&auto=format&fit=crop",
@@ -73,8 +67,7 @@
   "credit": "PJ Wallace / Unsplash",
   "page": "https://unsplash.com/photos/Do5rGlcZnuQ",
   "focal": "50% 45%",
-  "hero": true,
-  "art": true
+  "hero": true
  },
  "valdez-port": {
   "src": "https://images.unsplash.com/photo-1651682417623-e1660ce221a3?w=2400&q=85&auto=format&fit=crop",
@@ -97,15 +90,15 @@
   "credit": "Yuhan Du / Unsplash",
   "page": "https://unsplash.com/photos/8UCTwY4mrVA",
   "focal": "70% 50%",
-  "hero": true
+  "hero": true,
+  "plate": true
  },
  "chugach": {
   "src": "https://images.unsplash.com/photo-1539545853486-dd1f261ce4b6?w=2600&q=85&auto=format&fit=crop",
   "alt": "Glaciers and peaks of the Chugach Mountains, Alaska",
   "credit": "Paxson Woelber / Unsplash",
   "page": "https://unsplash.com/photos/x91Jq_UDbL0",
-  "hero": true,
-  "art": true
+  "hero": true
  },
  "tacoma-port": {
   "src": "https://images.unsplash.com/photo-1715885882474-8b9ce96e930d?w=2400&q=85&auto=format&fit=crop",
@@ -121,8 +114,7 @@
   "credit": "Jonathan Majam / Unsplash",
   "page": "https://unsplash.com/photos/vHKomsqKtqo",
   "focal": "65% 50%",
-  "hero": true,
-  "art": true
+  "hero": true
  },
  "cranes-dusk": {
   "src": "https://images.unsplash.com/photo-1636714289409-e06a4dfc617c?w=2000&q=85&auto=format&fit=crop",
@@ -130,8 +122,7 @@
   "credit": "Nicolas Beuret / Unsplash",
   "page": "https://unsplash.com/photos/8i19Rm2EFUM",
   "focal": "60% 50%",
-  "hero": true,
-  "art": true
+  "hero": true
  },
  "timber-weathered": {
   "src": "https://images.unsplash.com/photo-1766148891408-af4013825cb7?w=2000&q=85&auto=format&fit=crop",
@@ -162,7 +153,7 @@
    1,
    1
   ],
-  "alt": "A Uresco delivery truck lettered “Lumber by UCM Uresco”",
+  "alt": "A printed tag reading “Lumber by: UCM Uresco Construction Materials, Inc.” on a load of plywood",
   "credit": "Uresco Construction Materials"
  },
  "uresco-yard": {
@@ -198,8 +189,7 @@
   "credit": "Mélyna Côté / Unsplash",
   "page": "https://unsplash.com/photos/NxwMP5V57Zg",
   "focal": "60% 40%",
-  "hero": true,
-  "art": true
+  "hero": true
  },
  "siding": {
   "src": "https://images.unsplash.com/photo-1607810991928-7e609a664e8d?w=2000&q=85&auto=format&fit=crop",
@@ -207,8 +197,7 @@
   "credit": "Erik Mclean / Unsplash",
   "page": "https://unsplash.com/photos/msXwTmJjvb8",
   "focal": "70% 50%",
-  "hero": true,
-  "art": true
+  "hero": true
  },
  "insulation": {
   "src": "https://images.unsplash.com/photo-1607400201889-565b1ee75f8e?w=2000&q=85&auto=format&fit=crop",
@@ -216,8 +205,7 @@
   "credit": "Erik Mclean / Unsplash",
   "page": "https://unsplash.com/photos/aCshJn3y93s",
   "focal": "40% 50%",
-  "hero": true,
-  "art": true
+  "hero": true
  },
  "windows": {
   "src": "https://images.unsplash.com/photo-1672627170267-fca17bb54156?w=2000&q=85&auto=format&fit=crop",
@@ -225,8 +213,7 @@
   "credit": "Ernie Journeys / Unsplash",
   "page": "https://unsplash.com/photos/r5WU0B6OUws",
   "focal": "55% 60%",
-  "hero": true,
-  "art": true
+  "hero": true
  },
  "hardware": {
   "src": "https://images.unsplash.com/photo-1617123623686-2b7b339785da?w=2000&q=85&auto=format&fit=crop",
@@ -234,8 +221,7 @@
   "credit": "Konstantin Evdokimov / Unsplash",
   "page": "https://unsplash.com/photos/JALUvPLUde8",
   "focal": "50% 75%",
-  "hero": true,
-  "art": true
+  "hero": true
  },
  "blueprints": {
   "src": "https://images.unsplash.com/photo-1503387837-b154d5074bd2?w=2400&q=85&auto=format&fit=crop",
@@ -258,15 +244,16 @@
   "credit": "Deborah Schildt / Unsplash",
   "page": "https://unsplash.com/photos/8O-KsnJ2Yds",
   "focal": "45% 60%",
-  "hero": true,
-  "art": true
+  "hero": true
  },
  "institutional": {
   "src": "https://images.unsplash.com/photo-1749882120717-7187fb3838d0?w=2000&q=85&auto=format&fit=crop",
   "alt": "A single-story building framed with roof trusses and sheathing behind site fencing",
   "credit": "Troy Mortier / Unsplash",
   "page": "https://unsplash.com/photos/Ll9JCsrSC4U",
-  "focal": "50% 55%"
+  "focal": "50% 55%",
+  "hero": true,
+  "plate": true
  },
  "multifamily": {
   "src": "https://images.unsplash.com/photo-1741916540995-f9ea8ba16253?w=2000&q=85&auto=format&fit=crop",
@@ -313,11 +300,11 @@
   "page": "https://unsplash.com/photos/ytPJ4kppYWE",
   "focal": "50% 45%",
   "hero": true,
-  "art": true
+  "plate": true
  },
  "floatplane": {
   "src": "https://images.unsplash.com/photo-1633929231750-c39f0ae2b8d4?w=2000&q=85&auto=format&fit=crop",
-  "alt": "Skiffs on a gravel beach below a volcanic peak as a floatplane passes, Port Alsworth, Alaska",
+  "alt": "Skiffs on a gravel beach below a mountain as a floatplane passes, Port Alsworth, Alaska",
   "credit": "Brandy Willetts / Unsplash",
   "page": "https://unsplash.com/photos/TFpqCU4b2dw",
   "focal": "50% 70%"
@@ -343,7 +330,7 @@
    1,
    0.9
   ],
-  "alt": "Skiffs pulled up on a gravel beach as a small plane comes in below a volcanic peak, Port Alsworth, Alaska",
+  "alt": "Skiffs pulled up on a gravel beach as a small plane comes in below a mountain, Port Alsworth, Alaska",
   "focal": "58% 50%",
   "hero": true,
   "plate": true

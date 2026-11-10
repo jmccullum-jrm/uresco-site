@@ -9,15 +9,15 @@ It is a fast, static, mobile-first site. There is no CMS, database or plugin to 
 | Page | URL | Purpose |
 |---|---|---|
 | Home | `/` | Hero, the three yards' phone numbers, product lines and brands, delivery map, services, take-off prompt, who we build for, contractor accounts, yards |
-| Products | `/products/` + 9 category pages | Every product line, brands, and a price/availability panel with each yard's number |
+| Products | `/products/` + 9 category pages | A searchable index of every product line and brand; each line page lists its products, each yard's number, and a load ticket that sends several lines to the quote form |
 | Services | `/services/` | Take-offs and estimates, design, job-site delivery, remote and export packages, shipping, crating |
 | Alaska delivery | `/alaska/` | Map, how a remote package works, road/sea/air, barge season, Anchorage and Fairbanks yards, FAQ |
 | Pacific Northwest | `/pacific-northwest/` | The Kent yard |
-| Projects | `/projects/` | Filterable gallery by sector (see the note below) |
-| Locations | `/locations/` | All three yards, with call and directions buttons |
+| Projects | `/projects/` | The kinds of work Uresco supplies, by sector (see the note below) |
+| Locations | `/locations/` | Which yard to call, then every detail for each: phone, toll-free, fax, email, address, directions and the (placeholder) hours |
 | Request a quote | `/quote/` | Form with plan upload, routed to the yard the customer picks |
 | Contractor accounts | `/accounts/` | Account benefits and an online credit application, routed to the chosen home yard and printable as a paper form |
-| About | `/about/` | Mission, values, photos from Uresco's own yards |
+| About | `/about/` | Who Uresco is, told through the tag on its loads: the remote specialty, the mission, who picks up |
 
 On phones a bar fixed to the bottom of the screen gives **Call · Directions · Quote** on every page. Each yard shows a live **open/closed** status worked out in its own time zone. Both forms save a draft in the browser as people type. Product pages pass their product line into the quote form, and each yard card has a quote link that preselects that yard.
 
@@ -25,7 +25,7 @@ The old `/products-services/` URL redirects to `/products/`, `/contact/` redirec
 
 ## Design
 
-The site is built in the "Yellow" system: a bold brand poster. **`DESIGN.md` is the full guide**
+The site is built in the "Yellow" system: a bold brand poster. Every page uses it. **`DESIGN.md` is the full guide**
 (tokens, grid, every component with its markup, motion rules, do and don't). In short:
 
 - **Identity.** The mark is the end grain of a flat-sawn board: growth rings that read as a **U**.
@@ -52,7 +52,7 @@ Requirements: Node 18+ and Python 3 with Pillow (`pip install pillow`). Playwrig
 npm run build       # src/ → docs/ (preview: noindex)
 npm run build:live  # the same, for uresco.com: indexable, base '/', writes docs/CNAME
 npm run serve       # http://localhost:8080
-npm run check       # build + link/SEO checks + every page in Chromium at 5 widths, plus the forms
+npm run check       # build + link/SEO/facts checks + every page in Chromium at 5 widths, the forms, the no-JavaScript paths and the phone floors
 npm run images      # after changing scripts/photos.json
 npm run brand       # after changing the logo
 npm run fonts       # re-subset the fonts (needs: pip install fonttools brotli)
@@ -71,7 +71,7 @@ Every pull request runs `.github/workflows/check.yml`. It rebuilds the site, fai
   - **To use Uresco's own photos:** put the originals in `originals/uresco/`. Point an entry's `src` at the file, for example `"yard-kent": { "src": "originals/uresco/kent-yard.jpg", "alt": "…" }`, then run `npm run images && npm run build`.
   - Large, unedited camera files are best; the script handles resizing.
   - A photo used as a full-width hero needs `"hero": true, "art": true`, which adds the larger sizes and the phone crop. Add `"focal": [x, y]` (0 to 1) if the crop misses the subject.
-  - The first ones to replace: `yard-kent`, `framer` (accounts and design), `unloading` (job-site delivery) and `tug-barge` (remote packages).
+  - The first ones to replace: each yard's window (`photo` and `photoCaption` in `src/data/locations.mjs`), `framer` (projects and quote), `unloading` (job-site delivery) and `tug-barge` (remote packages).
 - **Manufacturer literature links**: the `literature` field on each category in `src/data/products.mjs`.
 - **Pages**: `src/pages/*.mjs`. **Styles**: `src/assets/css/*.css` then `src/assets/css/pages/*.css`, joined in name order. **Behavior**: `src/assets/js/*.js` then `src/assets/js/modules/*.js`, no frameworks. See `DESIGN.md`.
 
@@ -94,7 +94,7 @@ While `preview` is on, every page is `noindex` and `robots.txt` blocks crawlers,
 - **Yard hours.** Placeholder hours are in place (Mon–Fri 7:00 a.m.–4:30 p.m. local time, closed weekends). Confirm or correct them per yard; the open/closed status depends on them.
 - **Delivery area and minimums** per yard, if Uresco wants to publish them.
 - **Credit terms.** The credit application asks for references and a requested limit, and promises nothing about terms. If Uresco has a standard credit agreement or a PDF application, link it from `/accounts/`.
-- **Real photos.** Uresco has them, but none were found in the connected Google Drive. Upload them or share a folder (see **Photos** above for how they go in). The old site's "Lumber by UCM" truck and yard photos are on the About page, but they are only 714 px wide.
+- **Real photos.** Uresco has them, but none were found in the connected Google Drive. Upload them or share a folder (see **Photos** above for how they go in). The old site's photos of the printed "Lumber by UCM" tag and of a Uresco yard are on the About page, but they are only about 700 px wide.
 - **Real projects** for the gallery, as described above.
 - **Founding year**, if Uresco wants it shown ("35+ years" is used now).
 - **Logo.** The new mark is a proposal. If Uresco keeps the classic UCM logo, swap it into `src/lib/layout.mjs` (`brand`).

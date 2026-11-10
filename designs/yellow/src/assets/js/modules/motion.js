@@ -33,8 +33,10 @@
   if (!('IntersectionObserver' in window)) { targets.forEach((el) => el.classList.add('is-in')); return; }
   const io = new IntersectionObserver((entries) => entries.forEach((e) => {
     if (!e.isIntersecting) return;
-    e.target.classList.add('is-in');
+    if (e.target.matches('[data-reveal], [data-map]')) e.target.classList.add('is-in');
+    e.target.querySelectorAll(':scope > [data-reveal="wipe"]').forEach((el) => el.classList.add('is-in'));
     io.unobserve(e.target);
   }), { threshold: 0.08, rootMargin: '0px 0px -6% 0px' });
-  targets.forEach((el) => io.observe(el));
+  // A wipe starts clipped to nothing, and a browser never reports that as being on screen: watch its parent.
+  targets.forEach((el) => io.observe(el.dataset.reveal === 'wipe' ? el.parentElement : el));
 })();

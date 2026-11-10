@@ -1,14 +1,27 @@
-import { html } from '../lib/html.mjs';
+import { html, raw } from '../lib/html.mjs';
 import { icon } from '../lib/icons.mjs';
 import { layout } from '../lib/layout.mjs';
-import { picture, preloadFor, sectionHead, pageHero, quoteBand, stamp } from '../lib/components.mjs';
+import { win, snapshot, seal, eyebrow, sticker, sectionHead, marquee, pageHero, pageHeroPreload, quoteBand, yardsStrip, callBtn, pauseBtn, photoCaption } from '../lib/components.mjs';
+import { LOCATIONS } from '../data/locations.mjs';
 import { SITE } from '../config.mjs';
 
-const VALUES = [
-  ['Quality materials', 'A trusted, dependable source of quality construction materials — the right grade, the right brand, the right count.'],
-  ['Trusted service', 'A knowledgeable, resourceful sales staff committed to professional and prompt service.'],
-  ['Remote expertise', 'Remote-site and export building packages, with shipping coordination from quote to dock.'],
-  ['Independent', 'One of the largest independent building-material suppliers serving Alaska and the Pacific Northwest.'],
+// ================= About =================
+// The page is built around Uresco's own tag: the printed tag on a load of plywood, "LUMBER BY:".
+// It shows the real one, then the same tag at poster size with the blanks filled in.
+const HERO = 'timber-weathered';
+
+// What the tag says, and what a new customer wants to know. Only facts from FACTS.md.
+const TAG_ROWS = [
+  ['In business', html`More than ${SITE.years} years.`],
+  ['Independent', 'One of the largest independent building material suppliers serving Alaska and the Pacific Northwest.'],
+  ['Wholesale to', 'Institutional, commercial and residential builders.'],
+];
+
+// The mission, as three things to hold us to. Each row goes to where you can check it.
+const PROMISES = [
+  { name: 'The materials', text: 'A trusted, dependable source of quality construction materials.', href: 'products/', go: 'See the product lines' },
+  { name: 'The sales staff', text: 'Knowledgeable and resourceful, a call or an email away.', href: 'locations/', go: 'Find your yard' },
+  { name: 'The service', text: 'A commitment to professional and prompt service.', href: 'services/', go: 'See the services' },
 ];
 
 const about = {
@@ -16,62 +29,122 @@ const about = {
   render: (ctx) => layout(ctx, {
     title: 'About Uresco',
     description: `For more than ${SITE.years} years, Uresco Construction Materials has been a trusted source for quality building materials throughout the Pacific Northwest and all of Alaska.`,
-    preload: [preloadFor(ctx, 'lumber-stack')],
+    preload: [pageHeroPreload(ctx, HERO)],
     body: html`
 ${pageHero(ctx, {
-  eyebrow: `About · ${SITE.years}+ years`,
-  title: 'Quality materials. <em>Trusted service.</em>',
+  eyebrow: 'About Uresco',
+  title: 'The name <em>on the load.</em>',
   lede: `For more than ${SITE.years} years, Uresco has been a trusted source for quality building materials throughout the Pacific Northwest and all of Alaska.`,
-  photoKey: 'lumber-stack',
+  photoKey: HERO,
+  caption: 'Weathered timber ends',
+  actions: html`${callBtn(ctx)}<a class="btn btn--line" href="${ctx.u('locations/')}">Find your yard ${icon('arrow', { size: 18 })}</a>${pauseBtn()}`,
+  art: seal(ctx, { around: 'Quality materials • Trusted service •', big: SITE.years + '+', small: 'years', cls: 'phero__seal' }),
 })}
-<section class="section">
-  <div class="wrap split">
-    <div>
-      ${stamp('Who we are', { no: '01' })}
-      <h2 class="h2">Independent, <em>and built for distance.</em></h2>
-      <p class="lede">As one of the largest independent building-material suppliers serving Alaska and the Pacific Northwest, Uresco offers institutional, commercial and residential builders the best selection, pricing and service.</p>
-      <p>Our reliable service includes dependable delivery to job sites down the road or across an ocean. From our headquarters in Kent and our distribution centers in Anchorage and Fairbanks, we supply everything from framing lumber and engineered beams to siding, insulation, windows, cabinets and the hardware that holds it all together.</p>
+
+<section class="section field-p ab-tag" id="tag">
+  <div class="wrap ab-tag__grid">
+    <div class="ab-tag__say">
+      ${eyebrow('The short version')}
+      <h2 class="d2">Read <em>the tag.</em></h2>
+      <p class="lede">This is the tag on a Uresco load. Here it is again with the blanks filled in, for anyone new to us.</p>
+      ${snapshot(ctx, 'uresco-truck', { caption: 'The tag on a Uresco load', sizes: '(min-width: 760px) 260px, 62vw', cls: 'ab-shot', winCls: 'snap__win--tag ab-shot__win' })}
     </div>
-    <div class="split__media">${picture(ctx, 'valdez-port', { sizes: '(min-width: 860px) 60vw, 100vw' })}</div>
+
+    <article class="ab-card" aria-label="Uresco at a glance" data-reveal>
+      <header class="ab-card__head">
+        <p class="ab-card__by">Lumber by:</p>
+        <p class="ab-card__name"><b>UCM</b> <span>Uresco</span></p>
+        <p class="ab-card__legal">${SITE.legal.replace('Uresco ', '')}</p>
+      </header>
+      <dl class="ab-card__rows">
+        ${TAG_ROWS.map(([k, v]) => html`<div><dt>${k}</dt><dd>${v}</dd></div>`)}
+        <div class="ab-card__ships">
+          <dt>Ships from</dt>
+          <dd><ul class="ab-card__yards">${LOCATIONS.map((l) => html`<li><a href="${ctx.u('locations/')}#${l.id}">${l.city}, ${l.state}${l.id === 'kent' ? html`<small> headquarters</small>` : ''}</a></li>`)}</ul></dd>
+        </div>
+        <div class="ab-card__addr"><dt>Address</dt><dd>Yours. Job sites down the road or across an ocean, from Sitka to Utqiaġvik.</dd></div>
+      </dl>
+    </article>
   </div>
 </section>
 
-<section class="section section--dark">
-  <div class="wrap">
-    ${stamp('Our mission', { dark: true })}
-    <p class="mission">Uresco provides a trusted and dependable source of quality construction materials, a knowledgeable and resourceful sales staff, and we are committed to professional and prompt service.</p>
-    <p class="lede">That commitment lets our customers buy their materials with confidence that they will receive the best products at the best prices.</p>
-    <div class="values">
-      ${VALUES.map(([k, v]) => html`<div><b>${k}</b><p>${v}</p></div>`)}
+<section class="section field-k ab-remote clip" id="remote">
+  <div class="divider divider--p" aria-hidden="true"><i class="plx"></i><i class="plx"></i><i class="plx"></i></div>
+  <div class="wrap ab-remote__grid">
+    <div class="ab-remote__copy">
+      ${eyebrow('Our specialty')}
+      <h2 class="d2">Some jobs <em>have no road.</em></h2>
+      <p class="lede">We specialize in remote location delivery. Complete building packages, crated for the trip, with shipping coordination, dock delivery and rural Alaska delivery worked out with you.</p>
+      <ul class="ab-pills" aria-label="What that takes">
+        <li><a href="${ctx.u('services/')}#takeoffs">Take-offs</a></li>
+        <li><a href="${ctx.u('services/')}#design">Design help</a></li>
+        <li><a href="${ctx.u('services/')}#remote">Export packages</a></li>
+        <li><a href="${ctx.u('services/')}#crating">Crating</a></li>
+        <li><a href="${ctx.u('services/')}#shipping">Shipping coordination</a></li>
+      </ul>
+      <div class="actions"><a class="btn" href="${ctx.u('alaska/')}">How remote delivery works ${icon('arrow', { size: 18 })}</a></div>
     </div>
+    <figure class="ab-remote__fig">
+      ${win(ctx, 'floatplane', { shape: 'arch', duo: true, cls: 'ab-remote__win', sizes: '(min-width: 900px) 30vw, 66vw', after: photoCaption('floatplane', 'Port Alsworth, Alaska') })}
+      ${sticker(raw('Sitka <span aria-hidden="true">→</span><span class="sr-only">to</span> Utqiaġvik'), { tone: 'y', rot: -7, cls: 'ab-remote__sticker' })}
+    </figure>
   </div>
 </section>
 
-<section class="section">
+${marquee(['Kent', 'Anchorage', 'Fairbanks', 'Sitka', 'Utqiaġvik'], { tone: 'p', tilt: true, slow: true })}
+
+<section class="section field-y ab-hold" id="mission">
   <div class="wrap">
-    ${sectionHead({ eyebrow: 'From our yards', title: 'Lumber <em>by UCM.</em>', lede: 'From Uresco’s own yards and trucks.' })}
-    <div class="archive">
-      <figure>${picture(ctx, 'uresco-truck', { sizes: '(min-width: 760px) 300px, 50vw' })}<figcaption>UCM delivery truck</figcaption></figure>
-      <figure>${picture(ctx, 'uresco-yard', { sizes: '(min-width: 760px) 300px, 50vw' })}<figcaption>Wrapped bundles in the yard</figcaption></figure>
-      <figure>${picture(ctx, 'uresco-stack', { sizes: '(min-width: 760px) 300px, 50vw' })}<figcaption>Stacked and stickered</figcaption></figure>
+    ${sectionHead({ eyebrow: 'Our mission', title: 'Three things <em>to hold us to.</em>', lede: 'So you can buy with confidence that you are getting the best products at the best prices.' })}
+  </div>
+  <ol class="lines ab-lines">
+    ${PROMISES.map((p, i) => html`<li><a class="line" href="${ctx.u(p.href)}">
+      <span class="line__no nums" aria-hidden="true">${String(i + 1).padStart(2, '0')}</span>
+      <span class="line__name">${p.name}</span>
+      <span class="line__items">${p.text}</span>
+      <span class="sr-only">. ${p.go}</span>
+      <span class="line__go">${icon('arrow', { size: 22 })}</span>
+    </a></li>`)}
+  </ol>
+</section>
+
+<section class="section field-p ab-ring" id="call">
+  <div class="wrap">
+    <div class="ab-ring__head">
+      <div class="ab-ring__say">
+        ${eyebrow('Who picks up')}
+        <h2 class="d2">Call. Email. <em>Stop by.</em></h2>
+        <p class="lede">Our friendly, knowledgeable sales staff is here to help.</p>
+      </div>
+      ${snapshot(ctx, 'uresco-yard', { caption: 'In a Uresco yard', rot: 3, sizes: '(min-width: 760px) 300px, 70vw', cls: 'ab-shot ab-shot--yard', winCls: 'ab-shot__win' })}
     </div>
+    ${yardsStrip(ctx)}
+    <ul class="ab-mails">
+      ${LOCATIONS.map((l) => html`<li><span>${l.city}</span> <a href="mailto:${l.email}">${l.email}</a></li>`)}
+    </ul>
+    <a class="ticket" href="${ctx.u('accounts/')}" data-reveal>
+      <span class="ticket__k">Contractor accounts</span>
+      <span class="ticket__t">Buying for a crew? Open an account.</span>
+      <span class="ticket__d">Order on account from any of the three yards. Apply online.</span>
+      <span class="line__go">${icon('arrow', { size: 22 })}</span>
+    </a>
   </div>
 </section>
-<section class="section section--bone">
-  <div class="wrap split">
-    <div class="split__media">${picture(ctx, 'combilift', { sizes: '(min-width: 860px) 50vw, 100vw' })}</div>
-    <div>
-      ${stamp('Careers', { no: '04' })}
-      <h2 class="h2">Good people <em>move good lumber.</em></h2>
-      <p class="lede">Yard crew, drivers, estimators and inside sales — we’re always glad to hear from people who take pride in getting the order right. Call or email the yard nearest you and ask about openings.</p>
-      <div class="actions"><a class="btn btn--dark" href="${ctx.u('locations/')}">Find your nearest yard ${icon('arrow', { size: 18 })}</a></div>
-    </div>
-  </div>
-</section>
-${quoteBand(ctx, { title: 'Let’s build <em>something.</em>', body: 'Call your Uresco team today for your building-material needs, or send plans and we’ll quote the job.' })}
+
+${quoteBand(ctx, { title: 'Now you know <em>who to call.</em>', body: 'Send drawings or a list and the yard nearest your project will help with the take-off. Quality materials, trusted service.', photoKey: 'lumber-stack', caption: 'Ends of stacked lumber', label: 'First job with us?' })}
 `,
   }),
 };
+
+// The main pages, for someone who has landed nowhere.
+const WAYS_OUT = [
+  ['products/', 'Products', 'Nine lines, from framing to fasteners'],
+  ['services/', 'Services', 'Take-offs, packages, delivery'],
+  ['alaska/', 'Alaska delivery', 'Sitka to Utqiaġvik'],
+  ['pacific-northwest/', 'Pacific Northwest', 'Job sites around Puget Sound'],
+  ['locations/', 'Locations', 'Three yards, every number'],
+  ['quote/', 'Request a quote', 'Send plans or a list'],
+];
 
 const notFound = {
   path: '404/',
@@ -79,19 +152,33 @@ const notFound = {
   render: (ctx) => {
     // GitHub Pages serves 404.html from any depth, so this page links absolutely to the site root
     // it was built for instead of relatively.
-    return layout({ ...ctx, u: (to) => (ctx.base || '/') + to }, {
+    const base = ctx.base || '/';
+    const c = { ...ctx, u: (to) => base + to };
+    return layout(c, {
       title: 'Page not found',
       description: 'This page doesn’t exist. Find lumber, building materials and delivery across Alaska and the Pacific Northwest at Uresco.',
+      preload: [pageHeroPreload(c, 'tug-barge')],
       body: html`
-<section class="section lost">
+${pageHero(c, {
+  cls: 'nf-hero',
+  eyebrow: 'Error 404 · Off the map',
+  title: 'This page <em>missed the barge.</em>',
+  lede: 'It may have moved when we rebuilt the site. Try one of these, or call a yard and ask.',
+  photoKey: 'tug-barge',
+  caption: 'A tug pushing a loaded freight barge',
+  actions: html`<a class="btn" href="${base}">Go to the home page ${icon('arrow', { size: 18 })}</a><a class="btn btn--line" href="${c.u('products/')}">Browse products</a>`,
+  after: yardsStrip(c),
+})}
+<section class="section field-k nf-ways">
   <div class="wrap">
-    ${stamp('404 · Off the map')}
-    <h1 class="display" style="color:var(--ink)">This page <br>missed the barge.</h1>
-    <p class="lede">The page you were after isn’t here. It may have moved when we rebuilt the site.</p>
-    <div class="actions">
-      <a class="btn btn--dark" href="${ctx.base || '/'}">Go to the home page ${icon('arrow', { size: 18 })}</a>
-      <a class="btn btn--line" href="${(ctx.base || '/') + 'products/'}">Browse products</a>
-    </div>
+    ${eyebrow('Try these instead')}
+    <ul class="nf-list">
+      ${WAYS_OUT.map(([to, name, what], i) => html`<li style="--i:${i}"><a class="nf-way" href="${c.u(to)}">
+        <b class="nf-way__name">${name}</b>
+        <span class="nf-way__what">${what}</span>
+        <span class="line__go">${icon('arrow', { size: 20 })}</span>
+      </a></li>`)}
+    </ul>
   </div>
 </section>`,
     });

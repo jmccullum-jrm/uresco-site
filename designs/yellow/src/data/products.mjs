@@ -10,7 +10,7 @@ export const CATEGORIES = [
     short: 'Framing & Timbers',
     photo: 'lumber-stack',
     lede: 'Dimensional lumber and timbers for framing, in the grades and treatments a project calls for.',
-    body: 'Framing packages are the core of what we ship, from a single load for a Kent job site to a full house package crated for a barge. Tell us the plan and we will build the list.',
+    body: 'Framing packages are the core of what we ship, from a single load for a Kent job site to a full house package crated for a barge. Tell us the plan and we’ll help with the list.',
     items: [
       ['Dimensional lumber', 'Studs, joists and rafters for wall, floor and roof framing.'],
       ['Timbers', 'Heavy sawn sections for posts, beams and exposed structure.'],
@@ -115,7 +115,7 @@ export const CATEGORIES = [
     short: 'Windows, Doors & Cabinets',
     photo: 'windows',
     lede: 'Openings and casework, packaged with the rest of the job.',
-    body: 'Windows and doors, and custom cabinets, quoted alongside the framing and envelope so the whole project ships together.',
+    body: 'Windows and doors, and custom cabinets, quoted alongside the framing and envelope.',
     items: [
       ['Windows', 'Residential and light-commercial windows.'],
       ['Doors', 'Exterior and interior doors.'],

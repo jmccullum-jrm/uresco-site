@@ -14,4 +14,7 @@
   });
   item.addEventListener('focusout', (e) => { if (!item.contains(e.relatedTarget)) set(false); });
   document.addEventListener('click', (e) => { if (!item.contains(e.target)) set(false); });
+  // Escape also dismisses a menu that only the pointer opened; moving away and back brings it again.
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && item.matches(':hover')) item.setAttribute('data-shut', ''); });
+  item.addEventListener('mouseleave', () => item.removeAttribute('data-shut'));
 })();

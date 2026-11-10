@@ -10,20 +10,13 @@
   ],
   "width": 2400,
   "height": 1600,
-  "alt": "A freight truck on a highway through spruce forest with Denali rising behind it",
+  "alt": "A truck on a highway through spruce forest with Denali rising behind it",
   "focal": "60% 50%",
   "credit": "Joseph Corl / Unsplash",
   "page": "https://unsplash.com/photos/OVKRxZub9f4",
   "standIn": false,
   "cropOf": null,
-  "portrait": [
-   640,
-   960,
-   1280
-  ],
-  "pwidth": 1280,
-  "pheight": 1706,
-  "color": "#818f89"
+  "color": "#8a8a8a"
  },
  "lumber-stack": {
   "widths": [
@@ -42,13 +35,6 @@
   "page": "https://unsplash.com/photos/6j3laFTi8wg",
   "standIn": false,
   "cropOf": null,
-  "portrait": [
-   640,
-   960,
-   1202
-  ],
-  "pwidth": 1202,
-  "pheight": 1602,
   "color": "#81654b"
  },
  "pine-racking": {
@@ -68,13 +54,6 @@
   "page": "https://unsplash.com/photos/EFR6ICYBMN0",
   "standIn": false,
   "cropOf": null,
-  "portrait": [
-   640,
-   960,
-   1200
-  ],
-  "pwidth": 1200,
-  "pheight": 1600,
   "color": "#754c27"
  },
  "timber-ends": {
@@ -93,9 +72,6 @@
   "page": "https://unsplash.com/photos/07hBSBN9XC0",
   "standIn": false,
   "cropOf": null,
-  "portrait": [],
-  "pwidth": null,
-  "pheight": null,
   "color": "#82764c"
  },
  "plywood": {
@@ -114,14 +90,6 @@
   "page": "https://unsplash.com/photos/BimFx6m5XqU",
   "standIn": false,
   "cropOf": null,
-  "portrait": [
-   640,
-   960,
-   1280,
-   2000
-  ],
-  "pwidth": 2000,
-  "pheight": 2667,
   "color": "#867a6a"
  },
  "framer": {
@@ -140,12 +108,6 @@
   "page": "https://unsplash.com/photos/EWoU3snzadU",
   "standIn": false,
   "cropOf": null,
-  "portrait": [
-   640,
-   960
-  ],
-  "pwidth": 960,
-  "pheight": 1280,
   "color": "#959688"
  },
  "framing-joists": {
@@ -164,12 +126,6 @@
   "page": "https://unsplash.com/photos/kkdfOe0iRu8",
   "standIn": false,
   "cropOf": null,
-  "portrait": [
-   640,
-   960
-  ],
-  "pwidth": 960,
-  "pheight": 1280,
   "color": "#77716c"
  },
  "unloading": {
@@ -188,14 +144,6 @@
   "page": "https://unsplash.com/photos/TIL-dnIjK8E",
   "standIn": false,
   "cropOf": null,
-  "portrait": [
-   640,
-   960,
-   1280,
-   2000
-  ],
-  "pwidth": 2000,
-  "pheight": 2667,
   "color": "#4d483c"
  },
  "combilift": {
@@ -214,14 +162,6 @@
   "page": "https://unsplash.com/photos/Do5rGlcZnuQ",
   "standIn": false,
   "cropOf": null,
-  "portrait": [
-   640,
-   960,
-   1280,
-   2000
-  ],
-  "pwidth": 2000,
-  "pheight": 2667,
   "color": "#343028"
  },
  "valdez-port": {
@@ -241,9 +181,6 @@
   "page": "https://unsplash.com/photos/1TilbaZ3ALA",
   "standIn": false,
   "cropOf": null,
-  "portrait": [],
-  "pwidth": null,
-  "pheight": null,
   "color": "#484f5f"
  },
  "juneau-freight": {
@@ -262,9 +199,6 @@
   "page": "https://unsplash.com/photos/dCNcbGYssNY",
   "standIn": false,
   "cropOf": null,
-  "portrait": [],
-  "pwidth": null,
-  "pheight": null,
   "color": "#8599a2"
  },
  "anchorage": {
@@ -284,10 +218,7 @@
   "page": "https://unsplash.com/photos/8UCTwY4mrVA",
   "standIn": false,
   "cropOf": null,
-  "portrait": [],
-  "pwidth": null,
-  "pheight": null,
-  "color": "#757e87"
+  "color": "#7c7c7c"
  },
  "chugach": {
   "widths": [
@@ -306,13 +237,6 @@
   "page": "https://unsplash.com/photos/x91Jq_UDbL0",
   "standIn": false,
   "cropOf": null,
-  "portrait": [
-   640,
-   960,
-   1280
-  ],
-  "pwidth": 1280,
-  "pheight": 1707,
   "color": "#586470"
  },
  "tacoma-port": {
@@ -332,9 +256,6 @@
   "page": "https://unsplash.com/photos/7wrKEqA2qu8",
   "standIn": false,
   "cropOf": null,
-  "portrait": [],
-  "pwidth": null,
-  "pheight": null,
   "color": "#869baf"
  },
  "cedar": {
@@ -353,12 +274,6 @@
   "page": "https://unsplash.com/photos/vHKomsqKtqo",
   "standIn": false,
   "cropOf": null,
-  "portrait": [
-   640,
-   960
-  ],
-  "pwidth": 960,
-  "pheight": 1280,
   "color": "#756046"
  },
  "cranes-dusk": {
@@ -377,12 +292,6 @@
   "page": "https://unsplash.com/photos/8i19Rm2EFUM",
   "standIn": false,
   "cropOf": null,
-  "portrait": [
-   640,
-   843
-  ],
-  "pwidth": 843,
-  "pheight": 1124,
   "color": "#3a4f65"
  },
  "timber-weathered": {
@@ -401,9 +310,6 @@
   "page": "https://unsplash.com/photos/yrqoWErSElA",
   "standIn": false,
   "cropOf": null,
-  "portrait": [],
-  "pwidth": null,
-  "pheight": null,
   "color": "#877f79"
  },
  "tug-barge": {
@@ -423,9 +329,6 @@
   "page": "https://unsplash.com/photos/hvgb3lXdOKw",
   "standIn": false,
   "cropOf": null,
-  "portrait": [],
-  "pwidth": null,
-  "pheight": null,
   "color": "#acb0b5"
  },
  "forklift-yard": {
@@ -444,9 +347,6 @@
   "page": "https://unsplash.com/photos/V5YPZo528n4",
   "standIn": false,
   "cropOf": null,
-  "portrait": [],
-  "pwidth": null,
-  "pheight": null,
   "color": "#918577"
  },
  "uresco-truck": {
@@ -456,15 +356,12 @@
   ],
   "width": 314,
   "height": 322,
-  "alt": "A Uresco delivery truck lettered \u201cLumber by UCM Uresco\u201d",
+  "alt": "A printed tag reading \u201cLumber by: UCM Uresco Construction Materials, Inc.\u201d on a load of plywood",
   "focal": null,
   "credit": "Uresco Construction Materials",
   "page": null,
   "standIn": false,
   "cropOf": null,
-  "portrait": [],
-  "pwidth": null,
-  "pheight": null,
   "color": "#39312e"
  },
  "uresco-yard": {
@@ -480,9 +377,6 @@
   "page": null,
   "standIn": false,
   "cropOf": null,
-  "portrait": [],
-  "pwidth": null,
-  "pheight": null,
   "color": "#756c67"
  },
  "uresco-stack": {
@@ -498,9 +392,6 @@
   "page": null,
   "standIn": false,
   "cropOf": null,
-  "portrait": [],
-  "pwidth": null,
-  "pheight": null,
   "color": "#80614b"
  },
  "uresco-woodpile": {
@@ -515,9 +406,6 @@
   "page": null,
   "standIn": false,
   "cropOf": null,
-  "portrait": [],
-  "pwidth": null,
-  "pheight": null,
   "color": "#b18c6f"
  },
  "concrete-forms": {
@@ -536,12 +424,6 @@
   "page": "https://unsplash.com/photos/NxwMP5V57Zg",
   "standIn": false,
   "cropOf": null,
-  "portrait": [
-   640,
-   960
-  ],
-  "pwidth": 960,
-  "pheight": 1280,
   "color": "#b4ae9f"
  },
  "siding": {
@@ -560,12 +442,6 @@
   "page": "https://unsplash.com/photos/msXwTmJjvb8",
   "standIn": false,
   "cropOf": null,
-  "portrait": [
-   640,
-   960
-  ],
-  "pwidth": 960,
-  "pheight": 1280,
   "color": "#5a8281"
  },
  "insulation": {
@@ -584,12 +460,6 @@
   "page": "https://unsplash.com/photos/aCshJn3y93s",
   "standIn": false,
   "cropOf": null,
-  "portrait": [
-   640,
-   960
-  ],
-  "pwidth": 960,
-  "pheight": 1280,
   "color": "#845f5e"
  },
  "windows": {
@@ -608,12 +478,6 @@
   "page": "https://unsplash.com/photos/r5WU0B6OUws",
   "standIn": false,
   "cropOf": null,
-  "portrait": [
-   640,
-   960
-  ],
-  "pwidth": 960,
-  "pheight": 1280,
   "color": "#646d78"
  },
  "hardware": {
@@ -632,12 +496,6 @@
   "page": "https://unsplash.com/photos/JALUvPLUde8",
   "standIn": false,
   "cropOf": null,
-  "portrait": [
-   640,
-   960
-  ],
-  "pwidth": 960,
-  "pheight": 1280,
   "color": "#bfa90e"
  },
  "blueprints": {
@@ -657,9 +515,6 @@
   "page": "https://unsplash.com/photos/-FPFq_trr2Y",
   "standIn": false,
   "cropOf": null,
-  "portrait": [],
-  "pwidth": null,
-  "pheight": null,
   "color": "#797675"
  },
  "deck": {
@@ -678,9 +533,6 @@
   "page": "https://unsplash.com/photos/R5ExRDtg_BM",
   "standIn": false,
   "cropOf": null,
-  "portrait": [],
-  "pwidth": null,
-  "pheight": null,
   "color": "#878469"
  },
  "remote-village": {
@@ -700,35 +552,25 @@
   "page": "https://unsplash.com/photos/8O-KsnJ2Yds",
   "standIn": false,
   "cropOf": null,
-  "portrait": [
-   640,
-   960,
-   1204
-  ],
-  "pwidth": 1204,
-  "pheight": 1605,
   "color": "#8d8b89"
  },
  "institutional": {
   "widths": [
    240,
-   480,
-   800,
-   1200,
-   1600
+   640,
+   960,
+   1280,
+   1920
   ],
-  "width": 1600,
-  "height": 1066,
+  "width": 1920,
+  "height": 1280,
   "alt": "A single-story building framed with roof trusses and sheathing behind site fencing",
   "focal": "50% 55%",
   "credit": "Troy Mortier / Unsplash",
   "page": "https://unsplash.com/photos/Ll9JCsrSC4U",
   "standIn": false,
   "cropOf": null,
-  "portrait": [],
-  "pwidth": null,
-  "pheight": null,
-  "color": "#928f82"
+  "color": "#8e8e8e"
  },
  "multifamily": {
   "widths": [
@@ -746,9 +588,6 @@
   "page": "https://unsplash.com/photos/3GdHDDtHJ-4",
   "standIn": false,
   "cropOf": null,
-  "portrait": [],
-  "pwidth": null,
-  "pheight": null,
   "color": "#7892a8"
  },
  "custom-home": {
@@ -767,9 +606,6 @@
   "page": "https://unsplash.com/photos/QtF2v8BP46I",
   "standIn": false,
   "cropOf": null,
-  "portrait": [],
-  "pwidth": null,
-  "pheight": null,
   "color": "#c59d73"
  },
  "north-slope": {
@@ -788,9 +624,6 @@
   "page": "https://unsplash.com/photos/sf8cIlT1t5g",
   "standIn": false,
   "cropOf": null,
-  "portrait": [],
-  "pwidth": null,
-  "pheight": null,
   "color": "#7892b3"
  },
  "export": {
@@ -809,9 +642,6 @@
   "page": "https://unsplash.com/photos/sI2eENXdoBI",
   "standIn": false,
   "cropOf": null,
-  "portrait": [],
-  "pwidth": null,
-  "pheight": null,
   "color": "#768d9f"
  },
  "yard-kent": {
@@ -830,9 +660,6 @@
   "page": "https://unsplash.com/photos/V5YPZo528n4",
   "standIn": true,
   "cropOf": null,
-  "portrait": [],
-  "pwidth": null,
-  "pheight": null,
   "color": "#918577"
  },
  "fairbanks": {
@@ -851,9 +678,6 @@
   "page": "https://unsplash.com/photos/F_p4UZUe_xo",
   "standIn": false,
   "cropOf": null,
-  "portrait": [],
-  "pwidth": null,
-  "pheight": null,
   "color": "#21595d"
  },
  "rainier-tacoma": {
@@ -873,14 +697,7 @@
   "page": "https://unsplash.com/photos/ytPJ4kppYWE",
   "standIn": false,
   "cropOf": null,
-  "portrait": [
-   640,
-   960,
-   1200
-  ],
-  "pwidth": 1200,
-  "pheight": 1600,
-  "color": "#696384"
+  "color": "#696969"
  },
  "floatplane": {
   "widths": [
@@ -892,15 +709,12 @@
   ],
   "width": 1600,
   "height": 2134,
-  "alt": "Skiffs on a gravel beach below a volcanic peak as a floatplane passes, Port Alsworth, Alaska",
+  "alt": "Skiffs on a gravel beach below a mountain as a floatplane passes, Port Alsworth, Alaska",
   "focal": "50% 70%",
   "credit": "Brandy Willetts / Unsplash",
   "page": "https://unsplash.com/photos/TFpqCU4b2dw",
   "standIn": false,
   "cropOf": null,
-  "portrait": [],
-  "pwidth": null,
-  "pheight": null,
   "color": "#8d99ac"
  },
  "barge-strip": {
@@ -920,9 +734,6 @@
   "page": "https://unsplash.com/photos/hvgb3lXdOKw",
   "standIn": false,
   "cropOf": "tug-barge",
-  "portrait": [],
-  "pwidth": null,
-  "pheight": null,
   "color": "#a9a9a9"
  },
  "port-alsworth": {
@@ -935,15 +746,12 @@
   ],
   "width": 1920,
   "height": 1280,
-  "alt": "Skiffs pulled up on a gravel beach as a small plane comes in below a volcanic peak, Port Alsworth, Alaska",
+  "alt": "Skiffs pulled up on a gravel beach as a small plane comes in below a mountain, Port Alsworth, Alaska",
   "focal": "58% 50%",
   "credit": "Brandy Willetts / Unsplash",
   "page": "https://unsplash.com/photos/TFpqCU4b2dw",
   "standIn": false,
   "cropOf": "floatplane",
-  "portrait": [],
-  "pwidth": null,
-  "pheight": null,
   "color": "#7b7b7b"
  }
 }

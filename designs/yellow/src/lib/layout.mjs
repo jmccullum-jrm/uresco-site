@@ -1,14 +1,14 @@
-import { html, raw, esc } from './html.mjs';
+import { html, raw } from './html.mjs';
 import { icon, mark } from './icons.mjs';
 import { SITE } from '../config.mjs';
-import { LOCATIONS, tel, address, mapsUrl, hoursLines, openingHoursLd } from '../data/locations.mjs';
-import { openStatus } from './components.mjs';
+import { LOCATIONS, tel, mapsUrl } from '../data/locations.mjs';
+import { openStatus, callBtn } from './components.mjs';
 import { CATEGORIES } from '../data/products.mjs';
 
 export const NAV = [
   { href: 'products/', label: 'Products', menu: true },
   { href: 'services/', label: 'Services' },
-  { href: 'alaska/', label: 'Alaska Delivery' },
+  { href: 'alaska/', label: 'Alaska delivery' },
   { href: 'projects/', label: 'Projects' },
   { href: 'locations/', label: 'Locations' },
   { href: 'about/', label: 'About' },
@@ -40,7 +40,7 @@ const header = (ctx) => html`
   <div class="utility" role="region" aria-label="Call a yard">
     <div class="wrap utility__row">
       <ul class="utility__yards">
-        ${LOCATIONS.map((l) => html`<li><span class="utility__city">${l.city}</span><a href="${tel(l.phone)}">${l.phone}</a>${openStatus(l, { short: true })}</li>`)}
+        ${LOCATIONS.map((l) => html`<li><span class="utility__city">${l.city}</span><a href="${tel(l.phone)}">${l.phone}</a>${openStatus(l)}</li>`)}
       </ul>
       <div class="utility__links">
         <a href="${ctx.u('accounts/')}">Contractor accounts</a>
@@ -60,11 +60,11 @@ const header = (ctx) => html`
         </ul>
       </nav>
       <div class="masthead__acts">
-        <button type="button" class="btn btn--sm btn--line masthead__call" data-open="call-sheet" aria-haspopup="dialog">${icon('phone', { size: 16 })}Call</button>
-        <a class="btn btn--sm masthead__cta" href="${ctx.u('quote/')}">Get a quote</a>
-        <button class="masthead__menu" type="button" data-open="drawer" aria-haspopup="dialog" aria-controls="drawer">
+        <a class="btn btn--sm btn--line masthead__call" href="${ctx.u('locations/')}" data-open="call-sheet" aria-haspopup="dialog">${icon('phone', { size: 16 })}<span class="masthead__call-t">Call<span class="masthead__more masthead__more--call"> a yard</span></span></a>
+        <a class="btn btn--sm masthead__cta" href="${ctx.u('quote/')}"><span><span class="masthead__more masthead__more--cta">Request a </span>quote</span></a>
+        <a class="masthead__menu" href="#site-index" data-open="drawer" aria-haspopup="dialog" aria-controls="drawer">
           ${icon('menu', { size: 20 })}<span>Menu</span>
-        </button>
+        </a>
       </div>
     </div>
   </header>
@@ -75,40 +75,59 @@ const header = (ctx) => html`
     </div>
     <nav aria-label="Mobile">
       <ul class="drawer__nav">
-        ${NAV.map((n, i) => html`<li style="--i:${i}"><a href="${ctx.u(n.href)}"${raw(isCurrent(ctx, n.href) ? ' aria-current="page"' : '')}>${n.label}</a></li>`)}
+        ${NAV.map((n, i) => (n.menu ? html`<li style="--i:${i}">
+          <details class="drawer__group">
+            <summary>${n.label}</summary>
+            <ul class="drawer__lines">
+              ${CATEGORIES.map((c) => html`<li><a href="${ctx.u('products/' + c.slug + '/')}"${raw(ctx.path.startsWith('products/' + c.slug) ? ' aria-current="page"' : '')}>${c.short}</a></li>`)}
+              <li class="drawer__all"><a href="${ctx.u(n.href)}">All products ${icon('arrow', { size: 16 })}</a></li>
+            </ul>
+          </details>
+        </li>` : html`<li style="--i:${i}"><a href="${ctx.u(n.href)}"${raw(isCurrent(ctx, n.href) ? ' aria-current="page"' : '')}>${n.label}</a></li>`))}
       </ul>
     </nav>
-    <ul class="drawer__minor">
-      <li><a href="${ctx.u('accounts/')}">Contractor accounts</a></li>
-      <li><a href="${ctx.u('pacific-northwest/')}">Pacific Northwest</a></li>
-    </ul>
     <ul class="drawer__yards" aria-label="Call a yard">
       ${LOCATIONS.map((l) => html`<li><a href="${tel(l.phone)}"><b>${l.city}</b><span>${l.phone}</span></a></li>`)}
     </ul>
-    <a class="btn btn--block btn--paper" href="${ctx.u('quote/')}">Request a quote ${icon('arrow', { size: 18 })}</a>
+    <div class="drawer__cta">
+      <a class="btn btn--paper" href="${ctx.u('quote/')}">Request a quote ${icon('arrow', { size: 18 })}</a>
+      <a class="btn btn--line" href="${ctx.u('accounts/')}">Open an account</a>
+    </div>
+    <a class="drawer__minor" href="${ctx.u('pacific-northwest/')}">Pacific Northwest ${icon('arrow', { size: 16 })}</a>
   </dialog>`;
 
-const callSheet = () => html`
+// Call or visit: every yard with its number and a map link side by side. From the Alaska page the
+// Alaska yards come first. Status shows Open or Closed only: yard hours are unconfirmed placeholders.
+const callSheet = (ctx) => {
+  const yards = ctx.path.startsWith('alaska') ? [...LOCATIONS.filter((l) => l.state === 'AK'), ...LOCATIONS.filter((l) => l.state !== 'AK')] : LOCATIONS;
+  return html`
   <dialog class="sheet" id="call-sheet" aria-labelledby="call-sheet-title">
     <div class="sheet__head">
-      <h2 id="call-sheet-title" class="sheet__title">Call a yard</h2>
+      <h2 id="call-sheet-title" class="sheet__title">Call or visit a yard</h2>
       <button type="button" class="xbtn" data-close>${icon('close', { size: 22 })}<span class="sr-only">Close</span></button>
     </div>
     <ul class="sheet__list">
-      ${LOCATIONS.map((l) => html`<li class="sheet__yard">
-        <span><b>${l.city}, ${l.state}</b><small>${l.street}</small>${openStatus(l)}</span>
-        <span class="sheet__acts">
-          <a class="sheet__dir" href="${mapsUrl(l)}" target="_blank" rel="noopener" aria-label="Directions to the ${l.city} yard">${icon('directions', { size: 20 })}</a>
-          <a class="sheet__num" href="${tel(l.phone)}">${icon('phone', { size: 18 })}${l.phone}</a>
-        </span></li>`)}
+      ${yards.map((l) => html`<li class="sheet__yard">
+        <div class="sheet__top"><b class="sheet__city">${l.city}, ${l.state}</b>${openStatus(l)}</div>
+        <p class="sheet__addr"><span>${l.street}</span> <span class="nw">Fax <span class="nums">${l.fax}</span></span></p>
+        <div class="sheet__acts">
+          <a class="sheet__num" href="${tel(l.phone)}">${icon('phone', { size: 18 })}<span class="sr-only">Call the ${l.city} yard at </span>${l.phone}</a>
+          <a class="sheet__dir" href="${mapsUrl(l)}" target="_blank" rel="noopener">${icon('directions', { size: 18 })}Directions<span class="sr-only"> to the ${l.city} yard</span></a>
+        </div>
+        <div class="sheet__more">
+          <a href="mailto:${l.email}">${icon('mail', { size: 16 })}${l.email}</a>
+          <a href="${ctx.u('locations/#' + l.id)}"><span class="sr-only">${l.city} yard </span>Details ${icon('arrow', { size: 14 })}</a>
+        </div>
+      </li>`)}
     </ul>
-    <a class="sheet__mail" href="mailto:${SITE.email}">${icon('mail', { size: 18 })} ${SITE.email}</a>
   </dialog>`;
+};
 
+// Call and Directions both open the sheet; without the script they are links to the locations page.
 const actionBar = (ctx) => html`
   <div class="actionbar" role="region" aria-label="Quick actions">
-    <button type="button" class="actionbar__btn" data-open="call-sheet" aria-haspopup="dialog">${icon('phone', { size: 19 })}Call</button>
-    <a class="actionbar__btn" href="${ctx.u('locations/')}">${icon('directions', { size: 19 })}Directions</a>
+    <a class="actionbar__btn" href="${ctx.u('locations/')}" data-open="call-sheet" aria-haspopup="dialog">${icon('phone', { size: 19 })}Call</a>
+    <a class="actionbar__btn" href="${ctx.u('locations/')}" data-open="call-sheet" aria-haspopup="dialog">${icon('directions', { size: 19 })}Directions</a>
     <a class="actionbar__btn actionbar__btn--primary" href="${ctx.u('quote/')}">${icon('file', { size: 19 })}Quote</a>
   </div>`;
 
@@ -120,20 +139,20 @@ const footer = (ctx) => html`
         <p class="footer__tag d2">Quality materials, trusted service.</p>
         <div class="footer__acts">
           <a class="btn btn--yellow" href="${ctx.u('quote/')}">Request a quote ${icon('arrow', { size: 18 })}</a>
-          <button type="button" class="btn btn--line" data-open="call-sheet" aria-haspopup="dialog">${icon('phone', { size: 18 })} Call a yard</button>
+          ${callBtn(ctx, { cls: 'btn--line' })}
         </div>
       </div>
       <div class="footer__cols">
         ${LOCATIONS.map((l) => html`
           <div class="footer__yard">
-            <h2 class="footer__h">${l.city}, ${l.state}</h2>
+            <div class="footer__yardhead"><h2 class="footer__h">${l.city}, ${l.state}</h2>${openStatus(l)}</div>
             <address>${l.street}<br>${l.city}, ${l.state} ${l.zip}</address>
             <a class="footer__num" href="${tel(l.phone)}">${l.phone}</a>
             ${l.tollFree ? html`<a href="${tel(l.tollFree)}">${l.tollFree} <small>toll-free</small></a>` : ''}
             <a href="mailto:${l.email}">${l.email}</a>
-            ${l.hours ? html`<small class="footer__hours">${hoursLines(l).join(' · ')}</small>` : ''}
+            <span class="footer__fax">Fax <span class="nums">${l.fax}</span></span>
           </div>`)}
-        <nav class="footer__nav" aria-label="Footer">
+        <nav class="footer__nav" id="site-index" aria-label="Footer">
           <h2 class="footer__h">Explore</h2>
           <a href="${ctx.u('products/')}">Products</a>
           <a href="${ctx.u('services/')}">Services</a>
@@ -144,6 +163,10 @@ const footer = (ctx) => html`
           <a href="${ctx.u('locations/')}">Locations</a>
           <a href="${ctx.u('accounts/')}">Contractor accounts</a>
           <a href="${ctx.u('quote/')}">Request a quote</a>
+        </nav>
+        <nav class="footer__nav footer__nav--lines" aria-label="Product lines">
+          <h2 class="footer__h">Product lines</h2>
+          ${CATEGORIES.map((c) => html`<a href="${ctx.u('products/' + c.slug + '/')}">${c.short}</a>`)}
         </nav>
       </div>
       <span class="footer__word" aria-hidden="true">Uresco</span>
@@ -181,7 +204,6 @@ export const orgJsonLd = (ctx) => {
       email: l.email,
       address: { '@type': 'PostalAddress', streetAddress: l.street, addressLocality: l.city, addressRegion: l.state, postalCode: l.zip, addressCountry: 'US' },
       geo: { '@type': 'GeoCoordinates', latitude: l.geo.lat, longitude: l.geo.lng },
-      openingHoursSpecification: openingHoursLd(l),
     })),
   };
   return html`<script type="application/ld+json">${raw(JSON.stringify(org).replace(/</g, '\\u003c'))}</script>`;
@@ -236,10 +258,8 @@ ${body}
 </main>
 ${footer(ctx)}
 ${actionBar(ctx)}
-${callSheet()}
+${callSheet(ctx)}
 </body>
 </html>
 `;
 };
-
-export { esc, address };

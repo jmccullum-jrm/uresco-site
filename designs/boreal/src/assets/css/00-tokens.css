@@ -11,25 +11,26 @@
 @property --z { syntax: '<number>'; inherits: true; initial-value: 1; }
 
 :root {
-  /* Light: snow, ice and mist. Text is a deep spruce ink. */
+  /* Light: snow, ice and mist. Text is the black of the logo. */
   --snow: #F4F6F6;
   --white: #FFFFFF;
   --ice: #E8EEEF;
   --mist: #D9E1E3;
   --fog: #B4C1C5;
   --slate: #51636A;        /* muted text: 5.9:1 on snow, 6.4:1 on white */
-  --ink: #0A1B20;
-  --spruce: #12393A;
+  --ink: #0E0E0C;          /* the black in the mark */
+  --ink-hi: #2C2C27;       /* a dark button under the pointer */
 
-  /* Dark: the night the map and other "screens" sit in. */
-  --night: #071419;
-  --night-2: #0C2229;
-  --night-3: #14313A;
-  --night-line: rgba(207, 234, 241, .14);
-  --frost: #CFEAF1;        /* text on night */
-  --haze: #9DBCC5;         /* muted text on night: 8.6:1 */
+  /* Dark: true black, the other half of the UCM yellow-and-black. Maps and other "screens" sit in it. */
+  --night: #0E0E0C;
+  --night-2: #1A1A17;
+  --night-3: #272823;
+  --night-line: rgba(255, 255, 255, .14);
+  --frost: #E3E7E6;        /* text on night */
+  --haze: #A9B3B3;         /* muted text on night: 9:1 */
 
-  /* Accents from the north. Yellow is UCM yellow: the primary action and the freight line, nothing else. */
+  /* Accents from the north. Yellow is UCM yellow: the primary action, the freight line, the yard
+     numbers on black and one large surface per page (the band at the top of the footer). */
   --glacier: #7FC4D9;
   --glacier-ink: #17657E;  /* glacier for text on light: 5.9:1 on snow */
   --aurora: #5FE0B0;
@@ -66,10 +67,10 @@
   --r-sm: 10px; --r-md: 14px; --r-lg: 22px; --r-xl: 28px; --r-2xl: 32px;
 
   /* Depth: fine borders first, shadows second. */
-  --line: 0 0 0 1px rgba(10, 27, 32, .07);
-  --sh-1: 0 0 0 1px rgba(10, 27, 32, .06), 0 1px 2px rgba(10, 27, 32, .05);
-  --sh-2: 0 0 0 1px rgba(10, 27, 32, .06), 0 2px 4px rgba(10, 27, 32, .04), 0 12px 28px -8px rgba(10, 27, 32, .14);
-  --sh-3: 0 0 0 1px rgba(10, 27, 32, .06), 0 4px 8px rgba(10, 27, 32, .05), 0 28px 56px -16px rgba(10, 27, 32, .32);
+  --line: 0 0 0 1px rgba(14, 14, 12, .07);
+  --sh-1: 0 0 0 1px rgba(14, 14, 12, .06), 0 1px 2px rgba(14, 14, 12, .05);
+  --sh-2: 0 0 0 1px rgba(14, 14, 12, .06), 0 2px 4px rgba(14, 14, 12, .04), 0 12px 28px -8px rgba(14, 14, 12, .14);
+  --sh-3: 0 0 0 1px rgba(14, 14, 12, .06), 0 4px 8px rgba(14, 14, 12, .05), 0 28px 56px -16px rgba(14, 14, 12, .32);
 
   /* Motion */
   --ease: cubic-bezier(.2, .7, .2, 1);

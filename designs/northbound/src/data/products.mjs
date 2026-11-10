@@ -1,6 +1,6 @@
 // Product categories. The item lists are the lines uresco.com says Uresco carries;
 // the one-line notes describe what each product is, not specific stock or sizes.
-// Availability varies by yard, so pages tell people to call rather than promise.
+// What is on the ground is for the yard to say, so pages tell people to call rather than promise.
 // literature: manufacturer pages for spec sheets and installation guides (opened in a new tab).
 
 export const CATEGORIES = [

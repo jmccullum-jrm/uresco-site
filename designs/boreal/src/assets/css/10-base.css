@@ -60,7 +60,7 @@ html:not(.js) .jsonly { display: none !important; }
   min-height: 44px; padding: 0 1.1rem; border-radius: 12px; border: 1px solid transparent;
   background: var(--yellow); color: var(--ink); font-size: .9375rem; font-weight: 500; letter-spacing: -.005em;
   text-decoration: none; white-space: nowrap; cursor: pointer;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .4), 0 1px 2px rgba(10, 27, 32, .18);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .4), 0 1px 2px rgba(14, 14, 12, .18);
   transition: background var(--fast), border-color var(--fast), transform var(--fast) var(--ease);
 }
 .btn:hover { background: var(--yellow-hi); }
@@ -70,8 +70,8 @@ html:not(.js) .jsonly { display: none !important; }
 .btn--lg { min-height: 52px; padding: 0 1.4rem; font-size: 1rem; border-radius: 14px; }
 .btn--sm { min-height: 38px; padding: 0 .9rem; font-size: .875rem; border-radius: 10px; }
 .btn--block { display: flex; width: 100%; }
-.btn--dark { background: var(--ink); color: #fff; box-shadow: inset 0 1px 0 rgba(255, 255, 255, .1), 0 1px 2px rgba(10, 27, 32, .2); }
-.btn--dark:hover { background: #173039; }
+.btn--dark { background: var(--ink); color: #fff; box-shadow: inset 0 1px 0 rgba(255, 255, 255, .1), 0 1px 2px rgba(14, 14, 12, .2); }
+.btn--dark:hover { background: var(--ink-hi); }
 .btn--line { background: transparent; color: var(--ink); border-color: var(--fog); box-shadow: none; }
 .btn--line:hover { background: var(--white); border-color: var(--ink); }
 .btn--glass { background: rgba(255, 255, 255, .08); color: #fff; border-color: rgba(255, 255, 255, .2); box-shadow: none; }
@@ -90,7 +90,7 @@ html:not(.js) .jsonly { display: none !important; }
 button.chip { cursor: pointer; transition: background var(--fast), color var(--fast); }
 button.chip:hover { background: var(--mist); }
 button.chip[aria-pressed='true'] { background: var(--ink); color: #fff; }
-.chip--glass { background: rgba(7, 20, 25, .62); color: #fff; border-color: rgba(255, 255, 255, .16); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
+.chip--glass { background: rgba(14, 14, 12, .62); color: #fff; border-color: rgba(255, 255, 255, .16); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
 
 /* Live open/closed status: a dot and a word, in the yard's own time zone. */
 .status { display: inline-flex; align-items: center; gap: .4rem; font-size: .8125rem; font-weight: 500; color: var(--slate); white-space: nowrap; }
@@ -101,11 +101,10 @@ button.chip[aria-pressed='true'] { background: var(--ink); color: #fff; }
 
 /* ---------- Sections ---------- */
 .section { padding-block: var(--section); }
-.section--tight { padding-block: calc(var(--section) * .6); }
 .section--first { padding-top: calc(var(--section) * .8); }
 /* A section that is a surface: inset from the screen edge and rounded, like the map. */
 .section--ice { background: var(--ice); margin-inline: var(--edge); border-radius: var(--r-2xl); }
-.section--ice > .wrap { padding-inline: calc(var(--gutter) - var(--inset)); }
+.section--ice > .wrap { max-width: none; padding-inline: var(--column); }
 /* Surfaces that touch keep a seam the width of the inset; a surface before the footer does the same. */
 :is(.section--ice, .interlude, .cta, .remote, .hero) + :is(.section--ice, .interlude, .cta, .remote) { margin-top: var(--inset); }
 main:has(> :is(.section--ice, .interlude, .cta, .remote):last-child) + .footer { margin-top: var(--inset); }
@@ -119,14 +118,14 @@ main:has(> :is(.section--ice, .interlude, .cta, .remote):last-child) + .footer {
    Always in a large rounded frame, graded a little cool so pictures from many cameras sit together. */
 .frame { position: relative; isolation: isolate; overflow: hidden; margin: 0; border-radius: var(--r-xl); background: var(--ice); }
 .frame img { width: 100%; height: 100%; object-fit: cover; filter: saturate(.86) contrast(1.03); }
-.frame::after { content: ''; position: absolute; inset: 0; z-index: 1; pointer-events: none; border-radius: inherit; background: linear-gradient(180deg, rgba(60, 130, 150, .10), rgba(7, 20, 25, .12)); box-shadow: inset 0 0 0 1px rgba(10, 27, 32, .08); }
+.frame::after { content: ''; position: absolute; inset: 0; z-index: 1; pointer-events: none; border-radius: inherit; background: linear-gradient(180deg, rgba(60, 130, 150, .10), rgba(14, 14, 12, .12)); box-shadow: inset 0 0 0 1px rgba(14, 14, 12, .08); }
 .frame__cap {
   position: absolute; z-index: 2; left: 1rem; bottom: 1rem; margin: 0; display: inline-flex; gap: .6rem; align-items: center;
-  padding: .45rem .65rem; border-radius: 9px; background: rgba(7, 20, 25, .62); color: #fff;
+  padding: .45rem .65rem; border-radius: 9px; background: rgba(14, 14, 12, .78); color: #fff;
   -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
-  font-family: var(--mono); font-size: .6875rem; font-weight: 500; letter-spacing: .06em; text-transform: uppercase;
+  font-family: var(--mono); font-size: var(--t-micro); font-weight: 500; letter-spacing: .05em; text-transform: uppercase;
 }
-.frame__cap span { color: var(--haze); }
+.frame__cap span { color: var(--frost); }
 
 /* Reduced motion: nothing animates, whatever a later rule says. */
 @media (prefers-reduced-motion: reduce) {

@@ -23,8 +23,8 @@
 <link rel="preload" href="../assets/fonts/fraunces-var.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="../assets/fonts/fraunces-italic-var.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" as="image" imagesrcset="../assets/img/lumber-stack-p-480.webp 480w, ../assets/img/lumber-stack-p-640.webp 640w, ../assets/img/lumber-stack-p-800.webp 800w, ../assets/img/lumber-stack-p-960.webp 960w, ../assets/img/lumber-stack-p-1202.webp 1202w" imagesizes="100vw" media="(max-aspect-ratio: 1/1)" fetchpriority="high"><link rel="preload" as="image" imagesrcset="../assets/img/lumber-stack-240.webp 240w, ../assets/img/lumber-stack-640.webp 640w, ../assets/img/lumber-stack-960.webp 960w, ../assets/img/lumber-stack-1280.webp 1280w, ../assets/img/lumber-stack-1920.webp 1920w, ../assets/img/lumber-stack-2400.webp 2400w" imagesizes="max(100vw, calc(1.71 * clamp(16rem, 58vw, 40rem)))" media="(min-aspect-ratio: 1001/1000)" fetchpriority="high">
-<link rel="stylesheet" href="../assets/css/site.css?v=45383785">
-<script src="../assets/js/site.js?v=45383785" defer></script>
+<link rel="stylesheet" href="../assets/css/site.css?v=0948b281">
+<script src="../assets/js/site.js?v=0948b281" defer></script>
 
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.uresco.com/"},{"@type":"ListItem","position":2,"name":"About Uresco","item":"https://www.uresco.com/about/"}]}</script>
 </head>
@@ -36,8 +36,7 @@
       <li><span class="dateline__lat">47.4°N</span><span class="dateline__city">Kent</span><a href="tel:+12533951211">(253) 395-1211</a><span class="status" data-hours="{&quot;tz&quot;:&quot;America/Los_Angeles&quot;,&quot;week&quot;:[null,[420,990],[420,990],[420,990],[420,990],[420,990],null]}" data-short hidden></span></li><li><span class="dateline__lat">61.2°N</span><span class="dateline__city">Anchorage</span><a href="tel:+19075632500">(907) 563-2500</a><span class="status" data-hours="{&quot;tz&quot;:&quot;America/Anchorage&quot;,&quot;week&quot;:[null,[420,990],[420,990],[420,990],[420,990],[420,990],null]}" data-short hidden></span></li><li><span class="dateline__lat">64.8°N</span><span class="dateline__city">Fairbanks</span><a href="tel:+19074561550">(907) 456-1550</a><span class="status" data-hours="{&quot;tz&quot;:&quot;America/Anchorage&quot;,&quot;week&quot;:[null,[420,990],[420,990],[420,990],[420,990],[420,990],null]}" data-short hidden></span></li>
     </ul>
     <div class="dateline__links">
-      <a href="../accounts/">Contractor accounts</a>
-      <a href="mailto:sales@uresco.com">sales@uresco.com</a>
+      <a href="../accounts/">Open an account</a>
     </div>
   </div>
   <header class="masthead" data-masthead>
@@ -103,7 +102,7 @@
           </li><li class="nav__item">
             <a class="nav__link" href="../services/">Services</a>
           </li><li class="nav__item">
-            <a class="nav__link" href="../alaska/">Alaska Delivery</a>
+            <a class="nav__link" href="../alaska/">Alaska delivery</a>
           </li><li class="nav__item">
             <a class="nav__link" href="../projects/">Projects</a>
           </li><li class="nav__item">
@@ -113,13 +112,12 @@
           </li>
         </ul>
       </nav>
-      
       <div class="masthead__acts">
-        <button type="button" class="btn btn--sm btn--line masthead__call" data-open="call-sheet" aria-haspopup="dialog"><svg class="i " width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 3.5h3.2l1.6 4.2-2.1 1.4a11 11 0 0 0 5.2 5.2l1.4-2.1 4.2 1.6V17a2 2 0 0 1-2 2A15.5 15.5 0 0 1 3 5.5a2 2 0 0 1 2-2Z"/></svg>Call a yard</button>
-        <a class="btn btn--sm masthead__cta" href="../quote/">Request a quote</a>
-        <button class="masthead__menu" type="button" data-open="drawer" aria-haspopup="dialog" aria-controls="drawer">
+        <a class="btn btn--sm masthead__call" href="../locations/" data-open="call-sheet" aria-haspopup="dialog"><svg class="i " width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 3.5h3.2l1.6 4.2-2.1 1.4a11 11 0 0 0 5.2 5.2l1.4-2.1 4.2 1.6V17a2 2 0 0 1-2 2A15.5 15.5 0 0 1 3 5.5a2 2 0 0 1 2-2Z"/></svg><span>Call<span class="masthead__more"> a yard</span></span></a>
+        <a class="btn btn--sm masthead__cta" href="../quote/"><span class="masthead__cta-long">Request a quote</span><span class="masthead__cta-short">Quote</span></a>
+        <a class="masthead__menu" href="#footer-index" data-open="drawer" aria-haspopup="dialog" aria-controls="drawer">
           <span>Menu</span><svg class="i " width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
-        </button>
+        </a>
       </div>
     </div>
     
@@ -135,16 +133,25 @@
     </div>
     <nav class="drawer__body" aria-label="Mobile">
       <ol class="drawer__nav">
-        <li><a href="../products/"><span class="drawer__no">01</span>Products</a></li><li><a href="../services/"><span class="drawer__no">02</span>Services</a></li><li><a href="../alaska/"><span class="drawer__no">03</span>Alaska Delivery</a></li><li><a href="../projects/"><span class="drawer__no">04</span>Projects</a></li><li><a href="../locations/"><span class="drawer__no">05</span>Locations</a></li><li><a href="../about/" aria-current="page"><span class="drawer__no">06</span>About</a></li>
+        
+  <li><details class="drawer__more">
+    <summary><span class="drawer__no">01</span>Products<svg class="i drawer__caret" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg></summary>
+    <ol class="drawer__lines">
+      <li><a class="drawer__all" href="../products/">All products <svg class="i " width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 12h15m-6-6 6 6-6 6"/></svg></a></li>
+      <li><a href="../products/framing-lumber/"><span class="drawer__no">01</span>Framing &amp; Timbers</a></li><li><a href="../products/panels-sheathing/"><span class="drawer__no">02</span>Panels &amp; Sheathing</a></li><li><a href="../products/engineered-wood/"><span class="drawer__no">03</span>Engineered Wood</a></li><li><a href="../products/concrete-forming/"><span class="drawer__no">04</span>Forming Panels</a></li><li><a href="../products/cedar-decking/"><span class="drawer__no">05</span>Cedar &amp; Decking</a></li><li><a href="../products/siding-exterior/"><span class="drawer__no">06</span>Siding &amp; Exterior</a></li><li><a href="../products/insulation-drywall/"><span class="drawer__no">07</span>Insulation &amp; Drywall</a></li><li><a href="../products/windows-doors-cabinets/"><span class="drawer__no">08</span>Windows, Doors &amp; Cabinets</a></li><li><a href="../products/hardware-supplies/"><span class="drawer__no">09</span>Hardware &amp; Supplies</a></li>
+    </ol>
+  </details></li><li><a href="../services/"><span class="drawer__no">02</span>Services</a></li><li><a href="../alaska/"><span class="drawer__no">03</span>Alaska delivery</a></li><li><a href="../projects/"><span class="drawer__no">04</span>Projects</a></li><li><a href="../locations/"><span class="drawer__no">05</span>Locations</a></li><li><a href="../about/" aria-current="page"><span class="drawer__no">06</span>About</a></li>
       </ol>
       <ul class="drawer__minor">
-        <li><a href="../accounts/">Contractor accounts</a></li>
         <li><a href="../pacific-northwest/">Pacific Northwest</a></li>
         <li><a href="mailto:sales@uresco.com">sales@uresco.com</a></li>
       </ul>
     </nav>
     <div class="drawer__foot">
-      <a class="btn btn--block" href="../quote/">Request a quote <svg class="i " width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 12h15m-6-6 6 6-6 6"/></svg></a>
+      <div class="drawer__cta">
+        <a class="btn" href="../quote/">Request a quote</a>
+        <a class="btn btn--line" href="../accounts/">Open an account</a>
+      </div>
       <ul class="drawer__yards">
         <li><a href="tel:+12533951211"><span class="drawer__lat">47.4°N</span><b>Kent</b><span class="drawer__num">(253) 395-1211</span></a></li><li><a href="tel:+19075632500"><span class="drawer__lat">61.2°N</span><b>Anchorage</b><span class="drawer__num">(907) 563-2500</span></a></li><li><a href="tel:+19074561550"><span class="drawer__lat">64.8°N</span><b>Fairbanks</b><span class="drawer__num">(907) 456-1550</span></a></li>
       </ul>
@@ -156,93 +163,194 @@
 
   <section class="phero">
     <div class="wrap phero__inner">
+      <nav class="crumbs" aria-label="Breadcrumb"><ol>
+        <li><a href="../">Home</a></li>
+        <li><span aria-current="page">About</span></li>
+      </ol></nav>
+      <p class="label phero__eyebrow">About Uresco · More than 35 years</p>
+      <h1 class="display phero__title">Who you are <em>buying from.</em></h1>
       
-      <p class="label phero__eyebrow">About · 35+ years</p>
-      <h1 class="display phero__title">Quality materials. <em>Trusted service.</em></h1>
       <div class="phero__row">
-        <p class="lede phero__lede">For more than 35 years, Uresco has been a trusted source for quality building materials throughout the Pacific Northwest and all of Alaska.</p>
-        
+        <p class="lede phero__lede">Uresco Construction Materials is a wholesale dealer in building materials, with yards in Kent, Anchorage and Fairbanks. For more than 35 years we have supplied builders across the Pacific Northwest and all of Alaska.</p>
+        <div class="actions"><a class="btn" href="../quote/">Request a quote <svg class="i " width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 12h15m-6-6 6 6-6 6"/></svg></a><a class="btn btn--line" href="../locations/" data-open="call-sheet" aria-haspopup="dialog"><svg class="i " width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 3.5h3.2l1.6 4.2-2.1 1.4a11 11 0 0 0 5.2 5.2l1.4-2.1 4.2 1.6V17a2 2 0 0 1-2 2A15.5 15.5 0 0 1 3 5.5a2 2 0 0 1 2-2Z"/></svg> Call a yard</a></div>
       </div>
     </div>
     <figure class="phero__media">
-      <div class="phero__frame" data-parallax><picture><source media="(max-aspect-ratio: 1/1)" srcset="../assets/img/lumber-stack-p-480.webp 480w, ../assets/img/lumber-stack-p-640.webp 640w, ../assets/img/lumber-stack-p-800.webp 800w, ../assets/img/lumber-stack-p-960.webp 960w, ../assets/img/lumber-stack-p-1202.webp 1202w" sizes="100vw" width="1202" height="1602"><img class="" src="../assets/img/lumber-stack-1280.webp" srcset="../assets/img/lumber-stack-240.webp 240w, ../assets/img/lumber-stack-640.webp 640w, ../assets/img/lumber-stack-960.webp 960w, ../assets/img/lumber-stack-1280.webp 1280w, ../assets/img/lumber-stack-1920.webp 1920w, ../assets/img/lumber-stack-2400.webp 2400w" sizes="max(100vw, calc(1.71 * clamp(16rem, 58vw, 40rem)))" width="2400" height="1602" alt="Ends of stacked dimensional lumber in a yard" fetchpriority="high" decoding="async" style="background-color:#7c6854"></picture></div>
-      
+      <div class="phero__frame" data-parallax><picture><source media="(max-aspect-ratio: 1/1)" srcset="../assets/img/lumber-stack-p-480.webp 480w, ../assets/img/lumber-stack-p-640.webp 640w, ../assets/img/lumber-stack-p-800.webp 800w, ../assets/img/lumber-stack-p-960.webp 960w, ../assets/img/lumber-stack-p-1202.webp 1202w" sizes="100vw" width="1202" height="1602"><img class="" src="../assets/img/lumber-stack-1280.webp" srcset="../assets/img/lumber-stack-240.webp 240w, ../assets/img/lumber-stack-640.webp 640w, ../assets/img/lumber-stack-960.webp 960w, ../assets/img/lumber-stack-1280.webp 1280w, ../assets/img/lumber-stack-1920.webp 1920w, ../assets/img/lumber-stack-2400.webp 2400w" sizes="max(100vw, calc(1.71 * clamp(16rem, 58vw, 40rem)))" width="2400" height="1602" alt="Ends of stacked dimensional lumber in a yard" fetchpriority="high" decoding="async" style="object-position:50% 52%;background-color:#7c6854"></picture></div>
+      <figcaption class="fig__cap wrap"><span>Ends of stacked dimensional lumber. <small class="fig__credit">Photo: Georg Eiermann / Unsplash</small></span></figcaption>
     </figure>
+    
   </section>
-<section class="section">
-  <div class="wrap split">
-    <div>
-      <p class="label ">Who we are</p>
-      <h2 class="h2">Independent, <em>and built for distance.</em></h2>
-      <p class="lede">As one of the largest independent building-material suppliers serving Alaska and the Pacific Northwest, Uresco offers institutional, commercial and residential builders the best selection, pricing and service.</p>
-      <p>Our reliable service includes dependable delivery to job sites down the road or across an ocean. From our headquarters in Kent and our distribution centers in Anchorage and Fairbanks, we supply everything from framing lumber and engineered beams to siding, insulation, windows, cabinets and the hardware that holds it all together.</p>
-    </div>
-    <div class="split__media"><img class="" src="../assets/img/valdez-port-1280.webp" srcset="../assets/img/valdez-port-240.webp 240w, ../assets/img/valdez-port-640.webp 640w, ../assets/img/valdez-port-960.webp 960w, ../assets/img/valdez-port-1280.webp 1280w, ../assets/img/valdez-port-1920.webp 1920w, ../assets/img/valdez-port-2400.webp 2400w" sizes="(min-width: 860px) 60vw, 100vw" width="2400" height="1500" alt="A port crane at the foot of snow-covered mountains in Valdez, Alaska" loading="lazy" decoding="async" style="object-position:55% 60%;background-color:#465161"></div>
+
+<section class="abt-stand" aria-label="What we do">
+  <div class="wrap abt-stand__grid">
+    <p class="label abt-stand__side">In short</p>
+    <p class="prologue__text rv">We sell building materials, wholesale, to institutional, commercial and residential builders across the Pacific Northwest and all of Alaska. Our specialty is the hard part: <em>a complete building package, delivered to a site with no road to it.</em></p>
   </div>
 </section>
 
-<section class="section section--dark rings">
-  <div class="wrap">
-    <p class="label ">Our mission</p>
-    <p class="mission">Uresco provides a trusted and dependable source of quality construction materials, a knowledgeable and resourceful sales staff, and we are committed to professional and prompt service.</p>
-    <p class="lede">That commitment lets our customers buy their materials with confidence that they will receive the best products at the best prices.</p>
-    <div class="values">
-      <div><b>Quality materials</b><p>A trusted, dependable source of quality construction materials — the right grade, the right brand, the right count.</p></div><div><b>Trusted service</b><p>A knowledgeable, resourceful sales staff committed to professional and prompt service.</p></div><div><b>Remote expertise</b><p>Remote-site and export building packages, with shipping coordination from quote to dock.</p></div><div><b>Independent</b><p>One of the largest independent building-material suppliers serving Alaska and the Pacific Northwest.</p></div>
+<section class="section abt-years" aria-labelledby="years-title">
+  <div class="wrap abt-years__grid">
+    <div class="abt-rings rv">
+      <svg viewBox="-500 -500 1000 1000" aria-hidden="true" focusable="false"><path class="abt-ring" pathLength="1" style="--r:0" d="M180 7l0 17l-2 16l-4 16l-6 16l-7 14l-7 15l-9 14l-9 13l-10 14l-12 12l-12 11l-14 9l-16 8l-15 5l-17 4l-16 2l-17 1l-16 0l-16 -1l-17 -1l-16 -3l-15 -5l-15 -7l-15 -8l-13 -9l-12 -11l-11 -12l-11 -12l-10 -12l-10 -13l-8 -14l-8 -15l-5 -15l-4 -16l-2 -17l-1 -16l1 -16l1 -17l3 -16l4 -17l5 -15l8 -16l9 -14l11 -12l12 -12l13 -10l14 -9l14 -8l15 -7l15 -7l15 -6l16 -4l16 -3l17 0l16 1l17 3l15 5l16 5l14 7l15 7l14 8l14 9l12 11l12 12l10 13l8 14l7 15l6 15l5 16l4 15l2 17z"/><path class="abt-ring" pathLength="1" style="--r:1" d="M189 7l0 17l-3 17l-4 17l-6 16l-7 16l-8 15l-8 15l-10 14l-11 14l-12 13l-13 11l-15 10l-16 7l-16 6l-17 4l-17 2l-18 1l-17 0l-17 0l-17 -2l-17 -3l-16 -5l-16 -7l-15 -9l-13 -10l-13 -11l-12 -12l-11 -12l-11 -13l-10 -14l-9 -15l-7 -15l-6 -16l-4 -17l-2 -17l-1 -17l0 -17l2 -18l3 -17l4 -17l5 -16l8 -16l10 -15l11 -13l13 -12l14 -11l15 -9l14 -9l16 -8l15 -7l16 -6l17 -4l17 -3l17 0l17 1l17 4l17 5l16 5l15 7l16 7l14 9l15 9l13 11l12 13l10 14l9 14l7 16l6 16l5 16l4 17l3 17z"/><path class="abt-ring" pathLength="1" style="--r:2" d="M199 7l-1 18l-2 18l-5 17l-6 17l-7 17l-8 15l-9 16l-11 15l-11 14l-12 14l-14 12l-16 10l-16 8l-18 6l-18 4l-18 2l-18 1l-17 1l-18 -1l-18 -2l-18 -4l-17 -5l-16 -7l-16 -9l-14 -11l-14 -11l-12 -13l-12 -13l-11 -13l-11 -15l-9 -15l-8 -16l-6 -17l-4 -18l-2 -17l-1 -18l0 -18l2 -19l2 -18l5 -17l6 -18l8 -16l10 -16l12 -14l14 -12l14 -11l16 -10l15 -9l16 -8l16 -8l17 -6l18 -5l17 -2l19 -1l18 2l17 4l17 5l17 6l16 6l16 8l16 9l15 10l14 12l12 13l11 14l9 16l8 16l6 16l6 18l4 17l3 18z"/><path class="abt-ring" pathLength="1" style="--r:3" d="M205 6l0 19l-3 18l-4 19l-6 17l-8 17l-8 17l-10 16l-10 15l-11 15l-13 14l-15 12l-16 11l-17 8l-18 6l-19 4l-18 2l-19 2l-18 0l-19 -1l-18 -2l-18 -3l-18 -6l-17 -8l-16 -9l-14 -11l-14 -12l-13 -13l-13 -13l-11 -14l-11 -15l-9 -15l-8 -17l-7 -18l-4 -18l-2 -18l-2 -19l1 -18l1 -19l3 -19l4 -18l7 -18l8 -17l11 -16l13 -14l14 -13l15 -11l15 -10l16 -10l16 -8l17 -8l18 -7l18 -4l18 -3l19 0l18 2l18 3l18 5l18 6l16 7l17 8l16 9l15 11l14 12l13 13l11 15l10 16l8 17l7 17l5 18l5 18l3 18z"/><path class="abt-ring abt-ring--h" pathLength="1" style="--r:4" d="M214 6l-1 19l-3 20l-5 18l-6 19l-8 17l-8 17l-10 17l-10 16l-12 16l-14 14l-15 13l-17 10l-18 9l-18 6l-19 4l-20 3l-19 1l-19 1l-19 -1l-19 -2l-19 -4l-18 -6l-18 -8l-16 -10l-15 -11l-15 -12l-13 -13l-13 -14l-12 -15l-11 -15l-10 -16l-8 -18l-7 -18l-4 -19l-3 -19l-1 -19l0 -19l1 -20l3 -19l5 -19l7 -19l9 -17l11 -17l13 -14l14 -14l16 -11l16 -11l16 -10l17 -9l18 -8l18 -6l19 -5l19 -3l19 0l19 2l19 3l18 6l18 6l18 7l17 8l17 10l16 11l14 12l13 14l12 16l10 16l8 17l7 18l6 18l5 19l3 19z"/><path class="abt-ring" pathLength="1" style="--r:5" d="M224 6l0 20l-3 20l-5 20l-7 19l-8 18l-9 18l-10 18l-11 17l-12 16l-15 15l-15 13l-18 12l-19 8l-19 7l-20 4l-20 3l-21 2l-20 0l-20 -1l-20 -2l-19 -4l-19 -7l-19 -8l-17 -10l-16 -12l-15 -13l-14 -13l-14 -15l-12 -15l-12 -16l-10 -17l-9 -18l-6 -19l-5 -20l-3 -20l-1 -20l0 -20l1 -21l3 -20l5 -20l7 -19l9 -19l12 -17l14 -15l15 -14l16 -13l17 -11l17 -10l18 -10l18 -8l19 -7l20 -5l20 -2l20 -1l20 2l20 4l19 6l19 6l19 7l18 9l17 10l16 11l16 14l13 14l12 17l11 17l9 18l7 18l7 19l5 20l3 20z"/><path class="abt-ring" pathLength="1" style="--r:6" d="M235 6l-1 21l-3 21l-5 20l-7 20l-8 20l-9 18l-11 19l-11 18l-13 17l-15 15l-17 14l-18 12l-20 9l-20 6l-21 5l-21 3l-21 2l-21 0l-21 0l-21 -3l-21 -4l-20 -7l-19 -9l-18 -11l-17 -12l-15 -13l-15 -14l-14 -15l-14 -16l-12 -17l-10 -18l-9 -19l-7 -20l-5 -20l-3 -21l-2 -21l0 -21l1 -22l4 -21l5 -21l7 -20l10 -20l13 -17l14 -16l16 -15l17 -13l17 -12l18 -11l19 -10l19 -8l20 -7l20 -5l21 -3l22 0l21 2l20 4l20 5l20 7l19 8l19 9l18 10l17 12l16 14l15 16l12 16l11 18l9 19l8 20l7 19l5 21l4 21z"/><path class="abt-ring" pathLength="1" style="--r:7" d="M244 6l-1 21l-3 22l-6 21l-7 21l-8 20l-9 20l-11 19l-12 19l-14 17l-15 16l-17 15l-20 11l-20 10l-21 7l-22 5l-22 3l-21 2l-22 0l-22 -1l-22 -2l-21 -5l-20 -7l-20 -9l-19 -11l-17 -13l-17 -14l-15 -14l-15 -16l-14 -16l-12 -18l-11 -19l-9 -19l-7 -21l-5 -21l-4 -22l-2 -21l0 -22l2 -23l3 -22l5 -21l8 -21l11 -20l13 -19l15 -16l16 -15l17 -14l18 -12l19 -12l19 -10l20 -9l21 -7l21 -5l22 -3l22 0l22 2l21 4l21 6l20 7l20 7l20 10l19 11l17 12l17 15l14 16l14 17l11 19l10 19l8 20l7 21l6 21l3 22z"/><path class="abt-ring" pathLength="1" style="--r:8" d="M254 5l-1 23l-4 23l-5 21l-8 22l-8 21l-10 20l-11 20l-12 20l-14 18l-16 17l-19 14l-19 12l-22 10l-22 7l-22 5l-23 4l-22 2l-23 1l-22 -1l-23 -3l-22 -5l-21 -8l-21 -9l-19 -12l-18 -13l-17 -14l-16 -15l-16 -16l-14 -17l-13 -19l-11 -19l-9 -20l-8 -22l-5 -22l-4 -22l-2 -23l0 -23l1 -22l3 -23l6 -23l8 -22l11 -20l14 -19l16 -18l17 -15l18 -14l18 -13l20 -12l19 -11l21 -9l22 -8l22 -5l22 -2l23 -1l23 3l22 4l22 6l21 7l21 8l20 9l19 12l19 13l17 15l15 17l13 18l12 19l10 20l9 21l8 21l5 22l4 23z"/><path class="abt-ring abt-ring--h" pathLength="1" style="--r:9" d="M260 5l-1 23l-4 23l-5 23l-8 22l-8 21l-10 21l-11 21l-13 20l-14 18l-17 17l-19 15l-20 13l-22 10l-22 7l-23 5l-23 4l-23 2l-24 1l-23 -1l-23 -3l-22 -6l-22 -7l-21 -10l-20 -12l-18 -13l-18 -15l-16 -15l-16 -17l-14 -17l-14 -19l-11 -20l-10 -21l-7 -21l-6 -23l-4 -23l-2 -23l0 -23l1 -24l3 -23l6 -24l9 -22l11 -21l14 -19l16 -18l17 -16l19 -14l19 -14l20 -12l20 -11l21 -9l22 -8l23 -5l23 -3l23 0l23 3l23 4l22 6l22 7l21 8l21 10l20 12l19 13l17 15l16 18l14 18l12 20l10 20l9 21l8 22l6 23l3 23z"/><path class="abt-ring" pathLength="1" style="--r:10" d="M272 5l-1 24l-4 24l-6 24l-8 22l-9 23l-10 22l-11 21l-14 21l-15 20l-17 17l-20 16l-21 13l-23 10l-23 8l-24 5l-24 4l-24 2l-24 1l-25 -1l-23 -3l-24 -6l-23 -8l-21 -10l-21 -12l-19 -14l-19 -15l-17 -16l-16 -18l-15 -18l-14 -19l-12 -21l-10 -22l-8 -23l-6 -23l-4 -24l-2 -24l-1 -25l1 -24l4 -25l6 -24l9 -23l12 -22l15 -20l16 -18l19 -17l19 -15l20 -14l20 -13l21 -12l23 -9l23 -8l23 -6l24 -2l25 0l24 2l23 4l24 6l22 8l22 9l22 10l21 12l19 14l18 16l17 18l14 19l13 21l11 21l10 22l7 23l6 24l4 24z"/><path class="abt-ring" pathLength="1" style="--r:11" d="M281 5l-2 25l-4 24l-6 24l-8 24l-9 23l-10 23l-12 22l-13 22l-16 20l-18 18l-20 16l-22 13l-24 11l-24 8l-24 5l-25 4l-25 3l-25 1l-25 -2l-25 -3l-24 -6l-23 -8l-23 -11l-21 -13l-20 -14l-19 -15l-18 -17l-16 -17l-16 -19l-14 -20l-12 -22l-10 -22l-8 -24l-7 -24l-4 -24l-3 -25l0 -25l1 -26l4 -25l6 -25l9 -24l13 -22l15 -21l17 -19l19 -17l19 -16l21 -14l21 -14l22 -12l23 -10l24 -8l24 -5l25 -3l25 0l25 3l24 4l24 6l23 8l23 9l23 10l21 13l20 15l19 16l16 19l15 19l13 21l12 22l10 23l8 24l6 24l4 25z"/><path class="abt-ring" pathLength="1" style="--r:12" d="M287 5l-1 25l-4 25l-6 25l-8 24l-9 24l-11 23l-12 23l-14 22l-16 20l-18 19l-21 16l-23 14l-24 10l-24 8l-25 7l-26 4l-25 2l-26 1l-25 -1l-26 -4l-24 -6l-24 -8l-23 -11l-22 -13l-20 -15l-19 -16l-19 -17l-17 -18l-16 -19l-14 -21l-13 -21l-10 -23l-8 -24l-7 -25l-4 -25l-3 -25l-1 -26l1 -26l4 -26l7 -26l10 -24l12 -23l16 -21l17 -20l19 -17l21 -16l20 -15l22 -14l22 -12l24 -10l24 -8l25 -6l26 -2l25 0l25 2l25 5l25 6l24 7l23 10l23 11l22 12l20 15l19 17l17 19l16 21l13 21l12 22l10 24l9 24l6 25l3 25z"/><path class="abt-ring" pathLength="1" style="--r:13" d="M296 4l-1 27l-5 25l-6 26l-8 25l-9 24l-11 24l-12 24l-15 22l-16 22l-19 19l-22 16l-23 14l-25 11l-25 9l-26 6l-26 4l-26 3l-27 1l-26 -2l-26 -3l-25 -7l-25 -9l-23 -11l-23 -13l-21 -15l-20 -16l-19 -18l-17 -18l-17 -20l-14 -21l-13 -23l-11 -24l-8 -24l-7 -26l-5 -25l-3 -27l-1 -26l2 -27l3 -27l7 -26l11 -25l13 -24l16 -22l18 -19l20 -19l20 -16l22 -16l22 -14l23 -12l24 -11l25 -8l26 -6l26 -2l26 0l26 2l26 5l25 6l25 8l24 10l24 11l22 13l21 16l20 17l17 20l16 20l14 22l12 24l11 24l8 24l7 26l3 26z"/><path class="abt-ring abt-ring--h" pathLength="1" style="--r:14" d="M303 4l-2 27l-4 26l-7 26l-8 26l-9 25l-11 25l-12 24l-15 23l-17 21l-20 20l-22 17l-23 14l-25 11l-26 9l-27 6l-27 5l-26 2l-27 1l-27 -1l-27 -4l-26 -7l-25 -9l-24 -12l-22 -13l-22 -15l-20 -17l-20 -17l-18 -19l-17 -21l-14 -22l-13 -23l-11 -24l-9 -25l-7 -26l-5 -26l-3 -27l-1 -27l1 -28l4 -27l7 -27l11 -25l13 -24l17 -23l18 -20l20 -18l21 -18l22 -15l23 -15l23 -13l25 -10l26 -9l26 -5l27 -3l27 0l26 3l27 5l25 6l26 8l24 9l24 12l23 14l22 16l19 17l18 20l17 21l14 23l13 24l10 24l9 25l7 27l3 26z"/><path class="abt-ring" pathLength="1" style="--r:15" d="M311 4l-2 27l-5 27l-6 27l-8 26l-10 26l-11 25l-13 25l-15 24l-17 22l-20 20l-23 17l-24 14l-26 12l-27 9l-27 6l-27 5l-27 3l-28 1l-28 -2l-27 -4l-26 -7l-26 -9l-25 -12l-23 -14l-22 -15l-21 -17l-20 -18l-18 -20l-17 -21l-16 -22l-13 -24l-11 -24l-9 -26l-7 -27l-5 -27l-4 -27l-1 -28l1 -28l4 -28l8 -28l11 -26l14 -24l17 -23l18 -21l21 -19l21 -18l23 -16l23 -15l24 -13l26 -11l26 -8l27 -6l27 -3l28 1l27 2l27 5l27 6l25 8l26 10l24 12l24 14l22 17l20 18l18 20l17 22l15 23l13 24l11 25l9 26l7 27l3 27z"/><path class="abt-ring" pathLength="1" style="--r:16" d="M319 4l-2 28l-4 28l-7 27l-8 27l-10 26l-11 26l-13 26l-16 24l-18 23l-20 20l-24 18l-25 14l-26 12l-27 9l-28 7l-28 5l-28 3l-29 1l-28 -2l-28 -4l-27 -7l-27 -10l-25 -12l-24 -14l-22 -16l-22 -17l-20 -19l-19 -20l-18 -21l-15 -23l-14 -25l-11 -25l-9 -26l-8 -27l-5 -28l-4 -28l-1 -29l1 -29l4 -29l8 -28l11 -27l15 -25l17 -23l19 -22l21 -19l22 -18l23 -17l24 -15l25 -14l26 -11l27 -9l28 -5l28 -3l28 0l28 3l28 5l27 6l27 8l26 11l25 12l24 14l22 17l21 19l19 21l17 22l15 24l14 24l11 26l9 27l7 27l4 28z"/><path class="abt-ring" pathLength="1" style="--r:17" d="M328 4l-2 28l-5 29l-7 28l-8 28l-10 27l-11 27l-14 26l-16 25l-18 23l-22 21l-23 18l-26 15l-27 12l-28 9l-29 7l-28 6l-29 3l-29 0l-29 -1l-29 -5l-28 -7l-27 -10l-26 -13l-24 -14l-24 -16l-22 -18l-21 -19l-19 -21l-18 -22l-16 -23l-14 -25l-12 -26l-9 -27l-8 -28l-6 -29l-3 -28l-2 -30l1 -30l5 -29l8 -29l11 -28l15 -25l18 -24l20 -22l22 -20l22 -19l23 -17l25 -16l26 -14l26 -11l28 -9l29 -6l29 -2l28 0l29 3l28 4l28 7l28 8l26 11l26 12l25 15l23 18l21 19l20 21l17 23l16 24l14 25l12 27l9 27l7 29l3 28z"/><path class="abt-ring" pathLength="1" style="--r:18" d="M336 3l-2 30l-5 29l-7 29l-8 28l-10 28l-12 27l-14 27l-16 26l-19 23l-22 22l-24 18l-27 15l-28 13l-28 10l-29 7l-30 5l-29 4l-30 0l-30 -1l-29 -5l-29 -8l-27 -10l-27 -13l-25 -15l-24 -16l-23 -18l-21 -20l-20 -21l-18 -23l-17 -24l-14 -25l-12 -27l-9 -28l-8 -28l-6 -29l-5 -30l-1 -30l1 -30l5 -31l8 -29l12 -28l16 -27l18 -24l20 -23l22 -20l23 -20l24 -17l25 -16l26 -15l28 -11l28 -9l30 -6l29 -2l30 0l29 2l29 5l29 7l28 9l27 10l26 13l25 16l24 17l22 20l20 22l18 23l16 25l14 26l13 27l9 28l7 29l4 30z"/><path class="abt-ring abt-ring--h" pathLength="1" style="--r:19" d="M348 3l-3 31l-5 30l-7 30l-8 29l-10 29l-12 28l-15 28l-17 26l-19 25l-23 22l-25 18l-28 16l-28 13l-30 10l-30 8l-30 6l-31 3l-31 1l-31 -2l-30 -5l-30 -8l-28 -11l-27 -13l-26 -15l-25 -17l-24 -19l-22 -20l-20 -22l-19 -23l-17 -25l-14 -27l-13 -27l-10 -29l-8 -29l-7 -30l-4 -31l-2 -31l2 -32l4 -31l9 -30l13 -29l16 -28l19 -25l21 -23l22 -22l24 -20l25 -18l25 -17l28 -14l28 -12l30 -9l30 -6l30 -3l31 0l30 3l30 5l30 7l29 9l28 11l27 13l26 16l25 18l22 21l21 22l19 24l16 26l15 27l13 28l10 29l7 30l3 30z"/><path class="abt-ring" pathLength="1" style="--r:20" d="M355 3l-3 31l-4 31l-7 30l-9 30l-10 30l-12 29l-15 28l-17 27l-21 25l-23 22l-26 19l-28 17l-29 13l-30 10l-31 8l-31 6l-31 3l-32 1l-31 -2l-31 -5l-30 -8l-29 -11l-28 -14l-27 -15l-25 -18l-24 -19l-23 -20l-21 -23l-19 -23l-17 -26l-14 -27l-13 -28l-11 -29l-8 -30l-7 -31l-4 -31l-2 -32l1 -32l5 -32l9 -31l13 -30l17 -28l19 -25l21 -24l23 -22l24 -21l26 -18l26 -17l28 -15l29 -12l30 -10l31 -5l31 -3l31 0l31 3l31 5l30 7l30 9l28 11l28 14l27 16l24 19l23 21l22 23l19 24l17 26l15 27l13 29l10 30l7 30l4 32z"/><path class="abt-ring" pathLength="1" style="--r:21" d="M364 3l-3 32l-5 31l-7 31l-9 31l-10 30l-13 30l-14 29l-18 27l-21 26l-24 23l-27 19l-28 17l-30 13l-31 11l-31 8l-32 6l-32 4l-32 1l-33 -3l-31 -5l-31 -8l-30 -12l-28 -13l-28 -16l-26 -18l-24 -19l-23 -22l-22 -22l-19 -25l-17 -26l-16 -28l-13 -29l-10 -29l-9 -31l-7 -31l-5 -32l-2 -33l2 -33l5 -33l9 -31l14 -31l16 -28l20 -27l22 -24l23 -23l25 -21l26 -19l27 -17l28 -15l30 -13l31 -9l32 -6l32 -3l32 0l31 3l32 5l30 7l31 10l29 11l29 14l27 17l25 19l24 22l21 23l20 25l18 27l15 27l13 30l11 30l7 32l3 32z"/><path class="abt-ring" pathLength="1" style="--r:22" d="M374 2l-2 33l-5 33l-7 32l-9 31l-11 32l-13 30l-15 30l-19 28l-21 26l-25 24l-27 20l-29 17l-31 14l-32 11l-32 9l-33 6l-33 3l-33 1l-33 -2l-33 -6l-31 -8l-31 -12l-30 -14l-28 -16l-26 -19l-26 -20l-23 -21l-22 -24l-20 -25l-18 -27l-16 -29l-13 -29l-11 -31l-10 -31l-7 -32l-5 -34l-2 -33l2 -34l5 -34l10 -32l14 -32l17 -29l21 -27l22 -25l24 -23l25 -22l27 -20l28 -18l29 -16l31 -12l31 -10l33 -6l33 -2l33 0l32 2l33 5l31 8l32 9l30 12l29 15l28 17l26 20l24 22l23 24l20 26l18 27l16 29l14 30l10 31l7 33l4 32z"/><path class="abt-ring" pathLength="1" style="--r:23" d="M381 2l-3 34l-5 33l-7 32l-9 32l-11 32l-13 31l-15 31l-19 29l-22 26l-25 24l-28 20l-30 18l-31 14l-32 11l-33 9l-34 6l-33 4l-34 1l-34 -3l-33 -6l-32 -8l-31 -12l-30 -15l-28 -16l-28 -19l-25 -20l-25 -22l-22 -24l-20 -26l-18 -27l-16 -29l-14 -30l-11 -31l-10 -32l-7 -33l-5 -34l-2 -34l1 -34l6 -35l10 -33l14 -32l18 -29l20 -28l23 -26l24 -23l26 -22l27 -21l29 -18l29 -16l32 -13l32 -9l33 -6l34 -3l33 0l33 3l33 5l32 7l32 10l31 12l30 15l28 18l26 20l25 22l23 25l21 26l18 27l17 30l13 30l11 32l7 33l4 34z"/><path class="abt-ring abt-ring--h" pathLength="1" style="--r:24" d="M387 2l-2 34l-5 33l-7 34l-9 32l-11 33l-13 32l-16 31l-19 29l-23 27l-26 24l-28 21l-30 17l-32 15l-33 11l-33 9l-34 7l-34 3l-35 1l-34 -2l-33 -6l-33 -9l-32 -12l-30 -15l-29 -17l-28 -19l-26 -20l-25 -23l-22 -24l-21 -27l-18 -27l-16 -30l-14 -30l-12 -32l-10 -32l-8 -34l-5 -34l-2 -35l2 -35l6 -35l10 -33l14 -33l18 -30l21 -28l23 -26l25 -24l26 -23l27 -21l29 -18l31 -16l32 -13l33 -10l33 -6l34 -3l34 1l34 2l33 5l33 8l33 10l31 12l30 15l29 18l27 21l25 23l23 24l21 27l19 28l17 30l14 31l11 32l7 34l3 34z"/><path class="abt-ring" pathLength="1" style="--r:25" d="M397 2l-3 35l-5 34l-7 34l-9 33l-11 34l-14 32l-16 32l-20 30l-23 27l-26 25l-29 21l-31 18l-33 15l-33 12l-34 9l-35 7l-35 4l-35 0l-35 -2l-35 -6l-33 -10l-33 -12l-31 -15l-30 -17l-28 -19l-27 -21l-25 -23l-23 -26l-21 -27l-19 -28l-16 -30l-15 -31l-12 -33l-10 -33l-8 -34l-5 -35l-3 -36l2 -36l6 -35l11 -35l15 -33l18 -31l22 -29l23 -26l25 -25l27 -23l28 -22l30 -19l31 -16l33 -13l33 -10l35 -6l35 -3l35 0l34 3l34 5l34 8l33 10l32 13l31 15l29 19l28 21l26 23l24 25l21 27l20 29l17 30l14 32l11 34l7 34l4 35z"/><path class="abt-ring" pathLength="1" style="--r:26" d="M407 2l-3 35l-5 35l-8 35l-9 35l-11 34l-14 33l-16 33l-21 30l-24 28l-27 25l-29 22l-32 18l-33 16l-35 12l-35 10l-35 7l-36 3l-36 1l-36 -3l-35 -6l-35 -10l-33 -12l-32 -15l-30 -18l-29 -20l-28 -21l-26 -24l-23 -26l-22 -27l-19 -30l-16 -30l-15 -32l-13 -33l-10 -34l-9 -35l-5 -36l-2 -37l2 -37l6 -36l11 -36l15 -33l19 -32l22 -29l24 -28l26 -26l27 -23l29 -22l30 -20l32 -16l34 -14l34 -9l36 -7l35 -3l36 0l35 3l35 5l35 8l34 11l32 13l32 16l30 19l28 21l27 24l24 26l23 27l20 30l17 31l15 33l11 34l7 35l4 36z"/><path class="abt-ring" pathLength="1" style="--r:27" d="M413 1l-3 36l-5 36l-7 36l-9 35l-12 34l-14 34l-17 33l-20 31l-25 29l-27 25l-30 22l-33 19l-33 15l-35 13l-36 10l-36 7l-36 4l-37 0l-36 -3l-36 -6l-35 -10l-34 -13l-32 -15l-31 -18l-30 -20l-28 -22l-26 -24l-24 -26l-21 -28l-20 -30l-17 -31l-15 -33l-12 -33l-11 -35l-9 -35l-6 -37l-2 -37l2 -37l7 -37l11 -36l16 -34l19 -32l22 -30l24 -28l26 -26l28 -25l29 -22l31 -19l33 -17l34 -14l35 -10l36 -6l36 -3l36 0l36 3l36 5l35 8l34 10l33 14l32 16l31 19l29 22l26 24l25 26l23 28l21 30l17 32l15 33l11 35l7 36l4 36z"/><path class="abt-ring" pathLength="1" style="--r:28" d="M424 1l-3 37l-5 37l-7 36l-9 36l-12 36l-14 35l-18 34l-21 31l-25 30l-28 26l-31 22l-34 20l-34 16l-36 13l-36 10l-38 7l-37 4l-38 1l-37 -4l-37 -6l-36 -10l-34 -13l-34 -16l-31 -18l-31 -21l-28 -22l-27 -25l-25 -27l-22 -29l-20 -31l-17 -32l-16 -33l-13 -34l-11 -36l-9 -36l-6 -38l-2 -38l2 -38l7 -38l12 -37l16 -35l19 -33l23 -31l25 -29l26 -27l29 -25l30 -22l32 -21l33 -17l35 -14l36 -10l37 -6l37 -4l37 0l37 3l37 6l36 8l35 11l34 14l33 16l31 20l30 22l28 25l25 27l24 29l21 30l18 33l15 34l11 36l8 37l3 37z"/><path class="abt-ring abt-ring--h" pathLength="1" style="--r:29" d="M435 1l-3 38l-5 38l-8 37l-9 37l-12 36l-15 36l-18 35l-22 32l-25 30l-29 27l-32 23l-34 20l-35 16l-37 14l-37 10l-38 7l-39 5l-38 0l-39 -3l-37 -7l-37 -10l-35 -14l-35 -16l-32 -19l-31 -20l-30 -24l-27 -25l-25 -28l-23 -29l-20 -32l-18 -33l-16 -34l-14 -35l-12 -36l-9 -38l-6 -38l-2 -39l2 -39l8 -39l12 -38l16 -36l20 -34l23 -31l26 -30l27 -28l29 -25l31 -23l32 -21l35 -18l36 -14l37 -10l38 -7l38 -3l38 0l38 3l37 5l37 8l36 12l35 14l34 17l32 20l30 23l28 25l27 28l24 29l21 32l19 33l15 35l12 37l7 38l4 38z"/><path class="abt-ring" pathLength="1" style="--r:30" d="M443 1l-3 38l-5 39l-7 38l-10 37l-12 38l-15 36l-18 35l-23 34l-26 30l-30 27l-32 24l-34 20l-37 17l-37 13l-38 11l-39 8l-39 4l-39 0l-39 -3l-38 -7l-38 -11l-36 -13l-35 -17l-33 -19l-32 -21l-30 -24l-28 -26l-25 -28l-23 -30l-21 -32l-18 -34l-16 -34l-15 -36l-12 -37l-9 -38l-6 -39l-2 -40l2 -40l8 -40l12 -38l17 -37l20 -34l24 -32l26 -31l27 -28l30 -26l31 -24l33 -21l35 -18l37 -14l38 -10l38 -7l39 -3l39 -1l38 3l39 6l37 8l37 12l36 14l34 18l33 21l30 23l29 25l27 28l25 30l22 32l19 34l16 36l11 38l8 38l3 39z"/><path class="abt-ring" pathLength="1" style="--r:31" d="M455 1l-3 39l-5 40l-8 39l-9 38l-13 39l-15 37l-19 36l-23 34l-27 31l-31 28l-33 24l-35 21l-37 17l-38 14l-40 11l-39 8l-40 4l-41 1l-40 -4l-39 -7l-39 -11l-37 -14l-35 -17l-35 -19l-32 -22l-31 -24l-28 -27l-26 -29l-24 -31l-21 -33l-19 -34l-17 -35l-14 -37l-13 -38l-10 -39l-6 -40l-2 -41l3 -41l7 -41l13 -39l17 -38l21 -35l24 -33l27 -31l28 -29l30 -27l33 -25l34 -21l36 -18l37 -15l39 -11l40 -7l39 -3l40 0l40 2l39 6l38 9l38 12l37 15l35 18l33 21l32 24l30 26l27 29l26 30l22 33l20 35l16 37l12 39l7 39l4 40z"/><path class="abt-ring" pathLength="1" style="--r:32" d="M462 0l-2 41l-6 40l-7 39l-10 40l-12 39l-16 38l-19 37l-24 34l-28 31l-30 29l-34 24l-36 21l-38 18l-38 15l-40 11l-41 8l-41 4l-41 0l-40 -3l-40 -8l-39 -11l-38 -14l-36 -17l-35 -20l-33 -22l-31 -25l-29 -27l-27 -29l-24 -32l-21 -33l-19 -35l-18 -36l-15 -37l-12 -39l-10 -40l-7 -41l-2 -41l3 -42l8 -41l13 -40l18 -38l21 -36l24 -34l27 -32l29 -29l31 -28l32 -24l35 -22l37 -19l38 -14l39 -11l41 -7l40 -4l40 0l41 3l40 5l39 9l38 12l37 16l36 18l34 22l32 24l30 26l29 29l25 32l24 33l19 36l16 37l12 39l8 40l3 41z"/><path class="abt-ring" pathLength="1" style="--r:33" d="M471 0l-3 41l-5 41l-7 40l-10 41l-13 39l-16 39l-20 38l-24 35l-28 32l-31 28l-35 25l-36 22l-39 18l-39 15l-41 11l-41 8l-41 5l-42 0l-42 -4l-40 -7l-40 -12l-39 -14l-37 -17l-35 -20l-34 -23l-32 -25l-29 -28l-27 -30l-24 -32l-22 -34l-20 -36l-17 -36l-16 -38l-13 -40l-10 -40l-7 -42l-2 -42l3 -43l8 -42l14 -41l18 -38l22 -37l24 -34l27 -33l30 -30l31 -28l33 -25l36 -22l37 -19l39 -15l40 -11l41 -7l42 -4l41 0l41 3l40 6l40 9l39 12l38 16l36 19l35 21l33 25l31 27l29 30l26 31l24 34l20 37l16 38l12 40l8 41l3 41z"/><path class="abt-ring abt-ring--open" pathLength="1" style="--r:34" d="M482 0l-2 42l-6 42l-7 41l-10 41l-13 41l-17 40l-20 38l-25 36l-29 32l-32 30l-35 25l-38 22l-39 19l-40 15l-41 12l-43 8l-42 5l-43 0l-42 -4l-42 -8l-41 -11l-39 -15l-38 -17l-36 -21l-35 -23l-32 -26l-30 -29l-28 -31l-25 -33l-22 -34l-20 -36l-18 -38l-16 -39l-14 -40l-10 -41l-7 -43l-2 -43l3 -44l9 -43l14 -42l18 -39l22 -38l25 -35l28 -33l30 -31l32 -29l34 -26l36 -22l39 -19l40 -16l41 -11l42 -7l42 -4l42 0l42 3l41 6l41 9l40 13l39 16l37 19l36 22l33 25l32 28l29 30l28 33l24 35l20 37l17 39l12 41l8 42l3 42z"/></svg>
+      <p class="abt-rings__fig" aria-hidden="true"><span>35</span><sup>+</sup></p>
+    </div>
+    <div class="abt-years__text">
+      <p class="shead__bar rv-line"><span class="chead__no">01</span><span>On the record</span></p>
+      <h2 class="h2 rv" id="years-title">Thirty-five rings <em>and counting.</em></h2>
+      <p class="lede rv" style="--i:1">For more than 35 years, Uresco has been a trusted source for quality building materials throughout the Pacific Northwest and all of Alaska, and is one of the largest independent building material suppliers serving Alaska and the Pacific Northwest.</p>
+      <p class="abt-years__note rv" style="--i:2">Drawn with one ring for each of those years. The last ring is still open.</p>
     </div>
   </div>
 </section>
 
-<section class="section">
+<section class="section section--paper2 abt-sheet" aria-labelledby="sheet-title">
+  <div class="wrap abt-sheet__grid">
+    <div class="abt-sheet__intro">
+      <p class="shead__bar rv-line"><span class="chead__no">02</span><span>Company record</span></p>
+      <h2 class="h2 rv" id="sheet-title">The short version, <em>on one sheet.</em></h2>
+      <p class="lede rv" style="--i:1">For purchasing departments, and anyone checking who they are about to buy from.</p>
+      <a class="link rv" style="--i:2" href="../accounts/">Open a contractor account <svg class="i " width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 12h15m-6-6 6 6-6 6"/></svg></a>
+    </div>
+    <div class="abt-form rv" style="--i:1">
+      <div class="abt-form__head">
+        <p class="label">Who we are</p>
+        <p class="label abt-form__no" aria-hidden="true">Company record</p>
+      </div>
+      <dl class="abt-form__rows">
+        <div><dt>Name</dt><dd>Uresco Construction Materials, Inc.</dd></div>
+        <div><dt>Known as</dt><dd>Uresco, or UCM</dd></div>
+        <div><dt>Business</dt><dd>Wholesale dealer in building materials</dd></div>
+        <div><dt>Customers</dt><dd>Institutional, commercial and residential builders</dd></div>
+        <div><dt>In business</dt><dd>More than 35 years</dd></div>
+        <div><dt>Standing</dt><dd>One of the largest independent building material suppliers serving Alaska and the Pacific Northwest</dd></div>
+        <div><dt>Yards</dt><dd class="abt-form__yards"><a href="../locations/#kent">Kent, WA (headquarters)</a><a href="../locations/#anchorage">Anchorage, AK</a><a href="../locations/#fairbanks">Fairbanks, AK</a></dd></div>
+        <div><dt>Serves</dt><dd>The Pacific Northwest and all of Alaska, from Sitka to Utqiaġvik</dd></div>
+        <div><dt>Specialty</dt><dd>Remote location and export building packages</dd></div>
+      </dl>
+      <p class="abt-form__foot">Quality Materials, Trusted Service.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section section--deep abt-mission" aria-labelledby="mission-title">
   <div class="wrap">
     
   <header class="shead">
-    <p class="shead__bar rv-line"><span class="chead__no"></span><span>From our yards</span></p>
+    <p class="shead__bar rv-line"><span class="chead__no">03</span><span>Our mission</span></p>
     <div class="shead__body">
-      <h2 class="h2 rv">Lumber <em>by UCM.</em></h2>
+      <h2 class="h2 rv" id="mission-title">Three promises, <em>and what backs them up.</em></h2>
       <div class="shead__aside rv" style="--i:1">
-        <p class="lede">From Uresco’s own yards and trucks.</p>
+        <p class="lede">Our mission, line by line, and what each line means on a job.</p>
         
       </div>
     </div>
   </header>
-    <div class="archive">
-      <figure><img class="" src="../assets/img/uresco-truck-314.webp" srcset="../assets/img/uresco-truck-240.webp 240w, ../assets/img/uresco-truck-314.webp 314w" sizes="(min-width: 760px) 300px, 50vw" width="314" height="322" alt="A Uresco delivery truck lettered “Lumber by UCM Uresco”" loading="lazy" decoding="async" style="background-color:#383537"><figcaption>UCM delivery truck</figcaption></figure>
-      <figure><img class="" src="../assets/img/uresco-yard-357.webp" srcset="../assets/img/uresco-yard-240.webp 240w, ../assets/img/uresco-yard-357.webp 357w" sizes="(min-width: 760px) 300px, 50vw" width="357" height="322" alt="Wrapped lumber bundles and a forklift in a Uresco yard" loading="lazy" decoding="async" style="background-color:#736f6c"><figcaption>Wrapped bundles in the yard</figcaption></figure>
-      <figure><img class="" src="../assets/img/uresco-stack-357.webp" srcset="../assets/img/uresco-stack-240.webp 240w, ../assets/img/uresco-stack-357.webp 357w" sizes="(min-width: 760px) 300px, 50vw" width="357" height="322" alt="Stacked lumber at a Uresco yard" loading="lazy" decoding="async" style="background-color:#7b6554"><figcaption>Stacked and stickered</figcaption></figure>
+    <ol class="abt-promises">
+      <li class="abt-promise rv" style="--i:0">
+        <span class="abt-promise__no" aria-hidden="true">01</span>
+        <p class="abt-promise__line">A trusted, dependable source of quality construction materials.</p>
+        <div class="abt-promise__back">
+          <p>Nine product lines, from framing lumber and engineered beams to siding, insulation, windows and fasteners, with brands including James Hardie, CertainTeed, Simpson Strong-Tie.</p>
+          <a class="link" href="../products/">See what we carry <svg class="i " width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 12h15m-6-6 6 6-6 6"/></svg></a>
+        </div>
+      </li><li class="abt-promise rv" style="--i:1">
+        <span class="abt-promise__no" aria-hidden="true">02</span>
+        <p class="abt-promise__line">A knowledgeable, resourceful sales staff.</p>
+        <div class="abt-promise__back">
+          <p>Material take-offs, estimates and design services for your unique project needs. On a remote job, we work with you on all aspects of shipping coordination.</p>
+          <a class="link" href="../services/">See the services <svg class="i " width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 12h15m-6-6 6 6-6 6"/></svg></a>
+        </div>
+      </li><li class="abt-promise rv" style="--i:2">
+        <span class="abt-promise__no" aria-hidden="true">03</span>
+        <p class="abt-promise__line">Professional and prompt service.</p>
+        <div class="abt-promise__back">
+          <p>Dependable site delivery to job sites down the road or across an ocean: boom trucks and truck-mounted Moffett forklifts around the Puget Sound region, dock and rural delivery anywhere in Alaska.</p>
+          <a class="link" href="../services/#delivery">How delivery works <svg class="i " width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 12h15m-6-6 6 6-6 6"/></svg></a>
+        </div>
+      </li>
+    </ol>
+    <p class="pull abt-pull rv">So you can buy with confidence that you are getting <em>the best products at the best prices.</em></p>
+  </div>
+</section>
+
+<div class="abt-far">
+  
+  <section class="interlude">
+    <div class="interlude__frame rv-img" data-parallax><img class="" src="../assets/img/floatplane-1200.webp" srcset="../assets/img/floatplane-240.webp 240w, ../assets/img/floatplane-480.webp 480w, ../assets/img/floatplane-800.webp 800w, ../assets/img/floatplane-1200.webp 1200w, ../assets/img/floatplane-1600.webp 1600w" sizes="100vw" width="1600" height="2134" alt="Skiffs on a gravel beach below a volcanic peak as a floatplane passes, Port Alsworth, Alaska" loading="lazy" decoding="async" style="object-position:50% 55%;background-color:#929ba8"></div>
+    <div class="wrap interlude__text">
+      <p class="interlude__line rv">We specialize in <em>remote location delivery.</em></p>
+      <p class="fig__cap"><span>Skiffs on a gravel beach below a volcanic peak, as a floatplane passes. <small class="fig__credit">Photo: Brandy Willetts / Unsplash</small></span><span class="fig__place">Port Alsworth, Alaska</span></p>
+    </div>
+  </section>
+  <div class="wrap abt-far__foot">
+    <p>Delivery is available anywhere in Alaska, from Sitka to Utqiaġvik.</p>
+    <a class="link" href="../alaska/">How remote delivery works <svg class="i " width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 12h15m-6-6 6 6-6 6"/></svg></a>
+  </div>
+</div>
+
+<section class="section section--paper2 abt-archive" aria-labelledby="archive-title">
+  <div class="wrap abt-archive__grid">
+    <div class="abt-archive__text">
+      <p class="shead__bar rv-line"><span class="chead__no">04</span><span>The archive</span></p>
+      <h2 class="h2 rv" id="archive-title">From <em>our own yards.</em></h2>
+      <p class="lede rv" style="--i:1">Lumber on the ground, banded and tagged.</p>
+    </div>
+    <div class="abt-prints">
+      <figure class="print abt-print abt-print--1 rv" style="--i:0">
+        <img class="" src="../assets/img/uresco-truck-314.webp" srcset="../assets/img/uresco-truck-240.webp 240w, ../assets/img/uresco-truck-314.webp 314w" sizes="(min-width: 1000px) 340px, 44vw" width="314" height="322" alt="A printed tag reading “Lumber by UCM Uresco Construction Materials, Inc.” on a load of plywood" loading="lazy" decoding="async" style="background-color:#383537">
+        <figcaption>The tag on a Uresco load.</figcaption>
+      </figure><figure class="print abt-print abt-print--2 rv" style="--i:1">
+        <img class="" src="../assets/img/uresco-yard-357.webp" srcset="../assets/img/uresco-yard-240.webp 240w, ../assets/img/uresco-yard-357.webp 357w" sizes="(min-width: 1000px) 340px, 44vw" width="357" height="322" alt="Wrapped lumber bundles and a forklift in a Uresco yard" loading="lazy" decoding="async" style="background-color:#736f6c">
+        <figcaption>Bundles staged in a Uresco yard.</figcaption>
+      </figure><figure class="print abt-print abt-print--3 rv" style="--i:2">
+        <img class="" src="../assets/img/uresco-stack-357.webp" srcset="../assets/img/uresco-stack-240.webp 240w, ../assets/img/uresco-stack-357.webp 357w" sizes="(min-width: 1000px) 340px, 44vw" width="357" height="322" alt="Stacked lumber at a Uresco yard" loading="lazy" decoding="async" style="background-color:#7b6554">
+        <figcaption>Lumber stacked in a Uresco yard.</figcaption>
+      </figure><figure class="print abt-print abt-print--4 rv" style="--i:3">
+        <img class="" src="../assets/img/uresco-woodpile-214.webp" srcset="../assets/img/uresco-woodpile-214.webp 214w" sizes="(min-width: 1000px) 340px, 44vw" width="214" height="200" alt="Timber ends stacked in a Uresco yard" loading="lazy" decoding="async" style="background-color:#ad8f77">
+        <figcaption>Timber ends in a Uresco yard.</figcaption>
+      </figure>
     </div>
   </div>
 </section>
-<section class="section section--bone">
-  <div class="wrap split">
-    <div class="split__media"><img class="" src="../assets/img/combilift-1280.webp" srcset="../assets/img/combilift-240.webp 240w, ../assets/img/combilift-640.webp 640w, ../assets/img/combilift-960.webp 960w, ../assets/img/combilift-1280.webp 1280w, ../assets/img/combilift-1920.webp 1920w" sizes="(min-width: 860px) 50vw, 100vw" width="1920" height="3415" alt="A forklift operator moving lumber in a warehouse" loading="lazy" decoding="async" style="object-position:50% 45%;background-color:#323331"></div>
-    <div>
-      <p class="label ">Careers</p>
-      <h2 class="h2">Good people <em>move good lumber.</em></h2>
-      <p class="lede">Yard crew, drivers, estimators and inside sales — we’re always glad to hear from people who take pride in getting the order right. Call or email the yard nearest you and ask about openings.</p>
-      <div class="actions"><a class="btn btn--dark" href="../locations/">Find your nearest yard <svg class="i " width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 12h15m-6-6 6 6-6 6"/></svg></a></div>
-    </div>
-  </div>
-</section>
-<section class="section section--deep"><div class="wrap">
-  <div class="manifest rv" id="manifest">
-    <div class="manifest__head">
-      <p class="label">Estimates &amp; take-offs</p>
-      <p class="label manifest__form" aria-hidden="true">Form 01 · Request for quote</p>
-    </div>
-    <div class="manifest__body">
-      <div class="manifest__pitch">
-        <h3 class="h2 manifest__title">Let’s build <em>something.</em></h3>
-        <p>Call your Uresco team today for your building-material needs, or send plans and we’ll quote the job.</p>
+
+<section class="section abt-close" aria-labelledby="close-title">
+  <div class="wrap">
+    <div class="abt-close__head">
+      <h2 class="h2 rv" id="close-title">Give us a call, <em>email or stop by.</em></h2>
+      <div class="abt-close__side rv" style="--i:1">
+        <p class="lede">Our friendly, knowledgeable sales staff is here to help.</p>
         <div class="actions">
           <a class="btn" href="../quote/">Request a quote <svg class="i " width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 12h15m-6-6 6 6-6 6"/></svg></a>
-          <a class="btn btn--line" href="../quote/#plans"><svg class="i " width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V4m-4.5 4.5L12 4l4.5 4.5"/><path d="M4 15v3.5A1.5 1.5 0 0 0 5.5 20h13a1.5 1.5 0 0 0 1.5-1.5V15"/></svg> Send plans</a>
+          <a class="btn btn--line" href="../accounts/">Open an account</a>
         </div>
       </div>
-      <dl class="manifest__rows">
-        <div><dt>Send</dt><dd>Plans, drawings or a materials list</dd></div><div><dt>To</dt><dd>The yard nearest your project</dd></div><div><dt>Returns</dt><dd>A take-off: every stick, panel and connector, priced</dd></div><div><dt>Ships</dt><dd>To the job site down the road, or to the dock for the trip north</dd></div>
-      </dl>
     </div>
-  </div></div></section>
+    
+  <ul class="ystrip" aria-label="Call a yard">
+    <li>
+      <a href="tel:+12533951211" class="ystrip__item">
+        <span class="ystrip__lat">47.4°N<span> · Headquarters</span></span>
+        <span class="status" data-hours="{&quot;tz&quot;:&quot;America/Los_Angeles&quot;,&quot;week&quot;:[null,[420,990],[420,990],[420,990],[420,990],[420,990],null]}" data-short hidden></span>
+        <span class="ystrip__city"><b>Kent</b><small>WA</small></span>
+        <span class="ystrip__num"><svg class="i " width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 3.5h3.2l1.6 4.2-2.1 1.4a11 11 0 0 0 5.2 5.2l1.4-2.1 4.2 1.6V17a2 2 0 0 1-2 2A15.5 15.5 0 0 1 3 5.5a2 2 0 0 1 2-2Z"/></svg>(253) 395-1211</span>
+      </a></li><li>
+      <a href="tel:+19075632500" class="ystrip__item">
+        <span class="ystrip__lat">61.2°N<span> · Southcentral</span></span>
+        <span class="status" data-hours="{&quot;tz&quot;:&quot;America/Anchorage&quot;,&quot;week&quot;:[null,[420,990],[420,990],[420,990],[420,990],[420,990],null]}" data-short hidden></span>
+        <span class="ystrip__city"><b>Anchorage</b><small>AK</small></span>
+        <span class="ystrip__num"><svg class="i " width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 3.5h3.2l1.6 4.2-2.1 1.4a11 11 0 0 0 5.2 5.2l1.4-2.1 4.2 1.6V17a2 2 0 0 1-2 2A15.5 15.5 0 0 1 3 5.5a2 2 0 0 1 2-2Z"/></svg>(907) 563-2500</span>
+      </a></li><li>
+      <a href="tel:+19074561550" class="ystrip__item">
+        <span class="ystrip__lat">64.8°N<span> · Interior</span></span>
+        <span class="status" data-hours="{&quot;tz&quot;:&quot;America/Anchorage&quot;,&quot;week&quot;:[null,[420,990],[420,990],[420,990],[420,990],[420,990],null]}" data-short hidden></span>
+        <span class="ystrip__city"><b>Fairbanks</b><small>AK</small></span>
+        <span class="ystrip__num"><svg class="i " width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 3.5h3.2l1.6 4.2-2.1 1.4a11 11 0 0 0 5.2 5.2l1.4-2.1 4.2 1.6V17a2 2 0 0 1-2 2A15.5 15.5 0 0 1 3 5.5a2 2 0 0 1 2-2Z"/></svg>(907) 456-1550</span>
+      </a></li>
+  </ul>
+    <a class="link abt-close__more" href="../locations/">Addresses, fax and email <svg class="i " width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 12h15m-6-6 6 6-6 6"/></svg></a>
+  </div>
+</section>
 
 </main>
 
@@ -258,31 +366,35 @@
       <div class="footer__cols">
         
           <div class="footer__yard">
-            <h3 class="footer__h"><span>47.4°N</span>Kent, WA</h3>
-            <address>8246 S 194th St<br>Kent, WA 98032</address>
+            <p class="footer__meta"><span>47.4°N</span><span class="status" data-hours="{&quot;tz&quot;:&quot;America/Los_Angeles&quot;,&quot;week&quot;:[null,[420,990],[420,990],[420,990],[420,990],[420,990],null]}" data-short hidden></span></p>
+            <h3 class="footer__h">Kent, WA</h3>
             <a class="footer__tel" href="tel:+12533951211">(253) 395-1211</a>
             <a href="tel:+18002758333">(800) 275-8333 <small>toll-free</small></a>
             <a href="mailto:sales@uresco.com">sales@uresco.com</a>
-            <span class="status" data-hours="{&quot;tz&quot;:&quot;America/Los_Angeles&quot;,&quot;week&quot;:[null,[420,990],[420,990],[420,990],[420,990],[420,990],null]}" hidden></span>
+            <p class="footer__fax">Fax (253) 872-8432</p>
+            <address>8246 S 194th St<br>Kent, WA 98032</address>
           </div>
           <div class="footer__yard">
-            <h3 class="footer__h"><span>61.2°N</span>Anchorage, AK</h3>
-            <address>12790 Old Seward Hwy<br>Anchorage, AK 99515</address>
+            <p class="footer__meta"><span>61.2°N</span><span class="status" data-hours="{&quot;tz&quot;:&quot;America/Anchorage&quot;,&quot;week&quot;:[null,[420,990],[420,990],[420,990],[420,990],[420,990],null]}" data-short hidden></span></p>
+            <h3 class="footer__h">Anchorage, AK</h3>
             <a class="footer__tel" href="tel:+19075632500">(907) 563-2500</a>
             <a href="tel:+18005632500">(800) 563-2500 <small>toll-free</small></a>
             <a href="mailto:anchorage@uresco.com">anchorage@uresco.com</a>
-            <span class="status" data-hours="{&quot;tz&quot;:&quot;America/Anchorage&quot;,&quot;week&quot;:[null,[420,990],[420,990],[420,990],[420,990],[420,990],null]}" hidden></span>
+            <p class="footer__fax">Fax (907) 561-2076</p>
+            <address>12790 Old Seward Hwy<br>Anchorage, AK 99515</address>
           </div>
           <div class="footer__yard">
-            <h3 class="footer__h"><span>64.8°N</span>Fairbanks, AK</h3>
-            <address>1077 Aspen St<br>Fairbanks, AK 99709</address>
+            <p class="footer__meta"><span>64.8°N</span><span class="status" data-hours="{&quot;tz&quot;:&quot;America/Anchorage&quot;,&quot;week&quot;:[null,[420,990],[420,990],[420,990],[420,990],[420,990],null]}" data-short hidden></span></p>
+            <h3 class="footer__h">Fairbanks, AK</h3>
             <a class="footer__tel" href="tel:+19074561550">(907) 456-1550</a>
             
             <a href="mailto:fairbanks@uresco.com">fairbanks@uresco.com</a>
-            <span class="status" data-hours="{&quot;tz&quot;:&quot;America/Anchorage&quot;,&quot;week&quot;:[null,[420,990],[420,990],[420,990],[420,990],[420,990],null]}" hidden></span>
+            <p class="footer__fax">Fax (907) 456-5519</p>
+            <address>1077 Aspen St<br>Fairbanks, AK 99709</address>
           </div>
-        <nav class="footer__nav" aria-label="Footer">
-          <h3 class="footer__h"><span>Index</span>Explore</h3>
+        <nav class="footer__nav" id="footer-index" aria-label="Footer">
+          <p class="footer__meta">Index</p>
+          <h3 class="footer__h">Explore</h3>
           <ul>
             <li><a href="../products/">Products</a></li>
             <li><a href="../services/">Services</a></li>
@@ -291,7 +403,7 @@
             <li><a href="../projects/">Projects</a></li>
             <li><a href="../locations/">Locations</a></li>
             <li><a href="../about/">About</a></li>
-            <li><a href="../accounts/">Contractor accounts</a></li>
+            <li><a href="../accounts/">Open an account</a></li>
             <li><a href="../quote/">Request a quote</a></li>
           </ul>
         </nav>
@@ -309,50 +421,62 @@
   </footer>
 
   <div class="actionbar" role="region" aria-label="Quick actions">
-    <button type="button" class="actionbar__btn" data-open="call-sheet" aria-haspopup="dialog"><svg class="i " width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 3.5h3.2l1.6 4.2-2.1 1.4a11 11 0 0 0 5.2 5.2l1.4-2.1 4.2 1.6V17a2 2 0 0 1-2 2A15.5 15.5 0 0 1 3 5.5a2 2 0 0 1 2-2Z"/></svg>Call</button>
-    <a class="actionbar__btn" href="../locations/"><svg class="i " width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 2.8 21.2 12 12 21.2 2.8 12z"/><path d="M9 14v-2.5a1.5 1.5 0 0 1 1.5-1.5H15m-2-2 2 2-2 2"/></svg>Directions</a>
+    <a class="actionbar__btn actionbar__btn--call" href="../locations/" data-open="call-sheet" aria-haspopup="dialog"><svg class="i " width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 3.5h3.2l1.6 4.2-2.1 1.4a11 11 0 0 0 5.2 5.2l1.4-2.1 4.2 1.6V17a2 2 0 0 1-2 2A15.5 15.5 0 0 1 3 5.5a2 2 0 0 1 2-2Z"/></svg>Call</a>
+    <a class="actionbar__btn" href="../locations/" data-open="call-sheet" aria-haspopup="dialog"><svg class="i " width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 2.8 21.2 12 12 21.2 2.8 12z"/><path d="M9 14v-2.5a1.5 1.5 0 0 1 1.5-1.5H15m-2-2 2 2-2 2"/></svg>Directions</a>
     <a class="actionbar__btn actionbar__btn--primary" href="../quote/"><svg class="i " width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4"/></svg>Quote</a>
   </div>
 
   <dialog class="sheet" id="call-sheet" aria-labelledby="call-sheet-title">
     <div class="sheet__head">
-      <h2 id="call-sheet-title" class="sheet__title">Call a yard</h2>
+      <h2 id="call-sheet-title" class="sheet__title">Call or visit a yard</h2>
       <button type="button" class="iconbtn" data-close><svg class="i " width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6 6 18"/></svg><span class="sr-only">Close</span></button>
     </div>
     <ul class="sheet__list">
       <li class="sheet__yard">
         <div class="sheet__who">
-          <span class="sheet__lat">47.4°N</span>
-          <b>Kent, WA</b>
-          <small>8246 S 194th St</small>
-          <span class="status" data-hours="{&quot;tz&quot;:&quot;America/Los_Angeles&quot;,&quot;week&quot;:[null,[420,990],[420,990],[420,990],[420,990],[420,990],null]}" hidden></span>
+          <span class="sheet__lat">47.4°N · Puget Sound</span>
+          <span class="status" data-hours="{&quot;tz&quot;:&quot;America/Los_Angeles&quot;,&quot;week&quot;:[null,[420,990],[420,990],[420,990],[420,990],[420,990],null]}" data-short hidden></span>
+          <p class="sheet__place"><b>Kent, WA</b> <small>8246 S 194th St</small></p>
         </div>
         <div class="sheet__acts">
-          <a class="sheet__num" href="tel:+12533951211"><svg class="i " width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 3.5h3.2l1.6 4.2-2.1 1.4a11 11 0 0 0 5.2 5.2l1.4-2.1 4.2 1.6V17a2 2 0 0 1-2 2A15.5 15.5 0 0 1 3 5.5a2 2 0 0 1 2-2Z"/></svg>(253) 395-1211</a>
-          <a class="sheet__dir" href="https://www.google.com/maps/search/?api=1&amp;query=Uresco%20Construction%20Materials%2C%208246%20S%20194th%20St%2C%20Kent%2C%20WA%2098032" target="_blank" rel="noopener" aria-label="Directions to the Kent yard"><svg class="i " width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 2.8 21.2 12 12 21.2 2.8 12z"/><path d="M9 14v-2.5a1.5 1.5 0 0 1 1.5-1.5H15m-2-2 2 2-2 2"/></svg></a>
-        </div></li><li class="sheet__yard">
+          <a class="sheet__num" href="tel:+12533951211"><svg class="i " width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 3.5h3.2l1.6 4.2-2.1 1.4a11 11 0 0 0 5.2 5.2l1.4-2.1 4.2 1.6V17a2 2 0 0 1-2 2A15.5 15.5 0 0 1 3 5.5a2 2 0 0 1 2-2Z"/></svg><span><span class="sr-only">Call Kent: </span>(253) 395-1211</span></a>
+          <a class="sheet__dir" href="https://www.google.com/maps/search/?api=1&amp;query=Uresco%20Construction%20Materials%2C%208246%20S%20194th%20St%2C%20Kent%2C%20WA%2098032" target="_blank" rel="noopener"><svg class="i " width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 2.8 21.2 12 12 21.2 2.8 12z"/><path d="M9 14v-2.5a1.5 1.5 0 0 1 1.5-1.5H15m-2-2 2 2-2 2"/></svg><span>Directions<span class="sr-only"> to the Kent yard</span></span></a>
+        </div>
+        <ul class="sheet__more">
+          <li><a href="mailto:sales@uresco.com">sales@uresco.com</a></li>
+          <li>Fax (253) 872-8432</li>
+          <li class="sheet__details"><a href="../locations/#kent"><span class="sr-only">Kent yard </span>Details <svg class="i " width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 12h15m-6-6 6 6-6 6"/></svg></a></li>
+        </ul></li><li class="sheet__yard">
         <div class="sheet__who">
-          <span class="sheet__lat">61.2°N</span>
-          <b>Anchorage, AK</b>
-          <small>12790 Old Seward Hwy</small>
-          <span class="status" data-hours="{&quot;tz&quot;:&quot;America/Anchorage&quot;,&quot;week&quot;:[null,[420,990],[420,990],[420,990],[420,990],[420,990],null]}" hidden></span>
+          <span class="sheet__lat">61.2°N · Southcentral &amp; remote</span>
+          <span class="status" data-hours="{&quot;tz&quot;:&quot;America/Anchorage&quot;,&quot;week&quot;:[null,[420,990],[420,990],[420,990],[420,990],[420,990],null]}" data-short hidden></span>
+          <p class="sheet__place"><b>Anchorage, AK</b> <small>12790 Old Seward Hwy</small></p>
         </div>
         <div class="sheet__acts">
-          <a class="sheet__num" href="tel:+19075632500"><svg class="i " width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 3.5h3.2l1.6 4.2-2.1 1.4a11 11 0 0 0 5.2 5.2l1.4-2.1 4.2 1.6V17a2 2 0 0 1-2 2A15.5 15.5 0 0 1 3 5.5a2 2 0 0 1 2-2Z"/></svg>(907) 563-2500</a>
-          <a class="sheet__dir" href="https://www.google.com/maps/search/?api=1&amp;query=Uresco%20Construction%20Materials%2C%2012790%20Old%20Seward%20Hwy%2C%20Anchorage%2C%20AK%2099515" target="_blank" rel="noopener" aria-label="Directions to the Anchorage yard"><svg class="i " width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 2.8 21.2 12 12 21.2 2.8 12z"/><path d="M9 14v-2.5a1.5 1.5 0 0 1 1.5-1.5H15m-2-2 2 2-2 2"/></svg></a>
-        </div></li><li class="sheet__yard">
+          <a class="sheet__num" href="tel:+19075632500"><svg class="i " width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 3.5h3.2l1.6 4.2-2.1 1.4a11 11 0 0 0 5.2 5.2l1.4-2.1 4.2 1.6V17a2 2 0 0 1-2 2A15.5 15.5 0 0 1 3 5.5a2 2 0 0 1 2-2Z"/></svg><span><span class="sr-only">Call Anchorage: </span>(907) 563-2500</span></a>
+          <a class="sheet__dir" href="https://www.google.com/maps/search/?api=1&amp;query=Uresco%20Construction%20Materials%2C%2012790%20Old%20Seward%20Hwy%2C%20Anchorage%2C%20AK%2099515" target="_blank" rel="noopener"><svg class="i " width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 2.8 21.2 12 12 21.2 2.8 12z"/><path d="M9 14v-2.5a1.5 1.5 0 0 1 1.5-1.5H15m-2-2 2 2-2 2"/></svg><span>Directions<span class="sr-only"> to the Anchorage yard</span></span></a>
+        </div>
+        <ul class="sheet__more">
+          <li><a href="mailto:anchorage@uresco.com">anchorage@uresco.com</a></li>
+          <li>Fax (907) 561-2076</li>
+          <li class="sheet__details"><a href="../locations/#anchorage"><span class="sr-only">Anchorage yard </span>Details <svg class="i " width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 12h15m-6-6 6 6-6 6"/></svg></a></li>
+        </ul></li><li class="sheet__yard">
         <div class="sheet__who">
-          <span class="sheet__lat">64.8°N</span>
-          <b>Fairbanks, AK</b>
-          <small>1077 Aspen St</small>
-          <span class="status" data-hours="{&quot;tz&quot;:&quot;America/Anchorage&quot;,&quot;week&quot;:[null,[420,990],[420,990],[420,990],[420,990],[420,990],null]}" hidden></span>
+          <span class="sheet__lat">64.8°N · Interior &amp; north</span>
+          <span class="status" data-hours="{&quot;tz&quot;:&quot;America/Anchorage&quot;,&quot;week&quot;:[null,[420,990],[420,990],[420,990],[420,990],[420,990],null]}" data-short hidden></span>
+          <p class="sheet__place"><b>Fairbanks, AK</b> <small>1077 Aspen St</small></p>
         </div>
         <div class="sheet__acts">
-          <a class="sheet__num" href="tel:+19074561550"><svg class="i " width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 3.5h3.2l1.6 4.2-2.1 1.4a11 11 0 0 0 5.2 5.2l1.4-2.1 4.2 1.6V17a2 2 0 0 1-2 2A15.5 15.5 0 0 1 3 5.5a2 2 0 0 1 2-2Z"/></svg>(907) 456-1550</a>
-          <a class="sheet__dir" href="https://www.google.com/maps/search/?api=1&amp;query=Uresco%20Construction%20Materials%2C%201077%20Aspen%20St%2C%20Fairbanks%2C%20AK%2099709" target="_blank" rel="noopener" aria-label="Directions to the Fairbanks yard"><svg class="i " width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 2.8 21.2 12 12 21.2 2.8 12z"/><path d="M9 14v-2.5a1.5 1.5 0 0 1 1.5-1.5H15m-2-2 2 2-2 2"/></svg></a>
-        </div></li>
+          <a class="sheet__num" href="tel:+19074561550"><svg class="i " width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 3.5h3.2l1.6 4.2-2.1 1.4a11 11 0 0 0 5.2 5.2l1.4-2.1 4.2 1.6V17a2 2 0 0 1-2 2A15.5 15.5 0 0 1 3 5.5a2 2 0 0 1 2-2Z"/></svg><span><span class="sr-only">Call Fairbanks: </span>(907) 456-1550</span></a>
+          <a class="sheet__dir" href="https://www.google.com/maps/search/?api=1&amp;query=Uresco%20Construction%20Materials%2C%201077%20Aspen%20St%2C%20Fairbanks%2C%20AK%2099709" target="_blank" rel="noopener"><svg class="i " width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 2.8 21.2 12 12 21.2 2.8 12z"/><path d="M9 14v-2.5a1.5 1.5 0 0 1 1.5-1.5H15m-2-2 2 2-2 2"/></svg><span>Directions<span class="sr-only"> to the Fairbanks yard</span></span></a>
+        </div>
+        <ul class="sheet__more">
+          <li><a href="mailto:fairbanks@uresco.com">fairbanks@uresco.com</a></li>
+          <li>Fax (907) 456-5519</li>
+          <li class="sheet__details"><a href="../locations/#fairbanks"><span class="sr-only">Fairbanks yard </span>Details <svg class="i " width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 12h15m-6-6 6 6-6 6"/></svg></a></li>
+        </ul></li>
     </ul>
-    <p class="sheet__note">Any yard can help. They work as one team. <a href="mailto:sales@uresco.com">sales@uresco.com</a></p>
+    <p class="sheet__note">Any yard can help. They work as one team.</p>
   </dialog>
 </body>
 </html>

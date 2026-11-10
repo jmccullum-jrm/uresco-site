@@ -5,7 +5,13 @@ calm: window.matchMedia('(prefers-reduced-motion: reduce)'),
 };
 (() => {
 const { $, $$ } = UCM;
-/* Dialogs: [data-open="id"] opens, [data-close] or a backdrop click closes. */
+/* Dialogs: [data-open="id"] opens, [data-close] or a backdrop click closes.
+Openers are links wherever they can be, so without this script (or a browser without <dialog>)
+they still lead to the locations page or the footer index. */
+const onBackdrop = (e, d) => {
+const r = d.getBoundingClientRect();
+return e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom;
+};
 document.addEventListener('click', (e) => {
 const opener = e.target.closest('[data-open]');
 if (opener) {
@@ -20,7 +26,7 @@ dlg.addEventListener('close', () => opener.setAttribute('aria-expanded', 'false'
 return;
 }
 if (e.target.closest('[data-close]')) { e.target.closest('dialog')?.close(); return; }
-if (e.target instanceof HTMLDialogElement) e.target.close();
+if (e.target instanceof HTMLDialogElement && onBackdrop(e, e.target)) e.target.close();
 if (e.target.closest('[data-print]')) window.print();
 });
 $$('dialog a[href]').forEach((a) => a.addEventListener('click', () => a.closest('dialog').close()));
@@ -45,60 +51,65 @@ item.addEventListener('mouseleave', () => item.removeAttribute('data-shut'));
 item.addEventListener('focusout', (e) => { if (!item.contains(e.relatedTarget)) { set(false); item.removeAttribute('data-shut'); } });
 document.addEventListener('click', (e) => { if (!item.contains(e.target)) set(false); });
 });
+/* Motion that runs on its own can be paused. One setting for the whole site, remembered between pages.
+html.is-still pauses only the endless animations (see 30-components.css), so a line that is still
+drawing itself finishes, and a loop that starts later obeys the same setting. */
+const root = document.documentElement;
+const toggles = $$('[data-motion]');
+const STILL = 'ucm-still';
+const isLoop = (a) => { try { return a.effect.getComputedTiming().iterations === Infinity; } catch { return false; } };
+if (toggles.length && document.getAnimations) {
+let still = false;
+try { still = localStorage.getItem(STILL) === '1'; } catch { /* no storage: lasts for this page */ }
+const label = () => {
+root.classList.toggle('is-still', still);
+toggles.forEach((b) => { $('span', b).textContent = still ? 'Play motion' : 'Pause motion'; });
+};
+if (document.getAnimations().some(isLoop)) toggles.forEach((b) => { b.hidden = false; });
+label();
+toggles.forEach((b) => b.addEventListener('click', () => {
+still = !still;
+label();
+try { still ? localStorage.setItem(STILL, '1') : localStorage.removeItem(STILL); } catch { /* fine */ }
+}));
+}
 /* The phone action bar steps aside while the keyboard is up. */
 const TYPING = 'input:not([type=radio],[type=checkbox],[type=file]), textarea, select';
 document.addEventListener('focusin', (e) => { if (e.target.matches?.(TYPING)) document.body.classList.add('is-typing'); });
 document.addEventListener('focusout', (e) => { if (e.target.matches?.(TYPING)) document.body.classList.remove('is-typing'); });
-/* Projects filter */
-const filters = $('[data-filters]');
-if (filters) {
-filters.addEventListener('click', (e) => {
-const b = e.target.closest('button[data-filter]');
-if (!b) return;
-const f = b.dataset.filter;
-$$('button', filters).forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
-$$('[data-sector]').forEach((card) => { card.hidden = f !== 'all' && card.dataset.sector !== f; });
-$('.proj-grid').classList.toggle('is-filtered', f !== 'all');
-});
-}
 })();
 (() => {
 const { $$ } = UCM;
-/* Open / closed, computed in each yard's own time zone.
+/* Open / closed, computed in each yard's own time zone. The word and nothing more: the hours in the
+data are placeholders, so no opening or closing time is ever written out.
 data-hours = {"tz":"America/Anchorage","week":[null,[420,990],…]}  (Sunday first, minutes after midnight) */
 const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-const clock = (m, always) => {
-const h = Math.floor(m / 60), mm = m % 60, ap = h < 12 ? 'a.m.' : 'p.m.';
-return `${((h + 11) % 12) + 1}${mm || always ? ':' + String(mm).padStart(2, '0') : ''} ${ap}`;
-};
 const partsIn = (tz) => Object.fromEntries(new Intl.DateTimeFormat('en-US', { timeZone: tz, weekday: 'short', hour: 'numeric', minute: 'numeric', hourCycle: 'h23' })
 .formatToParts(new Date()).map((p) => [p.type, p.value]));
-const yardStatus = ({ tz, week }) => {
+const isOpen = ({ tz, week }) => {
 const parts = partsIn(tz);
-const day = DAYS.indexOf(parts.weekday), now = +parts.hour * 60 + +parts.minute;
-const today = week[day];
-if (today && now >= today[0] && now < today[1]) return { open: true, text: `Open now · until ${clock(today[1])}` };
-for (let i = 0; i < 8; i++) {
-const d = (day + i) % 7, h = week[d];
-if (h && (i > 0 || now < h[0])) return { open: false, text: `Closed · opens ${i === 0 ? 'today' : i === 1 ? 'tomorrow' : DAYS[d]} ${clock(h[0])}` };
-}
-return { open: false, text: 'Closed' };
+const today = week[DAYS.indexOf(parts.weekday)], now = +parts.hour * 60 + +parts.minute;
+return !!today && now >= today[0] && now < today[1];
+};
+/* The local clock beside a yard: "10:42 a.m." */
+const clockText = (m) => {
+const h = Math.floor(m / 60);
+return `${((h + 11) % 12) + 1}:${String(m % 60).padStart(2, '0')} ${h < 12 ? 'a.m.' : 'p.m.'}`;
 };
 const paint = () => {
 $$('[data-hours]').forEach((el) => {
 try {
-const s = yardStatus(JSON.parse(el.dataset.hours));
-const text = el.hasAttribute('data-short') ? (s.open ? 'Open' : 'Closed') : s.text;
+const open = isOpen(JSON.parse(el.dataset.hours));
+const text = open ? 'Open' : 'Closed';
 if (el.textContent !== text) el.textContent = text;
-el.classList.toggle('is-open', s.open);
+el.classList.toggle('is-open', open);
 el.hidden = false;
 } catch { /* leave hidden */ }
 });
-/* The yard's local time: "10:42 a.m." */
 $$('[data-clock]').forEach((el) => {
 try {
 const p = partsIn(el.dataset.clock);
-const text = clock(+p.hour * 60 + +p.minute, true);
+const text = clockText(+p.hour * 60 + +p.minute);
 if (el.textContent !== text) el.textContent = text;
 } catch { /* leave empty */ }
 });
@@ -107,7 +118,17 @@ paint();
 setInterval(paint, 15 * 1000);
 })();
 (() => {
-const { $, $$ } = UCM;
+const { $, $$, calm } = UCM;
+const query = new URLSearchParams(location.search);
+const fold = (s) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[’'.]/g, '').toLowerCase().trim();
+const put = (k, v) => $$(`[data-s="${k}"]`).forEach((el) => { if (el.textContent !== v) el.textContent = v; });
+const arcPath = ([x1, y1], [x2, y2]) => {
+const dx = x2 - x1, dy = y2 - y1, d = Math.hypot(dx, dy) || 1;
+const lift = Math.min(90, d * 0.22);
+const nx = -dy / d, ny = dx / d, s = ny > 0 ? -1 : 1;
+const cx = (x1 + x2) / 2 + nx * lift * s, cy = (y1 + y2) / 2 + ny * lift * s;
+return `M${x1.toFixed(1)},${y1.toFixed(1)}Q${cx.toFixed(1)},${cy.toFixed(1)} ${x2.toFixed(1)},${y2.toFixed(1)}`;
+};
 /* Forms: the quote request and the credit application share this. */
 $$('form[data-form]').forEach((form) => {
 const kind = form.dataset.form;
@@ -117,33 +138,164 @@ const failed = $('[data-failed]', host);
 const DRAFT = 'uresco.draft.' + kind;
 const MAX = 25 * 1024 * 1024;
 let bag = new DataTransfer();
+const yardSel = $('select[name=yard]', form);
+const placeField = $('input[name=location]', form);
+const materials = $('textarea[name=materials]', form);
+let yardPicked = false, deliveryPicked = false;
+const carried = $('[data-carried]');
+const draftText = $('[data-draft-text]', form);
+const draftClear = $('[data-draft-clear]', form);
+const draftSays = (t) => { if (draftText) draftText.textContent = t; if (draftClear) draftClear.hidden = false; };
 const fields = () => $$('input, select, textarea', form).filter((el) => el.name && el.type !== 'file' && el.type !== 'hidden');
+const typed = () => fields().some((el) => el.matches('input:not([type=radio],[type=checkbox]), textarea') && el.value.trim());
 const PRIVATE = /^(ein|bank|bank_contact|signature|signed|agree)$/;
 const save = () => {
 const d = {};
 fields().filter((el) => !PRIVATE.test(el.name)).forEach((el) => {
 if (el.type === 'radio') { if (el.checked) d[el.name] = el.value; } else if (el.type === 'checkbox') d[el.name] = el.checked; else d[el.name] = el.value;
 });
-try { localStorage.setItem(DRAFT, JSON.stringify(d)); } catch { /* private mode */ }
+if (yardPicked) d._yard = true;
+if (deliveryPicked) d._delivery = true;
+try { localStorage.setItem(DRAFT, JSON.stringify(d)); if (typed()) draftSays('Draft saved on this device.'); } catch { /* private mode */ }
 };
 try {
 const d = JSON.parse(localStorage.getItem(DRAFT) || 'null');
-if (d) fields().forEach((el) => {
+if (d) {
+fields().forEach((el) => {
 if (!(el.name in d)) return;
 if (el.type === 'radio') el.checked = d[el.name] === el.value; else if (el.type === 'checkbox') el.checked = !!d[el.name]; else el.value = d[el.name];
 });
+yardPicked = !!d._yard;
+deliveryPicked = !!d._delivery;
+if (typed()) draftSays('Draft picked up from this device.');
+}
 } catch { /* ignore */ }
 form.addEventListener('input', save);
 form.addEventListener('change', save);
-const product = new URLSearchParams(location.search).get('product');
-const materials = $('textarea[name=materials]', form);
+const prefill = () => {
+const product = query.get('product');
 if (product && materials && !materials.value) materials.value = product + ':\n';
-const yardParam = new URLSearchParams(location.search).get('yard');
-const yardSel = $('select[name=yard]', form);
-if (yardParam && yardSel) $$('option', yardSel).forEach((o) => { if (o.value.toLowerCase() === yardParam) yardSel.value = o.value; });
-const placeParam = new URLSearchParams(location.search).get('location');
-const placeField = $('input[name=location]', form);
+const yardParam = (query.get('yard') || '').toLowerCase();
+if (yardParam && yardSel) $$('option', yardSel).forEach((o) => { if (o.value.toLowerCase() === yardParam) { yardSel.value = o.value; yardPicked = true; } });
+const placeParam = query.get('location');
 if (placeParam && placeField) placeField.value = placeParam.slice(0, 80);
+};
+prefill();
+/* ---- The side panel: answers the place, names the yard, keeps count ---- */
+const yardHint = $('#yard-hint', form);
+const yardHintDefault = yardHint ? yardHint.textContent : '';
+const geo = (() => { try { return JSON.parse($('[data-form-places]').textContent); } catch { return null; } })();
+const index = new Map();
+if (geo) {
+const places = geo.places.map(([name, st, x, y, region, access, yard]) => ({ name, st, xy: [x, y], region, access, yard }));
+places.forEach((p) => index.set(fold(p.name), p));
+Object.entries(geo.aliases).forEach(([alias, name]) => index.set(fold(alias), places.find((p) => p.name === name)));
+}
+const lookup = (v) => index.get(fold(v.split(',')[0]).replace(/\s+(ak|alaska|wa|washington)$/, '')) || null;
+const cityOf = (id) => id && id[0].toUpperCase() + id.slice(1);
+const slipMap = $('[data-slip-map]');
+const arc = slipMap && $('[data-arc]', slipMap);
+const dest = slipMap && $('[data-map-dest]', slipMap);
+let drawn = '';
+const labels = { yard: null, dest: null };
+const placeLabels = () => {
+if (!slipMap) return;
+const m = slipMap.getScreenCTM();
+const box = slipMap.getBoundingClientRect();
+Object.entries(labels).forEach(([k, l]) => {
+const el = $(`[data-map-tag="${k}"]`, slipMap.parentElement);
+el.hidden = !l || !m;
+if (!l || !m) return;
+el.textContent = l.text;
+const x = m.a * l.xy[0] + m.e - box.left, y = m.d * l.xy[1] + m.f - box.top;
+el.style.transform = `translate(${Math.round(x)}px, ${Math.round(y)}px) translate(${l.west ? 'calc(-100% - 11px)' : '11px'}, -50%)`;
+});
+};
+if (slipMap && 'ResizeObserver' in window) new ResizeObserver(placeLabels).observe(slipMap);
+const paintMap = (p, yardId) => {
+if (!slipMap) return;
+$$('[data-map-yard]', slipMap).forEach((g) => g.classList.toggle('is-on', g.dataset.mapYard === yardId));
+const home = $(`[data-map-yard="${yardId}"]`, slipMap);
+labels.yard = home && { text: cityOf(yardId), xy: geo.yards[yardId], west: home.dataset.side === 'w' };
+const d = p && geo.yards[yardId] ? arcPath(geo.yards[yardId], p.xy) : '';
+labels.dest = d ? { text: p.name, xy: p.xy, west: p.xy[0] < geo.yards[yardId][0] } : null;
+placeLabels();
+if (!d) {
+dest.setAttribute('visibility', 'hidden'); arc.setAttribute('visibility', 'hidden');
+drawn = ''; return;
+}
+dest.setAttribute('visibility', 'visible');
+dest.setAttribute('transform', `translate(${p.xy[0]} ${p.xy[1]})`);
+arc.setAttribute('visibility', 'visible');
+if (d === drawn) return;
+drawn = d;
+arc.setAttribute('d', d);
+if (!calm.matches) { arc.classList.remove('is-drawing'); arc.getBoundingClientRect(); arc.classList.add('is-drawing'); }
+};
+const paintPlace = () => {
+if (!geo || !placeField) return;
+const text = placeField.value.trim();
+const p = text ? lookup(text) : null;
+if (p && !yardPicked && yardSel.value !== cityOf(p.yard)) yardSel.value = cityOf(p.yard);
+if (p && !deliveryPicked) {
+const want = p.access === 'coastal' || p.access === 'seasonal' ? 'Remote Alaska shipping' : 'Job-site delivery';
+$$('input[name=delivery]', form).forEach((r) => { r.checked = r.value === want; });
+}
+if (yardHint) yardHint.textContent = p && !yardPicked ? `Picked for ${p.name}. Change it if you work with another yard.` : yardHintDefault;
+const yardId = yardSel.value.toLowerCase();
+const acc = p && geo.access[p.access];
+if (carried && query.get('location')) { carried.hidden = !text; carried.textContent = `Quote for ${text} · ${cityOf(yardId)} yard`; }
+put('place', p ? `${p.name}, ${geo.states[p.st]}` : text || 'Where is the job?');
+put('meta', p ? `${p.region} · ${acc.tag}` : text ? 'Not on our short list, which does not mean we cannot get there. A yard will work out the route.' : 'Add the project location and this fills in.');
+$$('[data-s-modes]').forEach((el) => el.classList.toggle('is-empty', !acc));
+$$('[data-ic]').forEach((el) => { const [i, k] = el.dataset.ic.split('-'); el.hidden = !(acc && acc.modes[i]?.[0] === k); });
+[0, 1].forEach((i) => put('m' + i, acc && acc.modes[i] ? acc.modes[i][1].replace('{yard}', cityOf(yardId)) : ''));
+paintMap(p, yardId);
+};
+const live = $('[data-live]', form);
+let lastYard = '';
+const paintYard = () => {
+if (!yardSel) return;
+const id = yardSel.value.toLowerCase();
+$$('[data-y]').forEach((el) => { el.hidden = el.dataset.y !== id; });
+if (live && lastYard && lastYard !== id) live.textContent = `${yardSel.value} will answer this.`;
+lastYard = id;
+};
+const stateOf = (el) => (el.type === 'checkbox' ? el.checked : el.value.trim() !== '');
+const leftLine = $('[data-left]', form);
+const paintProgress = () => {
+$$('[data-step]', form).forEach((fs) => {
+const need = $$('[required]', fs);
+const left = need.filter((el) => !el.validity.valid).length;
+const some = fields().some((el) => fs.contains(el) && el.type !== 'radio' && el.tagName !== 'SELECT' && stateOf(el)) || Array.from(bag.files).length > 0 && fs.contains(input);
+const text = need.length ? (left ? `${left} required` : 'Complete') : (some ? 'Added' : 'Optional');
+$$(`[data-step-state="${fs.id}"]`).forEach((el) => {
+el.textContent = text;
+el.classList.toggle('is-done', need.length ? !left : some);
+});
+});
+if (leftLine) {
+const left = $$('[required]', form).filter((el) => !el.validity.valid).length;
+const text = left ? `${left} required ${left === 1 ? 'field' : 'fields'} still to fill in.` : 'Everything required is filled in.';
+if (!leftLine.dataset.hold && leftLine.textContent !== text) leftLine.textContent = text;
+leftLine.classList.toggle('is-ready', !left);
+}
+};
+const paintDetails = () => {
+const when = $('input[name=needed]', form)?.value;
+put('needed', when ? new Date(when + 'T12:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'No date yet');
+const delivery = $('input[name=delivery]:checked', form);
+if (delivery) put('delivery', delivery.value);
+const files = Array.from(bag.files);
+const product = query.get('product');
+put('attached', files.length ? (files.length === 1 ? files[0].name : `${files.length} files attached`) : product || (materials && materials.value.trim() ? 'Listed in the request' : 'Nothing attached yet'));
+};
+const paint = () => { paintPlace(); paintYard(); paintProgress(); paintDetails(); };
+if (yardSel) yardSel.addEventListener('input', () => { yardPicked = true; });
+if (yardSel) yardSel.addEventListener('change', () => { yardPicked = true; save(); });
+$$('input[name=delivery]', form).forEach((r) => r.addEventListener('input', () => { deliveryPicked = true; }));
+form.addEventListener('input', paint);
+form.addEventListener('change', paint);
 const input = $('input[type=file]', form);
 const drop = $('[data-drop]', form);
 const list = $('[data-files]', form);
@@ -159,7 +311,7 @@ const rm = document.createElement('button'); rm.type = 'button'; rm.textContent 
 rm.addEventListener('click', () => {
 const next = new DataTransfer();
 Array.from(bag.files).forEach((g, j) => { if (j !== i) next.items.add(g); });
-bag = next; input.files = bag.files; render();
+bag = next; input.files = bag.files; render(); paint();
 });
 li.append(name, meta, rm);
 list.append(li);
@@ -173,6 +325,7 @@ render();
 const note = $('[data-file-err]', form);
 note.hidden = !tooBig.length;
 if (tooBig.length) note.textContent = `${tooBig.join(', ')} ${tooBig.length > 1 ? 'are' : 'is'} over 25 MB. Email large files to the yard directly, or send a download link in the notes.`;
+paint();
 };
 if (input && drop) {
 input.addEventListener('change', () => { const f = Array.from(input.files); bag = new DataTransfer(); add(f); });
@@ -186,18 +339,40 @@ const bad = !el.checkValidity();
 el.setAttribute('aria-invalid', String(bad));
 if (err) {
 err.hidden = !bad;
-err.textContent = !bad ? '' : el.type === 'checkbox' ? 'Please confirm to continue.' : el.validity.valueMissing ? 'Required.' : el.type === 'email' ? 'Enter an email address like name@company.com.' : 'Check this field.';
+err.textContent = !bad ? '' : el.type === 'checkbox' ? 'Please confirm to continue.' : el.validity.valueMissing ? (el.dataset.missing || 'Required.') : el.type === 'email' ? 'Enter an email address like name@company.com.' : 'Check this field.';
 }
 return !bad;
 };
+const labelOf = (el) => (el.dataset.label || form.querySelector(`label[for="${el.id}"]`)?.childNodes[0]?.textContent.trim() || el.name);
 const validate = () => {
 const bad = $$('[required]', form).filter((el) => !check(el));
 if (bad.length) bad[0].focus();
+if (leftLine) {
+leftLine.dataset.hold = bad.length ? '1' : '';
+if (bad.length) leftLine.textContent = `${bad.length} ${bad.length === 1 ? 'field needs' : 'fields need'} your attention: ${bad.map(labelOf).join(', ')}.`;
+}
 return !bad.length;
 };
 $$('[required]', form).forEach((el) => ['blur', 'change'].forEach((t) => el.addEventListener(t, () => {
-if (el.getAttribute('aria-invalid') === 'true') check(el);
+if (el.getAttribute('aria-invalid') === 'true') {
+check(el);
+if (leftLine && leftLine.dataset.hold) { leftLine.dataset.hold = ''; paintProgress(); }
+}
 })));
+if (draftClear) draftClear.addEventListener('click', () => {
+try { localStorage.removeItem(DRAFT); } catch { /* ignore */ }
+form.reset();
+bag = new DataTransfer(); if (input) { input.files = bag.files; render(); }
+yardPicked = false; deliveryPicked = false;
+prefill();
+$$('[aria-invalid]', form).forEach((el) => { el.removeAttribute('aria-invalid'); });
+$$('.err', form).forEach((el) => { el.hidden = true; el.textContent = ''; });
+if (leftLine) leftLine.dataset.hold = '';
+draftText.textContent = 'Saved on this device as you type.';
+draftClear.hidden = true;
+paint();
+$('input, select, textarea', form).focus();
+});
 const summary = () => {
 const out = [];
 $$('fieldset', form).forEach((fs) => {
@@ -247,12 +422,28 @@ return;
 }
 const { text, files } = summary();
 const subject = `${form.dataset.subject} — ${data.get('company') || data.get('name')}${data.get('location') ? ' — ' + data.get('location') : ''}`;
-window.location.href = `mailto:${to}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(text)}`;
+const mail = `mailto:${to}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(text)}`;
+window.location.href = mail;
 const note = $('[data-mail-note]', done);
 if (note) note.hidden = !files.length;
 $('[data-mail-to]', done).textContent = to;
+const again = $('[data-mail-again]', done);
+if (again) again.href = mail;
+const copy = $('[data-copy]', done);
+if (copy) copy.onclick = async () => {
+const label = $('[data-copy-label]', copy);
+try { await navigator.clipboard.writeText(`To: ${to}\nSubject: ${subject}\n\n${text}`); label.textContent = 'Copied'; } catch { label.textContent = 'Could not copy. Please call the yard.'; }
+};
 finish();
 });
+window.addEventListener('beforeprint', () => {
+const filled = typed();
+form.classList.toggle('is-filled', filled);
+$$('input[type=date]', form).forEach((el) => el.classList.toggle('has-date', !!el.value));
+$$('[data-print-for]', form).forEach((box) => { box.checked = filled && form.elements[box.dataset.printFor]?.value === box.value; });
+});
+window.addEventListener('afterprint', () => form.classList.remove('is-filled'));
+paint();
 });
 })();
 /* "Where are you building?" — the combobox, the route card and the map camera.
@@ -271,7 +462,7 @@ const places = data.places.map(([name, st, xy, lat, lon, region, access, yard]) 
 const byName = new Map(places.map((p) => [p.name, p]));
 const aliases = Object.entries(data.aliases).map(([alias, name]) => ({ alias, key: fold(alias), place: byName.get(name) }));
 const SUGGEST = ['Anchorage', 'Fairbanks', 'Bethel', 'Nome', 'Kotzebue', 'Utqiaġvik', 'Juneau', 'Seattle'].map((s) => ({ p: byName.get(s) }));
-const input = $('.finder__input', finder), list = $('.finder__list', finder), clear = $('[data-clear]', finder);
+const input = $('.finder__input', finder), list = $('.finder__list', finder), clear = $('[data-clear]', finder), go = $('[data-go]', finder);
 const route = $('[data-route]', finder), live = $('[data-live]', finder);
 const cam = $('[data-cam]', map), arc = $('[data-arc]', map), dest = $('[data-dest]', map), destName = $('[data-dest-name]', map);
 const reset = $('[data-reset]', stage);
@@ -328,7 +519,7 @@ showYard('any');
 field('how').hidden = true; field('else').hidden = false; field('note').hidden = true;
 field('short').textContent = text;
 field('quote').href = quoteUrl(text);
-live.textContent = `${text} is not on our short list. Any yard can help. Use the quote button, or call a yard.`;
+live.textContent = `${text} is not on our short list. Any yard can help: Kent for Puget Sound and the Pacific Northwest, Anchorage for Southcentral and remote Alaska, Fairbanks for the Interior and points north.`;
 };
 /* ---- The map ---- */
 const arcPath = ([x1, y1], [x2, y2]) => {
@@ -351,17 +542,20 @@ const W = map.offsetWidth, H = map.offsetHeight, k = W / data.w, phone = window.
 const mr = map.getBoundingClientRect(), cr = map.parentElement.getBoundingClientRect(), sr = stage.getBoundingClientRect(), fr = finder.getBoundingClientRect();
 let left = Math.max(0, cr.left - mr.left, sr.left - mr.left), right = Math.min(W, cr.right - mr.left, sr.right - mr.left);
 let top = Math.max(0, cr.top - mr.top, sr.top - mr.top), bottom = Math.min(H, cr.bottom - mr.top, sr.bottom - mr.top);
+const slideX = left, slideY = top;
 const beside = fr.top < mr.top + bottom - 40 && fr.bottom > mr.top + top + 40 && fr.right < mr.left + (left + right) / 2;
 if (beside) left = Math.max(left, fr.right - mr.left + 16);          // wide: the finder sits over the map's left
 else if (fr.top < mr.top + bottom) bottom = Math.max(top + 80, fr.top - mr.top); // band, phone: it overlaps the bottom edge
-const east = place[0] >= yard[0], yardTag = 150, placeTag = phone ? 56 : 44 + name.length * 8;
+const east = place[0] >= yard[0], yardTag = 150, placeTag = phone ? 8 + name.length * 4.5 : 44 + name.length * 8;
 const roomL = 20 + (east ? yardTag : placeTag), roomR = 20 + (east ? placeTag : yardTag);
 const roomT = phone ? 64 : 48, roomB = phone ? 52 : 64;
 const x0 = Math.min(yard[0], place[0]) * k, x1 = Math.max(yard[0], place[0]) * k, y0 = Math.min(yard[1], place[1]) * k, y1 = Math.max(yard[1], place[1]) * k;
 const fw = Math.max(40, right - left - roomL - roomR), fh = Math.max(40, bottom - top - roomT - roomB);
 const z = Math.max(1, Math.min(MAX_ZOOM, fw / Math.max(1, x1 - x0), fh / Math.max(1, y1 - y0)));
-const tx = Math.min(0, Math.max(W - z * W, left + roomL + fw / 2 - z * (x0 + x1) / 2));
-const ty = Math.min(0, Math.max(H - z * H, top + roomT + fh / 2 - z * (y0 + y1) / 2));
+let tx = left + roomL + fw / 2 - z * (x0 + x1) / 2;
+if (phone) { const px = place[0] * k * z; tx = Math.min(right - placeTag - 10 - px, Math.max(left + placeTag + 10 - px, tx)); }
+tx = Math.min(slideX, Math.max(W - z * W, tx));
+const ty = Math.min(slideY, Math.max(H - z * H, top + roomT + fh / 2 - z * (y0 + y1) / 2));
 setCam(tx, ty, z);
 };
 const yardPins = $$('[data-yard]', map);
@@ -390,16 +584,26 @@ if (move) fly(yard.xy, p.xy, p.name);
 };
 /* ---- Choosing ---- */
 const press = (name) => $$('.chip[data-place]', finder).forEach((c) => c.setAttribute('aria-pressed', String(c.dataset.place === name)));
+let answered = '';
+const syncButtons = () => { clear.hidden = !input.value; go.hidden = !input.value.trim() || input.value === answered; };
 const choose = (p, { typed = false } = {}) => {
 current = p;
 close();
-input.value = p.name; clear.hidden = false;
+input.value = p.name; answered = p.name; syncButtons();
 press(p.name); swap(); fill(p); draw(p);
 if (typed) input.blur();
 };
 const chooseUnknown = (text) => {
 current = null;
-close(); clear.hidden = false; press(''); swap(); fillUnknown(text.slice(0, 60)); draw(null);
+answered = input.value; syncButtons();
+close(); press(''); swap(); fillUnknown(text.slice(0, 60)); draw(null);
+input.blur();
+};
+const submit = () => {
+const text = input.value.trim();
+const pick = (!list.hidden && options[active]) || (text ? search(text)[0] : null);
+if (pick && pick.p) choose(pick.p, { typed: true });
+else if (text) chooseUnknown(text);
 };
 /* ---- The combobox ---- */
 const search = (q) => {
@@ -428,17 +632,21 @@ li.append(name, meta);
 list.append(li);
 });
 if (!options.length) {
+const text = input.value.trim();
+options = [{ unknown: text }];
 const li = document.createElement('li');
-li.className = 'is-none'; li.setAttribute('role', 'option'); li.setAttribute('aria-disabled', 'true'); li.setAttribute('aria-selected', 'false');
-li.textContent = 'Not on our short list. Press Enter and we will still point you to a yard.';
+li.setAttribute('role', 'option'); li.id = `${list.id}-0`; li.setAttribute('aria-selected', 'false');
+const name = document.createElement('span'); name.textContent = `Use ${text}`;
+const meta = document.createElement('small'); meta.textContent = 'Any yard can help';
+li.append(name, meta);
 list.append(li);
 }
 list.hidden = false;
 input.setAttribute('aria-expanded', 'true');
-setActive(options.length && input.value.trim() ? 0 : -1);
+setActive(input.value.trim() ? 0 : -1);
 };
 function close() { list.hidden = true; input.setAttribute('aria-expanded', 'false'); input.removeAttribute('aria-activedescendant'); active = -1; }
-input.addEventListener('input', () => { clear.hidden = !input.value; open(); });
+input.addEventListener('input', () => { syncButtons(); open(); });
 input.addEventListener('focus', () => {
 input.select(); open();
 if (window.innerWidth < 700) input.scrollIntoView({ block: 'start', behavior: calm.matches ? 'auto' : 'smooth' });
@@ -448,14 +656,10 @@ input.addEventListener('keydown', (e) => {
 if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
 e.preventDefault();
 if (list.hidden) return open();
-if (!options.length) return;
 setActive((active + (e.key === 'ArrowDown' ? 1 : -1) + options.length) % options.length);
 } else if (e.key === 'Enter') {
 e.preventDefault();
-if (list.hidden) open();
-const pick = options[active] || (input.value.trim() ? options[0] : null);
-if (pick) choose(pick.p, { typed: true });
-else if (input.value.trim()) chooseUnknown(input.value.trim());
+submit();
 } else if (e.key === 'Escape') {
 if (!list.hidden) { e.preventDefault(); close(); }
 }
@@ -464,9 +668,11 @@ list.addEventListener('mousedown', (e) => e.preventDefault());
 list.addEventListener('click', (e) => {
 const li = e.target.closest('[role=option]');
 const o = li && options[Array.prototype.indexOf.call(list.children, li)];
-if (o) choose(o.p, { typed: true });
+if (o && o.p) choose(o.p, { typed: true }); else if (o) chooseUnknown(o.unknown);
 });
-clear.addEventListener('click', () => { input.value = ''; clear.hidden = true; input.focus(); });
+clear.addEventListener('click', () => { input.value = ''; syncButtons(); input.focus(); });
+go.addEventListener('mousedown', (e) => e.preventDefault());
+go.addEventListener('click', submit);
 finder.addEventListener('click', (e) => {
 const chip = e.target.closest('.chip[data-place]');
 if (chip && byName.has(chip.dataset.place)) choose(byName.get(chip.dataset.place));
@@ -514,20 +720,158 @@ const { $$ } = UCM;
 $$('[data-lines]').forEach((root) => {
 const rows = $$('.line', root), shots = $$('.lines__shot', root);
 if (!shots.length) return;
+const items = rows.map((r) => r.closest('li'));
 let on = 0;
-rows[0].classList.add('is-on');
+items[0].classList.add('is-on');
 const show = (i) => {
 if (i === on || !shots[i]) return;
 on = i;
-rows.forEach((r, j) => r.classList.toggle('is-on', j === i));
+items.forEach((li, j) => li.classList.toggle('is-on', j === i));
 shots[i].classList.add('is-ready');
 requestAnimationFrame(() => requestAnimationFrame(() => shots.forEach((s, j) => s.classList.toggle('is-on', j === on))));
 };
 shots.forEach((s, j) => s.addEventListener('transitionend', () => { if (j !== on) s.classList.remove('is-ready'); }));
-rows.forEach((r, i) => {
-r.addEventListener('pointerenter', () => show(i));
-r.addEventListener('focus', () => show(i));
+items.forEach((li, i) => {
+li.addEventListener('pointerenter', () => show(i));
+li.addEventListener('focusin', () => show(i));
 });
+});
+})();
+/* The Pacific Northwest and Locations pages: small things around the maps. Everything here is an extra:
+without it the town chips are plain links to a pre-filled quote and the lanes simply keep moving. */
+(() => {
+const { $, $$, calm } = UCM;
+/* The Puget Sound close-up: a town chip under the pointer or the keyboard picks out its line and its
+name on the map, so the list and the map read as one thing. */
+const sound = $('[data-sound]');
+if (sound) {
+const mark = (name, on) => $$(`.pn-spoke[data-town="${name}"], .pn-town[data-town="${name}"]`, sound).forEach((el) => el.toggleAttribute('data-on', on));
+$$('.chip[data-town]', sound).forEach((chip) => {
+const on = () => mark(chip.dataset.town, true), off = () => mark(chip.dataset.town, false);
+chip.addEventListener('mouseenter', on);
+chip.addEventListener('mouseleave', off);
+chip.addEventListener('focus', on);
+chip.addEventListener('blur', off);
+});
+}
+/* The ruler on the About page draws its line once, when it arrives. */
+$$('.ab-ruler').forEach((ruler) => {
+if (calm.matches || !('IntersectionObserver' in window)) { ruler.classList.add('is-in'); return; }
+const io = new IntersectionObserver(([en]) => { if (en.isIntersecting) { ruler.classList.add('is-in'); io.disconnect(); } }, { threshold: 0.2 });
+io.observe(ruler);
+});
+/* A map without a finder still pauses its repainting lanes when it is off screen. */
+$$('[data-map]').forEach((map) => {
+if (map.closest('[data-stage]') || !('IntersectionObserver' in window)) return;
+new IntersectionObserver(([en]) => map.classList.toggle('is-paused', !en.isIntersecting)).observe(map);
+});
+})();
+/* Products.
+1. The index (/products/): a field that narrows the nine lines as you type. It searches product
+names, what each is for, brands and trade abbreviations; matching products show their note.
+2. A line page: "Add to quote" on any product, and every quote button on the page carries the
+line and the products chosen to the quote form. The button says which state it is in
+("Add to quote" / "On the quote"), so it carries no pressed state of its own.
+Both are extras: without this script the index is the full list and the buttons carry the line. */
+(() => {
+const { $, $$ } = UCM;
+const norm = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+const root = $('[data-pidx]');
+if (root) {
+const input = $('[data-pidx-q]', root), clear = $('[data-pidx-clear]', root), count = $('[data-pidx-count]', root), none = $('[data-pidx-none]', root), more = $('[data-pidx-more]', root);
+const tries = $$('[data-pidx-try]', root);
+const rows = $$('[data-pidx-row]', root).map((el) => ({
+el, text: norm(el.dataset.s),
+items: $$('[data-pidx-item]', el).map((li) => ({ li, note: $('small', li), text: norm(li.dataset.s) })),
+}));
+const all = count.innerHTML;
+const has = (text, words) => words.every((w) => (' ' + text).includes(' ' + w));
+const apply = () => {
+const words = norm(input.value).split(' ').filter(Boolean);
+const on = words.length > 0;
+let lines = 0, products = 0;
+rows.forEach((r) => {
+let hits = 0;
+r.items.forEach((it) => {
+const hit = on && has(it.text, words);
+it.li.classList.toggle('is-hit', hit);
+it.note.hidden = !hit;
+if (hit) hits++;
+});
+const show = !on || hits > 0 || has(r.text, words);
+r.el.hidden = !show;
+r.el.classList.toggle('is-narrowed', on && hits > 0);
+if (on) r.el.classList.add('is-in');
+if (show) { lines++; products += hits; }
+});
+root.classList.toggle('is-filtered', on);
+clear.hidden = !on;
+none.hidden = !on || lines > 0;
+if (more) more.hidden = on && !lines;
+tries.forEach((b) => b.setAttribute('aria-pressed', String(on && norm(b.dataset.pidxTry) === words.join(' '))));
+if (!on) count.innerHTML = all;
+else if (!lines) count.textContent = 'No match on the list';
+else if (products) count.textContent = `${products} product${products === 1 ? '' : 's'} in ${lines} line${lines === 1 ? '' : 's'}`;
+else count.textContent = lines === 1 ? '1 line matches' : `${lines} lines match`;
+};
+const lift = () => {
+const bar = input.closest('.pidx-find'), top = bar.getBoundingClientRect().top;
+const mast = $('[data-masthead]'), want = (mast ? mast.offsetHeight : 0) + 16;
+if (top > want + 40) window.scrollBy({ top: top - want, behavior: UCM.calm.matches ? 'auto' : 'smooth' });
+};
+input.addEventListener('focus', lift);
+input.addEventListener('input', apply);
+input.addEventListener('keydown', (e) => {
+if (e.key === 'Escape' && input.value) { input.value = ''; apply(); }
+if (e.key === 'Enter' && matchMedia('(pointer: coarse)').matches) input.blur();
+});
+input.addEventListener('search', apply);
+clear.addEventListener('click', () => { input.value = ''; apply(); input.focus(); });
+tries.forEach((b) => b.addEventListener('click', () => {
+input.value = b.getAttribute('aria-pressed') === 'true' ? '' : b.dataset.pidxTry;
+apply();
+lift();
+}));
+window.addEventListener('pageshow', () => { if (input.value) apply(); });
+}
+const line = $('[data-pline]');
+if (line) {
+const picks = $$('[data-pline-pick]', line), links = $$('[data-pline-quote]'), status = $('[data-pline-status]', line);
+const idle = status ? status.textContent : '';
+const isOn = (b) => b.hasAttribute('data-on');
+const sync = () => {
+const chosen = picks.filter(isOn).map((b) => b.dataset.plinePick);
+const product = line.dataset.line + (chosen.length ? ' — ' + chosen.join(', ') : '');
+links.forEach((a) => { a.href = line.dataset.quote + '?product=' + encodeURIComponent(product); });
+picks.forEach((b) => b.closest('li').classList.toggle('is-picked', isOn(b)));
+if (status) {
+status.textContent = chosen.length ? `On the quote: ${chosen.join(', ')}.` : idle;
+status.classList.toggle('is-on', chosen.length > 0);
+}
+};
+picks.forEach((b) => b.addEventListener('click', () => { b.toggleAttribute('data-on'); sync(); }));
+}
+})();
+/* Kinds of work (projects page): the chips show one sector at a time and say how much is showing.
+Without this script the chips are links to each sector and everything is on the page. */
+(() => {
+const { $, $$ } = UCM;
+const bar = $('[data-pj-filter]');
+if (!bar) return;
+const chips = $$('button[data-pj]', bar), sectors = $$('[data-pj-sector]'), count = $('[data-pj-count]');
+const all = count ? count.textContent : '';
+bar.addEventListener('click', (e) => {
+const chip = e.target.closest('button[data-pj]');
+if (!chip) return;
+const f = chip.dataset.pj;
+let n = 0;
+chips.forEach((c) => c.setAttribute('aria-pressed', String(c === chip)));
+sectors.forEach((s) => {
+const on = f === 'all' || s.id === f;
+s.hidden = !on;
+if (on) n += $$('.pj-kind', s).length;
+});
+if (count) count.textContent = f === 'all' ? all : `${n} ${n === 1 ? 'kind' : 'kinds'} of work in ${chip.textContent}`;
 });
 })();
 /* Scroll reveal: .reveal elements ease in once as they arrive. CSS hides them only when this script

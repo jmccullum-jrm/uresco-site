@@ -1,0 +1,136 @@
+/* ==========================================================================
+   Services: one load, followed from the plans to the ground.
+   The run (six stops on a line), the stops themselves, the handoff rows.
+   ========================================================================== */
+
+/* ---------- The run: the six services as stops on one line ---------- */
+.svx-index { padding-bottom: calc(var(--section) * .75); }
+/* Phones: a vertical line down the left, the three sea stops on map water, edge to edge. */
+.svx-run { display: grid; margin-inline: calc(var(--gutter) * -1); }
+.svx-run__stop { position: relative; display: grid; padding-inline: var(--gutter); }
+.svx-run__stop.is-sea { background: var(--water); }
+.svx-run__stop::before { content: ""; position: absolute; left: calc(var(--gutter) + .25rem); top: 0; bottom: 0; border-left: 1px solid var(--ink); }
+.svx-run__stop.is-sea::before { border-left: 1px dashed var(--sea); }
+.svx-run__stop:first-child::before { top: 1.6rem; }
+.svx-run__stop:last-child::before { bottom: auto; height: 1.6rem; }
+.svx-run__stop.has-leg:first-child::before { top: 3.9rem; }
+.svx-run__stop.has-leg:last-child::before { height: 3.9rem; }
+.svx-run__leg { position: relative; z-index: 1; display: block; padding: 1.2rem 0 .1rem 2.25rem; font: 400 var(--t-label)/1.3 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); }
+.is-sea .svx-run__leg { color: var(--sea); }
+.svx-run a { position: relative; display: grid; grid-template-columns: 2.1rem minmax(0, 1fr) auto; align-items: baseline; padding: .95rem 0 1rem 2.25rem; min-height: 3.75rem; text-decoration: none; }
+.svx-run__stop:not(.has-leg) a { border-top: 1px solid var(--rule); }
+.svx-run a::before { content: ""; position: absolute; left: 0; top: 1.3rem; width: .5625rem; height: .5625rem; border: 1.5px solid var(--ink); border-radius: 50%; background: var(--paper); transition: background-color var(--d-2), scale var(--d-2) var(--ease); }
+.is-sea a::before { background: var(--water); }
+.svx-run a:hover::before, .svx-run a:focus-visible::before { background: var(--yellow); scale: 1.35; }
+.svx-run__no { font: 400 var(--t-label)/1 var(--mono); letter-spacing: .08em; color: var(--ink-3); }
+.svx-run__text { display: grid; gap: .3rem; }
+.svx-run__name { font: 480 1.25rem/1.15 var(--serif); letter-spacing: -.01em; }
+.svx-run__stage { font: 400 var(--t-label)/1.3 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); }
+.is-sea .svx-run__stage, .is-sea .svx-run__no { color: var(--sea); }
+.svx-run__go { align-self: center; color: var(--ink-3); rotate: 90deg; transition: translate var(--d-2) var(--ease), color var(--d-1); }
+.svx-run a:hover .svx-run__go, .svx-run a:focus-visible .svx-run__go { translate: 0 .3rem; color: var(--ink); }
+.svx-run a:hover .svx-run__name { text-decoration: underline; text-decoration-color: var(--yellow); text-decoration-thickness: 2px; text-underline-offset: .2em; }
+.svx-run a:focus-visible { outline-offset: -2px; }
+/* From 900px: the line runs across, six stops along it. */
+@media (min-width: 900px) {
+  .svx-run { grid-template-columns: repeat(6, minmax(0, 1fr)); margin-inline: 0; }
+  .svx-run__stop { grid-template-rows: 2.75rem 1fr; padding-inline: 0; }
+  .svx-run__stop::before { content: none; }
+  .svx-run__leg { align-self: end; padding: 0 0 .75rem 1rem; white-space: nowrap; }
+  .svx-run a { grid-row: 2; grid-template-columns: minmax(0, 1fr); align-content: start; gap: 1.1rem; padding: 1.6rem .75rem 1.5rem 1rem; min-height: 0; border-top: 1px solid var(--ink); }
+  .svx-run__stop:not(.has-leg) a { border-top-color: var(--ink); }
+  .svx-run__stop.is-sea a { border-top: 1px dashed var(--sea); }
+  .svx-run a::before { left: 1rem; top: -.3125rem; }
+  .svx-run__text { gap: .5rem; }
+  .svx-run__name { font-size: clamp(1.125rem, .8rem + .6vw, 1.4375rem); }
+  .svx-run__go { justify-self: start; }
+}
+
+/* ---------- A stop ---------- */
+.svx-yard { padding-bottom: var(--section); }
+.svx-stage + .svx-stage { margin-top: var(--section); }
+.svx-bar { margin-bottom: clamp(1.75rem, 3.6vw, 3.5rem); }
+.svx-bar__name { font: inherit; letter-spacing: inherit; text-transform: inherit; }
+.svx-bar__stage { color: var(--ink-3); }
+@media (max-width: 479px) { .svx-bar__stage { display: none; } }
+.svx-line { font-size: clamp(2rem, 1.35rem + 2.5vw, 3.5rem); max-width: 11em; }
+.svx-line--xl { font-size: clamp(2.5rem, 1.45rem + 4.3vw, 5rem); line-height: .96; max-width: 9em; }
+.svx-line--sm { font-size: clamp(1.75rem, 1.4rem + 1.4vw, 2.5rem); }
+.svx-stage__grid { display: grid; gap: 2rem var(--col-gap); }
+.svx-stage__text { display: grid; gap: 1.25rem; justify-items: start; align-content: start; min-width: 0; }
+.svx-stage__body { max-width: 30em; color: var(--ink-2); font-size: var(--t-lede); line-height: 1.45; }
+.svx-stage__media { min-width: 0; }
+.svx-stage .actions { gap: 1rem 1.75rem; margin-top: .5rem; }
+@media (min-width: 1000px) {
+  .svx-stage__grid { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: var(--col-gap) clamp(2rem, 5vw, 5rem); align-items: start; }
+  .svx-stage--flip .svx-stage__grid { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); }
+  .svx-stage--flip .svx-stage__media { order: -1; }
+  .svx-stage--drop .svx-stage__grid { grid-template-columns: minmax(0, 6.4fr) minmax(0, 5.6fr); }
+  /* Where the pictures run longer than the words, the words keep pace. */
+  .svx-stage--list .svx-stage__text { position: sticky; top: calc(var(--mast) + 2rem); }
+}
+
+/* The handoff: what you bring to a stop, what you get back. */
+.svx-io { justify-self: stretch; max-width: 34rem; border-top: 1px solid currentColor; }
+.svx-io > div { display: grid; grid-template-columns: 5.25rem minmax(0, 1fr); gap: 1rem; align-items: baseline; padding: .8rem 0 .85rem; border-bottom: 1px dashed var(--rule-2); }
+.svx-io dt { font: 400 var(--t-label)/1.4 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); }
+.svx-io dd { font: 480 1.1875rem/1.25 var(--serif); letter-spacing: -.002em; }
+
+/* ---------- 01 The list: what a take-off can cover ---------- */
+.svx-sheet { position: relative; margin-top: 1.5rem; background: var(--paper-3); border: 1px solid var(--ink); }
+.svx-sheet__head { display: flex; justify-content: space-between; gap: 1rem; padding: .7rem 1rem; border-bottom: 1px solid var(--ink); }
+.svx-sheet__rows { list-style: none; margin: 0; padding: 0; }
+.svx-sheet__rows a { display: grid; grid-template-columns: 2.6rem minmax(0, 1fr) auto; column-gap: .4rem; align-items: baseline; padding: .7rem 1rem .75rem; border-bottom: 1px dashed var(--rule-2); text-decoration: none; transition: background-color var(--d-1); }
+.svx-sheet__no { font: 400 var(--t-label)/1 var(--mono); letter-spacing: .08em; color: var(--ink-3); }
+.svx-sheet__name { font: 480 1.125rem/1.2 var(--serif); letter-spacing: -.004em; }
+/* Every item in the line, on as many lines as it takes: what a take-off covers is the point of the form. */
+.svx-sheet__items { grid-column: 2; margin-top: .25rem; font-size: .8125rem; line-height: 1.4; color: var(--ink-3); }
+.svx-sheet__go { grid-column: 3; grid-row: 1 / span 2; align-self: center; color: var(--ink-3); transition: translate var(--d-2) var(--ease), color var(--d-1); }
+.svx-sheet__rows a:hover, .svx-sheet__rows a:focus-visible { background: var(--paper-2); }
+.svx-sheet__rows a:hover .svx-sheet__go, .svx-sheet__rows a:focus-visible .svx-sheet__go { translate: .3rem 0; color: var(--ink); }
+.svx-sheet__rows a:focus-visible { outline-offset: -3px; }
+.svx-sheet__foot { padding: .7rem 1rem .75rem; font: 400 var(--t-caption)/1.4 var(--mono); color: var(--ink-3); }
+@media (max-width: 499px) { .svx-sheet__head .label + .label { display: none; } }
+@media (min-width: 1200px) {
+  /* The form sits over the corner of the photograph; the caption keeps to the left of it. */
+  .svx-stage--list .svx-stage__media { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); }
+  .svx-stage--list .fig { grid-column: 1 / -1; grid-row: 1; }
+  .svx-stage--list .fig__cap { max-width: calc(200% / 7 - 1rem); }
+  .svx-sheet { grid-column: 3 / -1; grid-row: 2; margin-top: -5.5rem; box-shadow: var(--shadow-2); }
+}
+
+/* ---------- 02 The design ---------- */
+.svx-members { display: grid; gap: .75rem; justify-items: start; margin-top: .75rem; }
+.svx-members ul { display: flex; flex-wrap: wrap; gap: .2rem 1.25rem; list-style: none; margin: 0; padding: 0; font: italic 460 1.1875rem/1.3 var(--serif); color: var(--ink-2); }
+
+/* ---------- 03 to 05: across an ocean ---------- */
+.svx-lead__head { display: grid; gap: 1.5rem var(--col-gap); margin-bottom: clamp(2.5rem, 5vw, 5rem); }
+.svx-lead__side { display: grid; gap: 1.5rem; align-content: start; }
+.svx-lead__foot { display: grid; gap: 2rem var(--col-gap); margin-block: clamp(3rem, 7vw, 7rem) var(--section); }
+.svx-lead__more { display: grid; gap: 1.5rem; justify-items: start; align-content: end; }
+.svx-lead__more p { max-width: 30em; color: var(--ink-2); }
+@media (min-width: 900px) {
+  .svx-lead__head, .svx-lead__foot { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); align-items: end; }
+}
+.svx-pair { display: grid; gap: var(--section) clamp(2rem, 5vw, 5rem); }
+.svx-stage--half { display: grid; gap: 1.25rem; align-content: start; justify-items: start; min-width: 0; }
+.svx-stage--half + .svx-stage--half { margin-top: 0; }
+.svx-stage--half > .svx-bar, .svx-stage--half > .fig { justify-self: stretch; }
+.svx-stage--half > .svx-bar { margin-bottom: .5rem; }
+.svx-stage--half > .fig { margin-bottom: .75rem; }
+/* On phones the tall photograph sits in from the left, so the two stops do not read as one stack. */
+@media (max-width: 699px) { .svx-stage--half > .fig--port { width: min(78%, 20rem); justify-self: end; } }
+@media (min-width: 700px) { .svx-pair { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); align-items: start; } }
+.svx-legs { justify-self: stretch; max-width: 34rem; list-style: none; margin: 0; padding: 0; }
+.svx-legs li { display: flex; align-items: center; gap: 1rem; padding: .8rem 0; border-bottom: 1px solid var(--rule); font: 480 1.1875rem/1.25 var(--serif); }
+.svx-legs .i { flex: none; color: var(--ink-3); }
+
+/* ---------- 06 The drop ---------- */
+.svx-rig { justify-self: stretch; display: grid; gap: 0 var(--col-gap); margin-top: .5rem; }
+.svx-rig > div { display: grid; gap: .5rem; align-content: start; padding: 1.1rem 0 1.4rem; border-top: 1px solid var(--ink); }
+.svx-rig dt { font: 440 1.5rem/1.1 var(--serif); letter-spacing: -.012em; }
+.svx-rig dd { max-width: 22em; color: var(--ink-2); }
+@media (min-width: 600px) { .svx-rig { grid-template-columns: repeat(2, minmax(0, 1fr)); } .svx-rig > div { padding-right: 1rem; } }
+.svx-prints { position: relative; max-width: 36rem; padding: 0 0 3.5rem 14%; }
+.svx-prints .fig__cap { justify-content: flex-end; text-align: right; }
+.svx-prints .fig__cap span { max-width: 58%; }

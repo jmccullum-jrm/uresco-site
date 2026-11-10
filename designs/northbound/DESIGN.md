@@ -1,13 +1,13 @@
 # NORTHBOUND — the Uresco design system
 
-Direction A of the redesign. This file is what you need to build the remaining pages (products,
-services, locations, projects, quote, accounts, about) in the same system without asking anyone.
+Direction A of the redesign. Every page is built; this file is what you need to change one or add
+another in the same system without asking anyone. §13 maps each page's parts by selector and file.
 
 ---
 
 ## 1. The idea, in three sentences
 
-The site is a trip north. Uresco's story is distance: a load that leaves a yard on Puget Sound at
+The site is a trip north. Uresco's story is distance: a load that leaves a yard in the Puget Sound region at
 47.4°N and lands on the Arctic coast at 71.3°N, so **latitude is the organising device** — it names
 the yards, heads the chapters, runs down the edge of the page as a scale, and sits in the caption of
 every photograph. Everything else is a well-made magazine: warm paper, spruce-black ink, a display
@@ -42,7 +42,8 @@ All in `src/assets/css/00-tokens.css`. Reach for a token, not a raw value.
 | `--paper` | `#F4EFE6` | The page. |
 | `--paper-2` | `#EBE4D6` | A deeper sheet: bands (`.section--paper2`), hovers, drawer foot. |
 | `--paper-3` | `#FBF8F2` | A brighter sheet: menus, the manifest, inputs, the map margin. |
-| `--ink` | `#12201B` | Spruce-black. Text, rules, footer, dateline. |
+| `--ink` | `#12201B` | Spruce-black. Text and rules. |
+| `--black` | `#0E0E0C` | UCM black, the mark's: the dateline, the footer and the Call control. |
 | `--ink-2` | `#36443E` | Body copy and ledes on paper (8.9:1). |
 | `--ink-3` | `#59645E` | Captions and labels. 4.8:1 or better on every light sheet. Do not go lighter. |
 | `--rule` / `--rule-2` | ink at 16% / 34% | Hairlines. `--rule-2` where the line must hold a table together. |
@@ -89,6 +90,8 @@ Rules of the voice:
 
 - **One italic phrase per headline** (`<em>`), and it carries the point: "Down the road, or *across
   an ocean.*" In chapter heads the italic phrase breaks onto its own line.
+- Fraunces is pinned at its 144-point optical size, so below 1.5rem it must be at weight 480 (roman) or
+  460 (italic), or the hairlines break up.
 - Headline leading is tight (.94–1.0), tracking negative (−.02 to −.03em). `text-wrap: balance` is on.
 - Latitudes are written as the fact sheet gives them: one decimal, `47.4°N`. Use `deg()` and `LAT`
   from `components.mjs`; never type one by hand.
@@ -128,8 +131,8 @@ quiet pulse on a yard mark. Only `transform`, `opacity`, `clip-path`, `translate
 ## 3. Grid and layout
 
 - `.wrap` — the content column: `min(100% − 2 × gutter, 1320px)`, centred.
-- `.grid` — 12 columns, `--col-gap`. Most spreads are asymmetric: 7 / 5, 6.2 / 5.8, 5 / 7, 8 / 4.
-  Avoid 6 / 6 and avoid three equal cards as a default.
+- There is no grid class: each layout writes its own `grid-template-columns` with `--col-gap`. Most
+  spreads are asymmetric: 7 / 5, 6.2 / 5.8, 5 / 7, 8 / 4. Avoid 6 / 6 and three equal cards as a default.
 - **The margin column.** From 1000px up, `main` and `.footer` leave `--rail` (64px) on the left. It
   holds the rail; the yellow mark in the masthead sits exactly over it. The margin exists on every
   page so the chrome never shifts between pages.
@@ -147,14 +150,15 @@ quiet pulse on a yard mark. Only `transform`, `opacity`, `clip-path`, `translate
 
 ```
 src/assets/css/00-tokens.css     fonts and custom properties
-src/assets/css/10-base.css       reset, type classes, .wrap/.grid/.section, buttons, links, status, reveal states
-src/assets/css/20-chrome.css     brand, dateline, masthead, product menu, rail, phone menu, call sheet, action bar, footer
-src/assets/css/30-components.css everything shared between pages (this file's §6)
-src/assets/css/pages/home.css    cover, prologue, chapter-specific pieces, coda, directory
-src/assets/css/pages/alaska.css  region finder, modes, questions
-src/assets/js/00-core.js         $ and $$, dialogs, typing class, live yard hours
-src/assets/js/10-forms.js        projects filter, quote and credit forms
-src/assets/js/modules/*.js       reveal, rail, parallax, menu, stock, plate
+src/assets/css/10-base.css       reset, type classes, .wrap/.section, buttons, links, status, reveal states
+src/assets/css/20-chrome.css     brand, dateline, masthead, product menu, rail, dialogs, phone menu, call sheet, action bar, footer
+src/assets/css/30-components.css everything shared between pages (§6)
+src/assets/css/40-forms.css      the quote request and the credit application, on screen
+src/assets/css/90-print.css      the paper copy of the credit application
+src/assets/css/pages/*.css       one file a page (§13); a prefix each, so nothing leaks
+src/assets/js/00-core.js         $ and $$, dialogs, typing class, live yard status
+src/assets/js/10-forms.js        the two forms: validation, drafts, file list, hand-off
+src/assets/js/modules/*.js       reveal, rail, parallax, menu, stock, motion (pause), placefinder (Alaska), products (finder), projects (filter), locations (clocks)
 ```
 
 `build.mjs` joins CSS and JS in name order. **A new page gets `pages/<name>.css`** for anything not in
@@ -169,36 +173,53 @@ Templates: `src/lib/layout.mjs` (chrome), `src/lib/components.mjs` (every functi
 ## 5. Chrome
 
 ### Dateline — `.dateline`
-Ink strip above the masthead from 1000px: the three yards with phone links and live status; latitudes
-join at 1400px. The links on the right wrap out of sight before a phone number is ever cut.
+Black strip above the masthead from 1000px: the three yards with phone links and live status; latitudes
+join at 1400px, `Open an account` at 1100px. Nothing is clipped: what will not fit is not shown.
 
 ### Masthead — `.masthead`
 Sticky, paper, hairline under. Mark over the margin column, wordmark "Uresco" in Fraunces 560 with a
-mono descriptor. Desktop: navigation, `Call a yard` (opens the sheet, from 1280px), `Request a quote`.
-Below 1000px: wordmark, the latitude reading (`.latchip`, journey pages only), menu button.
+mono descriptor. The Call control (`.masthead__call`) shows at every width, black with a yellow handset:
+`Call` to 599px, `Call a yard` to 999px, `Call` to 1279px, `Call a yard` from there (`.masthead__more`).
+`Request a quote` from 1000px, shortened to `Quote` up to 1099px. Below 1000px: wordmark, Call, Menu.
+The quote links in the chrome carry the page's context (`?product=` on a line page, `?yard=kent` on
+Pacific Northwest, `?yard=anchorage` on Alaska).
+
+The latitude reading (`.latchip`) sits in the descriptor's slot on journey pages below 1000px. It takes
+over only inside a chapter, past the first screen (`.masthead.is-reading`), and never over the region
+map, the home coda or the yard directory.
 
 ### Products menu — `.mega`
 A full-width index of the nine lines (number, thumbnail, name, first three items). Opens on hover
-with CSS; the caret button (`.nav__toggle`, `aria-expanded`) opens it for keyboard and touch;
-Escape closes. Without JavaScript the Products link goes to `/products/`.
+with CSS; the caret button (`.nav__toggle`, `aria-expanded`) opens it for keyboard and touch and is
+hidden without JavaScript; Escape closes. Without JavaScript the Products link goes to `/products/`.
 
 ### The rail — `.rail` (see §7)
 
 ### Phone menu — `dialog.drawer#drawer`
-A full sheet of paper: numbered links in the display serif, minor links, then a `--paper-2` foot with
-the quote button and all three numbers.
+A full sheet of paper: numbered links in the display serif, Products as an expanding row (native
+`<details>` with all nine lines, open by default on product pages), minor links, then a `--paper-2` foot
+with `Request a quote`, `Open an account` and all three numbers.
 
 ### Call sheet — `dialog.sheet#call-sheet`
-Opened by any `[data-open="call-sheet"]`. Each yard: latitude, live status, city, street, a full-width
-yellow number and a directions button. Bottom sheet on phones, centred card from 700px.
+Titled `Call or visit a yard`. Opened by any `[data-open="call-sheet"]`. Each yard: latitude and who it
+is for (`callFor` in `locations.mjs`), live status, city and street, the number beside a labelled
+Directions button, then email, fax and a Details link. Bottom sheet on phones, centred card from
+700px. Fits 390x844 without scrolling. Tel, mail and map links leave it open; a click on the backdrop
+closes it, a click on its own padding does not. On the Alaska page Kent moves to the end.
+
+**Every dialog opener is a link**: `callLink(ctx)` writes `<a href="locations/" data-open="call-sheet">`,
+and Menu is `<a href="#footer-index" data-open="drawer">`. `00-core.js` opens the dialog when it can;
+without JavaScript the link is followed. `tests/check.mjs` fails on a `<button data-open>`.
 
 ### Action bar — `.actionbar`
-Below 1000px, fixed to the bottom: **Call** (opens the sheet) · **Directions** · **Quote** (yellow).
-It slides away while a form field has focus (`body.is-typing`).
+Below 1000px, fixed to the bottom: **Call** and **Directions** (both open the sheet; both links to
+`locations/` without JavaScript) · **Quote** (yellow, with the page's context). It slides away while a
+form field has focus (`body.is-typing`).
 
 ### Footer — `.footer`
-Ink. The tagline at display size, two buttons, the three yards and the index, then the legal line.
-On phones each yard is one row: name, number, status.
+Black, under a 4px yellow rule. The tagline at display size, two buttons, the three yards (status,
+number, toll-free, email, fax, address at every width) and the index (`#footer-index`), then the
+legal line. On phones each yard is one row: name, number, status.
 
 ---
 
@@ -218,8 +239,9 @@ Each is a function in `src/lib/components.mjs` unless marked "markup only".
 <a class="link" href="…">The Kent yard <svg class="i">…</svg></a>     <!-- text link with a rule and an arrow -->
 <div class="actions">…buttons…</div>
 ```
-`openStatus(l)` prints the live open/closed badge (`.status`, filled in by `00-core.js`); pass
-`{ short: true }` for "Open"/"Closed" only.
+`callLink(ctx, { text, cls, size, attrs })` is the Call control for any page body: a link to the yards
+that opens the call sheet. `openStatus(l)` prints the live open/closed badge (`.status`, filled in by
+`00-core.js`). It only ever says `Open` or `Closed`, never a time.
 
 ### Photograph — `figure(ctx, key, opts)` → `.fig`
 
@@ -229,10 +251,13 @@ Each is a function in `src/lib/components.mjs` unless marked "markup only".
   <figcaption class="fig__cap"><span>A tug and a loaded barge under way.</span><span class="fig__place">Utqiaġvik · 71.3°N</span></figcaption>
 </figure>
 ```
-Options: `ratio` = `cine` (21:9, 4:3 on phones) · `wide` (16:9) · `land` (3:2) · `sq` · `port` (4:5) ·
+Options: `ratio` = `cine` (21:9, 4:3 on phones) · `wide` (16:9, the default) · `land` (3:2) · `port` (4:5) ·
 `tall` (3:4); `caption` (what it shows); `place` + `lat` (where; prints the yellow square and the
 latitude); `parallax`; `reveal` (default on); `art` (use the 3:4 phone crop); `pos` (object-position
-for this placement); `sizes`; `cls: 'fig--bleed'` for edge to edge.
+for this placement); `sizes`; `cls: 'fig--bleed'` for edge to edge; `credit` (default on).
+Every stock photograph with a caption prints its photographer after it (`Photo: Joseph Corl / Unsplash`,
+from `photos.json`, in `.fig__credit`), so none can be taken for Uresco's own. `pageHero()` and
+`interlude()` take the same option. Uresco's own `uresco-*` keys print no credit.
 
 ### Chapter opener — `chapterHead({ no, kicker, lat, to, title, lede, id, tag })` → `.chead`
 For journey pages. A ruled bar (`01 · KENT, WASHINGTON ……… 47.4°N`), then the latitude the chapter
@@ -243,51 +268,99 @@ information as text.
 ### Section opener — `sectionHead({ no, eyebrow, title, lede, action, id })` → `.shead`
 For inner pages and codas: the same ruled bar, headline left, lede and an optional `.link` right.
 
-### Page hero — `pageHero(ctx, { crumbs, eyebrow, title, lede, actions, photoKey, caption, place, lat, pos, attrs })` → `.phero`
-**The inner-page pattern: type on paper first, then the photograph.** Breadcrumb (mono), eyebrow with
-the yellow square, an `h1` at `--t-h1` with one italic phrase, then a row with the lede on the left and
-up to two buttons on the right, then a full-bleed band (`.phero__frame`, 16rem → 40rem tall, parallax)
-with a caption under it. Use `heroSizes(key)` / `preloadFor(ctx, key)` so the preload matches the image.
-A panorama should not set `"art": true` in `photos.json`. `.phero--plain` is the variant without a
-photograph, for pages that open on a form (quote, accounts).
+### Page hero — `pageHero(ctx, { crumbs, eyebrow, title, lede, actions, photoKey, caption, place, lat, pos, attrs, cls, after, tail })` → `.phero`
+**The inner-page pattern: type on paper first, then the photograph.** Breadcrumb (mono; `crumbs` is
+`[[text, href?], …]`, Home is added), eyebrow with the yellow square, an `h1` at `--t-h1` with one italic
+phrase, then a row with the lede on the left and up to two buttons on the right, then a full-bleed band
+(`.phero__frame`, 16rem → 40rem tall, parallax) with a caption under it (the photographer's name
+follows automatically; `credit: false` drops it). Pass `preloadFor(ctx, key)` to `layout()` so the
+preload matches the image. A panorama should not set `"art": true` in `photos.json`.
+Without `photoKey` it is the plain variant `.phero--plain`, for pages that open on a form or a tool
+(quote, accounts, Alaska). `after` adds something between the headline and that row (the accounts
+ladder, Alaska's lede); `tail` adds something after it (the phone numbers on the two form pages).
 
 ### Yard strip — `yardsStrip(ctx)` → `.ystrip`
 Three ruled cells, each a phone link: latitude and role, live status, city in the serif, number.
-Used under the cover; fine under any hero where calling is the point.
+Used under the cover; fine under any hero where calling is the point. Stacked below 760px, three
+across from there. Each cell is its own container, so it answers to its own width, not the
+screen's: as it narrows, the state and the handset go (20.5rem), the type comes down a size (17.5rem),
+and finally the number takes its own row and the role drops from the latitude line (15.75rem). A
+yard's name must never run into its number; `tests/check.mjs` holds it to that at every width that
+has ever broken it. Do not patch it per page.
 
 ### Yard spread — `yardSpread(ctx, location, { photoKey, caption, place, flip, pos, attrs })` → `.spread`
 A yard as a magazine spread: a 5:4 photograph of the *place* (never captioned as the yard) and, beside
-it, latitude and role, the city at up to 7rem, blurb, a ruled list (`.yard__lines`: yard, phone and
-status, toll-free, email), `Call` and `Directions` buttons and a quote link that preselects the yard.
-Alternate `flip`. On phones: photograph, then details, with a rule between spreads.
+it, latitude and role, the city at up to 7rem, blurb, a ruled list (`.yard__lines`: yard, phone with
+the live status and the clock it runs on (`Alaska time`), toll-free, fax, email), `Call` and
+`Directions` buttons and a quote link that preselects the yard. Alternate `flip`. On phones:
+photograph, then details, with a rule between spreads. Numbers and addresses are at least 44px tall
+on touch screens. The live status is the short one (`Open`, `Closed`): no times here.
 
-### Yard card — `yardCard(ctx, location, { compact, showPhoto, headingLevel })` → `.yard`
-The full record (adds fax, hours, mailing address) for the locations and region pages, in a
-`.yards` grid (`.yards--2` for two).
+### A yard's details — `.yard__lines`, `.yard__tel`, `.yard__actions`, `.yard__quote`
+The ruled address, phone, toll-free, fax and email rows used by `yardSpread()` and by the Kent record on
+Pacific Northwest. **Hours are placeholders and appear only on the Locations page**, in its own
+`.lcx-hours` block; everywhere else a yard shows its live status alone.
 
 ### Steps — `steps([[title, body], …])` → `ol.steps`
 Numbered in mono, titles in the serif, a rule above each. Four across from 900px, a ruled list below.
 
-### Manifest — `manifest(ctx, { title, body, rows, id })` → `.manifest`
-The quote prompt, drawn as a freight form: a head strip (`Estimates & take-offs` / `Form 01 · Request
-for quote`), the pitch with `Request a quote` and `Send plans`, and a ruled list of what goes in and
-what comes back (`Send / To / Returns / Ships`). Bright paper, ink border, solid yellow offset. One per
-page, near the end of the argument it closes. `quoteBand(ctx, opts)` wraps it in a deep section for
-pages that only need the band.
+### Manifest — `manifest(ctx, { title, body, rows, id, query, cta, headingLevel })` → `.manifest`
+The quote prompt, drawn as a freight form: a head strip (`Estimates & take-offs` / `Request for
+quote`), the pitch with the primary button and `Send plans`, and a ruled list of what goes in and what
+comes back (`Send / To / Returns / Ships`). Bright paper, ink border, solid yellow offset. One per
+page, near the end of the argument it closes.
 
-### Stock list — markup only, see `home.mjs` → `.stock`
-The product lines as a numbered index. From 1000px a sticky frame on the left shows the photograph of
-the line being pointed at or focused (`modules/stock.js`; pictures are fetched on demand). On phones
-each row carries a 60px thumbnail instead. Follow it with `.brandline` (brands in italic serif).
+Options: `query` is added to both buttons, so the form opens knowing what the visitor was looking at
+(`?product=<URL-encoded line>`, `?yard=kent`, `?location=<place>`). `cta` is the primary button's
+wording (`Quote this line`). `headingLevel` (default 3) keeps the outline right: pass 2 when the
+manifest opens its own section. Never number it: the company has no "Form 01".
+
+### Closing — `closing(ctx, { ...manifest options, lead, more, label })` → `section.closing`
+How most pages end: the manifest (at `h2`), then a mono line (`Or call the yard nearest the job`), an
+optional link beside it (`more`), and the yard strip, on `--paper-2`. Alaska, Products, every line page,
+Services, Projects, Pacific Northwest and Locations all end on it; `tests/check.mjs` holds them to that.
+The two form pages have the form instead, and close on the three numbers at headline size
+(`closingYards()` in `forms.mjs`); Home closes on the directory, About on its own call to action with
+the strip.
+
+### Stock list — `stockFrame(ctx, { sizes, caption })` and `stockList(ctx, { extra })` → `.stock`
+The product lines as a numbered index, inside `<div class="stock" data-stock>`. From 1000px a sticky frame
+on the left shows the photograph of the line being pointed at or focused (`modules/stock.js`; pictures
+are fetched on demand); it is decoration, so it is `aria-hidden`. Every row shows the number, the name
+and every item in the line on as many lines as it takes: a product list never ends in an ellipsis. Beside
+each row `.stock__add` (`+ Quote`) goes to the form with that line on it; `extra` adds to those links
+(`&yard=kent`). On hover or focus a band fades in behind the row and its text slides by `translate`;
+nothing changes size. Follow the list with `.brandline` (brands in italic serif) and `.stocknote` (what
+else the yard carries).
+
+`stockRow(ctx, c)` inside `<ol class="stock__list stock__list--thumbs">` is the short version for a
+page's related lines: thumbnail, name, items, no frame beside it.
+
+### Service rows — markup only → `.svc__list`, `.svc__list--lg`, `.svc__go`
+Links on the dark sheet: icon, name and one line in `<span>`, an arrow. `--lg` for a short list with the
+width to itself (the line pages).
+
+### Archive print — markup only → `figure.print`
+A Uresco photograph at the size it deserves: white border, mono caption, a slight tilt set where it is
+used. `.print--over` hangs it over a corner of a larger photograph; `.print--inline` sits in the flow;
+`.print--archive` (home), `.pnw-print` and `.abt-print` only add size and tilt. Caption by what it
+shows, usually starting `From the Uresco archive:`. The photo of the printed tag is captioned `The tag
+on a Uresco load`, never as truck lettering, and its alt text in `photos.json` says the same.
 
 ### Route plate — `routePlate(ctx, { no, title, id })` → `figure.plate`
 `assets/map.svg` (the base sheet, written by `plateSvg()` at build) with an inline SVG of lanes and
 marks and HTML labels over it. Lanes: ocean freight (solid sea), road system (cased double line),
 barge (dashed), air (dotted). Yard marks are yellow discs ringed in ink; yard labels are links to
-`/locations/#id`. Below 47rem of width the sheet keeps its size and pans sideways inside its frame
-(`modules/plate.js` starts it on mainland Alaska and makes the frame focusable). Add
-`data-show="<region>"` on the figure to bring one region's places forward (see `pages/alaska.css`).
-To change geography edit `scripts/map.mjs` and regenerate `src/data/map.json`.
+`/locations/#id`. The plate never pans. In a frame under 54rem wide (container query on
+`.plate__scroll`, so it also applies to a narrow column on a wide screen) the sheet is **re-cut** to
+Kent-to-Utqiaġvik: its three layers are enlarged and shifted, the blank margin and the edge marks
+go, and the line weights come up. Under 39rem it is the **phone cut**: heavier again, only the
+places a load is named to, the title short, and a few labels on a different side of their marks
+(`PHONE_SIDE` in `components.mjs`, read through `data-pside`). Below 700px of screen it runs edge to
+edge. The yard labels are small to read and at least 44px tall to tap. Add `data-show="<region>"`
+on the figure to bring one region's places forward (see `pages/alaska.css`). To change geography
+edit `scripts/map.mjs` and regenerate `src/data/map.json`. Pacific Northwest uses the same sheet cut close
+to Kent (`.pnw-chart`, Plate IV). `modules/motion.js` adds `Pause motion` beside the plate.
 
 ### Interlude — `interlude(ctx, key, { line, note, place, lat, pos })` → `.interlude`
 One photograph edge to edge, its caption, and one line at `--t-h2` under it. Use it once a page, where
@@ -304,13 +377,41 @@ Native `<details>`; questions in the serif, a chevron that turns.
 An icon and a paragraph in a ruled box with a yellow left edge. For one caveat that matters (the barge
 season).
 
-### Forms — `src/lib/forms.mjs` → `.form`, `.fieldset`, `.field`, `.seg`, `.drop`, `.notice`
-Restyled, not yet designed in detail: bright-paper inputs with an ink-3 border, serif legends with a
-mono number, segmented radios that invert when chosen. The quote and accounts pages need a proper pass.
+### Forms — `src/lib/forms.mjs` → `.fp-sheet`, `.fieldset`, `.field`, `.seg`, `.drop`, `.notice`
+The quote request and the credit application are drawn as the manifest itself: a bright ruled sheet,
+one control to a cell, `Required` written out, `data-msg` on each input for its own message.
+`field`, `select`, `textarea`, `radios`, `yardSelect`, `fileDrop`, `formOpen`, `formFoot`, `doneNotice`.
+Around the form: `sheetHead` (the head strip, never a form number), `slip` (`.fp-slip`, the manifest that
+fills in as the visitor types, and `Check before you send` above the button on screens with no side
+column), `callList` (`.fp-call`, the three numbers beside the form, one marked as answering), `dial`
+(`.fp-dial`, the three numbers in one row above the form on phones), `closingYards` (`.fp-yards`). On
+paper the credit application prints as a two-page Letter form (`90-print.css`, `.print-only`,
+`.fp-screen-only`, `.field--paper`).
 
-### Left for the page builders
-`.tiles`, `.catalog`, `.proj-grid`, `.split`, `.chips`, `.aside`, `.qlayout` and friends at the bottom
-of `30-components.css` only keep the unbuilt pages legible. Replace them page by page (suggestions in §10).
+### Patterns built on the finished pages
+Page-level, so they live in `pages/<page>.css`; lift one into `30-components.css` the second time it
+is needed.
+
+| Pattern | Page | What it is |
+|---|---|---|
+| `.prod-find`, `.prod-row` | products | The stock list with a finder (`[data-prod-q]`): typing narrows the rows and underlines the matching items; Enter opens a single match; a miss falls back to the three yard numbers. Each row is a link, and `.prod-row__quote` beside it (`Add to a quote`) goes straight to the form with that line on it. |
+| `.prod-az` | products | An A to Z set like the back of a book: dot leaders, the line's number at the right. |
+| `.prod-ask` | line pages | The yard slip, sticky beside the item list: what the page cannot know, and who does. Three numbers with live status. |
+| `.prod-items`, `.prod-items--few` | line pages | A ruled name-and-note list; lines of two or three items are set larger. |
+| `.prod-pager` | line pages | Previous and next line, wrapping round all nine. |
+| `.svx-run`, `.is-sea`, `.has-leg` | services | Six stops on one line (vertical on phones, across from 900px); `.is-sea` puts a stop on map water; `.has-leg` opens a leg of the run. Each stop links to its anchor. |
+| `.svx-bar` | services | A chapter bar whose service name is the `h2`, in the bar's own size and tracking. |
+| `.svx-io` | services | The handoff: `You bring` / `You get`, in manifest rows. |
+| `.svx-sheet` | services | A take-off sheet of the nine lines, each a link: numbered 010 to 090 like take-off lines, listing every item. |
+| `.finder`, `.answer`, `.plate__dest` | alaska | "Where are you building?": an ARIA combobox over `PLACES` (`data/places.mjs`) with aliases, the typical way in and the yard to call for the chosen place, and its mark on the plate (`modules/placefinder.js`). Without JavaScript the three numbers show instead (`.finder__nojs`). Unlisted places get a graceful answer. |
+| `.regions`, `.region` | alaska | The six regions as a static ruled ledger: what is there, how freight typically gets there, who to call, a quote link carrying the place. |
+| `.pnw-record`, `.pnw-rig`, `.pnw-chart` | Pacific Northwest | The Kent record under a giant latitude, the two blueprint plates of the machines (they ink themselves in), the chart cut close to Kent. |
+| `.lcx-board`, `.lcx-yard`, `.lcx-book` | locations | The which-yard switchboard above the photograph; each yard sorted into Call, Visit and Write, the only place the hours appear. |
+| `.fp-sheet`, `.fp-slip`, `.fp-call`, `.fp-dial`, `.fp-yards`, `.ac-ladder`, `.ac-ledger` | quote, accounts | See Forms above. |
+| `.abt-rings`, `.abt-form`, `.abt-promise` | about | 35 drawn growth rings, the one-sheet company record, the mission line by line with what backs each line. |
+| `.pjx-filters` | projects | Sector filter as mono chips with counts, filled with `aria-pressed`, and a live status line; `.pjx-jump` replaces it without JavaScript. |
+| `.pjx-sector` | projects | Sector opener: the name set large, a tail line in italic, a lede and one link. |
+| `.pjx-kind--wide` / `--tall`, `.pjx-kind__list` | projects | An asymmetric pair of photographs with `On the list` as numbered take-off lines linking to the product line or service, and `Quote a job like this`, which carries the kind of work to the form. |
 
 ---
 
@@ -331,11 +432,13 @@ layout(ctx, { …, rail: [{ id: 'kent', lat: LAT.kent, name: 'Kent' }, …] })
   fewer: it has to fit beside the wordmark on a phone); `data-place-end` replaces it on arrival.
 - Stops are links to section ids, so the rail is also chapter navigation (`nav[aria-label]`).
 - Without stops a page still gets the margin column; add a rail only where the page really runs
-  south to north. Good candidates: Locations (the three yards, 47.4 → 64.8), Projects if ordered by
-  place. Poor candidates: quote, accounts.
+  south to north.
 - `modules/rail.js` moves one element with `transform` and rewrites two short strings; it measures
   on load, resize and when `main` changes height.
 - Without JavaScript the scale and stops remain and the needle is hidden. Nothing depends on it.
+- Below 1000px the same reading sits under the wordmark, only inside a chapter past the first screen
+  (see §5). A section marked `.coda`, or one holding `[data-finder]`, turns it off.
+- Pages with a rail: Home, Alaska, Pacific Northwest, Locations. Everything else keeps the empty margin.
 
 ---
 
@@ -373,9 +476,13 @@ Photography is the star, and it has to look like one shoot.
 | Lanes draw | `.plate.is-in .lane` — `stroke-dashoffset`, staggered by `--d` | The route plate |
 | Cover settles | CSS keyframes, once, no JavaScript | Home cover |
 | Needle | `transform` on scroll | The rail |
+| Row settles | a band fades in behind a stock row (`opacity`) and the text slides (`translate`) | Stock list |
+| Link arrow | `translate` on the icon | `.link`, buttons |
 
 Rules:
 
+- Anything that moves on its own can be stopped: `modules/motion.js` adds `Pause motion` beside the
+  plate, wherever its yard marks pulse (and not under reduced motion). The choice sets `html.is-still`.
 - Hidden states exist only under `html.js` **and** `prefers-reduced-motion: no-preference`. With
   reduced motion, or with no JavaScript, everything is visible and still. Check both before you ship.
 - The LCP image is never hidden: no opacity, no full clip. The cover photograph is on screen from the
@@ -387,28 +494,18 @@ Rules:
 
 ---
 
-## 10. Building the remaining pages
+## 10. Adding a page
 
-- **Products** (`/products/`): page hero with a wood texture (`lumber-stickered`, `pine-racking`);
-  the stock list at full width as the index; brands as `.brandline`. Category pages: `pageHero`, the
-  items as a ruled two-column list (name in serif, note in sans), manufacturer literature as `.link`s,
-  then the manifest with the product line passed through to the quote form.
-- **Services**: six services as alternating 7/5 spreads (`figure` + text), each numbered like a
-  chapter bar; job-site delivery and remote packages get the largest photographs; end on the manifest.
-- **Locations**: a journey page. Rail on, three `yardSpread`s south to north with full details
-  (`yardCard` fields), the route plate between Kent and Anchorage, "Which yard should I call?" as a
-  three-row ruled table.
-- **Pacific Northwest**: Kent's `yardSpread` at hero scale, job-site delivery (boom trucks, Moffett
-  forklifts), the stock list.
-- **Projects**: kinds of work only (no real project list exists). Use the `.sectors` card pattern from
-  the home coda at larger scale, with the sector filter as mono chips.
-- **Quote / Accounts**: `.phero--plain`, the form in a 7/4 split with a sticky aside styled as the
-  manifest's rows (what happens next), the three numbers beside it. Design the form fields properly.
-- **About**: the standfirst treatment from the home prologue (`.prologue__text`), the mission as a pull
-  line, the archive prints at larger scale, `35+ years` as a big figure in the chapter-head style.
-
-Every page: one `h1`; yellow for one primary action per screen; a phone number within one tap
-(the dateline, the action bar and the call sheet already guarantee it); captions on every photograph.
+- Start with `pageHero()` and pass a photograph unless the page opens on a form or a tool.
+- `.section`, `sectionHead()` or `.shead__bar` for each block; a dark sheet once at most, and sheets in
+  the §2 sequence.
+- End on `closing()` unless the page is itself a form.
+- Quote links carry what the visitor was looking at: `?product=<line name, URL-encoded>`,
+  `?yard=<kent|anchorage|fairbanks>`, `?location=<place>`.
+- Every Call control is `callLink()`, never a button.
+- Yellow for one primary action per screen; a phone number within one tap (the dateline, the masthead
+  Call, the action bar and the call sheet already guarantee it); a caption on every photograph, by what
+  it literally shows.
 
 ---
 
@@ -429,6 +526,11 @@ Every page: one `h1`; yellow for one primary action per screen; a phone number w
   testimonial.
 - State a fact that is not in `src/data/*.mjs` or the fact sheet: no customers, projects, awards,
   staff, prices, transit times, tonnage. Hours are placeholders; show live status, never sell hours.
+- Number a form ("Form 01"), or say stock varies by yard, name one point of contact, quote a duration
+  or promise the freight is priced. Print hours, or a time, anywhere but Locations. `tests/check.mjs`
+  fails on the phrases the reviewers caught, in the text, the alt text and the structured data.
+- Write `<button data-open>`. A control that opens something is a link to where that thing is.
+- Cut a list of products with an ellipsis, or a label at the edge of the map.
 - Hide content behind motion or JavaScript.
 
 ---
@@ -437,11 +539,48 @@ Every page: one `h1`; yellow for one primary action per screen; a phone number w
 
 ```bash
 node build.mjs                                   # builds docs/
-node tests/check.mjs                             # links, one h1, alt text, 5 widths, forms, dialogs, the fold
+node tests/check.mjs                             # everything below
+CHECK=pieces node tests/check.mjs                # the static pass and the shared pieces only
 node <tools>/shots.cjs http://localhost:PORT/ <dir> <page>/   # then look at every frame, phone first
 node <tools>/axe.mjs http://localhost:PORT/ <page>/
 <tools>/lighthouse.sh http://localhost:PORT/<page>/ out.json
 ```
 
+`tests/check.mjs`, in order: static page checks (title, description, one `h1`, alt text, unique ids,
+every link, asset and `#anchor` resolves, the phrases that must never appear, no hours or times outside
+Locations, no `openingHours`, every stock photo credited and none captioned as Uresco's, every number
+and email from the fact sheet, no `button[data-open]`); every page at five widths in Chromium (console
+errors, sideways scroll, stretched hero); the forms and dialogs; the yard numbers at the fold on ten
+common screens, in the default browser and in the headless shell with
+`--font-render-hinting=full`; JavaScript off (nothing dead, nothing waiting for a reveal, Call,
+Directions and Menu each go somewhere); the closing band; the shared pieces (yard strip, stock list,
+route plate crops, interlude, finder, pager, services anchors, projects filter).
+
 Also: 320px to 2560px with no sideways scroll; keyboard through the masthead, menu, any dialog;
 JavaScript off; reduced motion on.
+
+---
+
+## 13. Page map: how to pick out each page's parts
+
+Every page starts with `.masthead` and ends with `.footer`; `.actionbar`, `#call-sheet` and `#drawer` are
+on every page. Page CSS is prefixed, so a selector tells you where to look.
+
+| Page | Source | CSS | Parts, top to bottom |
+|---|---|---|---|
+| Home `/` | `pages/home.mjs` | `pages/home.css` | `.cover` (`.cover__calls` numbers below 1000px, `.cover__strip` from there, `.hero__media` the LCP image) · `.prologue`, `.facts` · `.chapter--kent` `#kent`, `.kent__prints`, `#lines`, `[data-stock]`, `.account` · `.chapter--crossing` `#crossing`, `.steps`, `.svc__list`, `#manifest` · `.chapter--landfall` (two `.spread`, `#anchorage`, `#fairbanks`) · `.chapter--last` `#last-mile`, `[data-plate]` · `.coda`, `.sectors` · `.directory` `#yards`, `.dir` |
+| Alaska `/alaska/` | `pages/alaska.mjs`, `data/places.mjs` | `pages/alaska.css` | `.phero--ask` · `#reach`: `.finder` (`#place-input`, `#place-list`, `[data-answer]`, `.finder__nojs`), `[data-plate]`, `.regions` · `.ask__photo` · `.legs`, `.steps` · `.modes`, `.callout` · `.yardsec` (`#anchorage`, `#fairbanks`) · `#north`, `.faq` · `.interlude` · `.closing` |
+| Products `/products/` | `pages/products.mjs` | `pages/products.css` | `.phero` · `#lines`: `[data-prod-ledger]`, `#prod-q`, `[data-prod-count]`, `.prod-row` (id = line slug), `.prod-row__quote`, `[data-prod-none]` · `.prod-brands` · `#a-z`, `.prod-az__cols` · `.interlude` · `.closing` |
+| A line `/products/<slug>/` | `pages/products.mjs` | `pages/products.css` | `.phero[data-prod-line]` · `.prod-in`, `.prod-items`, `.prod-makers`, `.prod-ask` · `.prod-svc`, `.svc__list--lg`, `.prod-svc__print` · `.prod-rest`, `.stock__list--thumbs`, `.prod-pager` · `.closing` (both buttons carry `?product=`) |
+| Services `/services/` | `pages/services.mjs`, `data/services.mjs` | `pages/services.css` | `.phero` · `.svx-index`, `.svx-run` · `.svx-yard`: `#takeoffs`, `.svx-sheet`, `#design` · `.svx-sea`: `#remote`, `#crating`, `#shipping` · `.svx-site`: `#delivery` · `.closing` |
+| Projects `/projects/` | `pages/projects.mjs`, `data/projects.mjs` | `pages/projects.css` | `.phero` · `.pjx-intro`, `[data-filters]`, `[data-pjx-status]`, `.pjx-jump` (no JavaScript) · `.pjx-sector` (`#institutional`, `#commercial`, `#residential`, `#remote-alaska`), `.pjx-kind` (id = kind) · `.pjx-turn` · `.pjx-pull-sec` · `.closing` |
+| Pacific Northwest `/pacific-northwest/` | `pages/regions.mjs` | `pages/pacific-northwest.css` | `.phero[data-page=pnw]` · `#kent`, `.pnw-record`, `.pnw-prints` · `#delivery`, `.pnw-rig` · `#stock`, `[data-stock]` · `#north`, `.pnw-chart`, `.pnw-legs` · `.closing` |
+| Locations `/locations/` | `pages/regions.mjs` | `pages/locations.css` | `.phero[data-page=locations]` with `.lcx-board` · `.lcx-sec` `article.yard#kent`, `.lcx-book`, `.lcx-hours` · `.lcx-chart`, `[data-plate]` · `#anchorage` · `#fairbanks` · `.closing` |
+| Quote `/quote/` | `pages/quote.mjs`, `lib/forms.mjs` | `40-forms.css`, `pages/quote.css` | `.phero--plain.fp-hero`, `.fp-dial` · `.fp-band`: `form[data-form=quote]`, `#plans`, `[data-done]`, `.fp-side` · `.fp-close`, `.fp-yards` |
+| Accounts `/accounts/` | `pages/accounts.mjs`, `lib/forms.mjs` | `40-forms.css`, `90-print.css`, `pages/accounts.css` | `.phero--plain.fp-hero`, `.ac-ladder`, `.fp-dial` · `.ac-what`, `.ac-ledger` · `#apply`: `form[data-form=credit]`, `[data-done]`, `.fp-side`, `.letterhead` (print) · `.fp-close`, `.fp-yards` |
+| About `/about/` | `pages/about.mjs` | `pages/about.css` | `.phero` · `.abt-stand` · `.abt-years`, `.abt-rings` · `.abt-sheet`, `.abt-form` · `.abt-mission`, `.abt-promise` · `.abt-far` · `.abt-archive`, `.abt-prints` · `.abt-close` |
+| Not found `404.html` | `pages/about.mjs` | `pages/about.css` | `.lost`: `.lost__head`, `.lost__fix`, `.lost__nav`, `.lost__call` (built with absolute links to the site base) |
+
+Hooks the suite and the scripts rely on: `.ystrip__item/__city/__num/__lat`, `[data-plate]`, `.plate__scroll`,
+`.manifest`, `.manifest__title`, `.closing`, `.stock__row`, `.stock__add`, `#call-sheet`, `#drawer`, `.actionbar`,
+`.masthead__menu`, `.yard [data-hours]` (three on Locations), `form[data-form]`, `[data-mail-to]`, `.phero__media img`.

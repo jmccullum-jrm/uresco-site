@@ -1,23 +1,26 @@
 // Renders the brand files into src/assets/brand/: logo SVGs, PNG icons and the social card.
 //   node scripts/brand.mjs        (needs Playwright + Chromium; see README)
-import { writeFileSync, mkdirSync } from 'fs';
+import { writeFileSync, mkdirSync, readFileSync } from 'fs';
 import { dirname, join } from 'path';
 import { fileURLToPath, pathToFileURL } from 'url';
 import { createRequire } from 'module';
 import { markSvg } from '../src/lib/icons.mjs';
+import { mapSvg } from '../src/lib/components.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const OUT = join(ROOT, 'src/assets/brand');
 mkdirSync(OUT, { recursive: true });
+const MAP = JSON.parse(readFileSync(join(ROOT, 'src/data/map.json'), 'utf8'));
 
 const require = createRequire(import.meta.url);
 let chromium;
 try { ({ chromium } = require('playwright')); } catch { ({ chromium } = require('/opt/node22/lib/node_modules/playwright')); }
 
-const INK = '#0E0E0C', YELLOW = '#F5B800', BONE = '#F2EEE5';
+// Boreal: the black and yellow of the mark, Geist for the words and Geist Mono for labels.
+const INK = '#0E0E0C', YELLOW = '#F5B800', SNOW = '#F4F6F6', HAZE = '#A9B3B3', SLATE = '#51636A', FROST = '#E3E7E6';
 const fontCss = `
-@font-face{font-family:Archivo;src:url(${pathToFileURL(join(ROOT, 'src/assets/fonts/archivo-var.woff2'))}) format('woff2');font-weight:400 900;font-stretch:62% 100%}
-@font-face{font-family:Plex;src:url(${pathToFileURL(join(ROOT, 'src/assets/fonts/plexmono-500.woff2'))}) format('woff2');font-weight:500}
+@font-face{font-family:Geist;src:url(${pathToFileURL(join(ROOT, 'src/assets/fonts/geist-var.woff2'))}) format('woff2');font-weight:400 700}
+@font-face{font-family:'Geist Mono';src:url(${pathToFileURL(join(ROOT, 'src/assets/fonts/geistmono-var.woff2'))}) format('woff2');font-weight:400 600}
 *{margin:0;box-sizing:border-box}`;
 
 // Vector files for print, signage and anyone who needs the logo.
@@ -47,28 +50,35 @@ await shot('icon-192.png', 192, 192, icon(192));
 await shot('icon-512.png', 512, 512, icon(512));
 await shot('uresco-mark-512.png', 512, 512, `<div style="width:512px;height:512px">${markSvg().replace('<svg ', '<svg width="512" height="512" ')}</div>`, 'body{background:transparent}');
 
-// Horizontal lockups.
-const lockup = (fg, bg) => `<div style="display:flex;align-items:center;gap:26px;padding:40px 48px;background:${bg};color:${fg};width:max-content">
+// Horizontal lockups: the masthead's, at print size.
+const lockup = (fg, sub, bg) => `<div style="display:flex;align-items:center;gap:26px;padding:40px 52px 40px 44px;background:${bg};color:${fg};width:max-content;font-family:Geist">
   <div style="width:112px;height:112px">${markSvg().replace('<svg ', '<svg width="112" height="112" ')}</div>
-  <div><div style="font:860 92px/0.86 Archivo;font-stretch:70%;text-transform:uppercase;letter-spacing:.01em">Uresco</div>
-  <div style="font:500 19px Plex;letter-spacing:.21em;text-transform:uppercase;margin-top:10px;opacity:.75">Construction Materials</div></div></div>`;
-await shot('uresco-lockup-dark.png', 640, 192, lockup(BONE, INK));
-await shot('uresco-lockup-light.png', 640, 192, lockup(INK, BONE));
+  <div><div style="font-weight:600;font-size:80px;line-height:.9;letter-spacing:-.035em">Uresco</div>
+  <div style="font-weight:500;font-size:32px;line-height:1;letter-spacing:-.005em;margin-top:14px;color:${sub}">Construction Materials</div></div></div>`;
+await shot('uresco-lockup-dark.png', 640, 192, lockup('#FFFFFF', HAZE, INK));
+await shot('uresco-lockup-light.png', 640, 192, lockup(INK, SLATE, SNOW));
 
-// Social card.
-const photo = pathToFileURL(join(ROOT, 'src/assets/img/hero-truck-denali-1920.webp'));
+// Social card: the map, the freight lane, three yards, and the company's own line.
+const yard = ([x, y]) => `<circle cx="${x}" cy="${y}" r="17" fill="${INK}"/><circle cx="${x}" cy="${y}" r="13" fill="none" stroke="${YELLOW}" stroke-opacity=".55" stroke-width="2"/><circle cx="${x}" cy="${y}" r="9" fill="${YELLOW}"/>`;
 await shot('og.jpg', 1200, 630, `
-<div style="position:relative;width:1200px;height:630px;background:${INK};color:${BONE};overflow:hidden;font-family:Archivo">
-  <img src="${photo}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:60% 50%">
-  <div style="position:absolute;inset:0;background:linear-gradient(90deg,rgba(14,14,12,.95) 0%,rgba(14,14,12,.8) 45%,rgba(14,14,12,.15) 100%)"></div>
-  <div style="position:absolute;left:72px;top:64px;display:flex;align-items:center;gap:16px">
-    <div style="width:64px;height:64px">${markSvg().replace('<svg ', '<svg width="64" height="64" ')}</div>
-    <div><div style="font:860 46px/0.86 Archivo;font-stretch:70%;text-transform:uppercase">Uresco</div>
-    <div style="font:500 12px Plex;letter-spacing:.21em;text-transform:uppercase;margin-top:6px;opacity:.75">Construction Materials</div></div>
+<div style="position:relative;width:1200px;height:630px;background:${INK};color:#fff;overflow:hidden;font-family:Geist">
+  <div style="position:absolute;inset:0;background:radial-gradient(52% 60% at 66% -6%,rgba(227,231,230,.12),transparent 72%)"></div>
+  <div style="position:absolute;left:-250px;top:-100px;width:1460px;height:811px">
+    ${mapSvg().replace('<svg ', '<svg style="position:absolute;inset:0;width:100%;height:100%" ').replace(/width="1800" height="1000"/, '')}
+    <svg viewBox="0 0 ${MAP.width} ${MAP.height}" style="position:absolute;inset:0;width:100%;height:100%" fill="none" stroke-linecap="round">
+      <path d="${MAP.sea}" stroke="${YELLOW}" stroke-width="5"/>
+      ${MAP.yards.map((y) => yard(y.xy)).join('')}
+    </svg>
   </div>
-  <div style="position:absolute;left:72px;bottom:72px;right:400px">
-    <div style="font:850 108px/0.9 Archivo;font-stretch:68%;text-transform:uppercase;letter-spacing:-.01em">From Puget Sound to the <span style="color:${YELLOW}">North Slope.</span></div>
-    <div style="font:500 17px Plex;letter-spacing:.18em;text-transform:uppercase;margin-top:28px;color:${YELLOW}">Kent · Anchorage · Fairbanks</div>
+  <div style="position:absolute;inset:0;background:linear-gradient(90deg,${INK} 20%,rgba(14,14,12,.82) 50%,rgba(14,14,12,0) 72%)"></div>
+  <div style="position:absolute;left:72px;top:60px;display:flex;align-items:center;gap:16px">
+    <div style="width:64px;height:64px">${markSvg().replace('<svg ', '<svg width="64" height="64" ')}</div>
+    <div><div style="font-weight:600;font-size:40px;line-height:1;letter-spacing:-.035em">Uresco</div>
+    <div style="font-weight:500;font-size:19px;line-height:1;margin-top:6px;color:${HAZE}">Construction Materials</div></div>
+  </div>
+  <div style="position:absolute;left:72px;bottom:66px;width:820px">
+    <div style="font-weight:500;font-size:80px;line-height:1.02;letter-spacing:-.04em">Down the road,<br><span style="color:${HAZE}">or across an ocean.</span></div>
+    <div style="display:flex;align-items:center;gap:12px;font-family:'Geist Mono';font-weight:500;font-size:19px;letter-spacing:.06em;text-transform:uppercase;margin-top:30px;color:${FROST}"><span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:${YELLOW}"></span>Kent · Anchorage · Fairbanks</div>
   </div>
 </div>`);
 

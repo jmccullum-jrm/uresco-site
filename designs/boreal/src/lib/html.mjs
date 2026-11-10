@@ -19,7 +19,3 @@ const val = (v) => {
 
 export const html = (strings, ...vals) =>
   raw(strings.reduce((out, s, i) => out + s + (i < vals.length ? val(vals[i]) : ''), ''));
-
-export const attrs = (o) =>
-  raw(Object.entries(o).filter(([, v]) => v != null && v !== false)
-    .map(([k, v]) => (v === true ? ` ${k}` : ` ${k}="${esc(v)}"`)).join(''));

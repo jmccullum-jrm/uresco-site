@@ -67,7 +67,7 @@ export const PLACES = [
   P('Cordova', 'AK', 60.543, -145.757, 'Prince William Sound', 'coastal', 'anchorage'),
   P('Kodiak', 'AK', 57.79, -152.407, 'Kodiak Island', 'coastal', 'anchorage', 's'),
   P('Seldovia', 'AK', 59.438, -151.711, 'Kenai Peninsula', 'coastal', 'anchorage'),
-  P('Sand Point', 'AK', 55.34, -160.497, 'Alaska Peninsula', 'coastal', 'anchorage'),
+  P('Sand Point', 'AK', 55.34, -160.497, 'Shumagin Islands', 'coastal', 'anchorage'),
   P('Unalaska', 'AK', 53.874, -166.537, 'Aleutian Islands', 'coastal', 'anchorage', 'n'),
 
   // Western and Arctic Alaska: barge in the ice-free season, air year-round
@@ -83,7 +83,7 @@ export const PLACES = [
   P('Unalakleet', 'AK', 63.873, -160.788, 'Norton Sound', 'seasonal', 'anchorage'),
   P('Nome', 'AK', 64.501, -165.406, 'Seward Peninsula', 'seasonal', 'anchorage', 'w'),
   P('Kotzebue', 'AK', 66.898, -162.597, 'Northwest Arctic', 'seasonal', 'anchorage', 'w'),
-  P('McGrath', 'AK', 62.956, -155.596, 'Interior Alaska', 'seasonal', 'fairbanks'),
+  P('McGrath', 'AK', 62.956, -155.596, 'Kuskokwim River', 'seasonal', 'anchorage'),
   P('Galena', 'AK', 64.741, -156.931, 'Interior Alaska', 'seasonal', 'fairbanks', 'w'),
   P('Fort Yukon', 'AK', 66.565, -145.274, 'Interior Alaska', 'seasonal', 'fairbanks'),
   P('Point Hope', 'AK', 68.348, -166.808, 'North Slope', 'seasonal', 'fairbanks'),
@@ -101,8 +101,8 @@ export const EXAMPLE = 'Bethel';
 // What the route card says for each kind of access. General Alaska geography, labelled "typical" on
 // the page. No carriers, schedules, transit times or prices.
 export const ACCESS = {
-  local: { tag: 'On the road system', modes: [['truck', 'Truck from {yard}'], ['pin', 'Or yard pick-up']] },
-  road: { tag: 'On the road system', modes: [['truck', 'Truck from {yard}'], ['pin', 'Or yard pick-up']] },
+  local: { tag: 'Pacific Northwest', modes: [['truck', 'Truck from {yard}']] },
+  road: { tag: 'On the road system', modes: [['truck', 'Truck from {yard}']] },
   coastal: { tag: 'Off the road system', modes: [['ship', 'By sea to the dock'], ['plane', 'Air cargo']] },
   seasonal: { tag: 'Off the road system', modes: [['ship', 'Barge in season'], ['plane', 'Air year-round']] },
 };

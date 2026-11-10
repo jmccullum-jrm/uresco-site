@@ -90,8 +90,8 @@
   "alt": "Shipping containers in a freight yard in Juneau, Alaska",
   "credit": "Jonah Townsley / Unsplash",
   "page": "https://unsplash.com/photos/dCNcbGYssNY",
-  "focal": "50% 60%"
- },
+  "focal": "50% 60%", "art": true
+  },
  "anchorage": {
   "src": "https://images.unsplash.com/photo-1704243962389-6e57197ccf09?w=2400&q=85&auto=format&fit=crop",
   "alt": "The Anchorage skyline beneath the snow-covered Chugach Mountains",
@@ -115,8 +115,8 @@
   "credit": "fr0ggy5 / Unsplash",
   "page": "https://unsplash.com/photos/7wrKEqA2qu8",
   "focal": "55% 50%",
-  "hero": true
- },
+  "hero": true, "art": true
+  },
  "cedar": {
   "src": "https://images.unsplash.com/photo-1781902915690-b36f0df9d478?w=2000&q=85&auto=format&fit=crop",
   "alt": "A building clad in vertical cedar siding under a deep roof overhang",
@@ -139,8 +139,8 @@
   "src": "https://images.unsplash.com/photo-1766148891408-af4013825cb7?w=2000&q=85&auto=format&fit=crop",
   "alt": "Weathered ends of stacked timbers showing growth rings",
   "credit": "Chris / Unsplash",
-  "page": "https://unsplash.com/photos/yrqoWErSElA"
- },
+  "page": "https://unsplash.com/photos/yrqoWErSElA", "art": true
+  },
  "tug-barge": {
   "src": "https://images.unsplash.com/photo-1783322494399-3372632a78d3?w=2400&q=85&auto=format&fit=crop",
   "alt": "A tug pushing a loaded freight barge",
@@ -165,7 +165,7 @@
    1,
    1
   ],
-  "alt": "A Uresco delivery truck lettered “Lumber by UCM Uresco”",
+  "alt": "A load of plywood with a printed tag that reads “Lumber by UCM Uresco Construction Materials, Inc.”",
   "credit": "Uresco Construction Materials"
  },
  "uresco-yard": {
@@ -254,8 +254,8 @@
   "alt": "A sunlit wood deck beside a dark-stained house",
   "credit": "Eli Chamoun / Unsplash",
   "page": "https://unsplash.com/photos/R5ExRDtg_BM",
-  "focal": "50% 65%"
- },
+  "focal": "50% 65%", "art": true
+  },
  "remote-village": {
   "src": "https://images.unsplash.com/photo-1541752346141-78198eddd145?w=2400&q=85&auto=format&fit=crop",
   "alt": "Snow-drifted buildings and a boat at sunset over sea ice in Utqiaġvik, Alaska",
@@ -326,9 +326,9 @@
  },
  "floatplane": {
   "src": "https://images.unsplash.com/photo-1633929231750-c39f0ae2b8d4?w=2000&q=85&auto=format&fit=crop",
-  "alt": "Skiffs on a gravel beach below a volcanic peak as a floatplane passes, Port Alsworth, Alaska",
+  "alt": "Skiffs on a gravel beach below a mountain as a small plane passes, Port Alsworth, Alaska",
   "credit": "Brandy Willetts / Unsplash",
   "page": "https://unsplash.com/photos/TFpqCU4b2dw",
-  "focal": "50% 70%"
- }
+  "focal": "50% 70%", "art": true
+  }
 }

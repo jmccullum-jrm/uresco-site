@@ -1,3 +1,71 @@
+/* ---------- Alaska hero: the ship-to ticket (its frame and field are shared, in 30-components.css) ---------- */
+
+.shipto__search { flex: 1 1 auto; display: flex; flex-direction: column; gap: .8rem; }
+.shipto__clear { position: absolute; top: 50%; right: 4px; display: grid; place-items: center; width: 44px; height: 44px; margin-top: -22px; border: 0; background: transparent; color: var(--ink); cursor: pointer; }
+.shipto__list { position: absolute; left: -1.5px; right: -1.5px; top: calc(100% + 1.5px); z-index: 30; max-height: min(20rem, 46vh); overflow-y: auto; overscroll-behavior: contain; background: var(--sheet); border: var(--line) solid var(--ink); }
+.shipto__list li { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; min-height: 44px; padding: .6rem .85rem; border-bottom: 1px solid var(--rule); font-weight: 500; cursor: pointer; }
+.shipto__list li:last-child { border-bottom: 0; }
+.shipto__list small { flex: none; max-width: 55%; font-size: .8125rem; font-weight: 400; color: var(--ink-3); text-align: right; }
+.shipto__list li:hover { background: var(--paper-2); }
+.shipto__list li[aria-selected="true"] { background: var(--ink); color: var(--paper); }
+.shipto__list li[aria-selected="true"] small { color: var(--board-mute); }
+.shipto__list li.is-none { display: block; font-weight: 400; color: var(--ink-2); }
+.shipto__list li.is-none[aria-selected="true"] { color: var(--paper); }
+.shipto__help { margin: 0; font-size: .9375rem; line-height: 1.4; color: var(--ink); }
+.shipto__try { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem; margin-top: auto; }
+.shipto__trylab { margin-right: .3rem; color: var(--ink); }
+.shipto__search.is-open .shipto__try { visibility: hidden; }
+.shipto__chip { min-height: 40px; padding: .3rem .7rem; border: 1px solid var(--ink); border-radius: var(--radius); background: transparent; color: var(--ink); font: 500 .8125rem/1.1 var(--mono); letter-spacing: .02em; cursor: pointer; }
+.shipto__chip:hover { background: var(--sheet); }
+.shipto__chip[aria-pressed="true"] { background: var(--ink); color: var(--yellow); }
+
+.shipto__card { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); grid-template-areas: "to to" "yard how" "foot foot"; align-content: start; }
+.shipto__to { grid-area: to; padding: clamp(.9rem, 1.6vw, 1.25rem) clamp(1rem, 1.8vw, 1.5rem); border-bottom: 1px solid var(--rule-2); }
+.shipto__lab { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; margin: 0 0 .35rem; color: var(--ink-3); }
+.shipto__name { margin: 0; font-size: clamp(1.625rem, 1.2rem + 1.6vw, 2.5rem); font-weight: 600; line-height: 1.05; letter-spacing: -.035em; overflow-wrap: anywhere; }
+.shipto__meta { display: flex; flex-wrap: wrap; align-items: baseline; gap: .15rem 1rem; margin: .45rem 0 0; font-size: .9375rem; color: var(--ink-2); }
+.shipto__tag { font-weight: 600; color: var(--ink); }
+.shipto__yard, .shipto__how, .shipto__else { padding: clamp(.8rem, 1.4vw, 1.1rem) clamp(1rem, 1.8vw, 1.5rem); }
+.shipto__yard { grid-area: yard; border-right: 1px solid var(--rule-2); }
+.shipto__y { display: grid; gap: .3rem; justify-items: start; }
+.shipto__city { display: flex; align-items: center; gap: .7rem; margin: 0; font-size: 1.125rem; font-weight: 600; letter-spacing: -.015em; }
+.shipto__tel { position: relative; isolation: isolate; display: inline-flex; align-items: center; min-height: 40px; font-size: clamp(1.25rem, 1.05rem + .7vw, 1.625rem); font-weight: 500; letter-spacing: -.01em; text-decoration: none; }
+.shipto__tel::before { content: ''; position: absolute; inset: 0 -.3rem; z-index: -1; background: var(--yellow); transform: scaleX(0); transform-origin: left; transition: transform var(--t-row) var(--ease); }
+.shipto__tel:hover::before, .shipto__tel:focus-visible::before { transform: scaleX(1); }
+.shipto__how, .shipto__else { grid-area: how; }
+.shipto__else { margin: 0; color: var(--ink-2); font-size: .9375rem; }
+.shipto__modes li { display: flex; align-items: center; gap: .6rem; min-height: 32px; font-size: 1.0625rem; font-weight: 500; }
+.shipto__modes .is-none { visibility: hidden; }
+.shipto__modes[data-lanes="none"] .pmap__tag { display: none; }
+.shipto__foot { grid-area: foot; display: flex; flex-wrap: wrap; align-items: center; gap: .75rem 1.5rem; padding: clamp(.8rem, 1.4vw, 1.1rem) clamp(1rem, 1.8vw, 1.5rem); border-top: 1px solid var(--rule-2); }
+.shipto__note { flex: 1 1 15rem; margin: 0; font-size: .875rem; line-height: 1.35; color: var(--blue); }
+@media (prefers-reduced-motion: no-preference) { .shipto__name .is-new { animation: plot 240ms linear; } }
+
+/* Without script: the three yards, in place of the field and the ticket. */
+html:not(.js) .shipto__search, html:not(.js) .shipto__card { display: none; }
+html.js .shipto__nojs { display: none; }
+.shipto__hint { margin: 0; font-size: 1.0625rem; }
+.shipto__fallback { padding: clamp(1rem, 1.8vw, 1.5rem); display: grid; gap: 1rem; align-content: center; }
+.shipto__yards li { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .1rem 1rem; padding-block: .55rem; border-bottom: 1px solid var(--rule-2); }
+.shipto__yards li:first-child { border-top: 1px solid var(--rule-2); }
+.shipto__who { display: grid; }
+.shipto__who small { font-size: .875rem; color: var(--ink-3); }
+
+@media (max-width: 599px) {
+  .shipto__help, .shipto__trylab { display: none; }
+  .shipto__card { grid-template-columns: minmax(0, 1fr); grid-template-areas: "to" "yard" "how" "foot"; }
+  .shipto__to, .shipto__yard, .shipto__how, .shipto__else, .shipto__foot { padding-inline: var(--margin); }
+  .shipto__yard { border-right: 0; border-bottom: 1px solid var(--rule-2); }
+  .shipto__foot .btn { width: 100%; }
+  .shipto__fallback { padding-inline: var(--margin); }
+}
+
+/* The pin the ticket sets on the delivery plate. */
+.pmap__pin { width: 0; height: 0; }
+.pmap__pin i { position: absolute; left: -7px; top: -7px; width: 14px; height: 14px; border: 2px solid var(--ink); border-radius: 50%; background: var(--yellow); }
+.pmap__pin b { position: absolute; left: 0; top: 0; padding: .28rem .45rem; background: var(--yellow); border: 1px solid var(--ink); color: var(--ink); font-size: .75rem; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; }
+.pmap__town.is-pinned { visibility: hidden; }
+
 /* ---------- Alaska: ways in ---------- */
 .ways { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border: var(--line) solid var(--ink); background: var(--sheet); }
 .way { position: relative; padding: clamp(1.25rem, 2.2vw, 2rem); border-right: 1px solid var(--rule-2); }
@@ -16,31 +84,29 @@
   .way .h3 { align-self: end; } .way__where { margin: .25rem 0 0; } .way p:last-child { grid-column: 1 / -1; margin-top: 1rem; }
 }
 
-/* ---------- Alaska: RFI log (questions) ---------- */
-.rfi { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); column-gap: var(--gap); align-items: start; }
-.rfi__head { display: grid; gap: 1.25rem; justify-items: start; position: sticky; top: calc(var(--mast) + 2rem); }
-.rfi__head .shead { margin: 0; width: 100%; }
-.rfi__head .lede { margin: 0; }
-.rfi__log { border-top: var(--line) solid var(--ink); }
-.rfi__item { border-bottom: 1px solid var(--rule-2); }
-.rfi__item:last-child { border-bottom: var(--line) solid var(--ink); }
-.rfi__item summary { display: grid; grid-template-columns: 4.25rem minmax(0, 1fr) 1.5rem; gap: 1rem; align-items: center; min-height: 68px; padding-block: 1rem; cursor: pointer; list-style: none; }
-.rfi__item summary::-webkit-details-marker { display: none; }
-.rfi__item summary .num { font-size: var(--fs-label); font-weight: 600; letter-spacing: .06em; color: var(--blue); }
-.rfi__q { font-size: var(--fs-h3); font-weight: 600; letter-spacing: -.028em; line-height: 1.15; }
-.rfi__item summary:hover .rfi__q { text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: .18em; }
-.rfi__mark { position: relative; width: 14px; height: 14px; justify-self: end; }
-.rfi__mark::before, .rfi__mark::after { content: ''; position: absolute; left: 0; right: 0; top: 6px; border-top: var(--line) solid var(--ink); transition: transform var(--t-ui) linear; }
-.rfi__mark::after { transform: rotate(90deg); }
-.rfi__item[open] .rfi__mark::after { transform: rotate(0); }
-.rfi__a { display: grid; grid-template-columns: 4.25rem minmax(0, 1fr); gap: 1rem; padding-bottom: 1.5rem; }
-.rfi__a .label { padding-top: .3rem; font-size: .625rem; }
-.rfi__a p:last-child { margin: 0; color: var(--ink-2); max-width: 40em; }
-@media (max-width: 999px) { .rfi { grid-template-columns: minmax(0, 1fr); row-gap: 2rem; } .rfi__head { position: static; } }
-@media (max-width: 599px) { .rfi__item summary { grid-template-columns: minmax(0, 1fr) 1.5rem; } .rfi__item summary .num { grid-column: 1 / -1; margin-bottom: -.6rem; } .rfi__a { grid-template-columns: minmax(0, 1fr); gap: .35rem; } }
+/* ---------- Alaska: questions ---------- */
+.faq { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); column-gap: var(--gap); align-items: start; }
+.faq__head { display: grid; gap: 1.25rem; justify-items: start; position: sticky; top: calc(var(--mast) + 2rem); }
+.faq__head .shead { margin: 0; width: 100%; }
+.faq__head .lede { margin: 0; }
+.faq__log { border-top: var(--line) solid var(--ink); }
+.faq__item { border-bottom: 1px solid var(--rule-2); }
+.faq__item:last-child { border-bottom: var(--line) solid var(--ink); }
+.faq__item summary { display: grid; grid-template-columns: 4.25rem minmax(0, 1fr) 1.5rem; gap: 1rem; align-items: center; min-height: 68px; padding-block: 1rem; cursor: pointer; list-style: none; }
+.faq__item summary::-webkit-details-marker { display: none; }
+.faq__item summary .num { font-size: var(--fs-label); font-weight: 600; letter-spacing: .06em; color: var(--blue); }
+.faq__q { font-size: var(--fs-h3); font-weight: 600; letter-spacing: -.028em; line-height: 1.15; }
+.faq__item summary:hover .faq__q { text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: .18em; }
+.faq__mark { position: relative; width: 14px; height: 14px; justify-self: end; }
+.faq__mark::before, .faq__mark::after { content: ''; position: absolute; left: 0; right: 0; top: 6px; border-top: var(--line) solid var(--ink); transition: transform var(--t-ui) linear; }
+.faq__mark::after { transform: rotate(90deg); }
+.faq__item[open] .faq__mark::after { transform: rotate(0); }
+.faq__a { display: grid; grid-template-columns: 4.25rem minmax(0, 1fr); gap: 1rem; padding-bottom: 1.5rem; }
+.faq__a .label { padding-top: .25rem; }
+.faq__a p:last-child { margin: 0; color: var(--ink-2); max-width: 40em; }
+@media (max-width: 999px) { .faq { grid-template-columns: minmax(0, 1fr); row-gap: 2rem; } .faq__head { position: static; } }
+@media (max-width: 599px) { .faq__item summary { grid-template-columns: minmax(0, 1fr) 1.5rem; } .faq__item summary .num { grid-column: 1 / -1; margin-bottom: -.6rem; } .faq__a { grid-template-columns: minmax(0, 1fr); gap: .35rem; } }
 
-/* The latitude rule under the hero, with the delivery range highlighted. */
-.phero .latrule { margin-top: .5rem; }
 
 /* ---------- Alaska: the package drawing under the four steps ---------- */
 .pack { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); column-gap: var(--gap); align-items: stretch; margin-top: clamp(2.5rem, 5vw, 4.5rem); }
@@ -52,8 +118,3 @@
 .pack__list li { position: relative; padding: .55rem 0 .55rem 1.4rem; border-bottom: 1px solid var(--rule-2); font-size: .9375rem; font-weight: 500; }
 .pack__list li::before { content: ''; position: absolute; left: 0; top: 1.1em; width: 10px; border-top: var(--line) solid var(--ink); }
 @media (max-width: 899px) { .pack { grid-template-columns: minmax(0, 1fr); row-gap: var(--gap); } }
-@media (prefers-reduced-motion: no-preference) {
-  html.js .pack__dwg[data-reveal]:not(.is-in) .dw-obj, html.js .pack__dwg[data-reveal]:not(.is-in) .dw-ann { clip-path: inset(-3% 103% -3% -3%); }
-  .pack__dwg.is-in .dw-obj { animation: plot 460ms linear backwards; }
-  .pack__dwg.is-in .dw-ann { animation: plot 360ms linear 260ms backwards; }
-}

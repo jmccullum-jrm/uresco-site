@@ -1,25 +1,25 @@
-import { html, raw, esc } from './html.mjs';
+import { html, raw } from './html.mjs';
 import { icon, mark } from './icons.mjs';
 import { glyph } from './drawings.mjs';
 import { SITE } from '../config.mjs';
-import { LOCATIONS, tel, address, mapsUrl, openingHoursLd } from '../data/locations.mjs';
-import { openStatus, YARD_FOR, lineNo } from './components.mjs';
+import { LOCATIONS, tel, mapsUrl } from '../data/locations.mjs';
+import { openStatus, YARD_FOR, lineNo, two } from './components.mjs';
 import { CATEGORIES, BRANDS } from '../data/products.mjs';
 
-export const NAV = [
+const NAV = [
   { href: 'products/', label: 'Products', menu: true },
   { href: 'services/', label: 'Services' },
-  { href: 'alaska/', label: 'Alaska Delivery' },
+  { href: 'alaska/', label: 'Alaska delivery' },
   { href: 'projects/', label: 'Projects' },
   { href: 'locations/', label: 'Locations' },
   { href: 'about/', label: 'About' },
 ];
 
 // Sheet names for the title block in the footer and the bar at the top of each page.
-const SHEETS = { '': 'Home', 'products/': 'Products', 'services/': 'Services', 'alaska/': 'Alaska Delivery', 'projects/': 'Projects', 'locations/': 'Locations', 'about/': 'About', 'quote/': 'Quote Request', 'accounts/': 'Contractor Accounts', 'pacific-northwest/': 'Pacific Northwest' };
-export const sheetName = (ctx, title) => SHEETS[ctx.path] || (ctx.path.startsWith('products/') ? 'Products' : title);
+const SHEETS = { '': 'Home', 'products/': 'Products', 'services/': 'Services', 'alaska/': 'Alaska delivery', 'projects/': 'Projects', 'locations/': 'Locations', 'about/': 'About', 'quote/': 'Request a quote', 'accounts/': 'Contractor accounts', 'pacific-northwest/': 'Pacific Northwest' };
+const sheetName = (ctx, title) => SHEETS[ctx.path] || (ctx.path.startsWith('products/') ? 'Products' : title);
 
-export const brand = (ctx, { cls = '' } = {}) => html`
+const brand = (ctx, { cls = '' } = {}) => html`
   <a class="brand ${cls}" href="${ctx.u('')}">
     <span class="brand__mark">${mark({ id: 'mk' + ctx.uid() })}</span>
     <span class="brand__word"><span class="brand__name">Uresco</span> <span class="brand__desc">Construction Materials</span></span>
@@ -32,7 +32,7 @@ const productMenu = (ctx) => html`
   <div class="mega" role="group" aria-label="Product lines">
     <div class="wrap mega__inner">
       <div class="mega__head">
-        <p class="label">Index of product lines <span class="num">001–009</span></p>
+        <p class="label">Index of product lines</p>
         <a class="link" href="${ctx.u('products/')}">All products ${icon('arrow', { size: 16 })}</a>
       </div>
       <ol class="mega__grid">
@@ -42,7 +42,7 @@ const productMenu = (ctx) => html`
           <span class="mega__name">${c.short}</span>
         </a></li>`)}
       </ol>
-      <p class="mega__foot"><span class="label">Brands on the manifest</span> ${BRANDS.join(' · ')}</p>
+      <p class="mega__foot"><span class="label">Brands we carry</span> ${BRANDS.join(' · ')}</p>
     </div>
   </div>`;
 
@@ -54,12 +54,12 @@ const header = (ctx) => html`
         ${LOCATIONS.map((l) => html`<li>
           <a href="${tel(l.phone)}"><span class="utility__city">${l.city}</span> <span class="utility__num">${l.phone}</span></a>
           <span class="utility__time js-only" data-clock="${l.hours.tz}" aria-hidden="true">--:--</span>
-          ${openStatus(l, { short: true })}
+          ${openStatus(l)}
         </li>`)}
       </ul>
       <div class="utility__links">
-        <a href="${ctx.u('accounts/')}">Contractor accounts</a>
-        <a href="mailto:${SITE.email}">${SITE.email}</a>
+        <a href="${ctx.u('accounts/')}">Open an account</a>
+        <a class="utility__mail" href="mailto:${SITE.email}">${SITE.email}</a>
       </div>
     </div>
   </div>
@@ -75,8 +75,8 @@ const header = (ctx) => html`
         </ul>
       </nav>
       <div class="masthead__acts">
-        <a class="btn btn--sm btn--line masthead__call" href="${ctx.u('locations/')}" data-open="call-sheet" aria-haspopup="dialog">${icon('phone', { size: 16 })}Call a yard</a>
-        <a class="btn btn--sm masthead__cta" href="${ctx.u('quote/')}">Request a quote ${icon('arrow', { size: 16 })}</a>
+        <a class="btn btn--sm btn--line masthead__call" href="${ctx.u('locations/')}" data-open="call-sheet" aria-haspopup="dialog">${icon('phone', { size: 16 })}<span>Call<span class="mh-long"> a yard</span></span></a>
+        <a class="btn btn--sm masthead__cta" href="${ctx.u('quote/')}"><span><span class="mh-long">Request a </span>quote</span>${icon('arrow', { size: 16 })}</a>
         <a class="masthead__menu" href="#index" data-open="drawer" aria-haspopup="dialog" aria-controls="drawer">
           <span>Menu</span>${icon('menu', { size: 20 })}
         </a>
@@ -88,43 +88,65 @@ const header = (ctx) => html`
       ${brand(ctx)}
       <button type="button" class="drawer__close" data-close><span>Close</span>${icon('close', { size: 20 })}</button>
     </div>
-    <nav aria-label="Mobile">
+    <nav aria-label="Phone menu">
       <ol class="drawer__nav">
-        ${NAV.map((n, i) => html`<li><a href="${ctx.u(n.href)}"${raw(isCurrent(ctx, n.href) ? ' aria-current="page"' : '')}><span class="num">${String(i + 1).padStart(2, '0')}</span>${n.label}${icon('arrow', { size: 20 })}</a></li>`)}
+        ${NAV.map((n, i) => n.menu ? html`<li><details class="drawer__group">
+          <summary${raw(isCurrent(ctx, n.href) ? ' aria-current="true"' : '')}><span class="num">${two(i)}</span>${n.label}${icon('chevron-down', { size: 20 })}</summary>
+          <ol class="drawer__lines">
+            ${CATEGORIES.map((c, j) => html`<li><a href="${ctx.u('products/' + c.slug + '/')}"><span class="num">${lineNo(j)}</span><span class="drawer__glyph">${glyph(c.slug, { size: 30 })}</span><span>${c.short}</span></a></li>`)}
+          </ol>
+          <a class="drawer__all" href="${ctx.u(n.href)}">All products ${icon('arrow', { size: 18 })}</a>
+        </details></li>` : html`<li><a href="${ctx.u(n.href)}"${raw(isCurrent(ctx, n.href) ? ' aria-current="page"' : '')}><span class="num">${two(i)}</span>${n.label}${icon('arrow', { size: 20 })}</a></li>`)}
       </ol>
       <ul class="drawer__minor">
-        <li><a href="${ctx.u('accounts/')}">Contractor accounts</a></li>
         <li><a href="${ctx.u('pacific-northwest/')}">Pacific Northwest</a></li>
         <li><a href="mailto:${SITE.email}">${SITE.email}</a></li>
       </ul>
     </nav>
-    <a class="btn btn--block" href="${ctx.u('quote/')}">Request a quote ${icon('arrow', { size: 18 })}</a>
+    <div class="drawer__cta">
+      <a class="btn btn--block" href="${ctx.u('quote/')}">Request a quote ${icon('arrow', { size: 18 })}</a>
+      <a class="btn btn--block btn--line" href="${ctx.u('accounts/')}">Open an account</a>
+    </div>
     <ul class="drawer__yards">
       ${LOCATIONS.map((l) => html`<li><a href="${tel(l.phone)}"><span class="drawer__city">${l.city}, ${l.state}</span><span class="num">${l.phone}</span>${icon('phone', { size: 18 })}</a></li>`)}
     </ul>
   </dialog>`;
 
-const callSheet = () => html`
+// Call or visit a yard: one row per yard with Call and Directions side by side, then its email, fax and details.
+// Read from the Alaska page, the Alaska yards come first.
+const sheetYards = (ctx) => (ctx.path.startsWith('alaska/') ? [...LOCATIONS].sort((a, b) => (b.state === 'AK') - (a.state === 'AK')) : LOCATIONS);
+
+const callSheet = (ctx) => html`
   <dialog class="sheet" id="call-sheet" aria-labelledby="call-sheet-title">
     <div class="sheet__head">
-      <h2 id="call-sheet-title" class="sheet__title">Call a yard</h2>
+      <h2 id="call-sheet-title" class="sheet__title">Call or visit a yard</h2>
       <button type="button" class="drawer__close" data-close><span>Close</span>${icon('close', { size: 20 })}</button>
     </div>
     <ul class="sheet__list">
-      ${LOCATIONS.map((l, i) => html`<li class="sheet__yard">
-        <span class="sheet__who"><span class="label">${String(i + 1).padStart(2, '0')} · ${YARD_FOR[l.id]}</span><b>${l.city}, ${l.state}</b><small>${l.street}</small>${openStatus(l)}</span>
-        <span class="sheet__acts">
-          <a class="sheet__num" href="${tel(l.phone)}">${icon('phone', { size: 18 })}<span class="num">${l.phone}</span></a>
-          <a class="sheet__dir" href="${mapsUrl(l)}" target="_blank" rel="noopener">${icon('directions', { size: 16 })}Directions<span class="sr-only"> to the ${l.city} yard</span></a>
-        </span></li>`)}
+      ${sheetYards(ctx).map((l, i) => html`<li class="sheet__yard">
+        <p class="label sheet__for">${two(i)} · ${YARD_FOR[l.id]}</p>
+        <div class="sheet__id">
+          <h3 class="sheet__name">${l.city}, ${l.state}</h3>
+          ${openStatus(l)}
+          <a class="sheet__more" href="${ctx.u('locations/')}#${l.id}">Details<span class="sr-only"> for the ${l.city} yard</span></a>
+        </div>
+        <p class="sheet__addr">${l.street}</p>
+        <div class="sheet__acts">
+          <a class="sheet__num" href="${tel(l.phone)}">${icon('phone', { size: 18 })}<span class="sr-only">Call ${l.city}: </span><span class="num">${l.phone}</span></a>
+          <a class="sheet__dir" href="${mapsUrl(l)}" target="_blank" rel="noopener">${icon('directions', { size: 18 })}Directions<span class="sr-only"> to the ${l.city} yard</span></a>
+        </div>
+        <p class="sheet__reach">
+          <a href="mailto:${l.email}">${l.email}</a>
+          ${l.fax ? html`<span class="sheet__fax"><span class="label">Fax</span> <span class="num">${l.fax}</span></span>` : ''}
+        </p>
+      </li>`)}
     </ul>
-    <a class="sheet__mail" href="mailto:${SITE.email}">${icon('mail', { size: 18 })} ${SITE.email}</a>
   </dialog>`;
 
 const actionBar = (ctx) => html`
   <div class="actionbar" role="region" aria-label="Quick actions">
     <a class="actionbar__btn" href="${ctx.u('locations/')}" data-open="call-sheet" aria-haspopup="dialog">${icon('phone', { size: 20 })}Call</a>
-    <a class="actionbar__btn" href="${ctx.u('locations/')}">${icon('directions', { size: 20 })}Directions</a>
+    <a class="actionbar__btn" href="${ctx.u('locations/')}" data-open="call-sheet" aria-haspopup="dialog">${icon('directions', { size: 20 })}Directions</a>
     <a class="actionbar__btn actionbar__btn--primary" href="${ctx.u('quote/')}">${icon('file', { size: 20 })}Quote</a>
   </div>`;
 
@@ -145,12 +167,13 @@ const footer = (ctx, title) => html`
         </div>
         ${LOCATIONS.map((l, i) => html`
           <div class="tb__cell tb__yard">
-            <h3 class="label">Yard ${String(i + 1).padStart(2, '0')} · ${l.city}, ${l.state}</h3>
+            <h3 class="label">Yard ${two(i)} · ${l.city}, ${l.state}</h3>
             <a class="tb__phone num" href="${tel(l.phone)}">${l.phone}</a>
             ${l.tollFree ? html`<a class="num" href="${tel(l.tollFree)}">${l.tollFree} <small>toll-free</small></a>` : ''}
             <address>${l.street}<br>${l.city}, ${l.state} ${l.zip}</address>
             <a href="mailto:${l.email}">${l.email}</a>
-            ${openStatus(l, { short: true })}
+            ${l.fax ? html`<span class="tb__fax">Fax <span class="num">${l.fax}</span></span>` : ''}
+            ${openStatus(l)}
           </div>`)}
         <nav class="tb__cell tb__index" id="index" aria-label="Footer">
           <h3 class="label">Index</h3>
@@ -172,7 +195,6 @@ const footer = (ctx, title) => html`
         </div>
         <div class="tb__cell tb__stamp"><span class="label">Sheet</span><b>${sheetName(ctx, title)}</b></div>
         <div class="tb__cell tb__stamp"><span class="label">Yards</span><b class="num">03</b></div>
-        <div class="tb__cell tb__stamp"><span class="label">Rev.</span><b class="num">${new Date().getFullYear()}</b></div>
       </div>
     </div>
   </footer>`;
@@ -201,7 +223,6 @@ export const orgJsonLd = (ctx) => {
       email: l.email,
       address: { '@type': 'PostalAddress', streetAddress: l.street, addressLocality: l.city, addressRegion: l.state, postalCode: l.zip, addressCountry: 'US' },
       geo: { '@type': 'GeoCoordinates', latitude: l.geo.lat, longitude: l.geo.lng },
-      openingHoursSpecification: openingHoursLd(l),
     })),
   };
   return html`<script type="application/ld+json">${raw(JSON.stringify(org).replace(/</g, '\\u003c'))}</script>`;
@@ -257,10 +278,8 @@ ${body}
 </main>
 ${footer(ctx, title)}
 ${actionBar(ctx)}
-${callSheet()}
+${callSheet(ctx)}
 </body>
 </html>
 `;
 };
-
-export { esc, address };

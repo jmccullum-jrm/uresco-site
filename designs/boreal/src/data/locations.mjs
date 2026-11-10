@@ -3,7 +3,8 @@
 //
 // hours: tz is the yard's IANA time zone; week runs Sunday→Saturday as [open, close] in minutes
 // after midnight, or null when closed. The site shows a live open/closed status from these.
-// HOURS ARE PLACEHOLDERS (typical yard hours, not confirmed by Uresco) — confirm before launch.
+// HOURS ARE PLACEHOLDERS (typical yard hours, not confirmed by Uresco): the Locations page is the one
+// place they are printed, and they never go in structured data. Confirm before launch.
 
 const weekdays = (open, close) => [null, [open, close], [open, close], [open, close], [open, close], [open, close], null];
 
@@ -24,12 +25,8 @@ export const LOCATIONS = [
     email: 'sales@uresco.com',
     hours: { tz: 'America/Los_Angeles', week: weekdays(7 * 60, 16 * 60 + 30) },
     page: 'pacific-northwest/',
-    // Regional photographs, captioned by place: none of them shows a Uresco yard.
-    photo: 'rainier-tacoma',
-    photoNote: 'Mount Rainier above Tacoma',
-    callFor: 'Puget Sound job sites',
-    tzShort: 'Pacific',
-    blurb: 'Our headquarters and Pacific Northwest distribution center, delivering to Puget Sound job sites by boom truck and Moffett forklift.',
+    serves: 'Puget Sound and the Pacific Northwest',
+    latShort: '47.4° N',
     geo: { lat: 47.4277, lng: -122.2335 },
   },
   {
@@ -47,11 +44,8 @@ export const LOCATIONS = [
     email: 'anchorage@uresco.com',
     hours: { tz: 'America/Anchorage', week: weekdays(7 * 60, 16 * 60 + 30) },
     page: 'alaska/',
-    photo: 'anchorage',
-    photoNote: 'Anchorage and the Chugach',
-    callFor: 'Southcentral and remote Alaska',
-    tzShort: 'Alaska',
-    blurb: 'Our Southcentral Alaska distribution center on the Old Seward Highway, with remote-site delivery anywhere in the state.',
+    serves: 'Southcentral and remote Alaska',
+    latShort: '61.2° N',
     geo: { lat: 61.1105, lng: -149.859 },
   },
   {
@@ -68,11 +62,8 @@ export const LOCATIONS = [
     email: 'fairbanks@uresco.com',
     hours: { tz: 'America/Anchorage', week: weekdays(7 * 60, 16 * 60 + 30) },
     page: 'alaska/',
-    photo: 'fairbanks',
-    photoNote: 'Aurora near Fairbanks',
-    callFor: 'The Interior and points north',
-    tzShort: 'Alaska',
-    blurb: 'Our Interior Alaska distribution center, serving Fairbanks and the communities beyond it.',
+    serves: 'The Interior and points north',
+    latShort: '64.8° N',
     geo: { lat: 64.8326, lng: -147.784 },
   },
 ];
@@ -101,13 +92,4 @@ export const hoursLines = (l) => {
   return runs.map((r) => `${DAY[r.from]}${r.to !== r.from ? '–' + DAY[r.to] : ''}: ${r.h ? `${clock(r.h[0])}–${clock(r.h[1])}` : 'Closed'}`);
 };
 export const tzLabel = (l) => (l.hours?.tz === 'America/Los_Angeles' ? 'Pacific time' : 'Alaska time');
-// "47.43° N" for labels and captions.
-export const latLabel = (l) => `${l.geo.lat.toFixed(2)}° N`;
 export const hoursAttr = (l) => (l.hours ? JSON.stringify({ tz: l.hours.tz, week: l.hours.week }) : null);
-// schema.org openingHoursSpecification
-export const openingHoursLd = (l) => {
-  if (!l.hours) return undefined;
-  const names = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-  const hhmm = (m) => `${String(Math.floor(m / 60)).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`;
-  return l.hours.week.map((h, i) => (h ? { '@type': 'OpeningHoursSpecification', dayOfWeek: names[i], opens: hhmm(h[0]), closes: hhmm(h[1]) } : null)).filter(Boolean);
-};

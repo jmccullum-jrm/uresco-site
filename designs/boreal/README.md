@@ -8,18 +8,18 @@ It is a fast, static, mobile-first site. There is no CMS, database or plugin to 
 
 | Page | URL | Purpose |
 |---|---|---|
-| Home | `/` | Hero, the three yards' phone numbers, product lines and brands, delivery map, services, take-off prompt, who we build for, contractor accounts, yards |
-| Products | `/products/` + 9 category pages | Every product line, brands, and a price/availability panel with each yard's number |
-| Services | `/services/` | Take-offs and estimates, design, job-site delivery, remote and export packages, shipping, crating |
-| Alaska delivery | `/alaska/` | Map, how a remote package works, road/sea/air, barge season, Anchorage and Fairbanks yards, FAQ |
-| Pacific Northwest | `/pacific-northwest/` | The Kent yard |
-| Projects | `/projects/` | Filterable gallery by sector (see the note below) |
-| Locations | `/locations/` | All three yards, with call and directions buttons |
+| Home | `/` | The "Where are you building?" finder on a live map, the three yards, product lines and brands, how a package travels, remote Alaska, who we supply, take-off prompt and contractor accounts |
+| Products | `/products/` + 9 category pages | A filterable ledger of the nine product lines, brands and an A–Z; each line page has every product, an "Add to quote" toggle, and the three yards' numbers |
+| Services | `/services/` | The six services as one line from plans to delivered load: take-offs and estimates, design, remote and export packages, crating, shipping, job-site delivery |
+| Alaska delivery | `/alaska/` | Opens on the finder, then road/sea/air, barge season, how a remote package works, Anchorage and Fairbanks yards, FAQ |
+| Pacific Northwest | `/pacific-northwest/` | A close-up map of the Puget Sound region around the Kent yard, boom truck and Moffett delivery, the full range as a load sheet, the lane north, the Kent yard |
+| Projects | `/projects/` | Kinds of work by sector, each shown as a load, with the services it typically uses (see the note below) |
+| Locations | `/locations/` | A "which yard should I call?" switchboard over the map, then every detail for all three yards; the only page that prints hours |
 | Request a quote | `/quote/` | Form with plan upload, routed to the yard the customer picks |
 | Contractor accounts | `/accounts/` | Account benefits and an online credit application, routed to the chosen home yard and printable as a paper form |
-| About | `/about/` | Mission, values, photos from Uresco's own yards |
+| About | `/about/` | The company on one sheet, the mission line by line, the yards on a ruler of latitude, photos from Uresco's own yards |
 
-On phones a bar fixed to the bottom of the screen gives **Call · Directions · Quote** on every page. Each yard shows a live **open/closed** status worked out in its own time zone. Both forms save a draft in the browser as people type. Product pages pass their product line into the quote form, and each yard card has a quote link that preselects that yard.
+On phones a bar fixed to the bottom of the screen gives **Call · Directions · Quote** on every page. Each yard shows a live **open/closed** status worked out in its own time zone; printed hours appear only on the Locations page. Both forms save a draft in the browser as people type. Product pages pass their product line, and any products picked, into the quote form; each yard card has a quote link that preselects that yard.
 
 The old `/products-services/` URL redirects to `/products/`, `/contact/` redirects to `/locations/`, and `/credit/` redirects to `/accounts/`. `/alaska/`, `/pacific-northwest/` and `/locations/` keep their old addresses, so existing links and search results still work.
 
@@ -27,13 +27,12 @@ The old `/products-services/` URL redirects to `/products/`, `/contact/` redirec
 
 This branch is the **Boreal** direction: calm, cool and map-first. The system is written up in
 [`DESIGN.md`](DESIGN.md): tokens, grid, every component with its markup, motion rules and do/don't.
-The home page and the Alaska page are finished in it; the other pages build and are usable, dressed
-in the new tokens by `src/assets/css/80-pages-pending.css` until each is rebuilt.
+Every page is built in it.
 
 - **Identity.** The mark is the end grain of a flat-sawn board. When a board is cut below the log's heart, its growth rings show as U shapes, so the mark is literally wood and literally a **U**. It keeps the UCM yellow and black. Files are in `src/assets/brand/`. The original logo is kept in `originals/uresco/logo-original.png`.
 - **The finder.** The home page opens on a live map of the Washington–Alaska corridor and asks *Where are you building?* Naming a place shows which yard to call (with its number and live open status), how freight typically reaches it, and a quote button that carries the place into the quote form. Places live in `src/data/places.mjs`; what the card says is general Alaska geography, never a schedule, carrier or price.
 - **Type.** Geist for text and headlines, Geist Mono for coordinates, labels and data. Both are self-hosted and subset (`npm run fonts`), with no Google request.
-- **Color.** Snow `#F4F6F6`, spruce ink `#0A1B20`, night `#071419` for the map and other dark surfaces, glacier and aurora as accents. UCM yellow `#F5B800` is reserved for the primary action and the freight line.
+- **Color.** UCM black `#0E0E0C` for type, the map and other dark surfaces; UCM yellow `#F5B800` for the primary action, the freight line and one large surface per page (the footer band); snow `#F4F6F6` for the page, and a cool steel on the map's land.
 - **Map.** A real projection of Natural Earth data. `scripts/map.mjs` writes `src/data/map.json`: land outlines, yards, places, illustrative freight lanes and a labelled graticule. After editing places or lanes, re-run it (it needs `d3-geo`, `topojson-client`, `world-atlas` and `us-atlas` installed in the folder you pass it).
 
 ## Working on it
@@ -63,13 +62,13 @@ Every pull request runs `.github/workflows/check.yml`. It rebuilds the site, fai
   - **To use Uresco's own photos:** put the originals in `originals/uresco/`. Point an entry's `src` at the file, for example `"yard-kent": { "src": "originals/uresco/kent-yard.jpg", "alt": "…" }`, then run `npm run images && npm run build`.
   - Large, unedited camera files are best; the script handles resizing.
   - A photo used as a full-width hero needs `"hero": true, "art": true`, which adds the larger sizes and the phone crop. Add `"focal": [x, y]` (0 to 1) if the crop misses the subject.
-  - The first ones to replace: the three yard-card photographs (set `photo` and `photoNote` on each yard in `src/data/locations.mjs`; today they are regional landscapes captioned as such), `framer` (accounts and design), `unloading` (job-site delivery) and `tug-barge` (remote packages).
+  - The first ones to replace: `unloading` (the services page), `tug-barge` (remote packages) and the sector photographs on the home and projects pages. Yard cards carry no photograph at all, because a stock picture beside a yard's name reads as that yard; once Uresco has real ones, add a picture back in `yardCard` in `src/lib/components.mjs`.
 - **Manufacturer literature links**: the `literature` field on each category in `src/data/products.mjs`.
 - **Pages**: `src/pages/*.mjs`. **Styles**: `src/assets/css/*.css` then `src/assets/css/pages/*.css`, joined in name order into one `site.css`. **Behavior**: `src/assets/js/*.js` then `src/assets/js/modules/*.js`, joined the same way; no frameworks.
 
-### Projects gallery
+### Projects page
 
-The gallery currently shows **kinds of work** (village housing packages, schools and clinics, multifamily framing and so on), not specific jobs. No project names, places or dates were available, and none were invented. To add real projects, add entries to `src/data/projects.mjs` with `real: true`, a title, place, year, scope and photo. Real projects sort first.
+The page shows **kinds of work** (village housing packages, schools and clinics, multifamily framing and so on), not specific jobs. No project names, places or dates were available, and none were invented. To add real projects, add entries to `src/data/projects.mjs` with `real: true`, a title, place, year, scope and photo. Real projects sort first.
 
 ## Launch checklist
 

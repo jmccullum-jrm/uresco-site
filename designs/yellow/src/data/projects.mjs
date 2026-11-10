@@ -63,7 +63,7 @@ export const PROJECTS = [
   {
     sector: 'Institutional',
     title: 'Export building packages',
-    photo: 'export',
+    photo: 'tacoma-port',
     scope: 'Complete building packages assembled and crated, with shipping coordinated for export.',
     materials: ['Full packages', 'Crating', 'Shipping coordination'],
   },

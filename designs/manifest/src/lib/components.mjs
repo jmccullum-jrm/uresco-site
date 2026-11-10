@@ -2,9 +2,8 @@ import { readFileSync } from 'fs';
 import { html, raw } from './html.mjs';
 import { icon } from './icons.mjs';
 import { drawing, glyph } from './drawings.mjs';
-import { LOCATIONS, tel, address, mapsUrl, hoursAttr, tzLabel } from '../data/locations.mjs';
+import { LOCATIONS, tel, mapsUrl, hoursAttr, tzLabel } from '../data/locations.mjs';
 import { CATEGORIES, BRANDS } from '../data/products.mjs';
-import { SITE } from '../config.mjs';
 
 const PHOTOS = JSON.parse(readFileSync(new URL('../data/photos.generated.json', import.meta.url), 'utf8'));
 const MAP = JSON.parse(readFileSync(new URL('../data/map.json', import.meta.url), 'utf8'));
@@ -22,41 +21,35 @@ export const YARD_FOR = {
   fairbanks: 'The Interior & points north',
 };
 export const lineNo = (i) => String(i + 1).padStart(3, '0');
-const two = (i) => String(i + 1).padStart(2, '0');
+export const two = (i) => String(i + 1).padStart(2, '0');
+// A product's name without the trademark sign. The sign is kept on the product pages, which are the full list, and nowhere else.
+const plain = (s) => s.replace(/[®™]/g, '');
+export const itemName = (s) => plain(s).replace(/\s*\(.*?\)/, '');
 
-// Portrait screens get the 3:4 crop made by scripts/images.py instead of a stretched landscape file.
-const PORTRAIT = '(max-aspect-ratio: 1/1)';
-const LANDSCAPE = '(min-aspect-ratio: 1001/1000)';
-const setOf = (ctx, key, prefix, widths) => widths.map((w) => `${ctx.u(`assets/img/${key}${prefix}-${w}.webp`)} ${w}w`).join(', ');
+// Quote links carry what the visitor was looking at: the form starts from product, yard and location.
+export const quoteHref = (ctx, { product, yard, location, hash = '' } = {}) => {
+  const q = Object.entries({ product, yard, location }).filter(([, v]) => v).map(([k, v]) => `${k}=${encodeURIComponent(v)}`).join('&');
+  return `${ctx.u('quote/')}${q ? '?' + q : ''}${hash}`;
+};
+
+const setOf = (ctx, key, widths) => widths.map((w) => `${ctx.u(`assets/img/${key}-${w}.webp`)} ${w}w`).join(', ');
 
 // Responsive image. `sizes` must describe the width the image is really drawn at, including any
-// extra width object-fit: cover needs in a tall box. `art` adds the portrait crop for phones.
-export const picture = (ctx, key, { sizes = '100vw', cls = '', eager = false, alt, art = false, artSizes = '100vw' } = {}) => {
+// extra width object-fit: cover needs in a tall box.
+export const picture = (ctx, key, { sizes = '100vw', cls = '', eager = false, alt } = {}) => {
   const p = photo(key);
   const mid = p.widths.find((w) => w >= 1200) || p.widths[p.widths.length - 1];
-  const img = html`<img class="${cls}" src="${ctx.u(`assets/img/${key}-${mid}.webp`)}" srcset="${setOf(ctx, key, '', p.widths)}" sizes="${sizes}" width="${p.width}" height="${p.height}" alt="${alt ?? p.alt}"${raw(eager ? ' fetchpriority="high"' : ' loading="lazy"')} decoding="async"${raw(` style="${p.focal ? `object-position:${p.focal};` : ''}background-color:${p.color || '#22211e'}"`)}>`;
-  if (!art || !p.portrait?.length) return img;
-  return html`<picture><source media="${PORTRAIT}" srcset="${setOf(ctx, key, '-p', p.portrait)}" sizes="${artSizes}" width="${p.pwidth}" height="${p.pheight}">${img}</picture>`;
+  return html`<img class="${cls}" src="${ctx.u(`assets/img/${key}-${mid}.webp`)}" srcset="${setOf(ctx, key, p.widths)}" sizes="${sizes}" width="${p.width}" height="${p.height}" alt="${alt ?? p.alt}"${raw(eager ? ' fetchpriority="high"' : ' loading="lazy"')} decoding="async"${raw(` style="${p.focal ? `object-position:${p.focal};` : ''}background-color:${p.color || '#22211e'}"`)}>`;
 };
 
 // The plate is 4:3 beside the title on wide screens and 3:2 under it on narrow ones; a 3:2 photograph covers both.
 export const PHERO_SIZES = '(min-width: 1000px) min(47vw, 620px), 100vw';
 
-// Preload hint for a hero photograph. The defaults match the page-hero plate; pass `sizes` for anything else.
-// `art` adds a second hint for the portrait crop, for a layout that uses picture(…, { art: true }).
-export const preloadFor = (ctx, key, { sizes = PHERO_SIZES, artSizes = '100vw', art = false } = {}) => {
-  const p = photo(key);
-  const both = art && p.portrait?.length;
-  const landscape = { srcset: setOf(ctx, key, '', p.widths), sizes, media: both ? LANDSCAPE : null };
-  return both ? [{ srcset: setOf(ctx, key, '-p', p.portrait), sizes: artSizes, media: PORTRAIT }, landscape] : [landscape];
-};
+// Preload hint for a hero photograph. The default matches the page-hero plate; pass `sizes` for anything else.
+export const preloadFor = (ctx, key, { sizes = PHERO_SIZES } = {}) => [{ srcset: setOf(ctx, key, photo(key).widths), sizes }];
 
 // Live open/closed badge; filled in by the script in the yard's own time zone. Hidden without JS.
-export const openStatus = (l, { short = false } = {}) =>
-  l.hours ? html`<span class="status" data-hours="${hoursAttr(l)}"${short ? html` data-short` : ''} hidden></span>` : '';
-
-// Mono label: the lettering on a drawing.
-export const stamp = (text) => html`<p class="label">${text}</p>`;
+export const openStatus = (l) => (l.hours ? html`<span class="status" data-hours="${hoursAttr(l)}" hidden></span>` : '');
 
 // ---------- Section head ----------
 // A ruled bar (detail bubble, label, note at the far end), then the headline with its supporting text beside it.
@@ -77,13 +70,13 @@ export const sectionHead = ({ no, eyebrow, title, lede, action, meta, level = 2 
   </header>`;
 
 // ---------- Photograph as a plate ----------
-// One photograph per page, at most. It is printed in two inks (see .plate in the stylesheet), trimmed with
-// crop marks and captioned as a figure, so a stock picture is never mistaken for Uresco's own yard.
-export const plate = (ctx, key, { fig = '1', caption, more = '', cls = '', sizes, eager = false, art = false, artSizes } = {}) => {
+// Printed in two inks (see .plate in the stylesheet), trimmed with crop marks and captioned as a figure,
+// so a stock picture is never mistaken for Uresco's own yard.
+export const plate = (ctx, key, { fig = '1', caption, more = '', cls = '', sizes, eager = false, alt } = {}) => {
   const p = photo(key);
   return html`
   <figure class="plate ${cls}">
-    <div class="plate__img">${picture(ctx, key, { sizes, eager, art, artSizes })}</div>
+    <div class="plate__img">${picture(ctx, key, { sizes, eager, alt })}</div>
     <figcaption class="plate__cap"><span class="label label--blue">Fig. ${fig}</span><span>${caption || p.alt}${more ? html` <span class="plate__more">${more}</span>` : ''}</span>${p.credit && !/Uresco/.test(p.credit) ? html`<span class="plate__credit">Photo: ${p.credit}</span>` : ''}</figcaption>
   </figure>`;
 };
@@ -104,31 +97,31 @@ export const latRule = ({ highlight, note = '' } = {}) => html`
   <div class="latrule" role="img" aria-label="Latitude scale. ${LATS.map((p) => `${p.name} ${p.lat} degrees north`).join(', ')}.">
     <div class="latrule__track" aria-hidden="true">
       ${highlight ? html`<span class="latrule__hl" style="left:${latPct(highlight[0])}%;right:${(100 - latPct(highlight[1])).toFixed(2)}%"></span>` : ''}
-      ${LATS.map((p, i) => html`<span class="latrule__pt latrule__pt--${p.row}${i === LATS.length - 1 ? ' is-last' : ''}" style="left:${latPct(p.lat)}%"><b>${p.name}</b><i class="num">${p.lat.toFixed(1)}° N</i></span>`)}
+      ${LATS.map((p, i) => html`<span class="latrule__pt latrule__pt--${p.row}${i === 0 ? ' is-first' : ''}${i === LATS.length - 1 ? ' is-last' : ''}" style="left:${latPct(p.lat)}%"><b>${p.name}</b><i class="num">${p.lat.toFixed(1)}° N</i></span>`)}
     </div>
   </div>
   ${note ? html`<p class="latrule__note">${note}</p>` : ''}`;
 
 // ---------- Dispatch board ----------
-// Three yards on a departures board: local time (ticking), open or closed, and the number. Every row is a tel: link.
-// Characters are set in fixed cells so the script can flip them; without the script they are simply the text.
+// Three yards on a departures board: local time (hours and minutes), open or closed, and the number. Every row is a tel: link.
+// Characters are set in fixed cells so the script can write them; without the script they are simply the text.
 const cells = (s) => raw([...s].map((ch) => `<span class="fl${ch === ' ' ? ' fl--sp' : ''}">${ch === ' ' ? '&nbsp;' : ch}</span>`).join(''));
-const TZ_ABBR = { 'America/Los_Angeles': 'PT', 'America/Anchorage': 'AKT' };
+export const TZ_ABBR = { 'America/Los_Angeles': 'PT', 'America/Anchorage': 'AKT' };
 export const board = (ctx, { id = 'board' } = {}) => html`
   <section class="board" aria-labelledby="${id}-t">
     <div class="board__head">
       <h2 class="board__title" id="${id}-t">Dispatch <span>Three yards, one team</span></h2>
       <p class="board__live js-only" aria-hidden="true"><i></i>Live · local time at each yard</p>
     </div>
-    <div class="board__cols" aria-hidden="true"><span>No.</span><span>Yard</span><span>Call this yard for</span><span>Local time</span><span>Status</span><span>Tap to call</span></div>
+    <div class="board__cols" aria-hidden="true"><span>No.</span><span>Yard</span><span>Call this yard for</span><span>Local time</span><span>Status</span><span>Call</span></div>
     <ol class="board__rows">
       ${LOCATIONS.map((l, i) => html`<li>
         <a class="board__row" href="${tel(l.phone)}">
           <span class="board__no num" aria-hidden="true">${two(i)}</span>
           <span class="board__yard">${l.city}<small>, ${l.state}</small></span>
           <span class="board__for">${YARD_FOR[l.id]}</span>
-          <span class="board__clock"><span class="board__time js-only" data-clock="${l.hours.tz}" data-seconds aria-hidden="true">${cells('--:--:--')}</span><abbr class="board__tz" title="${tzLabel(l)}">${TZ_ABBR[l.hours.tz]}</abbr></span>
-          <span class="board__status">${openStatus(l, { short: true })}</span>
+          <span class="board__clock js-only"><span class="board__time" data-clock="${l.hours.tz}" aria-hidden="true">${cells('--:--')}</span><abbr class="board__tz" title="${tzLabel(l)}">${TZ_ABBR[l.hours.tz]}</abbr></span>
+          <span class="board__status">${openStatus(l)}</span>
           <span class="board__num"><span class="sr-only">${l.phone}</span><span class="board__digits" data-flap aria-hidden="true">${cells(l.phone)}</span></span>
           <span class="board__go" aria-hidden="true">${icon('phone', { size: 18 })}</span>
         </a>
@@ -148,6 +141,7 @@ export const manifest = (ctx, { id = 'mf' } = {}) => html`
         <span class="mline__no num">${lineNo(i)}</span>
         <span class="mline__glyph">${glyph(c.slug, { size: 36 })}</span>
         <h3 class="mline__name">${c.name}</h3>
+        <span class="mline__sum">${c.items.map(([name]) => itemName(name)).join(' · ')}</span>
         <span class="mline__qty num">${String(c.items.length).padStart(2, '0')}<span class="sr-only"> items</span></span>
         <span class="mline__mark" aria-hidden="true"></span>
       </summary>
@@ -155,13 +149,14 @@ export const manifest = (ctx, { id = 'mf' } = {}) => html`
         <div class="dwg">
           <p class="dwg__bar label"><span>Dwg ${lineNo(i)}</span><span>${c.short}</span><span class="dwg__nts">Typical · not to scale</span></p>
           <div class="dwg__canvas">${drawing(c.slug, { id })}</div>
+          <p class="dwg__note">Typical sizes shown. Ask your yard what is in stock.</p>
         </div>
         <div class="mline__body">
           <p class="mline__lede">${c.lede}</p>
-          <ul class="mline__items">${c.items.map(([name]) => html`<li>${name}</li>`)}</ul>
+          <ul class="mline__items">${c.items.map(([name]) => html`<li>${plain(name)}</li>`)}</ul>
           <div class="mline__links">
-            <a class="btn btn--sm btn--dark" href="${ctx.u('products/' + c.slug + '/')}">Open line ${lineNo(i)} ${icon('arrow', { size: 16 })}</a>
-            <a class="link" href="${ctx.u('quote/')}?product=${encodeURIComponent(c.name)}">Add to a quote</a>
+            <a class="btn btn--sm btn--dark" href="${ctx.u('products/' + c.slug + '/')}">See ${c.short} ${icon('arrow', { size: 16 })}</a>
+            <a class="link" href="${quoteHref(ctx, { product: c.name })}">Quote this line</a>
           </div>
         </div>
       </div>
@@ -171,23 +166,24 @@ export const manifest = (ctx, { id = 'mf' } = {}) => html`
       <span><b>Not on the list?</b> Tarps, poly, caulking, adhesives, house wraps and more. Ask your yard.</span>
       ${icon('arrow', { size: 18 })}
     </a>
-    <p class="brandline"><span class="label">Brands on the manifest</span>${BRANDS.map((b) => html`<span>${b}</span>`)}</p>
+    <p class="brandline"><span class="label">Brands we carry</span>${BRANDS.map((b) => html`<span>${b}</span>`)}</p>
   </div></div>`;
 
-// Compact packing list: the nine lines as links with their glyphs (inner pages).
-export const packingList = (ctx) => html`
-  <ol class="plist">
-    ${CATEGORIES.map((c, i) => html`<li><a href="${ctx.u('products/' + c.slug + '/')}">
-      <span class="plist__no num">${lineNo(i)}</span>
+// Compact packing list: product lines as links with their glyphs and every item on the line (inner pages).
+// `only` is a list of categories to show instead of all nine.
+export const packingList = (ctx, { only, cls = '' } = {}) => html`
+  <ol class="plist ${cls}">
+    ${(only || CATEGORIES).map((c) => html`<li><a href="${ctx.u('products/' + c.slug + '/')}">
+      <span class="plist__no num">${lineNo(CATEGORIES.indexOf(c))}</span>
       <span class="plist__glyph">${glyph(c.slug, { size: 40 })}</span>
       <span class="plist__name">${c.short}</span>
-      <span class="plist__items">${c.items.map(([n]) => n.replace(/\s*\(.*?\)/, '').replace(/[®™]/g, '')).slice(0, 3).join(' · ')}</span>
+      <span class="plist__items">${c.items.map(([n]) => itemName(n)).join(' · ')}</span>
       ${icon('arrow', { size: 16 })}
     </a></li>`)}
   </ol>`;
 
 // ---------- Sequence ----------
-// Stations on one line: a process, drawn the way a dimension string is.
+// Stations on one line: a process, drawn the way a dimension string is. A step with an href is one link, edge to edge.
 export const sequence = (steps, { cls = '' } = {}) => html`
   <ol class="seq ${cls}" data-reveal style="--n:${steps.length}">
     ${steps.map((s) => html`<li class="seq__step">
@@ -199,23 +195,28 @@ export const sequence = (steps, { cls = '' } = {}) => html`
   </ol>`;
 
 // ---------- Page hero ----------
-export const pageHero = (ctx, { eyebrow, title, lede, photoKey, actions = '', crumbs = [], sheet, caption, fig = '1', below = '' }) => html`
-  <section class="phero">
+// `media` takes any object in place of the photograph (a drawing plate); `cls` is added to the section; `pre` goes above the
+// headline and `after` under the actions; `sheet` is the page's name in the breadcrumb and `meta` the short reference at the
+// right-hand end of the sheet bar.
+export const pageHero = (ctx, { sheet, meta, title, lede, photoKey, media = '', cls = '', pre = '', after = '', actions = '', crumbs = [], caption, fig = '1', below = '' }) => html`
+  <section class="phero ${cls}">
     <div class="wrap">
       <div class="sheetbar">
         <nav class="crumbs" aria-label="Breadcrumb"><ol>
           <li><a href="${ctx.u('')}">Home</a></li>
-          ${crumbs.length ? crumbs.map(([label, href]) => html`<li>${href ? html`<a href="${ctx.u(href)}">${label}</a>` : html`<span aria-current="page">${label}</span>`}</li>`) : html`<li><span aria-current="page">${sheet || eyebrow || 'Page'}</span></li>`}
+          ${crumbs.length ? crumbs.map(([label, href]) => html`<li>${href ? html`<a href="${ctx.u(href)}">${label}</a>` : html`<span aria-current="page">${label}</span>`}</li>`) : html`<li><span aria-current="page">${sheet}</span></li>`}
         </ol></nav>
-        ${eyebrow ? html`<p class="label sheetbar__meta">${eyebrow}</p>` : ''}
+        ${meta ? html`<p class="label sheetbar__meta">${meta}</p>` : ''}
       </div>
-      <div class="phero__grid${photoKey ? '' : ' phero__grid--plain'}">
+      <div class="phero__grid${photoKey || media ? '' : ' phero__grid--plain'}">
         <div class="phero__inner">
+          ${pre}
           <h1 class="display">${raw(title)}</h1>
           ${lede ? html`<p class="lede phero__lede">${lede}</p>` : ''}
           ${actions ? html`<div class="actions">${actions}</div>` : ''}
+          ${after}
         </div>
-        ${photoKey ? plate(ctx, photoKey, { cls: 'phero__media', fig, caption, eager: true, sizes: PHERO_SIZES }) : ''}
+        ${media || (photoKey ? plate(ctx, photoKey, { cls: 'phero__media', fig, caption, eager: true, sizes: PHERO_SIZES }) : '')}
       </div>
       ${below}
     </div>
@@ -223,8 +224,9 @@ export const pageHero = (ctx, { eyebrow, title, lede, photoKey, actions = '', cr
 
 // ---------- Take-off band (the quote call to action) ----------
 // A blank take-off sheet with the quantity column highlighted: the part Uresco fills in.
+// `product`, `yard` and `location` go on both buttons, so the form starts with what the visitor was looking at.
 const TAKEOFF = [['Dimensional lumber, studs & plates', 'EA'], ['I-joists, rim & beams', 'LF'], ['Wall & roof sheathing', 'SHT'], ['Hangers, ties & fasteners', 'BOX'], ['Windows & exterior doors', 'EA']];
-export const quoteBand = (ctx, { title = 'Send the plans. <em>We’ll fill in the quantities.</em>', body = 'Upload drawings or a list and the yard nearest your project builds the take-off: every stick, panel and connector, priced and ready to order.', eyebrow = 'Estimates & take-offs', no } = {}) => html`
+export const quoteBand = (ctx, { title = 'Send the plans. <em>We’ll fill in the quantities.</em>', body = 'Upload drawings or a list and we build the take-off: every stick, panel and connector, ready to quote.', eyebrow = 'Estimates & take-offs', no, product, yard, location } = {}) => html`
   <section class="takeoff">
     <div class="wrap takeoff__grid">
       <div class="takeoff__copy">
@@ -232,27 +234,28 @@ export const quoteBand = (ctx, { title = 'Send the plans. <em>We’ll fill in th
         <h2 class="h2">${raw(title)}</h2>
         <p class="lede">${body}</p>
         <div class="actions">
-          <a class="btn" href="${ctx.u('quote/')}">Request a quote ${icon('arrow', { size: 18 })}</a>
-          <a class="btn btn--line" href="${ctx.u('quote/#plans')}">${icon('upload', { size: 18 })} Send plans</a>
+          <a class="btn" href="${quoteHref(ctx, { product, yard, location })}">Request a quote ${icon('arrow', { size: 18 })}</a>
+          <a class="btn btn--line" href="${quoteHref(ctx, { product, yard, location, hash: '#plans' })}">${icon('upload', { size: 18 })} Send plans</a>
         </div>
       </div>
       <div class="tsheet" aria-hidden="true" data-reveal>
         <div class="tsheet__head"><b>Material take-off</b><span>Job <i></i></span><span>Ship to <i></i></span></div>
         <div class="tsheet__cols"><span>Ln</span><span>Description</span><span>Unit</span><span>Qty</span></div>
         ${TAKEOFF.map(([d, u], i) => html`<div class="tsheet__row"><span>${two(i)}</span><span>${d}</span><span>${u}</span><span class="tsheet__qty"></span></div>`)}
-        <div class="tsheet__row tsheet__row--more"><span>…</span><span>and every line after it</span><span></span><span class="tsheet__qty"></span></div>
+        <div class="tsheet__row tsheet__row--more"><span>+</span><span>and every line after it</span><span></span><span class="tsheet__qty"></span></div>
         <p class="tsheet__note"><span>We fill in this column</span></p>
       </div>
     </div>
   </section>`;
 
 // ---------- Yard card ----------
-// A yard as a specification sheet. `compact` drops fax, mail and the anchor id (for pages that list all three).
-export const yardCard = (ctx, l, { headingLevel = 3, compact = false } = {}) => {
+// A yard as a specification sheet. A yard shows only whether it is open now, never its hours:
+// those are placeholders and print on the Locations page alone.
+export const yardCard = (ctx, l, { headingLevel = 3 } = {}) => {
   const H = `h${headingLevel}`;
   const i = LOCATIONS.indexOf(l);
   return html`
-  <article class="yard${compact ? ' yard--compact' : ''}"${compact ? '' : html` id="${l.id}"`}>
+  <article class="yard" id="${l.id}">
     <header class="yard__head">
       <p class="label"><span class="num">Yard ${two(i)}</span> · ${l.region}</p>
       ${raw(`<${H} class="yard__city">`)}${l.city}<span>, ${l.state}</span>${raw(`</${H}>`)}
@@ -263,17 +266,31 @@ export const yardCard = (ctx, l, { headingLevel = 3, compact = false } = {}) => 
       ${l.tollFree ? html`<div><dt>Toll-free</dt><dd><a class="num" href="${tel(l.tollFree)}">${l.tollFree}</a></dd></div>` : ''}
       <div><dt>Email</dt><dd><a href="mailto:${l.email}">${l.email}</a></dd></div>
       <div><dt>Address</dt><dd><address>${l.street}<br>${l.city}, ${l.state} ${l.zip}</address></dd></div>
-      ${!compact && l.fax ? html`<div><dt>Fax</dt><dd class="num">${l.fax}</dd></div>` : ''}
-      ${!compact && l.mailing ? html`<div><dt>Mail</dt><dd>${l.mailing}</dd></div>` : ''}
-      ${l.hours ? html`<div><dt>Now</dt><dd>${openStatus(l)}</dd></div>` : ''}
+      ${l.fax ? html`<div><dt>Fax</dt><dd class="num">${l.fax}</dd></div>` : ''}
+      ${l.mailing ? html`<div><dt>Mail</dt><dd>${l.mailing}</dd></div>` : ''}
+      ${l.hours ? html`<div class="yard__now"><dt>Local time</dt><dd><span class="num"><span data-clock="${l.hours.tz}">--:--</span> <abbr title="${tzLabel(l)}">${TZ_ABBR[l.hours.tz]}</abbr></span>${openStatus(l)}</dd></div>` : ''}
     </dl>
     <div class="yard__actions">
       <a class="btn btn--sm" href="${tel(l.phone)}">${icon('phone', { size: 16 })} Call ${l.city}</a>
       <a class="btn btn--sm btn--line" href="${mapsUrl(l)}" target="_blank" rel="noopener">${icon('directions', { size: 16 })} Directions</a>
-      <a class="link yard__quote" href="${ctx.u('quote/')}?yard=${l.id}">Quote from ${l.city} ${icon('arrow', { size: 14 })}</a>
+      <a class="link yard__quote" href="${quoteHref(ctx, { yard: l.id })}">Quote from ${l.city} ${icon('arrow', { size: 14 })}</a>
     </div>
   </article>`;
 };
+
+// ---------- Yard strip ----------
+// Three yards as three numbers, each cell one tel: link: the light alternative to three yard cards on an inner page.
+export const yardStrip = (ctx, { cls = '' } = {}) => html`
+  <ul class="ystrip ${cls}">
+    ${LOCATIONS.map((l, i) => html`<li>
+      <a class="ystrip__cell" href="${tel(l.phone)}">
+        <span class="ystrip__top"><span class="label"><span class="ystrip__ref"><span class="num">Yard ${two(i)}</span> · </span>${l.city}, ${l.state}</span>${openStatus(l)}</span>
+        <span class="ystrip__for">${YARD_FOR[l.id]}</span>
+        <span class="ystrip__num num">${l.phone}</span>
+        <span class="ystrip__go">${icon('phone', { size: 16 })}<span>Call ${l.city}</span></span>
+      </a>
+    </li>`)}
+  </ul>`;
 
 // ---------- Delivery plate ----------
 // The base drawing is a cached file (assets/map.svg, written by build.mjs from mapSvg()): land, graticule, borders.
@@ -294,17 +311,18 @@ export const mapSvg = () => {
 };
 
 const LANES = [
-  { id: 'A', cls: 'sea', name: 'Ocean freight', note: 'Puget Sound to Southcentral Alaska' },
+  { id: 'A', cls: 'sea', name: 'Ocean freight', note: 'Puget Sound to Southeast and Southcentral Alaska' },
   { id: 'B', cls: 'road', name: 'Road system', note: 'Anchorage, Fairbanks and the highway north' },
   { id: 'C', cls: 'barge', name: 'Barge', note: 'Western and Arctic coast, in the ice-free season' },
   { id: 'D', cls: 'air', name: 'Air freight', note: 'Communities off the road system, year-round' },
 ];
 const KEY_TOWNS = ['Utqiaġvik', 'Nome', 'Bethel', 'Unalaska', 'Sitka', 'Deadhorse'];
+export const townKey = (name) => name.normalize('NFD').replace(/[^a-zA-Z]/g, '').toLowerCase();
 
-export const deliveryMap = (ctx, { compact = false, sheet = 'A-1', action = '' } = {}) => {
+export const deliveryMap = (ctx, { compact = false, action = '' } = {}) => {
   const W = MAP.width, H = MAP.height, u = ctx.uid();
   const at = ([x, y]) => `left:${((x / W) * 100).toFixed(2)}%;top:${((y / H) * 100).toFixed(2)}%`;
-  const alt = `Map of Uresco’s delivery area: distribution centers in Kent, Washington, and Anchorage and Fairbanks, Alaska; ocean freight from Puget Sound to Southcentral Alaska; the road system north to Deadhorse; barge lanes to western Alaska; and air freight to communities off the road system, including ${MAP.towns.map((t) => t.name).join(', ')}.`;
+  const alt = `Map of Uresco’s delivery area: distribution centers in Kent, Washington, and Anchorage and Fairbanks, Alaska; ocean freight from Puget Sound to Southeast and Southcentral Alaska; the road system north to Deadhorse; barge lanes along the western and Arctic coast; and air freight to communities off the road system. Example destinations: ${MAP.towns.map((t) => t.name).join(', ')}.`;
   const masked = (d, cls, id) => `<mask id="${id}" maskUnits="userSpaceOnUse" x="0" y="0" width="${W}" height="${H}"><path class="pm-draw" d="${d}" pathLength="1"/></mask><path class="pm-lane pm-lane--${cls}" d="${d}" mask="url(#${id})"/>`;
   const towns = compact ? MAP.towns.filter((t) => KEY_TOWNS.includes(t.name)) : MAP.towns;
   return html`
@@ -316,21 +334,20 @@ export const deliveryMap = (ctx, { compact = false, sheet = 'A-1', action = '' }
         ${raw(masked(MAP.barge + MAP.barge2, 'barge', `pm${u}c`))}
         ${raw(masked(MAP.sea, 'sea', `pm${u}a`))}
         <path class="pm-lane pm-lane--road" d="${MAP.road}" pathLength="1"/>
-        ${raw(MAP.towns.map((t) => `<circle class="pm-town" cx="${t.xy[0]}" cy="${t.xy[1]}" r="4.5"/>`).join(''))}
+        ${raw(towns.map((t) => `<circle class="pm-town pm-town--${townKey(t.name)}" cx="${t.xy[0]}" cy="${t.xy[1]}" r="4.5"/>`).join(''))}
         ${raw(MAP.yards.map((y) => `<g class="pm-yard"><circle cx="${y.xy[0]}" cy="${y.xy[1]}" r="13"/><circle class="pm-yard__dot" cx="${y.xy[0]}" cy="${y.xy[1]}" r="4.5"/></g>`).join(''))}
       </svg>
       <div class="pmap__labels">
-        ${MAP.gratLabels.map((g) => html`<span class="pmap__grat pmap__grat--${g.edge}" aria-hidden="true" style="${at(g.xy)}">${g.text}</span>`)}
+        ${MAP.gratLabels.filter((g) => !(g.edge === 's' && /^1[36]0/.test(g.text))).map((g) => html`<span class="pmap__grat pmap__grat--${g.edge}" aria-hidden="true" style="${at(g.xy)}">${g.text}</span>`)}
         ${MAP.tags.map((t) => html`<span class="pmap__tag pmap__tag--${t.id}" aria-hidden="true" style="${at(t.xy)}">${t.id}</span>`)}
-        ${towns.map((t) => html`<span class="pmap__town${KEY_TOWNS.includes(t.name) ? '' : ' pmap__town--minor'}${t.name === 'Bethel' ? ' pmap__town--tight' : ''}" aria-hidden="true" data-side="${t.side}" style="${at(t.xy)}">${t.name}</span>`)}
-        ${MAP.yards.map((y) => html`<a class="pmap__yard" data-side="${y.side || 'e'}" style="${at(y.xy)}" href="${ctx.u('locations/')}#${y.id}"><span class="sr-only">Yard details: </span>${y.name}<small>${(LATS.find((p) => p.name === y.name)?.lat ?? y.lat).toFixed(1)}° N</small></a>`)}
+        ${towns.map((t) => html`<span class="pmap__town pmap__town--${townKey(t.name)}" aria-hidden="true" data-side="${t.side}" style="${at(t.xy)}">${t.name}</span>`)}
+        ${MAP.yards.map((y) => html`<a class="pmap__yard pmap__yard--${y.id}" data-side="${y.side || 'e'}" style="${at(y.xy)}" href="${ctx.u('locations/')}#${y.id}"><span class="sr-only">Yard details: </span>${y.name}<small>${(LATS.find((p) => p.name === y.name)?.lat ?? y.lat).toFixed(1)}° N</small></a>`)}
         <span class="pmap__scale" aria-hidden="true" style="--mi:${((MAP.scale250 / W) * 100).toFixed(2)}%"><i></i><em><span>0</span><span>250</span><span>500 mi</span></em><b>Scale at 60° N</b></span>
       </div>
     </div>
     <figcaption class="pmap__side">
       <div class="tblock">
-        <p class="tblock__firm"><b>Uresco Construction Materials, Inc.</b><span>Kent · Anchorage · Fairbanks</span></p>
-        <p class="tblock__sheet"><span>Sheet</span><b>${sheet}</b></p>
+        <p class="tblock__firm"><b>Three yards</b><span>Kent · Anchorage · Fairbanks</span></p>
         <p class="tblock__title"><span>Title</span><b>Delivery area</b></p>
       </div>
       <ul class="pmap__legend">
@@ -341,16 +358,19 @@ export const deliveryMap = (ctx, { compact = false, sheet = 'A-1', action = '' }
         <li><i class="lg lg--town"></i>Example destination</li>
       </ul>
       ${action ? html`<p class="pmap__action">${action}</p>` : ''}
-      <p class="pmap__note">Conic conformal projection. Lanes are illustrative, not carrier schedules.</p>
+      <p class="pmap__note">Lanes are drawn to show how freight generally moves. They are not carrier routes or schedules.</p>
     </figcaption>
   </figure>`;
 };
-export { LANES };
 
-// Kept for pages not yet rebuilt in this system: a quiet band with one line of text (no second photograph).
-export const interlude = (ctx, key, { line, note } = {}) => html`
-  <section class="section section--panel">
-    <div class="wrap"><p class="h2">${raw(line)}</p>${note ? html`<p class="lede">${note}</p>` : ''}</div>
-  </section>`;
-
-export { SITE, address };
+// ---------- Stub ----------
+// The tear-off yellow ticket: the one solid yellow block on a page. `title` is a heading at `level`, or a paragraph if none is given.
+export const stub = ({ tag, title, body, actions, cls = '', level }) => html`
+  <div class="stub ${cls}">
+    <div class="stub__tag"><p class="label">${tag}</p></div>
+    <div class="stub__body">
+      ${level ? raw(`<h${level} class="stub__t">`) : raw('<p class="stub__t">')}${title}${level ? raw(`</h${level}>`) : raw('</p>')}
+      <p>${body}</p>
+    </div>
+    <div class="stub__acts">${actions}</div>
+  </div>`;

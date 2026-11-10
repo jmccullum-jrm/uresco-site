@@ -1,9 +1,25 @@
-import { html } from '../lib/html.mjs';
+import { html, raw } from '../lib/html.mjs';
 import { icon } from '../lib/icons.mjs';
 import { layout } from '../lib/layout.mjs';
-import { stamp, openStatus, pageHero } from '../lib/components.mjs';
-import { field, select, textarea, radios, yardSelect, fileDrop, formOpen, formFoot, doneNotice } from '../lib/forms.mjs';
-import { LOCATIONS, tel } from '../data/locations.mjs';
+import { eyebrow, pageHero, quoteBand } from '../lib/components.mjs';
+import { field, select, textarea, radios, yardSelect, fileDrop, formOpen, formFoot, doneNotice, callU, yardTag } from '../lib/forms.mjs';
+import { PLACES, ALIASES } from '../data/places.mjs';
+
+// What happens after Send. Freight is worked out with the visitor, never promised as part of the price.
+const NEXT = [
+  ['We go through it', 'The yard you chose reads your plans or list and helps with the take-off.'],
+  ['We quote it', 'We’ll quote the package and work out the freight with you.'],
+  ['You order', 'We schedule delivery, or package and ship it.'],
+];
+
+// The Alaska page's places, so typing one of them says how freight generally gets there.
+const HOW = { local: 'on the road system', road: 'on the road system', coastal: 'by sea or air', seasonal: 'barge in the ice-free season, air year-round' };
+const fold = (s) => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[’'.]/g, '').toLowerCase().trim();
+const placesData = () => {
+  const known = Object.fromEntries(PLACES.map((p) => [fold(p.name), [p.name, HOW[p.access]]]));
+  for (const [alias, name] of Object.entries(ALIASES)) known[fold(alias)] = known[fold(name)];
+  return JSON.stringify(known).replace(/</g, '\\u003c');
+};
 
 export default {
   path: 'quote/',
@@ -11,55 +27,80 @@ export default {
     title: 'Request a Quote',
     description: 'Send plans or a materials list to Uresco Construction Materials for a take-off and quote, with delivery to your job site or anywhere in Alaska.',
     body: html`
-${pageHero(ctx, { eyebrow: 'Estimates & take-offs', title: 'Request <em>a quote.</em>', lede: 'Tell us about the job and attach plans or a list. The yard you choose will get back to you with a take-off and pricing.' })}
-<section class="section">
-  <div class="wrap qlayout">
-    <div>
-      ${formOpen('quote', 'Quote request')}
+${pageHero(ctx, {
+  cls: 'fm-hero qt-hero',
+  eyebrow: 'Estimates & take-offs',
+  before: html`<p class="qt-carried"><span class="sticker sticker--k" style="--rot:-3deg" data-carried>Plans, a list or a sketch</span></p>`,
+  title: 'Quote <em>this job.</em>',
+  srTitle: 'Request a quote',
+  lede: 'Send whatever you have. The yard you choose gets back to you with a take-off and pricing.',
+  actions: html`<a class="btn" href="#request">Start the request ${icon('arrow', { size: 18 })}</a><a class="btn btn--line" href="#plans">${icon('upload', { size: 18 })} Send plans</a>`,
+  fill: callU(),
+})}
+
+<section class="section field-p fm-sec" id="request" aria-label="Quote request form">
+  <div class="wrap fm-layout">
+    <div class="fm-main">
+      ${formOpen('quote', 'Quote request', { name: 'Job ticket' })}
         <fieldset class="fieldset">
           <legend><span>01</span>About you</legend>
-          ${field({ id: 'name', label: 'Name', required: true, attrs: html` autocomplete="name"` })}
+          ${field({ id: 'name', label: 'Name', required: true, msg: 'Tell us who to ask for.', attrs: html` autocomplete="name"` })}
           ${field({ id: 'company', label: 'Company', attrs: html` autocomplete="organization"` })}
-          ${field({ id: 'phone', label: 'Phone', type: 'tel', required: true, attrs: html` autocomplete="tel" inputmode="tel"` })}
-          ${field({ id: 'email', label: 'Email', type: 'email', required: true, attrs: html` autocomplete="email" inputmode="email"` })}
+          ${field({ id: 'phone', label: 'Phone', type: 'tel', required: true, msg: 'Add a number the yard can reach you on.', attrs: html` autocomplete="tel" inputmode="tel"` })}
+          ${field({ id: 'email', label: 'Email', type: 'email', required: true, msg: 'Add an email for the quote to go to.', attrs: html` autocomplete="email" inputmode="email"` })}
           ${select({ id: 'role', label: 'I am a', full: true, options: ['Contractor / builder', 'Owner-builder', 'Architect or engineer', 'Agency, tribe or institution', 'Other'] })}
         </fieldset>
 
         <fieldset class="fieldset">
           <legend><span>02</span>The job</legend>
-          ${field({ id: 'location', label: 'Project location', required: true, hint: 'City or community, state', attrs: html` placeholder="e.g. Bethel, AK"` })}
+          ${field({ id: 'location', label: 'Project location', required: true, hint: 'City or community, state', msg: 'Tell us where the job is, even roughly.', attrs: html` placeholder="e.g. Bethel, AK"`, note: html`<p class="fm-way" data-way-note hidden></p>` })}
           ${field({ id: 'needed', label: 'Needed by', type: 'date' })}
-          ${radios('delivery', 'Delivery', [['Job-site delivery', 'truck'], ['Remote Alaska shipping', 'ship'], ['Export', 'route'], ['Pick up at the yard', 'pin']])}
+          ${radios('delivery', 'Delivery', [['Job-site delivery', 'truck'], ['Remote Alaska shipping', 'ship'], ['Export', 'route'], ['Pick up at the yard', 'pin']], { cls: 'fm-delivery' })}
           ${yardSelect()}
+          <script type="application/json" data-places>${raw(placesData())}</script>
         </fieldset>
 
         <fieldset class="fieldset" id="plans">
-          <legend><span>03</span>Plans & materials</legend>
+          <legend><span>03</span>Plans &amp; materials</legend>
           ${fileDrop({ id: 'plans', name: 'plans', label: 'Plans, lists or photos', hint: 'PDF, DWG, images or spreadsheets, up to 25 MB each', note: 'Drawings get the most accurate take-off.', accept: '.pdf,.dwg,.dxf,.jpg,.jpeg,.png,.heic,.xls,.xlsx,.csv,.doc,.docx' })}
           ${textarea({ id: 'materials', label: 'Materials or scope', hint: 'a list, quantities, or a description of the build', rows: 6 })}
           ${textarea({ id: 'notes', label: 'Anything else?', rows: 3 })}
         </fieldset>
-        ${formFoot('Send request')}
+        ${formFoot(html`Send to <span data-goes="city">Kent</span>`, { goes: false })}
       </form>
-      ${doneNotice({ sent: 'Thanks — the yard has your request and will be in touch.', almost: 'your request' })}
+      ${doneNotice({ sent: 'Thanks. The yard has your request and will be in touch.', almost: 'your request' })}
     </div>
 
-    <div class="aside">
-      ${stamp('What happens next', { dark: true })}
-      <h2>From plans to price</h2>
-      <ol class="steps" style="margin-top:1.25rem">
-        <li><b>We review your plans</b><span>The yard you chose builds the take-off.</span></li>
-        <li><b>We quote it</b><span>Materials, and delivery or freight to your site.</span></li>
-        <li><b>You order</b><span>We schedule delivery, or package and ship it.</span></li>
-      </ol>
-      <p style="margin-top:1.5rem">Rather talk it through?</p>
-      <ul>
-        ${LOCATIONS.map((l) => html`<li><a href="${tel(l.phone)}"><span>${l.city} ${openStatus(l, { short: true })}</span><span>${l.phone}</span></a></li>`)}
-      </ul>
-      <a class="aside__more" href="${ctx.u('accounts/')}">${icon('file', { size: 18 })} Buying regularly? Open a contractor account ${icon('arrow', { size: 16 })}</a>
+    <div class="fm-aside" role="group" aria-label="Who answers this request">
+      ${yardTag({
+        kicker: 'This request goes to',
+        lines: html`<dl class="fm-tag__lines">
+          <div><dt>Job</dt><dd data-live="location">Not filled in yet</dd></div>
+          <div><dt>Delivery</dt><dd data-live="delivery">Job-site delivery</dd></div>
+          <div><dt>Files</dt><dd data-live="files">None yet</dd></div>
+        </dl>`,
+      })}
     </div>
   </div>
 </section>
+
+<section class="section field-k qt-next clip">
+  <div class="wrap">
+    <div class="qt-next__head">
+      ${eyebrow('What happens next')}
+      <h2 class="d2">Then <em>what?</em></h2>
+    </div>
+    <ol class="qt-arches">
+      ${NEXT.map(([name, text], i) => html`<li class="qt-arch" style="--i:${i}" data-reveal>
+        <span class="qt-arch__no nums" aria-hidden="true">${i + 1}</span>
+        <h3 class="qt-arch__name">${name}</h3>
+        <p>${text}</p>
+      </li>`)}
+    </ol>
+  </div>
+</section>
+
+${quoteBand(ctx, { title: 'Buying <em>regularly?</em>', body: 'Open a contractor account and order from any of our three yards on account.', photoKey: 'framer', caption: 'A framer nailing a wall frame', label: 'Contractor accounts', primary: 'Open an account', href: ctx.u('accounts/') })}
 `,
   }),
 };

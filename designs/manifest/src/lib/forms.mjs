@@ -1,76 +1,173 @@
 import { html } from './html.mjs';
 import { icon } from './icons.mjs';
 import { SITE } from '../config.mjs';
-import { LOCATIONS } from '../data/locations.mjs';
+import { LOCATIONS, tel } from '../data/locations.mjs';
+import { openStatus, YARD_FOR } from './components.mjs';
 
 // Form building blocks shared by the quote request and the credit application.
-// site.js finds forms by [data-form] and handles validation, drafts, uploads and sending.
+// 10-forms.js finds forms by [data-form] and handles validation, drafts, uploads, routing and sending.
+//
+// The form is a printed form: one ruled sheet of cells, each with its lettering on top and the entry under it,
+// the way a title block is laid out. The same cells print on Letter paper as the credit application (90-print.css).
+// A cell spans the whole sheet (`full`), or `w: 'half' | 'third' | 'wide'`. `m2` keeps it two-up on a phone.
 
-export const field = ({ id, label, type = 'text', required = false, full = false, hint, attrs = '' }) => html`
-  <div class="field${full ? ' field--full' : ''}">
-    <label for="${id}">${label}${required ? html`<span class="req" aria-hidden="true">*</span>` : ''}${hint ? html` <span class="hint">${hint}</span>` : ''}</label>
-    <input class="input" id="${id}" name="${id}" type="${type}"${required ? html` required aria-describedby="${id}-err"` : ''}${attrs}>
-    ${required ? html`<span class="err" id="${id}-err" hidden></span>` : ''}
+const span = ({ full, w, m2 }) => (full || w === 'full' ? ' fm-cell--full' : ` fm-cell--${w || 'half'}`) + (m2 ? ' fm-cell--m2' : '');
+const REQ = html`<span class="fm-req" aria-hidden="true"><span>Required</span></span>`;
+
+export const field = ({ id, label, type = 'text', required = false, full = false, w, m2 = false, hint, screenHint = false, msg, attrs = '' }) => html`
+  <div class="fm-cell${span({ full, w, m2 })}${required ? ' fm-cell--req' : ''}">
+    <label class="fm-label" for="${id}">${label}${required ? REQ : ''}${hint ? html` <span class="fm-hint${screenHint ? ' fm-screen' : ''}">${hint}</span>` : ''}</label>
+    <input class="fm-input" id="${id}" name="${id}" type="${type}"${required ? html` required aria-describedby="${id}-err"` : ''}${msg ? html` data-msg="${msg}"` : ''}${attrs}>
+    ${required ? html`<span class="fm-err" id="${id}-err" hidden></span>` : ''}
   </div>`;
 
-export const select = ({ id, label, options, full = false, hint }) => html`
-  <div class="field${full ? ' field--full' : ''}">
-    <label for="${id}">${label}${hint ? html` <span class="hint">${hint}</span>` : ''}</label>
-    <select id="${id}" name="${id}">${options.map((o) => html`<option>${o}</option>`)}</select>
+// `paper: true` also prints the options as tick boxes, because a drop-down means nothing on paper.
+export const select = ({ id, label, options, full = false, w, m2 = false, hint, paper = false }) => html`
+  <div class="fm-cell${span({ full, w, m2 })}">
+    <label class="fm-label" for="${id}">${label}${hint ? html` <span class="fm-hint">${hint}</span>` : ''}</label>
+    <select class="fm-select" id="${id}" name="${id}">${options.map((o) => html`<option>${o}</option>`)}</select>
+    ${paper ? html`<div class="fm-paper fm-paperopts" data-paper-for="${id}">${options.map((o) => html`<label><input type="checkbox" value="${o}" tabindex="-1"><span class="fm-opt__box"></span>${o}</label>`)}</div>` : ''}
   </div>`;
 
-export const textarea = ({ id, label, hint, rows = 4, full = true }) => html`
-  <div class="field${full ? ' field--full' : ''}">
-    <label for="${id}">${label}${hint ? html` <span class="hint">${hint}</span>` : ''}</label>
-    <textarea id="${id}" name="${id}" rows="${rows}"></textarea>
+export const textarea = ({ id, label, hint, rows = 4, full = true, w }) => html`
+  <div class="fm-cell${span({ full, w })}">
+    <label class="fm-label" for="${id}">${label}${hint ? html` <span class="fm-hint">${hint}</span>` : ''}</label>
+    <textarea class="fm-text" id="${id}" name="${id}" rows="${rows}"></textarea>
   </div>`;
 
-export const radios = (name, legend, opts) => html`
-  <div class="field field--full" role="radiogroup" aria-labelledby="${name}-label">
-    <span class="label" id="${name}-label">${legend}</span>
-    <div class="seg">
-      ${opts.map(([value, ic], i) => html`<label><input type="radio" name="${name}" value="${value}"${i === 0 ? html` checked` : ''}>${ic ? icon(ic, { size: 18 }) : ''}${value}</label>`)}
+export const radios = (name, legend, opts, { full = true, w } = {}) => html`
+  <div class="fm-cell${span({ full, w })}" role="radiogroup" aria-labelledby="${name}-label">
+    <span class="fm-label" id="${name}-label">${legend}</span>
+    <div class="fm-seg fm-seg--${opts.length}">
+      ${opts.map(([value, ic], i) => html`<label class="fm-opt"><input type="radio" name="${name}" value="${value}"${i === 0 ? html` checked` : ''}><span class="fm-opt__box"></span>${ic ? icon(ic, { size: 20 }) : ''}<span class="fm-opt__t">${value}</span></label>`)}
     </div>
   </div>`;
 
-export const yardSelect = ({ label = 'Send to', hint = 'the yard nearest the job' } = {}) => html`
-  <div class="field field--full">
-    <label for="yard">${label} <span class="hint">${hint}</span></label>
-    <select id="yard" name="yard">
-      ${LOCATIONS.map((l) => html`<option value="${l.city}" data-email="${l.email}">${l.city}, ${l.state} — ${l.email}</option>`)}
-    </select>
+// Which yard will answer. All three are in the markup and the script shows the one chosen; each keeps its own live lamp.
+const yardRoute = ({ lead, cls = '' }) => html`
+  <div class="fm-route ${cls}" data-route>
+    <p class="label fm-route__lead">${lead}</p>
+    ${LOCATIONS.map((l, i) => html`<div class="fm-route__yard" data-route-yard="${l.city}"${i ? html` hidden` : ''}>
+      <p class="fm-route__city">${l.city}<span>, ${l.state}</span></p>
+      <span class="fm-route__lamp">${openStatus(l)}</span>
+      <a class="fm-route__tel num" href="${tel(l.phone)}">${l.phone}</a>
+      <a class="fm-route__mail" href="mailto:${l.email}">${l.email}</a>
+    </div>`)}
   </div>`;
 
-export const fileDrop = ({ id = 'files', name = 'files', label, hint, title = 'Drop files here or browse', note, accept }) => html`
-  <div class="field field--full">
-    <span class="label" id="${id}-label">${label}${hint ? html` <span class="hint">${hint}</span>` : ''}</span>
-    <label class="drop" data-drop>
-      <span class="drop__icon">${icon('upload', { size: 26 })}</span>
-      <b>${title}</b>
-      ${note ? html`<small>${note}</small>` : ''}
+const GUIDE = [['Puget Sound', 'Kent'], ['Southcentral Alaska or a remote site', 'Anchorage'], ['The Interior and points north', 'Fairbanks']];
+
+export const yardSelect = ({ label = 'Send to', hint = 'the yard nearest the job', lead = 'Answered by', guide = true } = {}) => html`
+  <div class="fm-cell fm-cell--full fm-cell--yard">
+    <label class="fm-label" for="yard">${label} <span class="fm-hint">${hint}</span></label>
+    <select class="fm-select" id="yard" name="yard" data-paper>
+      ${LOCATIONS.map((l) => html`<option value="${l.city}" data-email="${l.email}">${l.city}, ${l.state}</option>`)}
+    </select>
+    <div class="fm-paper fm-paperopts" data-paper-for="yard">${LOCATIONS.map((l) => html`<label><input type="checkbox" value="${l.city}" tabindex="-1"><span class="fm-opt__box"></span>${l.city}, ${l.state}</label>`)}</div>
+    ${yardRoute({ lead, cls: 'fm-route--cell' })}
+    ${guide ? html`<div class="fm-guide"><p class="label">Which yard?</p><ul>${GUIDE.map(([from, to]) => html`<li><span>${from}</span><b>${to}</b></li>`)}</ul><p class="fm-guide__any">Any yard can help. They work as one team.</p></div>` : ''}
+  </div>`;
+
+export const fileDrop = ({ id = 'files', name = 'files', label, hint, title = 'Drop files here or browse', tapTitle = 'Tap to add files', note, accept }) => html`
+  <div class="fm-cell fm-cell--full fm-cell--drop">
+    <span class="fm-label" id="${id}-label">${label}${hint ? html` <span class="fm-hint">${hint}</span>` : ''}</span>
+    <label class="fm-drop" data-drop>
+      <span class="fm-drop__icon">${icon('upload', { size: 22 })}</span>
+      <span class="fm-drop__text">
+        <b><span class="fm-drop__mouse">${title}</span><span class="fm-drop__touch">${tapTitle}</span></b>
+        ${note ? html`<small>${note}</small>` : ''}
+      </span>
       <input class="sr-only" type="file" name="${name}" multiple accept="${accept}" aria-labelledby="${id}-label">
     </label>
-    <ul class="files" data-files aria-live="polite"></ul>
-    <p class="err" data-file-err hidden></p>
+    <ul class="fm-files" data-files aria-live="polite"></ul>
+    <p class="fm-err fm-err--file" data-file-err hidden></p>
   </div>`;
 
-export const formOpen = (kind, subject) => html`<form class="form" data-form="${kind}" data-subject="${subject}" data-endpoint="${SITE.formEndpoint}" data-email="${SITE.email}" action="${SITE.formEndpoint || 'mailto:' + SITE.email}" method="post" enctype="multipart/form-data" novalidate>`;
+// One lettered section of the sheet: a bar with a detail bubble, then its cells.
+// The script writes what is left to fill in into [data-left]; the side index shows the same.
+export const group = ({ id, letter, title, cls = '' }, body) => html`
+  <fieldset class="fm-set ${cls}" id="${id}" data-reveal>
+    <legend class="fm-legend"><span class="bub num">${letter}</span>${title}</legend>
+    <p class="fm-left" data-left="${id}"></p>
+    <div class="fm-grid">${body}</div>
+  </fieldset>`;
 
-export const formFoot = (label) => html`
-  <div class="form__foot">
-    <button class="btn" type="submit">${label} ${icon('arrow', { size: 18 })}</button>
-    <p>${SITE.formEndpoint ? 'We’ll confirm by email.' : 'This opens your email app with everything filled in. Attach any files there before you send.'}</p>
+const formOpen = (kind, subject) => html`<form class="fm-sheet" data-form="${kind}" data-subject="${subject}" data-endpoint="${SITE.formEndpoint}" data-email="${SITE.email}" action="${SITE.formEndpoint || 'mailto:' + SITE.email}" method="post" enctype="multipart/form-data" novalidate>`;
+
+const formFoot = (label, { lead = 'Answered by' } = {}) => html`
+  <div class="fm-foot">
+    <div class="fm-foot__info">
+      ${yardRoute({ lead, cls: 'fm-route--foot' })}
+      <p class="fm-foot__left js-only" data-left-all></p>
+    </div>
+    <div class="fm-foot__act">
+      <button class="btn fm-send" type="submit">${label} ${icon('arrow', { size: 18 })}</button>
+      <p class="fm-foot__note">${SITE.formEndpoint ? 'We’ll confirm by email.' : 'This opens your email app with everything filled in. Attach any files there before you send.'}</p>
+    </div>
   </div>
-  <div class="notice" data-failed hidden tabindex="-1" role="alert">
-    ${icon('close', { size: 24 })}
-    <div><h2>That didn’t go through</h2><p>Please try again, or email <a href="mailto:${SITE.email}">${SITE.email}</a> or call the yard directly.</p></div>
+  <div class="fm-notice fm-notice--bad" data-failed hidden tabindex="-1" role="alert">
+    <span class="fm-notice__mark" aria-hidden="true">${icon('close', { size: 22 })}</span>
+    <div class="fm-notice__body"><h2 class="fm-notice__t">That didn’t go through</h2><p>Please try again, or email <a href="mailto:${SITE.email}">${SITE.email}</a> or call the yard directly.</p></div>
   </div>`;
 
-export const doneNotice = ({ sent, almost }) => html`
-  <div class="notice" data-done hidden tabindex="-1" role="status">
-    ${icon('check', { size: 24 })}
-    <div>
-      <h2>${SITE.formEndpoint ? 'Sent' : 'Almost there'}</h2>
+// Success, and the hand-off to the visitor's email app. Webmail users often get no email app at all, so the
+// finished request is kept on the page to open again or copy.
+const doneNotice = ({ sent, almost }) => html`
+  <div class="fm-notice fm-notice--done" data-done hidden tabindex="-1" role="status">
+    <span class="fm-notice__mark" aria-hidden="true">${icon('check', { size: 22 })}</span>
+    <div class="fm-notice__body">
+      <h2 class="fm-notice__t">${SITE.formEndpoint ? 'Sent' : 'Almost there'}</h2>
       <p>${SITE.formEndpoint ? sent : html`Your email app should have opened a message to <b data-mail-to>${SITE.email}</b> with ${almost} filled in. <span data-mail-note>Attach your files to that email, then send it.</span> If nothing opened, email us directly or call the yard.`}</p>
+      ${SITE.formEndpoint ? '' : html`
+      <div class="fm-notice__acts">
+        <a class="btn" href="#" data-mail-again>Open the email again ${icon('arrow', { size: 18 })}</a>
+        <button type="button" class="btn btn--line" data-copy>Copy the text</button>
+      </div>
+      <details class="fm-notice__text"><summary>See what you are sending</summary><pre data-mail-text></pre></details>`}
+    </div>
+  </div>`;
+
+// The three numbers, for people who would rather call. `fm-calls--top` shows above the sheet when there is no room beside it.
+const yardCalls = ({ cls = '', title = 'Rather call?' } = {}) => html`
+  <div class="fm-calls ${cls}">
+    <p class="label fm-calls__t">${title}</p>
+    <ul class="fm-calls__list">
+      ${LOCATIONS.map((l) => html`<li><a class="fm-call" href="${tel(l.phone)}">
+        <span class="fm-call__yard">${l.city}</span>
+        <span class="fm-call__for">${YARD_FOR[l.id]}</span>
+        <span class="fm-call__lamp">${openStatus(l)}</span>
+        <span class="fm-call__num num">${l.phone}</span>
+        <span class="fm-call__go" aria-hidden="true">${icon('phone', { size: 18 })}</span>
+      </a></li>`)}
+    </ul>
+  </div>`;
+
+// The whole form area: the sheet on the left, its title block beside it, the way a drawing is laid out.
+export const sheetLayout = ({ kind, subject, name, lead, steps, paper = '', head, privacy = '', body, send, done, cls = '' }) => html`
+  <div class="fm-layout ${cls}">
+    <div class="fm-main">
+      ${yardCalls({ cls: 'fm-calls--top' })}
+      ${formOpen(kind, subject)}
+        ${paper}
+        <div class="fm-sheet__head">
+          <p class="fm-sheet__title">${head}</p>
+          <p class="fm-sheet__save js-only"><span data-draft-state>Saves on this device as you type</span> <button type="button" class="fm-clear" data-clear hidden>Clear form</button></p>
+          ${privacy ? html`<p class="fm-sheet__private js-only">${privacy}</p>` : ''}
+        </div>
+        ${body}
+        ${formFoot(send, { lead })}
+      </form>
+      ${doneNotice(done)}
+    </div>
+    <div class="fm-side">
+      <div class="tblock fm-side__block">
+        <p class="tblock__firm"><b>Uresco Construction Materials, Inc.</b><span>Kent · Anchorage · Fairbanks</span></p>
+        <p class="tblock__title"><span>Title</span><b>${name}</b></p>
+      </div>
+      ${yardRoute({ lead, cls: 'fm-route--side' })}
+      <nav class="fm-steps" aria-label="Sections of this form"><ol>
+        ${steps.map(([id, letter, title]) => html`<li><a href="#${id}"><span class="bub bub--sm num">${letter}</span><span class="fm-steps__t">${title}</span><span class="fm-left fm-left--side" data-left="${id}"></span></a></li>`)}
+      </ol></nav>
+      ${yardCalls({ cls: 'fm-calls--side' })}
     </div>
   </div>`;

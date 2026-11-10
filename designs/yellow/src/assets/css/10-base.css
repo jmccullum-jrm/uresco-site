@@ -30,16 +30,16 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .nw { white-space: nowrap; }
 /* Without JS the pause control has nothing to do; it keeps its place so nothing moves when JS arrives. */
 html:not(.js) [data-motion-toggle] { visibility: hidden; }
+/* Printing is the script's job too: without it the button would do nothing. */
+html:not(.js) [data-print] { display: none; }
 
 /* ---------- Grid ---------- */
-/* One centred column with fluid gutters. Inside it, sections use a 12-column grid with a fluid gap. */
+/* One centred column with fluid gutters. */
 .wrap { width: 100%; max-width: calc(var(--wrap) + var(--gutter) * 2); margin-inline: auto; padding-inline: var(--gutter); }
-.grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: clamp(1rem, .4rem + 2vw, 2.5rem); }
 
 /* ---------- Fields ---------- */
 /* A section is one flat field of colour. --on is its text, --quiet its secondary text, --rule its lines. */
 .section { position: relative; padding-block: var(--section); --on: var(--black); --quiet: var(--stone); --rule: var(--black); }
-.section--tight { padding-block: calc(var(--section) * .5); }
 .field-y { background: var(--yellow); color: var(--black); --on: var(--black); --quiet: var(--umber); --rule: var(--black); }
 .field-k { background: var(--black); color: var(--paper); --on: var(--paper); --quiet: var(--ash); --rule: var(--black-3); }
 .field-p { background: var(--paper); color: var(--black); }
@@ -49,24 +49,20 @@ html:not(.js) [data-motion-toggle] { visibility: hidden; }
 
 /* ---------- Type ---------- */
 /* Display: Archivo at its wide, black end, always uppercase, set tight. */
-.d1, .d2, .d3, .d4 { font-stretch: var(--wide); font-weight: 900; text-transform: uppercase; letter-spacing: -.022em; }
+.d1, .d2 { font-stretch: var(--wide); font-weight: 900; text-transform: uppercase; letter-spacing: -.022em; }
 .d1 { font-size: var(--t-d1); line-height: .86; }
 .d2 { font-size: var(--t-d2); line-height: .9; }
-.d3 { font-size: var(--t-d3); line-height: .96; letter-spacing: -.015em; }
-.d4 { font-size: var(--t-d4); line-height: 1.05; font-weight: 800; letter-spacing: -.005em; }
 /* Emphasis inside a headline is the same word in outline: solid and hollow, like sign lettering. */
 .d1 em, .d2 em { font-style: normal; color: transparent; -webkit-text-stroke: .028em var(--on, var(--black)); paint-order: stroke fill; }
 .field-k .d1 em, .field-k .d2 em { -webkit-text-stroke-color: var(--yellow); }
 @supports not (-webkit-text-stroke: 1px black) { .d1 em, .d2 em { color: inherit; } }
 .lede { font-size: var(--t-lede); line-height: 1.42; font-weight: 500; max-width: 46ch; color: var(--on, inherit); }
-.quiet { color: var(--quiet, var(--stone)); }
 /* Eyebrow: the small voice. Wide, bold, uppercase, tracked, led by a small U. */
 .eyebrow {
   display: flex; align-items: center; gap: .6em; margin: 0 0 1.1rem;
   font-size: var(--t-label); font-weight: 750; font-stretch: var(--wide); letter-spacing: .09em; text-transform: uppercase; line-height: 1.2;
 }
 .eyebrow::before { content: ''; flex: none; width: .95em; height: .95em; border: .22em solid currentColor; border-top: 0; border-radius: 0 0 99px 99px; }
-.eyebrow--plain::before { content: none; }
 .field-k .eyebrow { color: var(--yellow); }
 
 /* ---------- Buttons: always pills ---------- */
@@ -93,13 +89,24 @@ html:not(.js) [data-motion-toggle] { visibility: hidden; }
 .btn--line:hover { background: var(--black); color: var(--yellow); border-color: var(--black); }
 .field-k .btn--line { --sh: rgba(247,243,234,.3); }
 .field-k .btn--line:hover { background: var(--paper); color: var(--black); border-color: var(--paper); }
+/* A yellow card on a black field: its buttons and focus ring go back to black. */
+.field-k .on-y .btn:not(.btn--line) { --bg: var(--black); --fg: var(--yellow); --bd: var(--black); --sh: rgba(14, 14, 12, .9); }
+.field-k .on-y .btn--line:hover { background: var(--black); color: var(--yellow); border-color: var(--black); }
+.field-k .on-y :focus-visible { outline-color: var(--black); box-shadow: 0 0 0 3px var(--yellow); }
 .actions { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: 2rem; }
 /* Phones: buttons in a group are always full width, so nothing re-wraps when the font arrives. */
 @media (max-width: 559px) { .actions > .btn { flex: 1 1 100%; } }
+/* The smallest phones: long labels wrap and narrow instead of running off the card. */
+@media (max-width: 360px) { .btn { max-width: 100%; white-space: normal; text-align: center; font-stretch: 100%; padding-inline: 1.1em; line-height: 1.15; } }
 /* Text link with a travelling arrow. */
 .link { display: inline-flex; align-items: center; gap: .5em; font-weight: 800; font-stretch: 112%; font-size: .86rem; letter-spacing: .03em; text-transform: uppercase; text-decoration: none; padding-bottom: .25em; border-bottom: var(--line) solid currentColor; white-space: nowrap; }
 .link .i { transition: transform var(--t-flip) var(--spring); }
 .link:hover .i { transform: translateX(5px); }
+/* On touch screens a text link is a full 44px target; the underline stays just under its last line. */
+@media (max-width: 999px), (pointer: coarse) {
+  .link { position: relative; min-height: 44px; padding-block: .65em; border-bottom: 0; }
+  .link::after { content: ''; position: absolute; inset: auto 0 .55em; height: var(--line); background: currentColor; }
+}
 
 /* ---------- Stickers ---------- */
 /* Badges that look stuck on: keyline, hard shadow, a few degrees off true. */
@@ -127,7 +134,6 @@ html:not(.js) [data-motion-toggle] { visibility: hidden; }
 .win > img, .win > picture > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: grayscale(1) contrast(1.12); }
 .win--duo { background: var(--yellow); }
 .win--duo > img, .win--duo > picture > img { mix-blend-mode: multiply; filter: grayscale(1) contrast(1.25) brightness(1.08); }
-.win--line { border: var(--line) solid var(--black); }
 
 /* Rings: the mark's concentric Us at poster scale, drawn as borders around a window or a point.
    Put .rings inside a positioned box; each <i> is one ring, --n its order outward. */
@@ -170,7 +176,7 @@ html:not(.js) [data-motion-toggle] { visibility: hidden; }
 /* Ambient motion rests while it is off screen (.is-live comes and goes with the viewport). */
 .js .marquee:not(.is-live) .marquee__track, .js .seal:not(.is-live) .seal__spin, .js .hero__art:not(.is-live) .rings__ripple, .js .dmap:not(.is-live) .lane { animation-play-state: paused; }
 /* The pause control stops everything that moves on its own. */
-html[data-motion="off"] .marquee__track, html[data-motion="off"] .seal__spin, html[data-motion="off"] .rings__ripple, html[data-motion="off"] .dmap__ping { animation-play-state: paused !important; }
+html[data-motion="off"] .marquee__track, html[data-motion="off"] .seal__spin, html[data-motion="off"] .rings__ripple, html[data-motion="off"] .dmap__town.is-on::after, html[data-motion="off"] .lane { animation-play-state: paused !important; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; scroll-behavior: auto !important; }
   [data-motion-toggle] { display: none !important; }

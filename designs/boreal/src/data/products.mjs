@@ -1,6 +1,6 @@
 // Product categories. The item lists are the lines uresco.com says Uresco carries;
 // the one-line notes describe what each product is, not specific stock or sizes.
-// Availability varies by yard, so pages tell people to call rather than promise.
+// Pages send questions of size, grade and availability to the yard rather than promise anything.
 // literature: manufacturer pages for spec sheets and installation guides (opened in a new tab).
 
 export const CATEGORIES = [
@@ -9,8 +9,8 @@ export const CATEGORIES = [
     name: 'Framing Lumber & Timbers',
     short: 'Framing & Timbers',
     photo: 'lumber-stack',
-    lede: 'Dimensional lumber and timbers for framing, in the grades and treatments a project calls for.',
-    body: 'Framing packages are the core of what we ship, from a single load for a Kent job site to a full house package crated for a barge. Tell us the plan and we will build the list.',
+    lede: 'Dimensional lumber and timbers for framing, including pressure-treated and fire-retardant-treated.',
+    body: 'From a single load for a job site near Kent to a full house package crated for a barge. Tell us the plan and we will help build the list.',
     items: [
       ['Dimensional lumber', 'Studs, joists and rafters for wall, floor and roof framing.'],
       ['Timbers', 'Heavy sawn sections for posts, beams and exposed structure.'],
@@ -39,7 +39,7 @@ export const CATEGORIES = [
     name: 'Engineered Wood & Trusses',
     short: 'Engineered Wood',
     photo: 'framing-joists',
-    lede: 'Long spans, straight members and floor systems that go in fast.',
+    lede: 'Long spans, straight members and complete floor systems.',
     body: 'I-joist floor systems, glulam, LVL and PSL beams, and truss packages, quoted from your plans so the members match the design.',
     items: [
       ['I-joist floor systems', 'Light, straight joists for long, quiet floor spans.'],
@@ -100,7 +100,7 @@ export const CATEGORIES = [
     name: 'Insulation & Drywall',
     short: 'Insulation & Drywall',
     photo: 'insulation',
-    lede: 'Envelope and interior materials, including cold-climate insulation.',
+    lede: 'Insulation for the envelope and drywall for the interior.',
     body: 'Rigid foam and batt insulation for walls, roofs and foundations, and drywall for the interior.',
     items: [
       ['Rigid foam insulation (XPS & EPS)', 'Continuous insulation for foundations, slabs, walls and roofs.'],
@@ -115,7 +115,7 @@ export const CATEGORIES = [
     short: 'Windows, Doors & Cabinets',
     photo: 'windows',
     lede: 'Openings and casework, packaged with the rest of the job.',
-    body: 'Windows and doors, and custom cabinets, quoted alongside the framing and envelope so the whole project ships together.',
+    body: 'Windows and doors, and custom cabinets, quoted alongside the framing and envelope.',
     items: [
       ['Windows', 'Residential and light-commercial windows.'],
       ['Doors', 'Exterior and interior doors.'],
@@ -129,7 +129,7 @@ export const CATEGORIES = [
     short: 'Hardware & Supplies',
     photo: 'hardware',
     lede: 'The connectors, fasteners and consumables that finish a load.',
-    body: 'Simpson Strong-Tie connectors, fasteners, and the tarps, poly, caulking and adhesives a crew goes through every week.',
+    body: 'Simpson Strong-Tie connectors, fasteners, and the tarps, poly, caulking and adhesives that finish a load.',
     items: [
       ['Simpson Strong-Tie® hardware', 'Hangers, ties, holdowns and structural connectors.'],
       ['Fasteners', 'Nails, screws and anchors.'],

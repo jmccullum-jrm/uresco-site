@@ -8,8 +8,8 @@ import { join, dirname, resolve } from 'path';
 import { fileURLToPath, pathToFileURL } from 'url';
 import { createHash } from 'crypto';
 import { SITE } from './src/config.mjs';
-import { markSvg, ringsSvg } from './src/lib/icons.mjs';
-import { mapSvg } from './src/lib/components.mjs';
+import { markSvg } from './src/lib/icons.mjs';
+import { plateSvg } from './src/lib/components.mjs';
 
 const ROOT = dirname(fileURLToPath(import.meta.url));
 // OUT=<dir> builds somewhere else, so several builds can run side by side without clobbering docs/.
@@ -20,11 +20,9 @@ const SRC = join(ROOT, 'src');
 //   src/assets/css/*.css, then src/assets/css/pages/*.css   → assets/css/site.css
 //   src/assets/js/*.js,   then src/assets/js/modules/*.js   → assets/js/site.js
 // Files are joined in name order, so a numeric prefix (00-tokens.css) sets the cascade.
-// SKIP_CSS=<file>[,<file>] leaves stylesheets out: used to check that a rebuilt page no longer leans on placeholder rules.
-const SKIP = (process.env.SKIP_CSS || '').split(',').filter(Boolean);
 const bundle = (dir, ext, sub) => [dir, join(dir, sub)]
   .filter(existsSync)
-  .flatMap((d) => readdirSync(d).filter((f) => f.endsWith(ext) && !SKIP.includes(f)).sort().map((f) => join(d, f)))
+  .flatMap((d) => readdirSync(d).filter((f) => f.endsWith(ext)).sort().map((f) => join(d, f)))
   .map((f) => readFileSync(f, 'utf8')).join('\n');
 const CSS = bundle(join(SRC, 'assets/css'), '.css', 'pages');
 const JS = bundle(join(SRC, 'assets/js'), '.js', 'modules');
@@ -47,8 +45,7 @@ const makeCtx = (path) => {
 rmSync(OUT, { recursive: true, force: true });
 mkdirSync(OUT, { recursive: true });
 cpSync(join(SRC, 'assets'), join(OUT, 'assets'), { recursive: true });
-writeFileSync(join(OUT, 'assets', 'map.svg'), mapSvg());
-writeFileSync(join(OUT, 'assets', 'rings.svg'), ringsSvg());
+writeFileSync(join(OUT, 'assets', 'map.svg'), plateSvg());
 // Light minification of the shipped CSS and JS (sources stay readable in src/).
 const minCss = (css) => css.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\s+/g, ' ').replace(/\s*([{};,>])\s*/g, '$1').replace(/;}/g, '}').trim();
 const minJs = (js) => js.split('\n').map((l) => l.trim()).filter((l) => l && !l.startsWith('//')).join('\n');

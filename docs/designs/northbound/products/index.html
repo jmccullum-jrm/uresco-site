@@ -23,8 +23,8 @@
 <link rel="preload" href="../assets/fonts/fraunces-var.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="../assets/fonts/fraunces-italic-var.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" as="image" imagesrcset="../assets/img/pine-racking-p-480.webp 480w, ../assets/img/pine-racking-p-640.webp 640w, ../assets/img/pine-racking-p-800.webp 800w, ../assets/img/pine-racking-p-960.webp 960w, ../assets/img/pine-racking-p-1200.webp 1200w" imagesizes="100vw" media="(max-aspect-ratio: 1/1)" fetchpriority="high"><link rel="preload" as="image" imagesrcset="../assets/img/pine-racking-240.webp 240w, ../assets/img/pine-racking-640.webp 640w, ../assets/img/pine-racking-960.webp 960w, ../assets/img/pine-racking-1280.webp 1280w, ../assets/img/pine-racking-1920.webp 1920w, ../assets/img/pine-racking-2400.webp 2400w" imagesizes="max(100vw, calc(1.71 * clamp(16rem, 58vw, 40rem)))" media="(min-aspect-ratio: 1001/1000)" fetchpriority="high">
-<link rel="stylesheet" href="../assets/css/site.css?v=45383785">
-<script src="../assets/js/site.js?v=45383785" defer></script>
+<link rel="stylesheet" href="../assets/css/site.css?v=0948b281">
+<script src="../assets/js/site.js?v=0948b281" defer></script>
 
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.uresco.com/"},{"@type":"ListItem","position":2,"name":"Products","item":"https://www.uresco.com/products/"}]}</script>
 </head>
@@ -36,8 +36,7 @@
       <li><span class="dateline__lat">47.4°N</span><span class="dateline__city">Kent</span><a href="tel:+12533951211">(253) 395-1211</a><span class="status" data-hours="{&quot;tz&quot;:&quot;America/Los_Angeles&quot;,&quot;week&quot;:[null,[420,990],[420,990],[420,990],[420,990],[420,990],null]}" data-short hidden></span></li><li><span class="dateline__lat">61.2°N</span><span class="dateline__city">Anchorage</span><a href="tel:+19075632500">(907) 563-2500</a><span class="status" data-hours="{&quot;tz&quot;:&quot;America/Anchorage&quot;,&quot;week&quot;:[null,[420,990],[420,990],[420,990],[420,990],[420,990],null]}" data-short hidden></span></li><li><span class="dateline__lat">64.8°N</span><span class="dateline__city">Fairbanks</span><a href="tel:+19074561550">(907) 456-1550</a><span class="status" data-hours="{&quot;tz&quot;:&quot;America/Anchorage&quot;,&quot;week&quot;:[null,[420,990],[420,990],[420,990],[420,990],[420,990],null]}" data-short hidden></span></li>
     </ul>
     <div class="dateline__links">
-      <a href="../accounts/">Contractor accounts</a>
-      <a href="mailto:sales@uresco.com">sales@uresco.com</a>
+      <a href="../accounts/">Open an account</a>
     </div>
   </div>
   <header class="masthead" data-masthead>
@@ -103,7 +102,7 @@
           </li><li class="nav__item">
             <a class="nav__link" href="../services/">Services</a>
           </li><li class="nav__item">
-            <a class="nav__link" href="../alaska/">Alaska Delivery</a>
+            <a class="nav__link" href="../alaska/">Alaska delivery</a>
           </li><li class="nav__item">
             <a class="nav__link" href="../projects/">Projects</a>
           </li><li class="nav__item">
@@ -113,13 +112,12 @@
           </li>
         </ul>
       </nav>
-      
       <div class="masthead__acts">
-        <button type="button" class="btn btn--sm btn--line masthead__call" data-open="call-sheet" aria-haspopup="dialog"><svg class="i " width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 3.5h3.2l1.6 4.2-2.1 1.4a11 11 0 0 0 5.2 5.2l1.4-2.1 4.2 1.6V17a2 2 0 0 1-2 2A15.5 15.5 0 0 1 3 5.5a2 2 0 0 1 2-2Z"/></svg>Call a yard</button>
-        <a class="btn btn--sm masthead__cta" href="../quote/">Request a quote</a>
-        <button class="masthead__menu" type="button" data-open="drawer" aria-haspopup="dialog" aria-controls="drawer">
+        <a class="btn btn--sm masthead__call" href="../locations/" data-open="call-sheet" aria-haspopup="dialog"><svg class="i " width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 3.5h3.2l1.6 4.2-2.1 1.4a11 11 0 0 0 5.2 5.2l1.4-2.1 4.2 1.6V17a2 2 0 0 1-2 2A15.5 15.5 0 0 1 3 5.5a2 2 0 0 1 2-2Z"/></svg><span>Call<span class="masthead__more"> a yard</span></span></a>
+        <a class="btn btn--sm masthead__cta" href="../quote/"><span class="masthead__cta-long">Request a quote</span><span class="masthead__cta-short">Quote</span></a>
+        <a class="masthead__menu" href="#footer-index" data-open="drawer" aria-haspopup="dialog" aria-controls="drawer">
           <span>Menu</span><svg class="i " width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
-        </button>
+        </a>
       </div>
     </div>
     
@@ -135,16 +133,25 @@
     </div>
     <nav class="drawer__body" aria-label="Mobile">
       <ol class="drawer__nav">
-        <li><a href="../products/" aria-current="page"><span class="drawer__no">01</span>Products</a></li><li><a href="../services/"><span class="drawer__no">02</span>Services</a></li><li><a href="../alaska/"><span class="drawer__no">03</span>Alaska Delivery</a></li><li><a href="../projects/"><span class="drawer__no">04</span>Projects</a></li><li><a href="../locations/"><span class="drawer__no">05</span>Locations</a></li><li><a href="../about/"><span class="drawer__no">06</span>About</a></li>
+        
+  <li><details class="drawer__more" open>
+    <summary><span class="drawer__no">01</span>Products<svg class="i drawer__caret" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg></summary>
+    <ol class="drawer__lines">
+      <li><a class="drawer__all" href="../products/" aria-current="page">All products <svg class="i " width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 12h15m-6-6 6 6-6 6"/></svg></a></li>
+      <li><a href="../products/framing-lumber/"><span class="drawer__no">01</span>Framing &amp; Timbers</a></li><li><a href="../products/panels-sheathing/"><span class="drawer__no">02</span>Panels &amp; Sheathing</a></li><li><a href="../products/engineered-wood/"><span class="drawer__no">03</span>Engineered Wood</a></li><li><a href="../products/concrete-forming/"><span class="drawer__no">04</span>Forming Panels</a></li><li><a href="../products/cedar-decking/"><span class="drawer__no">05</span>Cedar &amp; Decking</a></li><li><a href="../products/siding-exterior/"><span class="drawer__no">06</span>Siding &amp; Exterior</a></li><li><a href="../products/insulation-drywall/"><span class="drawer__no">07</span>Insulation &amp; Drywall</a></li><li><a href="../products/windows-doors-cabinets/"><span class="drawer__no">08</span>Windows, Doors &amp; Cabinets</a></li><li><a href="../products/hardware-supplies/"><span class="drawer__no">09</span>Hardware &amp; Supplies</a></li>
+    </ol>
+  </details></li><li><a href="../services/"><span class="drawer__no">02</span>Services</a></li><li><a href="../alaska/"><span class="drawer__no">03</span>Alaska delivery</a></li><li><a href="../projects/"><span class="drawer__no">04</span>Projects</a></li><li><a href="../locations/"><span class="drawer__no">05</span>Locations</a></li><li><a href="../about/"><span class="drawer__no">06</span>About</a></li>
       </ol>
       <ul class="drawer__minor">
-        <li><a href="../accounts/">Contractor accounts</a></li>
         <li><a href="../pacific-northwest/">Pacific Northwest</a></li>
         <li><a href="mailto:sales@uresco.com">sales@uresco.com</a></li>
       </ul>
     </nav>
     <div class="drawer__foot">
-      <a class="btn btn--block" href="../quote/">Request a quote <svg class="i " width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 12h15m-6-6 6 6-6 6"/></svg></a>
+      <div class="drawer__cta">
+        <a class="btn" href="../quote/">Request a quote</a>
+        <a class="btn btn--line" href="../accounts/">Open an account</a>
+      </div>
       <ul class="drawer__yards">
         <li><a href="tel:+12533951211"><span class="drawer__lat">47.4°N</span><b>Kent</b><span class="drawer__num">(253) 395-1211</span></a></li><li><a href="tel:+19075632500"><span class="drawer__lat">61.2°N</span><b>Anchorage</b><span class="drawer__num">(907) 563-2500</span></a></li><li><a href="tel:+19074561550"><span class="drawer__lat">64.8°N</span><b>Fairbanks</b><span class="drawer__num">(907) 456-1550</span></a></li>
       </ul>
@@ -156,127 +163,281 @@
 
   <section class="phero">
     <div class="wrap phero__inner">
+      <nav class="crumbs" aria-label="Breadcrumb"><ol>
+        <li><a href="../">Home</a></li>
+        <li><span aria-current="page">Products</span></li>
+      </ol></nav>
+      <p class="label phero__eyebrow">Products · Nine lines · Three yards</p>
+      <h1 class="display phero__title">Everything <em>on the list.</em></h1>
       
-      <p class="label phero__eyebrow">Wholesale building materials</p>
-      <h1 class="display phero__title">Quality materials to <em>get the job built.</em></h1>
       <div class="phero__row">
-        <p class="lede phero__lede">Our distribution centers carry a full range of products for the commercial and residential builder. Here’s what we stock, line by line.</p>
-        <div class="actions"><a class="btn" href="../quote/">Request a quote <svg class="i " width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 12h15m-6-6 6 6-6 6"/></svg></a></div>
+        <p class="lede phero__lede">A wholesale dealer’s full line, from framing packages to the last box of fasteners. Find the line below, then ask your yard what is on the ground today.</p>
+        <div class="actions"><a class="btn" href="../quote/">Request a quote <svg class="i " width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 12h15m-6-6 6 6-6 6"/></svg></a><a class="btn btn--line" href="../locations/" data-open="call-sheet" aria-haspopup="dialog"><svg class="i " width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 3.5h3.2l1.6 4.2-2.1 1.4a11 11 0 0 0 5.2 5.2l1.4-2.1 4.2 1.6V17a2 2 0 0 1-2 2A15.5 15.5 0 0 1 3 5.5a2 2 0 0 1 2-2Z"/></svg> Call a yard</a></div>
       </div>
     </div>
     <figure class="phero__media">
       <div class="phero__frame" data-parallax><picture><source media="(max-aspect-ratio: 1/1)" srcset="../assets/img/pine-racking-p-480.webp 480w, ../assets/img/pine-racking-p-640.webp 640w, ../assets/img/pine-racking-p-800.webp 800w, ../assets/img/pine-racking-p-960.webp 960w, ../assets/img/pine-racking-p-1200.webp 1200w" sizes="100vw" width="1200" height="1600"><img class="" src="../assets/img/pine-racking-1280.webp" srcset="../assets/img/pine-racking-240.webp 240w, ../assets/img/pine-racking-640.webp 640w, ../assets/img/pine-racking-960.webp 960w, ../assets/img/pine-racking-1280.webp 1280w, ../assets/img/pine-racking-1920.webp 1920w, ../assets/img/pine-racking-2400.webp 2400w" sizes="max(100vw, calc(1.71 * clamp(16rem, 58vw, 40rem)))" width="2400" height="1600" alt="Bundles of lumber on cantilever racking in a warehouse" fetchpriority="high" decoding="async" style="object-position:60% 50%;background-color:#6f5136"></picture></div>
-      
+      <figcaption class="fig__cap wrap"><span>Bundled lumber on cantilever racking. <small class="fig__credit">Photo: PJ Wallace / Unsplash</small></span></figcaption>
     </figure>
+    
   </section>
-<nav class="jump" aria-label="Jump to a product line">
-  <div class="wrap jump__row">
-    <a href="#framing-lumber">Framing &amp; Timbers</a><a href="#panels-sheathing">Panels &amp; Sheathing</a><a href="#engineered-wood">Engineered Wood</a><a href="#concrete-forming">Forming Panels</a><a href="#cedar-decking">Cedar &amp; Decking</a><a href="#siding-exterior">Siding &amp; Exterior</a><a href="#insulation-drywall">Insulation &amp; Drywall</a><a href="#windows-doors-cabinets">Windows, Doors &amp; Cabinets</a><a href="#hardware-supplies">Hardware &amp; Supplies</a>
-  </div>
-</nav>
-<section class="section">
+
+<section class="section prod-lines" id="lines" aria-labelledby="lines-title">
   <div class="wrap">
-    <div class="catalog">
-      
-        <article class="catalog__row reveal" id="framing-lumber">
-          <a class="catalog__media" href="../products/framing-lumber/" tabindex="-1" aria-hidden="true"><img class="" src="../assets/img/lumber-stack-1280.webp" srcset="../assets/img/lumber-stack-240.webp 240w, ../assets/img/lumber-stack-640.webp 640w, ../assets/img/lumber-stack-960.webp 960w, ../assets/img/lumber-stack-1280.webp 1280w, ../assets/img/lumber-stack-1920.webp 1920w, ../assets/img/lumber-stack-2400.webp 2400w" sizes="(min-width: 980px) 300px, (min-width: 640px) 220px, 100vw" width="2400" height="1602" alt="" loading="lazy" decoding="async" style="background-color:#7c6854"></a>
-          <div>
-            <h2><a href="../products/framing-lumber/">Framing Lumber &amp; Timbers</a></h2>
-            <p>Dimensional lumber and timbers for framing, in the grades and treatments a project calls for.</p>
-            <ul class="catalog__items"><li>Dimensional lumber</li><li>Timbers</li><li>Pressure-treated lumber</li><li>Fire-retardant-treated lumber</li></ul>
-          </div>
-          <a class="btn btn--sm btn--line" href="../products/framing-lumber/">Details <svg class="i " width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 12h15m-6-6 6 6-6 6"/></svg></a>
-        </article>
-        <article class="catalog__row reveal" id="panels-sheathing">
-          <a class="catalog__media" href="../products/panels-sheathing/" tabindex="-1" aria-hidden="true"><img class="" src="../assets/img/plywood-1280.webp" srcset="../assets/img/plywood-240.webp 240w, ../assets/img/plywood-640.webp 640w, ../assets/img/plywood-960.webp 960w, ../assets/img/plywood-1280.webp 1280w, ../assets/img/plywood-1920.webp 1920w" sizes="(min-width: 980px) 300px, (min-width: 640px) 220px, 100vw" width="1920" height="2880" alt="" loading="lazy" decoding="async" style="object-position:50% 40%;background-color:#867d70"></a>
-          <div>
-            <h2><a href="../products/panels-sheathing/">Plywood, OSB &amp; Sheathing</a></h2>
-            <p>Structural panels for floors, walls and roofs, plus exterior gypsum sheathing.</p>
-            <ul class="catalog__items"><li>Plywood</li><li>Oriented strand board (OSB)</li><li>DensGlass® Gold sheathing</li></ul>
-          </div>
-          <a class="btn btn--sm btn--line" href="../products/panels-sheathing/">Details <svg class="i " width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 12h15m-6-6 6 6-6 6"/></svg></a>
-        </article>
-        <article class="catalog__row reveal" id="engineered-wood">
-          <a class="catalog__media" href="../products/engineered-wood/" tabindex="-1" aria-hidden="true"><img class="" src="../assets/img/framing-joists-1280.webp" srcset="../assets/img/framing-joists-240.webp 240w, ../assets/img/framing-joists-640.webp 640w, ../assets/img/framing-joists-960.webp 960w, ../assets/img/framing-joists-1280.webp 1280w, ../assets/img/framing-joists-1920.webp 1920w" sizes="(min-width: 980px) 300px, (min-width: 640px) 220px, 100vw" width="1920" height="1280" alt="" loading="lazy" decoding="async" style="background-color:#757371"></a>
-          <div>
-            <h2><a href="../products/engineered-wood/">Engineered Wood &amp; Trusses</a></h2>
-            <p>Long spans, straight members and floor systems that go in fast.</p>
-            <ul class="catalog__items"><li>I-joist floor systems</li><li>Glulam beams (GLB)</li><li>Laminated veneer lumber (LVL)</li><li>Parallam® PSL beams</li><li>Truss packages</li></ul>
-          </div>
-          <a class="btn btn--sm btn--line" href="../products/engineered-wood/">Details <svg class="i " width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 12h15m-6-6 6 6-6 6"/></svg></a>
-        </article>
-        <article class="catalog__row reveal" id="concrete-forming">
-          <a class="catalog__media" href="../products/concrete-forming/" tabindex="-1" aria-hidden="true"><img class="" src="../assets/img/concrete-forms-1280.webp" srcset="../assets/img/concrete-forms-240.webp 240w, ../assets/img/concrete-forms-640.webp 640w, ../assets/img/concrete-forms-960.webp 960w, ../assets/img/concrete-forms-1280.webp 1280w, ../assets/img/concrete-forms-1920.webp 1920w" sizes="(min-width: 980px) 300px, (min-width: 640px) 220px, 100vw" width="1920" height="1280" alt="" loading="lazy" decoding="async" style="object-position:60% 40%;background-color:#b6b1a4"></a>
-          <div>
-            <h2><a href="../products/concrete-forming/">Concrete Forming Panels</a></h2>
-            <p>Overlaid plywood built to come off the pour clean and go back up again.</p>
-            <ul class="catalog__items"><li>MDO plywood</li><li>HDO plywood</li></ul>
-          </div>
-          <a class="btn btn--sm btn--line" href="../products/concrete-forming/">Details <svg class="i " width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 12h15m-6-6 6 6-6 6"/></svg></a>
-        </article>
-        <article class="catalog__row reveal" id="cedar-decking">
-          <a class="catalog__media" href="../products/cedar-decking/" tabindex="-1" aria-hidden="true"><img class="" src="../assets/img/cedar-1280.webp" srcset="../assets/img/cedar-240.webp 240w, ../assets/img/cedar-640.webp 640w, ../assets/img/cedar-960.webp 960w, ../assets/img/cedar-1280.webp 1280w, ../assets/img/cedar-1920.webp 1920w" sizes="(min-width: 980px) 300px, (min-width: 640px) 220px, 100vw" width="1920" height="1280" alt="" loading="lazy" decoding="async" style="object-position:65% 50%;background-color:#706251"></a>
-          <div>
-            <h2><a href="../products/cedar-decking/">Cedar, Decking &amp; Fencing</a></h2>
-            <p>Western red cedar and composite for siding, trim, decks and fences.</p>
-            <ul class="catalog__items"><li>Cedar siding &amp; trim</li><li>Cedar decking</li><li>Cedar fencing</li><li>Composite decking</li></ul>
-          </div>
-          <a class="btn btn--sm btn--line" href="../products/cedar-decking/">Details <svg class="i " width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 12h15m-6-6 6 6-6 6"/></svg></a>
-        </article>
-        <article class="catalog__row reveal" id="siding-exterior">
-          <a class="catalog__media" href="../products/siding-exterior/" tabindex="-1" aria-hidden="true"><img class="" src="../assets/img/siding-1280.webp" srcset="../assets/img/siding-240.webp 240w, ../assets/img/siding-640.webp 640w, ../assets/img/siding-960.webp 960w, ../assets/img/siding-1280.webp 1280w, ../assets/img/siding-1920.webp 1920w" sizes="(min-width: 980px) 300px, (min-width: 640px) 220px, 100vw" width="1920" height="1280" alt="" loading="lazy" decoding="async" style="object-position:70% 50%;background-color:#648283"></a>
-          <div>
-            <h2><a href="../products/siding-exterior/">Siding, Roofing &amp; Wraps</a></h2>
-            <p>Fiber-cement siding, roofing and the weather barrier behind it.</p>
-            <ul class="catalog__items"><li>James Hardie® fiber-cement siding</li><li>CertainTeed siding</li><li>Roofing</li><li>House wraps</li></ul>
-          </div>
-          <a class="btn btn--sm btn--line" href="../products/siding-exterior/">Details <svg class="i " width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 12h15m-6-6 6 6-6 6"/></svg></a>
-        </article>
-        <article class="catalog__row reveal" id="insulation-drywall">
-          <a class="catalog__media" href="../products/insulation-drywall/" tabindex="-1" aria-hidden="true"><img class="" src="../assets/img/insulation-1280.webp" srcset="../assets/img/insulation-240.webp 240w, ../assets/img/insulation-640.webp 640w, ../assets/img/insulation-960.webp 960w, ../assets/img/insulation-1280.webp 1280w, ../assets/img/insulation-1920.webp 1920w" sizes="(min-width: 980px) 300px, (min-width: 640px) 220px, 100vw" width="1920" height="1282" alt="" loading="lazy" decoding="async" style="object-position:40% 50%;background-color:#7c6364"></a>
-          <div>
-            <h2><a href="../products/insulation-drywall/">Insulation &amp; Drywall</a></h2>
-            <p>Envelope and interior materials, including cold-climate insulation.</p>
-            <ul class="catalog__items"><li>Rigid foam insulation (XPS &amp; EPS)</li><li>Fiberglass batt insulation</li><li>Drywall</li></ul>
-          </div>
-          <a class="btn btn--sm btn--line" href="../products/insulation-drywall/">Details <svg class="i " width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 12h15m-6-6 6 6-6 6"/></svg></a>
-        </article>
-        <article class="catalog__row reveal" id="windows-doors-cabinets">
-          <a class="catalog__media" href="../products/windows-doors-cabinets/" tabindex="-1" aria-hidden="true"><img class="" src="../assets/img/windows-1280.webp" srcset="../assets/img/windows-240.webp 240w, ../assets/img/windows-640.webp 640w, ../assets/img/windows-960.webp 960w, ../assets/img/windows-1280.webp 1280w, ../assets/img/windows-1920.webp 1920w" sizes="(min-width: 980px) 300px, (min-width: 640px) 220px, 100vw" width="1920" height="1291" alt="" loading="lazy" decoding="async" style="object-position:55% 60%;background-color:#656e79"></a>
-          <div>
-            <h2><a href="../products/windows-doors-cabinets/">Windows, Doors &amp; Cabinets</a></h2>
-            <p>Openings and casework, packaged with the rest of the job.</p>
-            <ul class="catalog__items"><li>Windows</li><li>Doors</li><li>Custom cabinets</li></ul>
-          </div>
-          <a class="btn btn--sm btn--line" href="../products/windows-doors-cabinets/">Details <svg class="i " width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 12h15m-6-6 6 6-6 6"/></svg></a>
-        </article>
-        <article class="catalog__row reveal" id="hardware-supplies">
-          <a class="catalog__media" href="../products/hardware-supplies/" tabindex="-1" aria-hidden="true"><img class="" src="../assets/img/hardware-1280.webp" srcset="../assets/img/hardware-240.webp 240w, ../assets/img/hardware-640.webp 640w, ../assets/img/hardware-960.webp 960w, ../assets/img/hardware-1280.webp 1280w, ../assets/img/hardware-1920.webp 1920w" sizes="(min-width: 980px) 300px, (min-width: 640px) 220px, 100vw" width="1920" height="1276" alt="" loading="lazy" decoding="async" style="object-position:50% 75%;background-color:#b8aa2f"></a>
-          <div>
-            <h2><a href="../products/hardware-supplies/">Hardware, Fasteners &amp; Jobsite Supplies</a></h2>
-            <p>The connectors, fasteners and consumables that finish a load.</p>
-            <ul class="catalog__items"><li>Simpson Strong-Tie® hardware</li><li>Fasteners</li><li>Tarps &amp; poly sheeting</li><li>Caulking &amp; adhesives</li></ul>
-          </div>
-          <a class="btn btn--sm btn--line" href="../products/hardware-supplies/">Details <svg class="i " width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 12h15m-6-6 6 6-6 6"/></svg></a>
-        </article>
+    
+  <header class="shead">
+    <p class="shead__bar rv-line"><span class="chead__no">01</span><span>The stock list</span></p>
+    <div class="shead__body">
+      <h2 class="h2 rv" id="lines-title">Nine lines, <em>one load.</em></h2>
+      <div class="shead__aside rv" style="--i:1">
+        <p class="lede">Every line opens to what is in it. For sizes, grades and what is on the ground today, call your yard.</p>
+        
+      </div>
     </div>
-    <p class="lede" style="margin-top:2.5rem">We also carry a large variety of other building materials for your construction projects — tarps, poly sheeting, caulking, adhesives, house wraps and more. If it’s not listed, ask.</p>
+  </header>
+    <div class="stock prod-ledger" data-prod-ledger>
+      
+  <div class="stock__view" aria-hidden="true">
+    <div class="stock__frame"><img class="is-on" src="../assets/img/lumber-stack-960.webp" srcset="../assets/img/lumber-stack-240.webp 240w, ../assets/img/lumber-stack-640.webp 640w, ../assets/img/lumber-stack-960.webp 960w, ../assets/img/lumber-stack-1280.webp 1280w" sizes="(min-width: 1440px) 430px, (min-width: 1000px) 30vw, 1px" width="2400" height="1602" alt="" loading="lazy" decoding="async"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../assets/img/plywood-960.webp" data-srcset="../assets/img/plywood-240.webp 240w, ../assets/img/plywood-640.webp 640w, ../assets/img/plywood-960.webp 960w, ../assets/img/plywood-1280.webp 1280w" sizes="(min-width: 1440px) 430px, (min-width: 1000px) 30vw, 1px" width="1920" height="2880" alt="" decoding="async" style="object-position:50% 40%"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../assets/img/framing-joists-960.webp" data-srcset="../assets/img/framing-joists-240.webp 240w, ../assets/img/framing-joists-640.webp 640w, ../assets/img/framing-joists-960.webp 960w, ../assets/img/framing-joists-1280.webp 1280w" sizes="(min-width: 1440px) 430px, (min-width: 1000px) 30vw, 1px" width="1920" height="1280" alt="" decoding="async"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../assets/img/concrete-forms-960.webp" data-srcset="../assets/img/concrete-forms-240.webp 240w, ../assets/img/concrete-forms-640.webp 640w, ../assets/img/concrete-forms-960.webp 960w, ../assets/img/concrete-forms-1280.webp 1280w" sizes="(min-width: 1440px) 430px, (min-width: 1000px) 30vw, 1px" width="1920" height="1280" alt="" decoding="async" style="object-position:60% 40%"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../assets/img/cedar-960.webp" data-srcset="../assets/img/cedar-240.webp 240w, ../assets/img/cedar-640.webp 640w, ../assets/img/cedar-960.webp 960w, ../assets/img/cedar-1280.webp 1280w" sizes="(min-width: 1440px) 430px, (min-width: 1000px) 30vw, 1px" width="1920" height="1280" alt="" decoding="async" style="object-position:65% 50%"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../assets/img/siding-960.webp" data-srcset="../assets/img/siding-240.webp 240w, ../assets/img/siding-640.webp 640w, ../assets/img/siding-960.webp 960w, ../assets/img/siding-1280.webp 1280w" sizes="(min-width: 1440px) 430px, (min-width: 1000px) 30vw, 1px" width="1920" height="1280" alt="" decoding="async" style="object-position:70% 50%"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../assets/img/insulation-960.webp" data-srcset="../assets/img/insulation-240.webp 240w, ../assets/img/insulation-640.webp 640w, ../assets/img/insulation-960.webp 960w, ../assets/img/insulation-1280.webp 1280w" sizes="(min-width: 1440px) 430px, (min-width: 1000px) 30vw, 1px" width="1920" height="1282" alt="" decoding="async" style="object-position:40% 50%"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../assets/img/windows-960.webp" data-srcset="../assets/img/windows-240.webp 240w, ../assets/img/windows-640.webp 640w, ../assets/img/windows-960.webp 960w, ../assets/img/windows-1280.webp 1280w" sizes="(min-width: 1440px) 430px, (min-width: 1000px) 30vw, 1px" width="1920" height="1291" alt="" decoding="async" style="object-position:55% 60%"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../assets/img/hardware-960.webp" data-srcset="../assets/img/hardware-240.webp 240w, ../assets/img/hardware-640.webp 640w, ../assets/img/hardware-960.webp 960w, ../assets/img/hardware-1280.webp 1280w" sizes="(min-width: 1440px) 430px, (min-width: 1000px) 30vw, 1px" width="1920" height="1276" alt="" decoding="async" style="object-position:50% 75%"></div>
+    <p class="fig__cap"><span data-prod-cap>01 · Framing Lumber &amp; Timbers</span></p>
+  </div>
+      <div class="prod-ledger__body">
+        <div class="prod-find">
+          <label class="label prod-find__label" for="prod-q">Find a product</label>
+          <div class="prod-find__field">
+            <svg class="i " width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></svg>
+            <input class="prod-find__input" id="prod-q" type="search" placeholder="LVL, Hardie, OSB…" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="search" aria-controls="prod-list" aria-describedby="prod-count" data-prod-q>
+            <button type="button" class="prod-find__clear" data-prod-clear hidden>Clear</button>
+          </div>
+          <p class="prod-find__count" id="prod-count" role="status" data-prod-count>9 lines</p>
+        </div>
+        <ol class="prod-ledger__list" id="prod-list">
+          <li class="prod-row is-on" id="framing-lumber" data-terms="framing lumber timbers framing timbers dimensional lumber and timbers for framing in the grades and treatments a project calls for dimensional lumber studs joists and rafters for wall floor and roof framing timbers heavy sawn sections for posts beams and exposed structure pressure treated lumber treated for ground contact sill plates decks and wet exposures fire retardant treated lumber for assemblies where code calls for frt framing or sheathing frt lumber treated lumber" data-cap="01 · Framing Lumber &amp; Timbers">
+            <img class="stock__thumb" src="../assets/img/lumber-stack-240.webp" width="60" height="60" alt="" loading="lazy" decoding="async">
+            <div class="prod-row__main">
+              <h3 class="prod-row__name"><a href="../products/framing-lumber/"><span class="prod-row__no">01</span>Framing Lumber &amp; Timbers</a></h3>
+              <p class="prod-row__lede">Dimensional lumber and timbers for framing, in the grades and treatments a project calls for.</p>
+            </div>
+            <ul class="prod-row__items"><li data-t="dimensional lumber studs joists and rafters for wall floor and roof framing">Dimensional lumber</li><li data-t="timbers heavy sawn sections for posts beams and exposed structure">Timbers</li><li data-t="pressure treated lumber treated for ground contact sill plates decks and wet exposures">Pressure-treated lumber</li><li data-t="fire retardant treated lumber for assemblies where code calls for frt framing or sheathing">Fire-retardant-treated lumber</li></ul>
+            <a class="prod-row__quote" href="../quote/?product=Framing%20Lumber%20%26%20Timbers">Add to a quote<span class="sr-only">: Framing Lumber &amp; Timbers</span></a>
+            <svg class="i stock__go" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 12h15m-6-6 6 6-6 6"/></svg>
+          </li><li class="prod-row" id="panels-sheathing" data-terms="plywood osb sheathing panels sheathing structural panels for floors walls and roofs plus exterior gypsum sheathing plywood structural and sheathing grades for floors walls and roofs oriented strand board osb economical structural sheathing and subfloor panels densglass gold sheathing fiberglass mat gypsum exterior sheathing by georgia pacific georgia pacific osb" data-cap="02 · Plywood, OSB &amp; Sheathing">
+            <img class="stock__thumb" src="../assets/img/plywood-240.webp" width="60" height="60" alt="" loading="lazy" decoding="async">
+            <div class="prod-row__main">
+              <h3 class="prod-row__name"><a href="../products/panels-sheathing/"><span class="prod-row__no">02</span>Plywood, OSB &amp; Sheathing</a></h3>
+              <p class="prod-row__lede">Structural panels for floors, walls and roofs, plus exterior gypsum sheathing.</p>
+            </div>
+            <ul class="prod-row__items"><li data-t="plywood structural and sheathing grades for floors walls and roofs">Plywood</li><li data-t="oriented strand board osb economical structural sheathing and subfloor panels">Oriented strand board (OSB)</li><li data-t="densglass gold sheathing fiberglass mat gypsum exterior sheathing by georgia pacific">DensGlass® Gold sheathing</li></ul>
+            <a class="prod-row__quote" href="../quote/?product=Plywood%2C%20OSB%20%26%20Sheathing">Add to a quote<span class="sr-only">: Plywood, OSB &amp; Sheathing</span></a>
+            <svg class="i stock__go" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 12h15m-6-6 6 6-6 6"/></svg>
+          </li><li class="prod-row" id="engineered-wood" data-terms="engineered wood trusses engineered wood long spans straight members and floor systems that go in fast i joist floor systems light straight joists for long quiet floor spans glulam beams glb glued laminated beams for headers ridges and exposed spans laminated veneer lumber lvl high strength headers beams and rim board parallam psl beams parallel strand lumber for heavy loads and columns truss packages roof and floor trusses engineered to your plans parallam glb lvl psl" data-cap="03 · Engineered Wood &amp; Trusses">
+            <img class="stock__thumb" src="../assets/img/framing-joists-240.webp" width="60" height="60" alt="" loading="lazy" decoding="async">
+            <div class="prod-row__main">
+              <h3 class="prod-row__name"><a href="../products/engineered-wood/"><span class="prod-row__no">03</span>Engineered Wood &amp; Trusses</a></h3>
+              <p class="prod-row__lede">Long spans, straight members and floor systems that go in fast.</p>
+            </div>
+            <ul class="prod-row__items"><li data-t="i joist floor systems light straight joists for long quiet floor spans">I-joist floor systems</li><li data-t="glulam beams glb glued laminated beams for headers ridges and exposed spans">Glulam beams (GLB)</li><li data-t="laminated veneer lumber lvl high strength headers beams and rim board">Laminated veneer lumber (LVL)</li><li data-t="parallam psl beams parallel strand lumber for heavy loads and columns">Parallam® PSL beams</li><li data-t="truss packages roof and floor trusses engineered to your plans">Truss packages</li></ul>
+            <a class="prod-row__quote" href="../quote/?product=Engineered%20Wood%20%26%20Trusses">Add to a quote<span class="sr-only">: Engineered Wood &amp; Trusses</span></a>
+            <svg class="i stock__go" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 12h15m-6-6 6 6-6 6"/></svg>
+          </li><li class="prod-row" id="concrete-forming" data-terms="concrete forming panels forming panels overlaid plywood built to come off the pour clean and go back up again mdo plywood medium density overlay for forming signs and paint grade work hdo plywood high density overlay for smooth finishes and many reuses" data-cap="04 · Concrete Forming Panels">
+            <img class="stock__thumb" src="../assets/img/concrete-forms-240.webp" width="60" height="60" alt="" loading="lazy" decoding="async">
+            <div class="prod-row__main">
+              <h3 class="prod-row__name"><a href="../products/concrete-forming/"><span class="prod-row__no">04</span>Concrete Forming Panels</a></h3>
+              <p class="prod-row__lede">Overlaid plywood built to come off the pour clean and go back up again.</p>
+            </div>
+            <ul class="prod-row__items"><li data-t="mdo plywood medium density overlay for forming signs and paint grade work">MDO plywood</li><li data-t="hdo plywood high density overlay for smooth finishes and many reuses">HDO plywood</li></ul>
+            <a class="prod-row__quote" href="../quote/?product=Concrete%20Forming%20Panels">Add to a quote<span class="sr-only">: Concrete Forming Panels</span></a>
+            <svg class="i stock__go" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 12h15m-6-6 6 6-6 6"/></svg>
+          </li><li class="prod-row" id="cedar-decking" data-terms="cedar decking fencing cedar decking western red cedar and composite for siding trim decks and fences cedar siding trim bevel channel and board profiles with matching trim cedar decking naturally durable decking boards cedar fencing pickets rails and posts composite decking low maintenance boards for decks and stairs decking fencing" data-cap="05 · Cedar, Decking &amp; Fencing">
+            <img class="stock__thumb" src="../assets/img/cedar-240.webp" width="60" height="60" alt="" loading="lazy" decoding="async">
+            <div class="prod-row__main">
+              <h3 class="prod-row__name"><a href="../products/cedar-decking/"><span class="prod-row__no">05</span>Cedar, Decking &amp; Fencing</a></h3>
+              <p class="prod-row__lede">Western red cedar and composite for siding, trim, decks and fences.</p>
+            </div>
+            <ul class="prod-row__items"><li data-t="cedar siding trim bevel channel and board profiles with matching trim">Cedar siding &amp; trim</li><li data-t="cedar decking naturally durable decking boards">Cedar decking</li><li data-t="cedar fencing pickets rails and posts">Cedar fencing</li><li data-t="composite decking low maintenance boards for decks and stairs">Composite decking</li></ul>
+            <a class="prod-row__quote" href="../quote/?product=Cedar%2C%20Decking%20%26%20Fencing">Add to a quote<span class="sr-only">: Cedar, Decking &amp; Fencing</span></a>
+            <svg class="i stock__go" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 12h15m-6-6 6 6-6 6"/></svg>
+          </li><li class="prod-row" id="siding-exterior" data-terms="siding roofing wraps siding exterior fiber cement siding roofing and the weather barrier behind it james hardie fiber cement siding lap panel and trim products certainteed siding siding and trim systems roofing roofing materials and underlayment house wraps weather resistive barriers for walls james hardie certainteed fiber cement siding" data-cap="06 · Siding, Roofing &amp; Wraps">
+            <img class="stock__thumb" src="../assets/img/siding-240.webp" width="60" height="60" alt="" loading="lazy" decoding="async">
+            <div class="prod-row__main">
+              <h3 class="prod-row__name"><a href="../products/siding-exterior/"><span class="prod-row__no">06</span>Siding, Roofing &amp; Wraps</a></h3>
+              <p class="prod-row__lede">Fiber-cement siding, roofing and the weather barrier behind it.</p>
+            </div>
+            <ul class="prod-row__items"><li data-t="james hardie fiber cement siding lap panel and trim products">James Hardie® fiber-cement siding</li><li data-t="certainteed siding siding and trim systems">CertainTeed siding</li><li data-t="roofing roofing materials and underlayment">Roofing</li><li data-t="house wraps weather resistive barriers for walls">House wraps</li></ul>
+            <a class="prod-row__quote" href="../quote/?product=Siding%2C%20Roofing%20%26%20Wraps">Add to a quote<span class="sr-only">: Siding, Roofing &amp; Wraps</span></a>
+            <svg class="i stock__go" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 12h15m-6-6 6 6-6 6"/></svg>
+          </li><li class="prod-row" id="insulation-drywall" data-terms="insulation drywall insulation drywall envelope and interior materials including cold climate insulation rigid foam insulation xps eps continuous insulation for foundations slabs walls and roofs fiberglass batt insulation cavity insulation for walls floors and ceilings drywall gypsum board for walls and ceilings eps foam xps foam" data-cap="07 · Insulation &amp; Drywall">
+            <img class="stock__thumb" src="../assets/img/insulation-240.webp" width="60" height="60" alt="" loading="lazy" decoding="async">
+            <div class="prod-row__main">
+              <h3 class="prod-row__name"><a href="../products/insulation-drywall/"><span class="prod-row__no">07</span>Insulation &amp; Drywall</a></h3>
+              <p class="prod-row__lede">Envelope and interior materials, including cold-climate insulation.</p>
+            </div>
+            <ul class="prod-row__items"><li data-t="rigid foam insulation xps eps continuous insulation for foundations slabs walls and roofs">Rigid foam insulation (XPS &amp; EPS)</li><li data-t="fiberglass batt insulation cavity insulation for walls floors and ceilings">Fiberglass batt insulation</li><li data-t="drywall gypsum board for walls and ceilings">Drywall</li></ul>
+            <a class="prod-row__quote" href="../quote/?product=Insulation%20%26%20Drywall">Add to a quote<span class="sr-only">: Insulation &amp; Drywall</span></a>
+            <svg class="i stock__go" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 12h15m-6-6 6 6-6 6"/></svg>
+          </li><li class="prod-row" id="windows-doors-cabinets" data-terms="windows doors cabinets windows doors cabinets openings and casework packaged with the rest of the job windows residential and light commercial windows doors exterior and interior doors custom cabinets cabinetry built to your layout" data-cap="08 · Windows, Doors &amp; Cabinets">
+            <img class="stock__thumb" src="../assets/img/windows-240.webp" width="60" height="60" alt="" loading="lazy" decoding="async">
+            <div class="prod-row__main">
+              <h3 class="prod-row__name"><a href="../products/windows-doors-cabinets/"><span class="prod-row__no">08</span>Windows, Doors &amp; Cabinets</a></h3>
+              <p class="prod-row__lede">Openings and casework, packaged with the rest of the job.</p>
+            </div>
+            <ul class="prod-row__items"><li data-t="windows residential and light commercial windows">Windows</li><li data-t="doors exterior and interior doors">Doors</li><li data-t="custom cabinets cabinetry built to your layout">Custom cabinets</li></ul>
+            <a class="prod-row__quote" href="../quote/?product=Windows%2C%20Doors%20%26%20Cabinets">Add to a quote<span class="sr-only">: Windows, Doors &amp; Cabinets</span></a>
+            <svg class="i stock__go" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 12h15m-6-6 6 6-6 6"/></svg>
+          </li><li class="prod-row" id="hardware-supplies" data-terms="hardware fasteners jobsite supplies hardware supplies the connectors fasteners and consumables that finish a load simpson strong tie hardware hangers ties holdowns and structural connectors fasteners nails screws and anchors tarps poly sheeting weather protection for materials and work caulking adhesives sealants and construction adhesives simpson strong tie adhesives hangers connectors nails screws poly sheeting" data-cap="09 · Hardware, Fasteners &amp; Jobsite Supplies">
+            <img class="stock__thumb" src="../assets/img/hardware-240.webp" width="60" height="60" alt="" loading="lazy" decoding="async">
+            <div class="prod-row__main">
+              <h3 class="prod-row__name"><a href="../products/hardware-supplies/"><span class="prod-row__no">09</span>Hardware, Fasteners &amp; Jobsite Supplies</a></h3>
+              <p class="prod-row__lede">The connectors, fasteners and consumables that finish a load.</p>
+            </div>
+            <ul class="prod-row__items"><li data-t="simpson strong tie hardware hangers ties holdowns and structural connectors">Simpson Strong-Tie® hardware</li><li data-t="fasteners nails screws and anchors">Fasteners</li><li data-t="tarps poly sheeting weather protection for materials and work">Tarps &amp; poly sheeting</li><li data-t="caulking adhesives sealants and construction adhesives">Caulking &amp; adhesives</li></ul>
+            <a class="prod-row__quote" href="../quote/?product=Hardware%2C%20Fasteners%20%26%20Jobsite%20Supplies">Add to a quote<span class="sr-only">: Hardware, Fasteners &amp; Jobsite Supplies</span></a>
+            <svg class="i stock__go" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 12h15m-6-6 6 6-6 6"/></svg>
+          </li>
+        </ol>
+        <div class="prod-none" data-prod-none hidden>
+          <p class="prod-none__line">No line by that name.</p>
+          <p>We carry more than is listed here, so ask your yard: <a href="tel:+12533951211">Kent (253) 395-1211</a>, <a href="tel:+19075632500">Anchorage (907) 563-2500</a>, <a href="tel:+19074561550">Fairbanks (907) 456-1550</a>.</p>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
-<section class="section--tight">
+
+<section class="section section--deep prod-brands" aria-labelledby="brands-title">
+  <div class="wrap prod-brands__grid">
+    <div>
+      <h2 class="shead__bar rv-line prod-brands__bar" id="brands-title"><span class="chead__no"></span><span>Brands we carry</span></h2>
+      <ul class="prod-brands__list">
+        <li class="rv" style="--i:0"><a href="../products/siding-exterior/">
+            <span class="prod-brands__name">James Hardie</span>
+            <svg class="i prod-brands__go" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 12h15m-6-6 6 6-6 6"/></svg>
+            <span class="prod-brands__meta"><span class="prod-brands__what">Fiber-cement siding</span><span class="prod-brands__line"><span class="sr-only">, in line </span>06<span class="prod-brands__short"> · Siding &amp; Exterior</span></span></span>
+          </a></li><li class="rv" style="--i:1"><a href="../products/siding-exterior/">
+            <span class="prod-brands__name">CertainTeed</span>
+            <svg class="i prod-brands__go" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 12h15m-6-6 6 6-6 6"/></svg>
+            <span class="prod-brands__meta"><span class="prod-brands__what">Siding and trim</span><span class="prod-brands__line"><span class="sr-only">, in line </span>06<span class="prod-brands__short"> · Siding &amp; Exterior</span></span></span>
+          </a></li><li class="rv" style="--i:2"><a href="../products/hardware-supplies/">
+            <span class="prod-brands__name">Simpson Strong-Tie</span>
+            <svg class="i prod-brands__go" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 12h15m-6-6 6 6-6 6"/></svg>
+            <span class="prod-brands__meta"><span class="prod-brands__what">Structural connectors</span><span class="prod-brands__line"><span class="sr-only">, in line </span>09<span class="prod-brands__short"> · Hardware &amp; Supplies</span></span></span>
+          </a></li><li class="rv" style="--i:3"><a href="../products/panels-sheathing/">
+            <span class="prod-brands__name">Georgia-Pacific DensGlass</span>
+            <svg class="i prod-brands__go" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 12h15m-6-6 6 6-6 6"/></svg>
+            <span class="prod-brands__meta"><span class="prod-brands__what">Gypsum exterior sheathing</span><span class="prod-brands__line"><span class="sr-only">, in line </span>02<span class="prod-brands__short"> · Panels &amp; Sheathing</span></span></span>
+          </a></li><li class="rv" style="--i:4"><a href="../products/engineered-wood/">
+            <span class="prod-brands__name">Parallam</span>
+            <svg class="i prod-brands__go" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 12h15m-6-6 6 6-6 6"/></svg>
+            <span class="prod-brands__meta"><span class="prod-brands__what">Parallel strand lumber</span><span class="prod-brands__line"><span class="sr-only">, in line </span>03<span class="prod-brands__short"> · Engineered Wood</span></span></span>
+          </a></li>
+      </ul>
+    </div>
+    <div class="prod-also">
+      <p class="label">We also carry</p>
+      <p class="prod-also__text rv">Tarps, polyurethane rolls, caulking, adhesives, house wraps <em>and more.</em></p>
+      <p class="rv" style="--i:1">A large variety of other building materials never makes a list like this one. If you need it on the job, ask.</p>
+      <a class="btn btn--line rv" href="../locations/" data-open="call-sheet" aria-haspopup="dialog" style="--i:2"><svg class="i " width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 3.5h3.2l1.6 4.2-2.1 1.4a11 11 0 0 0 5.2 5.2l1.4-2.1 4.2 1.6V17a2 2 0 0 1-2 2A15.5 15.5 0 0 1 3 5.5a2 2 0 0 1 2-2Z"/></svg> Call a yard</a>
+    </div>
+  </div>
+</section>
+
+<section class="section section--paper2 prod-az" id="a-z" aria-labelledby="az-title">
   <div class="wrap">
-    <div class="brands"><span class="brands__label">Brands we carry</span><ul><li>James Hardie</li><li>CertainTeed</li><li>Simpson Strong-Tie</li><li>Georgia-Pacific DensGlass</li><li>Parallam</li></ul></div>
+    
+  <header class="shead">
+    <p class="shead__bar rv-line"><span class="chead__no">02</span><span>Index</span></p>
+    <div class="shead__body">
+      <h2 class="h2 rv" id="az-title">Every product, <em>A to Z.</em></h2>
+      <div class="shead__aside rv" style="--i:1">
+        <p class="lede">Know the name but not the line? Each entry opens the line it belongs to. The number is the line.</p>
+        
+      </div>
+    </div>
+  </header>
+    <div class="prod-az__cols">
+      <div class="prod-az__group">
+        <h3 class="prod-az__letter">A</h3>
+        <ul><li><a href="../products/hardware-supplies/"><span class="prod-az__name">Adhesives</span><span class="prod-az__dots" aria-hidden="true"></span><span class="prod-az__no"><span class="sr-only">line </span>09</span></a></li></ul>
+      </div><div class="prod-az__group">
+        <h3 class="prod-az__letter">C</h3>
+        <ul><li><a href="../products/hardware-supplies/"><span class="prod-az__name">Caulking &amp; adhesives</span><span class="prod-az__dots" aria-hidden="true"></span><span class="prod-az__no"><span class="sr-only">line </span>09</span></a></li><li><a href="../products/cedar-decking/"><span class="prod-az__name">Cedar decking</span><span class="prod-az__dots" aria-hidden="true"></span><span class="prod-az__no"><span class="sr-only">line </span>05</span></a></li><li><a href="../products/cedar-decking/"><span class="prod-az__name">Cedar fencing</span><span class="prod-az__dots" aria-hidden="true"></span><span class="prod-az__no"><span class="sr-only">line </span>05</span></a></li><li><a href="../products/cedar-decking/"><span class="prod-az__name">Cedar siding &amp; trim</span><span class="prod-az__dots" aria-hidden="true"></span><span class="prod-az__no"><span class="sr-only">line </span>05</span></a></li><li><a href="../products/siding-exterior/"><span class="prod-az__name">CertainTeed siding</span><span class="prod-az__dots" aria-hidden="true"></span><span class="prod-az__no"><span class="sr-only">line </span>06</span></a></li><li><a href="../products/cedar-decking/"><span class="prod-az__name">Composite decking</span><span class="prod-az__dots" aria-hidden="true"></span><span class="prod-az__no"><span class="sr-only">line </span>05</span></a></li><li><a href="../products/windows-doors-cabinets/"><span class="prod-az__name">Custom cabinets</span><span class="prod-az__dots" aria-hidden="true"></span><span class="prod-az__no"><span class="sr-only">line </span>08</span></a></li></ul>
+      </div><div class="prod-az__group">
+        <h3 class="prod-az__letter">D</h3>
+        <ul><li><a href="../products/cedar-decking/"><span class="prod-az__name">Decking</span><span class="prod-az__dots" aria-hidden="true"></span><span class="prod-az__no"><span class="sr-only">line </span>05</span></a></li><li><a href="../products/panels-sheathing/"><span class="prod-az__name">DensGlass® Gold sheathing</span><span class="prod-az__dots" aria-hidden="true"></span><span class="prod-az__no"><span class="sr-only">line </span>02</span></a></li><li><a href="../products/framing-lumber/"><span class="prod-az__name">Dimensional lumber</span><span class="prod-az__dots" aria-hidden="true"></span><span class="prod-az__no"><span class="sr-only">line </span>01</span></a></li><li><a href="../products/windows-doors-cabinets/"><span class="prod-az__name">Doors</span><span class="prod-az__dots" aria-hidden="true"></span><span class="prod-az__no"><span class="sr-only">line </span>08</span></a></li><li><a href="../products/insulation-drywall/"><span class="prod-az__name">Drywall</span><span class="prod-az__dots" aria-hidden="true"></span><span class="prod-az__no"><span class="sr-only">line </span>07</span></a></li></ul>
+      </div><div class="prod-az__group">
+        <h3 class="prod-az__letter">E</h3>
+        <ul><li><a href="../products/insulation-drywall/"><span class="prod-az__name">EPS foam</span><span class="prod-az__dots" aria-hidden="true"></span><span class="prod-az__no"><span class="sr-only">line </span>07</span></a></li></ul>
+      </div><div class="prod-az__group">
+        <h3 class="prod-az__letter">F</h3>
+        <ul><li><a href="../products/hardware-supplies/"><span class="prod-az__name">Fasteners</span><span class="prod-az__dots" aria-hidden="true"></span><span class="prod-az__no"><span class="sr-only">line </span>09</span></a></li><li><a href="../products/cedar-decking/"><span class="prod-az__name">Fencing</span><span class="prod-az__dots" aria-hidden="true"></span><span class="prod-az__no"><span class="sr-only">line </span>05</span></a></li><li><a href="../products/siding-exterior/"><span class="prod-az__name">Fiber-cement siding</span><span class="prod-az__dots" aria-hidden="true"></span><span class="prod-az__no"><span class="sr-only">line </span>06</span></a></li><li><a href="../products/insulation-drywall/"><span class="prod-az__name">Fiberglass batt insulation</span><span class="prod-az__dots" aria-hidden="true"></span><span class="prod-az__no"><span class="sr-only">line </span>07</span></a></li><li><a href="../products/framing-lumber/"><span class="prod-az__name">Fire-retardant-treated lumber</span><span class="prod-az__dots" aria-hidden="true"></span><span class="prod-az__no"><span class="sr-only">line </span>01</span></a></li><li><a href="../products/framing-lumber/"><span class="prod-az__name">FRT lumber</span><span class="prod-az__dots" aria-hidden="true"></span><span class="prod-az__no"><span class="sr-only">line </span>01</span></a></li></ul>
+      </div><div class="prod-az__group">
+        <h3 class="prod-az__letter">G</h3>
+        <ul><li><a href="../products/engineered-wood/"><span class="prod-az__name">GLB</span><span class="prod-az__dots" aria-hidden="true"></span><span class="prod-az__no"><span class="sr-only">line </span>03</span></a></li><li><a href="../products/engineered-wood/"><span class="prod-az__name">Glulam beams (GLB)</span><span class="prod-az__dots" aria-hidden="true"></span><span class="prod-az__no"><span class="sr-only">line </span>03</span></a></li></ul>
+      </div><div class="prod-az__group">
+        <h3 class="prod-az__letter">H</h3>
+        <ul><li><a href="../products/hardware-supplies/"><span class="prod-az__name">Hangers &amp; connectors</span><span class="prod-az__dots" aria-hidden="true"></span><span class="prod-az__no"><span class="sr-only">line </span>09</span></a></li><li><a href="../products/concrete-forming/"><span class="prod-az__name">HDO plywood</span><span class="prod-az__dots" aria-hidden="true"></span><span class="prod-az__no"><span class="sr-only">line </span>04</span></a></li><li><a href="../products/siding-exterior/"><span class="prod-az__name">House wraps</span><span class="prod-az__dots" aria-hidden="true"></span><span class="prod-az__no"><span class="sr-only">line </span>06</span></a></li></ul>
+      </div><div class="prod-az__group">
+        <h3 class="prod-az__letter">I</h3>
+        <ul><li><a href="../products/engineered-wood/"><span class="prod-az__name">I-joist floor systems</span><span class="prod-az__dots" aria-hidden="true"></span><span class="prod-az__no"><span class="sr-only">line </span>03</span></a></li></ul>
+      </div><div class="prod-az__group">
+        <h3 class="prod-az__letter">J</h3>
+        <ul><li><a href="../products/siding-exterior/"><span class="prod-az__name">James Hardie® fiber-cement siding</span><span class="prod-az__dots" aria-hidden="true"></span><span class="prod-az__no"><span class="sr-only">line </span>06</span></a></li></ul>
+      </div><div class="prod-az__group">
+        <h3 class="prod-az__letter">L</h3>
+        <ul><li><a href="../products/engineered-wood/"><span class="prod-az__name">Laminated veneer lumber (LVL)</span><span class="prod-az__dots" aria-hidden="true"></span><span class="prod-az__no"><span class="sr-only">line </span>03</span></a></li><li><a href="../products/engineered-wood/"><span class="prod-az__name">LVL</span><span class="prod-az__dots" aria-hidden="true"></span><span class="prod-az__no"><span class="sr-only">line </span>03</span></a></li></ul>
+      </div><div class="prod-az__group">
+        <h3 class="prod-az__letter">M</h3>
+        <ul><li><a href="../products/concrete-forming/"><span class="prod-az__name">MDO plywood</span><span class="prod-az__dots" aria-hidden="true"></span><span class="prod-az__no"><span class="sr-only">line </span>04</span></a></li></ul>
+      </div><div class="prod-az__group">
+        <h3 class="prod-az__letter">N</h3>
+        <ul><li><a href="../products/hardware-supplies/"><span class="prod-az__name">Nails &amp; screws</span><span class="prod-az__dots" aria-hidden="true"></span><span class="prod-az__no"><span class="sr-only">line </span>09</span></a></li></ul>
+      </div><div class="prod-az__group">
+        <h3 class="prod-az__letter">O</h3>
+        <ul><li><a href="../products/panels-sheathing/"><span class="prod-az__name">Oriented strand board (OSB)</span><span class="prod-az__dots" aria-hidden="true"></span><span class="prod-az__no"><span class="sr-only">line </span>02</span></a></li><li><a href="../products/panels-sheathing/"><span class="prod-az__name">OSB</span><span class="prod-az__dots" aria-hidden="true"></span><span class="prod-az__no"><span class="sr-only">line </span>02</span></a></li></ul>
+      </div><div class="prod-az__group">
+        <h3 class="prod-az__letter">P</h3>
+        <ul><li><a href="../products/engineered-wood/"><span class="prod-az__name">Parallam® PSL beams</span><span class="prod-az__dots" aria-hidden="true"></span><span class="prod-az__no"><span class="sr-only">line </span>03</span></a></li><li><a href="../products/panels-sheathing/"><span class="prod-az__name">Plywood</span><span class="prod-az__dots" aria-hidden="true"></span><span class="prod-az__no"><span class="sr-only">line </span>02</span></a></li><li><a href="../products/hardware-supplies/"><span class="prod-az__name">Poly sheeting</span><span class="prod-az__dots" aria-hidden="true"></span><span class="prod-az__no"><span class="sr-only">line </span>09</span></a></li><li><a href="../products/framing-lumber/"><span class="prod-az__name">Pressure-treated lumber</span><span class="prod-az__dots" aria-hidden="true"></span><span class="prod-az__no"><span class="sr-only">line </span>01</span></a></li><li><a href="../products/engineered-wood/"><span class="prod-az__name">PSL</span><span class="prod-az__dots" aria-hidden="true"></span><span class="prod-az__no"><span class="sr-only">line </span>03</span></a></li></ul>
+      </div><div class="prod-az__group">
+        <h3 class="prod-az__letter">R</h3>
+        <ul><li><a href="../products/insulation-drywall/"><span class="prod-az__name">Rigid foam insulation (XPS &amp; EPS)</span><span class="prod-az__dots" aria-hidden="true"></span><span class="prod-az__no"><span class="sr-only">line </span>07</span></a></li><li><a href="../products/siding-exterior/"><span class="prod-az__name">Roofing</span><span class="prod-az__dots" aria-hidden="true"></span><span class="prod-az__no"><span class="sr-only">line </span>06</span></a></li></ul>
+      </div><div class="prod-az__group">
+        <h3 class="prod-az__letter">S</h3>
+        <ul><li><a href="../products/hardware-supplies/"><span class="prod-az__name">Simpson Strong-Tie® hardware</span><span class="prod-az__dots" aria-hidden="true"></span><span class="prod-az__no"><span class="sr-only">line </span>09</span></a></li></ul>
+      </div><div class="prod-az__group">
+        <h3 class="prod-az__letter">T</h3>
+        <ul><li><a href="../products/hardware-supplies/"><span class="prod-az__name">Tarps &amp; poly sheeting</span><span class="prod-az__dots" aria-hidden="true"></span><span class="prod-az__no"><span class="sr-only">line </span>09</span></a></li><li><a href="../products/framing-lumber/"><span class="prod-az__name">Timbers</span><span class="prod-az__dots" aria-hidden="true"></span><span class="prod-az__no"><span class="sr-only">line </span>01</span></a></li><li><a href="../products/framing-lumber/"><span class="prod-az__name">Treated lumber</span><span class="prod-az__dots" aria-hidden="true"></span><span class="prod-az__no"><span class="sr-only">line </span>01</span></a></li><li><a href="../products/engineered-wood/"><span class="prod-az__name">Truss packages</span><span class="prod-az__dots" aria-hidden="true"></span><span class="prod-az__no"><span class="sr-only">line </span>03</span></a></li></ul>
+      </div><div class="prod-az__group">
+        <h3 class="prod-az__letter">W</h3>
+        <ul><li><a href="../products/windows-doors-cabinets/"><span class="prod-az__name">Windows</span><span class="prod-az__dots" aria-hidden="true"></span><span class="prod-az__no"><span class="sr-only">line </span>08</span></a></li></ul>
+      </div><div class="prod-az__group">
+        <h3 class="prod-az__letter">X</h3>
+        <ul><li><a href="../products/insulation-drywall/"><span class="prod-az__name">XPS foam</span><span class="prod-az__dots" aria-hidden="true"></span><span class="prod-az__no"><span class="sr-only">line </span>07</span></a></li></ul>
+      </div>
+    </div>
   </div>
 </section>
-<section class="section section--deep"><div class="wrap">
+
+
+  <section class="interlude">
+    <div class="interlude__frame rv-img" data-parallax><img class="" src="../assets/img/timber-weathered-1200.webp" srcset="../assets/img/timber-weathered-240.webp 240w, ../assets/img/timber-weathered-480.webp 480w, ../assets/img/timber-weathered-800.webp 800w, ../assets/img/timber-weathered-1200.webp 1200w, ../assets/img/timber-weathered-1600.webp 1600w" sizes="100vw" width="1600" height="1200" alt="Weathered ends of stacked timbers showing growth rings" loading="lazy" decoding="async" style="object-position:50% 55%;background-color:#87827d"></div>
+    <div class="wrap interlude__text">
+      <p class="interlude__line rv">Not on the list? <em>Ask your yard.</em></p>
+      <p class="fig__cap"><span>Weathered timber ends, showing their rings. <small class="fig__credit">Photo: Chris / Unsplash</small></span></p>
+    </div>
+  </section>
+
+
+  <section class="section section--paper2 closing" aria-label="Request a quote or call a yard">
+    <div class="wrap">
+      
   <div class="manifest rv" id="manifest">
     <div class="manifest__head">
       <p class="label">Estimates &amp; take-offs</p>
-      <p class="label manifest__form" aria-hidden="true">Form 01 · Request for quote</p>
+      <p class="label manifest__form" aria-hidden="true">Request for quote</p>
     </div>
     <div class="manifest__body">
       <div class="manifest__pitch">
-        <h3 class="h2 manifest__title">Start with <em>the list.</em></h3>
+        <h2 class="h2 manifest__title">Start with <em>the list.</em></h2>
         <p>Send drawings or a materials list. The yard nearest your project builds the take-off, checks it for gaps and prices it.</p>
         <div class="actions">
           <a class="btn" href="../quote/">Request a quote <svg class="i " width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 12h15m-6-6 6 6-6 6"/></svg></a>
@@ -287,7 +448,35 @@
         <div><dt>Send</dt><dd>Plans, drawings or a materials list</dd></div><div><dt>To</dt><dd>The yard nearest your project</dd></div><div><dt>Returns</dt><dd>A take-off: every stick, panel and connector, priced</dd></div><div><dt>Ships</dt><dd>To the job site down the road, or to the dock for the trip north</dd></div>
       </dl>
     </div>
-  </div></div></section>
+  </div>
+      <div class="closing__call">
+        <p class="label closing__lead">Or call the yard nearest the job</p>
+        
+        
+  <ul class="ystrip" aria-label="Call a yard">
+    <li>
+      <a href="tel:+12533951211" class="ystrip__item">
+        <span class="ystrip__lat">47.4°N<span> · Headquarters</span></span>
+        <span class="status" data-hours="{&quot;tz&quot;:&quot;America/Los_Angeles&quot;,&quot;week&quot;:[null,[420,990],[420,990],[420,990],[420,990],[420,990],null]}" data-short hidden></span>
+        <span class="ystrip__city"><b>Kent</b><small>WA</small></span>
+        <span class="ystrip__num"><svg class="i " width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 3.5h3.2l1.6 4.2-2.1 1.4a11 11 0 0 0 5.2 5.2l1.4-2.1 4.2 1.6V17a2 2 0 0 1-2 2A15.5 15.5 0 0 1 3 5.5a2 2 0 0 1 2-2Z"/></svg>(253) 395-1211</span>
+      </a></li><li>
+      <a href="tel:+19075632500" class="ystrip__item">
+        <span class="ystrip__lat">61.2°N<span> · Southcentral</span></span>
+        <span class="status" data-hours="{&quot;tz&quot;:&quot;America/Anchorage&quot;,&quot;week&quot;:[null,[420,990],[420,990],[420,990],[420,990],[420,990],null]}" data-short hidden></span>
+        <span class="ystrip__city"><b>Anchorage</b><small>AK</small></span>
+        <span class="ystrip__num"><svg class="i " width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 3.5h3.2l1.6 4.2-2.1 1.4a11 11 0 0 0 5.2 5.2l1.4-2.1 4.2 1.6V17a2 2 0 0 1-2 2A15.5 15.5 0 0 1 3 5.5a2 2 0 0 1 2-2Z"/></svg>(907) 563-2500</span>
+      </a></li><li>
+      <a href="tel:+19074561550" class="ystrip__item">
+        <span class="ystrip__lat">64.8°N<span> · Interior</span></span>
+        <span class="status" data-hours="{&quot;tz&quot;:&quot;America/Anchorage&quot;,&quot;week&quot;:[null,[420,990],[420,990],[420,990],[420,990],[420,990],null]}" data-short hidden></span>
+        <span class="ystrip__city"><b>Fairbanks</b><small>AK</small></span>
+        <span class="ystrip__num"><svg class="i " width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 3.5h3.2l1.6 4.2-2.1 1.4a11 11 0 0 0 5.2 5.2l1.4-2.1 4.2 1.6V17a2 2 0 0 1-2 2A15.5 15.5 0 0 1 3 5.5a2 2 0 0 1 2-2Z"/></svg>(907) 456-1550</span>
+      </a></li>
+  </ul>
+      </div>
+    </div>
+  </section>
 
 </main>
 
@@ -303,31 +492,35 @@
       <div class="footer__cols">
         
           <div class="footer__yard">
-            <h3 class="footer__h"><span>47.4°N</span>Kent, WA</h3>
-            <address>8246 S 194th St<br>Kent, WA 98032</address>
+            <p class="footer__meta"><span>47.4°N</span><span class="status" data-hours="{&quot;tz&quot;:&quot;America/Los_Angeles&quot;,&quot;week&quot;:[null,[420,990],[420,990],[420,990],[420,990],[420,990],null]}" data-short hidden></span></p>
+            <h3 class="footer__h">Kent, WA</h3>
             <a class="footer__tel" href="tel:+12533951211">(253) 395-1211</a>
             <a href="tel:+18002758333">(800) 275-8333 <small>toll-free</small></a>
             <a href="mailto:sales@uresco.com">sales@uresco.com</a>
-            <span class="status" data-hours="{&quot;tz&quot;:&quot;America/Los_Angeles&quot;,&quot;week&quot;:[null,[420,990],[420,990],[420,990],[420,990],[420,990],null]}" hidden></span>
+            <p class="footer__fax">Fax (253) 872-8432</p>
+            <address>8246 S 194th St<br>Kent, WA 98032</address>
           </div>
           <div class="footer__yard">
-            <h3 class="footer__h"><span>61.2°N</span>Anchorage, AK</h3>
-            <address>12790 Old Seward Hwy<br>Anchorage, AK 99515</address>
+            <p class="footer__meta"><span>61.2°N</span><span class="status" data-hours="{&quot;tz&quot;:&quot;America/Anchorage&quot;,&quot;week&quot;:[null,[420,990],[420,990],[420,990],[420,990],[420,990],null]}" data-short hidden></span></p>
+            <h3 class="footer__h">Anchorage, AK</h3>
             <a class="footer__tel" href="tel:+19075632500">(907) 563-2500</a>
             <a href="tel:+18005632500">(800) 563-2500 <small>toll-free</small></a>
             <a href="mailto:anchorage@uresco.com">anchorage@uresco.com</a>
-            <span class="status" data-hours="{&quot;tz&quot;:&quot;America/Anchorage&quot;,&quot;week&quot;:[null,[420,990],[420,990],[420,990],[420,990],[420,990],null]}" hidden></span>
+            <p class="footer__fax">Fax (907) 561-2076</p>
+            <address>12790 Old Seward Hwy<br>Anchorage, AK 99515</address>
           </div>
           <div class="footer__yard">
-            <h3 class="footer__h"><span>64.8°N</span>Fairbanks, AK</h3>
-            <address>1077 Aspen St<br>Fairbanks, AK 99709</address>
+            <p class="footer__meta"><span>64.8°N</span><span class="status" data-hours="{&quot;tz&quot;:&quot;America/Anchorage&quot;,&quot;week&quot;:[null,[420,990],[420,990],[420,990],[420,990],[420,990],null]}" data-short hidden></span></p>
+            <h3 class="footer__h">Fairbanks, AK</h3>
             <a class="footer__tel" href="tel:+19074561550">(907) 456-1550</a>
             
             <a href="mailto:fairbanks@uresco.com">fairbanks@uresco.com</a>
-            <span class="status" data-hours="{&quot;tz&quot;:&quot;America/Anchorage&quot;,&quot;week&quot;:[null,[420,990],[420,990],[420,990],[420,990],[420,990],null]}" hidden></span>
+            <p class="footer__fax">Fax (907) 456-5519</p>
+            <address>1077 Aspen St<br>Fairbanks, AK 99709</address>
           </div>
-        <nav class="footer__nav" aria-label="Footer">
-          <h3 class="footer__h"><span>Index</span>Explore</h3>
+        <nav class="footer__nav" id="footer-index" aria-label="Footer">
+          <p class="footer__meta">Index</p>
+          <h3 class="footer__h">Explore</h3>
           <ul>
             <li><a href="../products/">Products</a></li>
             <li><a href="../services/">Services</a></li>
@@ -336,7 +529,7 @@
             <li><a href="../projects/">Projects</a></li>
             <li><a href="../locations/">Locations</a></li>
             <li><a href="../about/">About</a></li>
-            <li><a href="../accounts/">Contractor accounts</a></li>
+            <li><a href="../accounts/">Open an account</a></li>
             <li><a href="../quote/">Request a quote</a></li>
           </ul>
         </nav>
@@ -354,50 +547,62 @@
   </footer>
 
   <div class="actionbar" role="region" aria-label="Quick actions">
-    <button type="button" class="actionbar__btn" data-open="call-sheet" aria-haspopup="dialog"><svg class="i " width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 3.5h3.2l1.6 4.2-2.1 1.4a11 11 0 0 0 5.2 5.2l1.4-2.1 4.2 1.6V17a2 2 0 0 1-2 2A15.5 15.5 0 0 1 3 5.5a2 2 0 0 1 2-2Z"/></svg>Call</button>
-    <a class="actionbar__btn" href="../locations/"><svg class="i " width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 2.8 21.2 12 12 21.2 2.8 12z"/><path d="M9 14v-2.5a1.5 1.5 0 0 1 1.5-1.5H15m-2-2 2 2-2 2"/></svg>Directions</a>
+    <a class="actionbar__btn actionbar__btn--call" href="../locations/" data-open="call-sheet" aria-haspopup="dialog"><svg class="i " width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 3.5h3.2l1.6 4.2-2.1 1.4a11 11 0 0 0 5.2 5.2l1.4-2.1 4.2 1.6V17a2 2 0 0 1-2 2A15.5 15.5 0 0 1 3 5.5a2 2 0 0 1 2-2Z"/></svg>Call</a>
+    <a class="actionbar__btn" href="../locations/" data-open="call-sheet" aria-haspopup="dialog"><svg class="i " width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 2.8 21.2 12 12 21.2 2.8 12z"/><path d="M9 14v-2.5a1.5 1.5 0 0 1 1.5-1.5H15m-2-2 2 2-2 2"/></svg>Directions</a>
     <a class="actionbar__btn actionbar__btn--primary" href="../quote/"><svg class="i " width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4"/></svg>Quote</a>
   </div>
 
   <dialog class="sheet" id="call-sheet" aria-labelledby="call-sheet-title">
     <div class="sheet__head">
-      <h2 id="call-sheet-title" class="sheet__title">Call a yard</h2>
+      <h2 id="call-sheet-title" class="sheet__title">Call or visit a yard</h2>
       <button type="button" class="iconbtn" data-close><svg class="i " width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6 6 18"/></svg><span class="sr-only">Close</span></button>
     </div>
     <ul class="sheet__list">
       <li class="sheet__yard">
         <div class="sheet__who">
-          <span class="sheet__lat">47.4°N</span>
-          <b>Kent, WA</b>
-          <small>8246 S 194th St</small>
-          <span class="status" data-hours="{&quot;tz&quot;:&quot;America/Los_Angeles&quot;,&quot;week&quot;:[null,[420,990],[420,990],[420,990],[420,990],[420,990],null]}" hidden></span>
+          <span class="sheet__lat">47.4°N · Puget Sound</span>
+          <span class="status" data-hours="{&quot;tz&quot;:&quot;America/Los_Angeles&quot;,&quot;week&quot;:[null,[420,990],[420,990],[420,990],[420,990],[420,990],null]}" data-short hidden></span>
+          <p class="sheet__place"><b>Kent, WA</b> <small>8246 S 194th St</small></p>
         </div>
         <div class="sheet__acts">
-          <a class="sheet__num" href="tel:+12533951211"><svg class="i " width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 3.5h3.2l1.6 4.2-2.1 1.4a11 11 0 0 0 5.2 5.2l1.4-2.1 4.2 1.6V17a2 2 0 0 1-2 2A15.5 15.5 0 0 1 3 5.5a2 2 0 0 1 2-2Z"/></svg>(253) 395-1211</a>
-          <a class="sheet__dir" href="https://www.google.com/maps/search/?api=1&amp;query=Uresco%20Construction%20Materials%2C%208246%20S%20194th%20St%2C%20Kent%2C%20WA%2098032" target="_blank" rel="noopener" aria-label="Directions to the Kent yard"><svg class="i " width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 2.8 21.2 12 12 21.2 2.8 12z"/><path d="M9 14v-2.5a1.5 1.5 0 0 1 1.5-1.5H15m-2-2 2 2-2 2"/></svg></a>
-        </div></li><li class="sheet__yard">
+          <a class="sheet__num" href="tel:+12533951211"><svg class="i " width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 3.5h3.2l1.6 4.2-2.1 1.4a11 11 0 0 0 5.2 5.2l1.4-2.1 4.2 1.6V17a2 2 0 0 1-2 2A15.5 15.5 0 0 1 3 5.5a2 2 0 0 1 2-2Z"/></svg><span><span class="sr-only">Call Kent: </span>(253) 395-1211</span></a>
+          <a class="sheet__dir" href="https://www.google.com/maps/search/?api=1&amp;query=Uresco%20Construction%20Materials%2C%208246%20S%20194th%20St%2C%20Kent%2C%20WA%2098032" target="_blank" rel="noopener"><svg class="i " width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 2.8 21.2 12 12 21.2 2.8 12z"/><path d="M9 14v-2.5a1.5 1.5 0 0 1 1.5-1.5H15m-2-2 2 2-2 2"/></svg><span>Directions<span class="sr-only"> to the Kent yard</span></span></a>
+        </div>
+        <ul class="sheet__more">
+          <li><a href="mailto:sales@uresco.com">sales@uresco.com</a></li>
+          <li>Fax (253) 872-8432</li>
+          <li class="sheet__details"><a href="../locations/#kent"><span class="sr-only">Kent yard </span>Details <svg class="i " width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 12h15m-6-6 6 6-6 6"/></svg></a></li>
+        </ul></li><li class="sheet__yard">
         <div class="sheet__who">
-          <span class="sheet__lat">61.2°N</span>
-          <b>Anchorage, AK</b>
-          <small>12790 Old Seward Hwy</small>
-          <span class="status" data-hours="{&quot;tz&quot;:&quot;America/Anchorage&quot;,&quot;week&quot;:[null,[420,990],[420,990],[420,990],[420,990],[420,990],null]}" hidden></span>
+          <span class="sheet__lat">61.2°N · Southcentral &amp; remote</span>
+          <span class="status" data-hours="{&quot;tz&quot;:&quot;America/Anchorage&quot;,&quot;week&quot;:[null,[420,990],[420,990],[420,990],[420,990],[420,990],null]}" data-short hidden></span>
+          <p class="sheet__place"><b>Anchorage, AK</b> <small>12790 Old Seward Hwy</small></p>
         </div>
         <div class="sheet__acts">
-          <a class="sheet__num" href="tel:+19075632500"><svg class="i " width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 3.5h3.2l1.6 4.2-2.1 1.4a11 11 0 0 0 5.2 5.2l1.4-2.1 4.2 1.6V17a2 2 0 0 1-2 2A15.5 15.5 0 0 1 3 5.5a2 2 0 0 1 2-2Z"/></svg>(907) 563-2500</a>
-          <a class="sheet__dir" href="https://www.google.com/maps/search/?api=1&amp;query=Uresco%20Construction%20Materials%2C%2012790%20Old%20Seward%20Hwy%2C%20Anchorage%2C%20AK%2099515" target="_blank" rel="noopener" aria-label="Directions to the Anchorage yard"><svg class="i " width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 2.8 21.2 12 12 21.2 2.8 12z"/><path d="M9 14v-2.5a1.5 1.5 0 0 1 1.5-1.5H15m-2-2 2 2-2 2"/></svg></a>
-        </div></li><li class="sheet__yard">
+          <a class="sheet__num" href="tel:+19075632500"><svg class="i " width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 3.5h3.2l1.6 4.2-2.1 1.4a11 11 0 0 0 5.2 5.2l1.4-2.1 4.2 1.6V17a2 2 0 0 1-2 2A15.5 15.5 0 0 1 3 5.5a2 2 0 0 1 2-2Z"/></svg><span><span class="sr-only">Call Anchorage: </span>(907) 563-2500</span></a>
+          <a class="sheet__dir" href="https://www.google.com/maps/search/?api=1&amp;query=Uresco%20Construction%20Materials%2C%2012790%20Old%20Seward%20Hwy%2C%20Anchorage%2C%20AK%2099515" target="_blank" rel="noopener"><svg class="i " width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 2.8 21.2 12 12 21.2 2.8 12z"/><path d="M9 14v-2.5a1.5 1.5 0 0 1 1.5-1.5H15m-2-2 2 2-2 2"/></svg><span>Directions<span class="sr-only"> to the Anchorage yard</span></span></a>
+        </div>
+        <ul class="sheet__more">
+          <li><a href="mailto:anchorage@uresco.com">anchorage@uresco.com</a></li>
+          <li>Fax (907) 561-2076</li>
+          <li class="sheet__details"><a href="../locations/#anchorage"><span class="sr-only">Anchorage yard </span>Details <svg class="i " width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 12h15m-6-6 6 6-6 6"/></svg></a></li>
+        </ul></li><li class="sheet__yard">
         <div class="sheet__who">
-          <span class="sheet__lat">64.8°N</span>
-          <b>Fairbanks, AK</b>
-          <small>1077 Aspen St</small>
-          <span class="status" data-hours="{&quot;tz&quot;:&quot;America/Anchorage&quot;,&quot;week&quot;:[null,[420,990],[420,990],[420,990],[420,990],[420,990],null]}" hidden></span>
+          <span class="sheet__lat">64.8°N · Interior &amp; north</span>
+          <span class="status" data-hours="{&quot;tz&quot;:&quot;America/Anchorage&quot;,&quot;week&quot;:[null,[420,990],[420,990],[420,990],[420,990],[420,990],null]}" data-short hidden></span>
+          <p class="sheet__place"><b>Fairbanks, AK</b> <small>1077 Aspen St</small></p>
         </div>
         <div class="sheet__acts">
-          <a class="sheet__num" href="tel:+19074561550"><svg class="i " width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 3.5h3.2l1.6 4.2-2.1 1.4a11 11 0 0 0 5.2 5.2l1.4-2.1 4.2 1.6V17a2 2 0 0 1-2 2A15.5 15.5 0 0 1 3 5.5a2 2 0 0 1 2-2Z"/></svg>(907) 456-1550</a>
-          <a class="sheet__dir" href="https://www.google.com/maps/search/?api=1&amp;query=Uresco%20Construction%20Materials%2C%201077%20Aspen%20St%2C%20Fairbanks%2C%20AK%2099709" target="_blank" rel="noopener" aria-label="Directions to the Fairbanks yard"><svg class="i " width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 2.8 21.2 12 12 21.2 2.8 12z"/><path d="M9 14v-2.5a1.5 1.5 0 0 1 1.5-1.5H15m-2-2 2 2-2 2"/></svg></a>
-        </div></li>
+          <a class="sheet__num" href="tel:+19074561550"><svg class="i " width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 3.5h3.2l1.6 4.2-2.1 1.4a11 11 0 0 0 5.2 5.2l1.4-2.1 4.2 1.6V17a2 2 0 0 1-2 2A15.5 15.5 0 0 1 3 5.5a2 2 0 0 1 2-2Z"/></svg><span><span class="sr-only">Call Fairbanks: </span>(907) 456-1550</span></a>
+          <a class="sheet__dir" href="https://www.google.com/maps/search/?api=1&amp;query=Uresco%20Construction%20Materials%2C%201077%20Aspen%20St%2C%20Fairbanks%2C%20AK%2099709" target="_blank" rel="noopener"><svg class="i " width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 2.8 21.2 12 12 21.2 2.8 12z"/><path d="M9 14v-2.5a1.5 1.5 0 0 1 1.5-1.5H15m-2-2 2 2-2 2"/></svg><span>Directions<span class="sr-only"> to the Fairbanks yard</span></span></a>
+        </div>
+        <ul class="sheet__more">
+          <li><a href="mailto:fairbanks@uresco.com">fairbanks@uresco.com</a></li>
+          <li>Fax (907) 456-5519</li>
+          <li class="sheet__details"><a href="../locations/#fairbanks"><span class="sr-only">Fairbanks yard </span>Details <svg class="i " width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 12h15m-6-6 6 6-6 6"/></svg></a></li>
+        </ul></li>
     </ul>
-    <p class="sheet__note">Any yard can help. They work as one team. <a href="mailto:sales@uresco.com">sales@uresco.com</a></p>
+    <p class="sheet__note">Any yard can help. They work as one team.</p>
   </dialog>
 </body>
 </html>

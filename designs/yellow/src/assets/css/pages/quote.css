@@ -1,0 +1,27 @@
+/* ---------- Quote request ---------- */
+/* The sticker over the headline says what the link that brought you here was about. */
+.qt-carried { margin: 0 0 1.1rem; max-width: 100%; }
+.qt-carried .sticker { max-width: 100%; overflow: hidden; text-overflow: ellipsis; display: inline-block; font-size: .78rem; }
+
+/* What happens next: three arches, each taller, each numeral bigger, the words on one line across. */
+.qt-next { padding-bottom: 0; }
+.qt-next__head { margin-bottom: clamp(2rem, 1.25rem + 3vw, 4rem); }
+.qt-arches { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(.6rem, 1.4vw, 1.25rem); align-items: end; }
+.qt-arch { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; text-align: center; padding: clamp(1.75rem, 3vw, 2.75rem) clamp(1rem, 2.5vw, 2.25rem) clamp(1.75rem, 2.8vw, 2.75rem); background: var(--yellow); color: var(--black); border-radius: var(--r-pill) var(--r-pill) 0 0; }
+.qt-arch:nth-child(1) { min-height: clamp(330px, 27vw, 420px); --big: clamp(5rem, 8.5vw, 8.5rem); }
+.qt-arch:nth-child(2) { min-height: clamp(400px, 33vw, 510px); --big: clamp(7rem, 12vw, 12rem); }
+.qt-arch:nth-child(3) { min-height: clamp(470px, 39vw, 600px); --big: clamp(9rem, 15.5vw, 15.5rem); }
+.qt-arch__no { display: block; margin-bottom: .05em; font-size: var(--big); font-weight: 900; font-stretch: 125%; line-height: .86; letter-spacing: -.03em; }
+.qt-arch__name { margin-bottom: .6rem; font-size: clamp(1.25rem, 2vw, 2.25rem); font-weight: 900; font-stretch: var(--wide); letter-spacing: -.015em; line-height: .96; text-transform: uppercase; white-space: nowrap; }
+.qt-arch p { max-width: 27ch; min-height: 4.2em; margin: 0; font-weight: 500; line-height: 1.4; }
+@media (max-width: 1100px) and (min-width: 700px) { .qt-arch__name { font-size: 1.25rem; white-space: normal; min-height: 2em; display: flex; align-items: flex-end; } }
+@media (max-width: 699px) {
+  /* Phones: rows with the arch on the left, the way the service tiles turn. */
+  .qt-next { padding-bottom: var(--section); }
+  .qt-arches { grid-template-columns: minmax(0, 1fr); gap: 1.25rem; }
+  .qt-arch { display: grid; grid-template-columns: 76px minmax(0, 1fr); grid-template-areas: "no name" "no text"; justify-items: start; text-align: left; gap: .25rem 1rem; align-items: start; padding: 0; background: none; color: var(--paper); border-radius: 0; }
+  .qt-arch:nth-child(n) { min-height: 0; }
+  .qt-arch__no { grid-area: no; display: grid; place-items: center; width: 76px; height: 96px; padding-top: 12px; margin: 0; background: var(--yellow); color: var(--black); border-radius: var(--r-pill) var(--r-pill) 0 0; font-size: 2.6rem; }
+  .qt-arch__name { grid-area: name; align-self: end; margin: 0; font-size: 1.3rem; color: var(--yellow); white-space: normal; }
+  .qt-arch p { grid-area: text; max-width: none; min-height: 0; color: var(--paper); }
+}

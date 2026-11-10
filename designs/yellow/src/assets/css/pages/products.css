@@ -1,0 +1,277 @@
+/* ================= Products: the index and the nine line pages =================
+   Everything here is prefixed pl-. The index rows are the home page's .line rows (30-components)
+   with more in them; the rules below only add to those. */
+
+/* ---------- Index: hero ---------- */
+.pl-down { transform: rotate(90deg); }
+.btn:hover .pl-down.i:last-child:not(:first-child) { transform: rotate(90deg) translateX(4px); }
+
+/* ---------- Index: the finder ---------- */
+.pl-index { padding-bottom: 0; --pl-win: clamp(66px, 6.6vw, 98px); --pl-gap: clamp(1rem, 2.2vw, 2.5rem); }
+.pl-find { display: grid; gap: .6rem; width: 100%; }
+.pl-find__label { font-size: var(--t-label); font-weight: 800; font-stretch: var(--wide); letter-spacing: .09em; text-transform: uppercase; line-height: 1.2; }
+.pl-find__box { position: relative; display: block; }
+.pl-find__box > .i { position: absolute; z-index: 1; left: 1.35rem; top: 50%; margin-top: -11px; pointer-events: none; transition: transform var(--t-flip) var(--spring); }
+.pl-find__input {
+  display: block; width: 100%; height: 66px; margin: 0; padding: 0 4.1rem 0 3.6rem;
+  background: var(--white); color: var(--black); border: var(--line) solid var(--black); border-radius: var(--r-pill);
+  font: inherit; font-size: 1.15rem; font-weight: 650; letter-spacing: -.005em; -webkit-appearance: none; appearance: none;
+  transition: box-shadow var(--t-flip) var(--spring), transform var(--t-flip) var(--spring);
+}
+.pl-find__input::placeholder { color: var(--stone); font-weight: 500; opacity: 1; }
+.pl-find__input::-webkit-search-cancel-button, .pl-find__input::-webkit-search-decoration { -webkit-appearance: none; display: none; }
+/* In use, the field lifts off the page like a sticker: a heavier keyline and the hard shadow. */
+.pl-find__input:focus, .pl-find__input:focus-visible { outline: 0; border-radius: var(--r-pill); box-shadow: inset 0 0 0 2px var(--black), 5px 5px 0 var(--black); transform: translate(-2px, -2px); }
+.pl-find__box:focus-within > .i { transform: translate(-2px, -2px); }
+.pl-find__clear { position: absolute; z-index: 1; right: 10px; top: 10px; display: grid; place-items: center; width: 46px; height: 46px; padding: 0; border: 0; border-radius: 50%; background: var(--black); color: var(--yellow); transition: transform var(--t-flip) var(--spring); }
+.pl-find__clear:hover { transform: rotate(90deg) scale(1.08); }
+.pl-find__status { margin: 0; min-height: 2.9em; font-size: .92rem; line-height: 1.45; font-weight: 600; color: var(--umber); }
+/* Without script there is nothing to type into; the field keeps its place so nothing moves when script arrives. */
+html:not(.js) .pl-find { visibility: hidden; }
+
+/* ---------- Index: nine rows ---------- */
+/* Rows are taller here than on the home page, so the window is larger at rest and springs less far. */
+@media (min-width: 900px) {
+  .pl-line { grid-template-columns: 3rem minmax(0, 1.3fr) minmax(0, 1fr) var(--pl-win) 60px; padding-block: 1.2rem; }
+  .pl-line .line__name { font-size: clamp(1.25rem, .7rem + 2.1vw, 2.7rem); }
+  .pl-line .line__win { width: var(--pl-win); }
+}
+/* The name is the row's link: its hit area is the whole row, as on the home page. */
+.pl-line__link { color: inherit; text-decoration: none; }
+.pl-line__link::after { content: ''; position: absolute; inset: 0; z-index: 2; }
+.pl-line__link:focus-visible { outline: 0; box-shadow: none; }
+.pl-line__link:focus-visible::after { outline: 3px solid var(--yellow); outline-offset: -6px; }
+.pl-line .line__win { pointer-events: none; }
+/* Each item is a link of its own, above the row's. */
+.pl-line__items { position: relative; z-index: 3; display: grid; justify-items: start; pointer-events: none; font-size: 1rem; line-height: 1.25; }
+.pl-line__items a {
+  pointer-events: auto; display: inline-block; margin-left: -.75rem; padding: .38rem .75rem;
+  color: inherit; font-weight: 550; text-decoration: none; border-radius: var(--r-pill);
+  transition: background var(--t-tap) linear, color var(--t-tap) linear, transform var(--t-flip) var(--spring);
+}
+.pl-line__items sup, .pl-brand sup, .pl-item sup, .pl-makers sup { font-size: .55em; line-height: 0; vertical-align: .55em; margin-left: .05em; }
+/* Keyboard: the row flips when anything inside it has focus. */
+.pl-line:focus-within { background: var(--black); color: var(--yellow); z-index: 2; }
+.pl-line:focus-within .line__items { color: var(--paper); }
+.pl-line:focus-within .line__win { transform: scale(1.75) rotate(-7deg); z-index: 3; }
+.pl-line.is-on .line__win { transform: scale(1.75) rotate(-7deg); }
+@media (hover: hover) { .pl-line:hover .line__win { transform: scale(1.75) rotate(-7deg); } }
+.pl-line:focus-within .line__go { background: var(--yellow); color: var(--black); transform: translateX(6px); }
+.pl-line:focus-within .line__win--sign { background: var(--yellow); color: var(--black); box-shadow: 0 0 0 var(--line) var(--black); }
+/* The item under the pointer flips back to yellow inside its black row. */
+.pl-line__items a:focus-visible { background: var(--yellow); color: var(--black); outline: 0; box-shadow: none; transform: translateX(.75rem); }
+@media (hover: hover) { .pl-line__items a:hover { background: var(--yellow); color: var(--black); transform: translateX(.75rem); } }
+/* A found item is a black pill on the yellow row, and a yellow one once the row has flipped. */
+.pl-line__items .is-hit a { margin-block: 2px; background: var(--black); color: var(--yellow); transform: translateX(.75rem); }
+.pl-line.is-on .is-hit a, .pl-line:focus-within .is-hit a { background: var(--yellow); color: var(--black); }
+@media (hover: hover) { .pl-line:hover .is-hit a { background: var(--yellow); color: var(--black); } }
+@media (max-width: 899px) {
+  .pl-line { align-items: start; row-gap: .5rem; padding-block: 1.15rem .95rem; }
+  .pl-line .line__name { align-self: center; min-height: 1.9em; display: flex; align-items: center; font-size: clamp(1.18rem, 5.6vw, 1.7rem); }
+  .pl-line__items { display: grid; overflow: visible; -webkit-line-clamp: none; font-size: .98rem; }
+  .pl-line__items a { padding-block: .64rem; }
+  .pl-line .line__win { align-self: start; }
+  .pl-line.is-on .line__win, .pl-line:focus-within .line__win { transform: scale(1.1) rotate(-5deg); }
+}
+
+/* The tenth row: everything that is not on the list. */
+.pl-more {
+  --pad: max(var(--gutter), calc((100% - var(--wrap)) / 2));
+  display: grid; grid-template-columns: 3rem minmax(0, 1.3fr) minmax(0, 1fr) calc(var(--pl-win) + var(--pl-gap) + 60px); align-items: center; gap: .5rem var(--pl-gap);
+  padding: clamp(1.4rem, 2.6vw, 2.25rem) var(--pad); border-bottom: var(--line) solid var(--black);
+}
+.pl-more .line__no { font-size: 1.5rem; line-height: 1; }
+.pl-more__q { font-size: clamp(1.25rem, .7rem + 2.1vw, 2.7rem); }
+.pl-more__a { margin: 0; max-width: 44ch; font-weight: 500; line-height: 1.4; }
+.pl-more__call { justify-self: end; }
+@media (prefers-reduced-motion: no-preference) { .pl-more.is-up { animation: pl-up .5s var(--spring); } }
+@keyframes pl-up { from { transform: translateY(18px); } }
+@media (max-width: 899px) {
+  .pl-more { grid-template-columns: 1.7rem minmax(0, 1fr); grid-template-areas: "no name" ". a" ". call"; gap: .5rem .7rem; padding-block: 1.4rem 1.6rem; }
+  .pl-more .line__no { font-size: 1.2rem; padding-top: .1rem; align-self: start; }
+  .pl-more__q { font-size: clamp(1.18rem, 5.6vw, 1.7rem); }
+  .pl-more__a { grid-area: a; }
+  .pl-more__call { grid-area: call; justify-self: start; margin-top: .5rem; }
+}
+@media (max-width: 559px) { .pl-more__call { justify-self: stretch; } }
+
+/* ---------- Index: brands ---------- */
+.pl-brands { padding-bottom: calc(var(--section) * .9); }
+.pl-brandlist { border-top: var(--line) solid var(--black-3); }
+.pl-brand {
+  --pad: max(var(--gutter), calc((100% - var(--wrap)) / 2));
+  position: relative; display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1.25fr) minmax(0, .8fr) 60px; align-items: center; gap: .4rem clamp(1rem, 2.2vw, 2.5rem);
+  min-height: clamp(92px, 8.4vw, 126px); padding: 1rem var(--pad); border-bottom: var(--line) solid var(--black-3);
+  color: var(--paper); text-decoration: none; transition: background var(--t-tap) linear, color var(--t-tap) linear;
+}
+.pl-brand__name { font-size: clamp(1.25rem, .7rem + 2.1vw, 2.7rem); line-height: .95; font-weight: 900; font-stretch: var(--wide); letter-spacing: -.022em; text-transform: uppercase; color: var(--yellow); text-wrap: balance; transition: color var(--t-tap) linear; }
+.pl-brand__what { display: grid; gap: .15rem; line-height: 1.35; }
+.pl-brand__what b { font-weight: 700; }
+.pl-brand__what span { font-size: .95rem; color: var(--ash); transition: color var(--t-tap) linear; }
+.pl-brand__line { display: flex; align-items: baseline; gap: .7rem; font-size: .8rem; line-height: 1.25; font-weight: 800; font-stretch: var(--wide); letter-spacing: .04em; text-transform: uppercase; }
+.pl-brand__line .nums { color: var(--yellow); transition: color var(--t-tap) linear; }
+.pl-brand .line__go { background: var(--yellow); color: var(--black); }
+.pl-brand:focus-visible { background: var(--yellow); color: var(--black); outline-offset: -6px; outline-color: var(--black); box-shadow: none; }
+.pl-brand:focus-visible .pl-brand__name, .pl-brand:focus-visible .pl-brand__line .nums { color: var(--black); }
+.pl-brand:focus-visible .pl-brand__what span { color: var(--umber); }
+.pl-brand:focus-visible .line__go { background: var(--black); color: var(--yellow); transform: translateX(6px); }
+@media (hover: hover) {
+  .pl-brand:hover { background: var(--yellow); color: var(--black); }
+  .pl-brand:hover .pl-brand__name, .pl-brand:hover .pl-brand__line .nums { color: var(--black); }
+  .pl-brand:hover .pl-brand__what span { color: var(--umber); }
+  .pl-brand:hover .line__go { background: var(--black); color: var(--yellow); transform: translateX(6px); }
+}
+@media (max-width: 899px) {
+  .pl-brand { grid-template-columns: minmax(0, 1fr) 52px; grid-template-areas: "name go" "what go" "line go"; gap: .45rem 1rem; padding-block: 1.2rem; }
+  .pl-brand__name { grid-area: name; font-size: clamp(1.18rem, 5.6vw, 1.7rem); }
+  .pl-brand__what { grid-area: what; } .pl-brand__line { grid-area: line; margin-top: .2rem; font-size: .75rem; }
+  .pl-brand .line__go { grid-area: go; display: grid; width: 52px; height: 52px; }
+}
+
+/* ---------- Line page: hero ---------- */
+/* The headline is the line's full name, set as large as its column allows: --pl-fit (set on the
+   section by the page) is the width in em of the widest line the name breaks into. */
+.pl-hero .phero__copy { container-type: inline-size; }
+.pl-hero .phero__title { font-size: clamp(1.9rem, calc(97cqi / var(--pl-fit, 8.6)), var(--pl-cap, 6.4rem)); line-height: .88; }
+.pl-hero--s .phero__title { --pl-cap: 4.6rem; line-height: .9; }
+/* Small phones set display type a little narrower (--wide), so the same words take less room. */
+@media (max-width: 420px) { .pl-hero .phero__title { font-size: clamp(1.9rem, calc(103cqi / var(--pl-fit, 8.6)), var(--pl-cap, 6.4rem)); } }
+.pl-hero .motion-toggle { align-self: center; height: 46px; }
+/* The line's number, stamped on the window the way a grade stamp sits on a board. */
+
+/* ---------- Line page: what is in the line ---------- */
+.pl-spec { padding-top: calc(var(--section) + clamp(70px, 13vw, 210px)); }
+.pl-spec__grid { display: grid; grid-template-columns: minmax(0, 1fr) clamp(300px, 29vw, 410px); gap: clamp(2rem, 5.5vw, 6rem); align-items: start; }
+.pl-spec__lede { margin: 1.4rem 0 0; color: var(--paper); }
+.pl-items { margin-top: clamp(2rem, 4vw, 3.25rem); border-top: var(--line) solid var(--black-3); }
+.pl-item { position: relative; isolation: isolate; scroll-margin-top: 1rem; display: grid; grid-template-columns: 4.4rem minmax(0, 1.2fr) minmax(0, 1fr); align-items: baseline; gap: .3rem clamp(1rem, 2vw, 2rem); padding: 1.35rem 0 1.3rem; border-bottom: var(--line) solid var(--black-3); }
+.pl-item__no { font-size: .76rem; font-weight: 800; font-stretch: var(--wide); letter-spacing: .05em; color: var(--yellow); }
+.pl-item__name { font-size: clamp(1.15rem, .95rem + .95vw, 1.7rem); line-height: 1; font-weight: 900; font-stretch: 118%; letter-spacing: -.015em; text-transform: uppercase; text-wrap: balance; }
+.pl-item__note { margin: 0; color: var(--ash); line-height: 1.45; }
+/* Arriving from the index on one item: that row is the one flipped. */
+.pl-item:target::before { content: ''; position: absolute; z-index: -1; inset: -2px -1.1rem; background: var(--yellow); border-radius: var(--r-m); }
+.pl-item:target, .pl-item:target .pl-item__no { color: var(--black); }
+.pl-item:target .pl-item__note { color: var(--umber); }
+.pl-makers { display: flex; flex-wrap: wrap; align-items: center; gap: 1.1rem 1.6rem; margin-top: clamp(1.75rem, 3vw, 2.5rem); }
+.pl-makers__k { margin: 0; font-size: var(--t-label); font-weight: 800; font-stretch: var(--wide); letter-spacing: .09em; text-transform: uppercase; color: var(--yellow); }
+.pl-makers__brands { display: flex; flex-wrap: wrap; gap: .8rem .7rem; }
+.pl-makers .sticker { font-size: clamp(.75rem, .6rem + .3vw, .9rem); padding: .7em 1.2em .62em; }
+.pl-makers__lit { display: flex; flex-wrap: wrap; gap: .8rem 1.6rem; flex-basis: 100%; }
+.pl-makers__lit .link { white-space: normal; color: var(--paper); text-transform: none; letter-spacing: 0; font-stretch: 100%; font-size: 1rem; font-weight: 600; }
+/* Plans in, take-off out: one wide link under the list. */
+.pl-send { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: .4rem clamp(1rem, 2.4vw, 2.25rem); margin-top: clamp(1.75rem, 3vw, 2.5rem); padding: clamp(.9rem, 1.6vw, 1.2rem) clamp(.9rem, 1.6vw, 1.2rem) clamp(.9rem, 1.6vw, 1.2rem) clamp(1.3rem, 2.6vw, 2.1rem); border: var(--line) solid var(--paper); border-radius: var(--r-pill); color: var(--paper); text-decoration: none; transition: background var(--t-tap) linear, color var(--t-tap) linear, border-color var(--t-tap) linear; }
+.pl-send__q { font-size: clamp(1.05rem, .85rem + .8vw, 1.5rem); line-height: 1; font-weight: 900; font-stretch: var(--wide); letter-spacing: -.02em; text-transform: uppercase; }
+.pl-send__a { color: var(--ash); line-height: 1.35; transition: color var(--t-tap) linear; }
+.pl-send .line__go { background: var(--yellow); color: var(--black); }
+.pl-send:hover, .pl-send:focus-visible { background: var(--yellow); border-color: var(--yellow); color: var(--black); }
+.pl-send:hover .pl-send__a, .pl-send:focus-visible .pl-send__a { color: var(--black); }
+.pl-send:hover .line__go, .pl-send:focus-visible .line__go { background: var(--black); color: var(--yellow); transform: translateX(6px); }
+.pl-send:focus-visible { border-radius: var(--r-pill); }
+@media (max-width: 1279px) { .pl-send { grid-template-columns: minmax(0, 1fr) auto; border-radius: var(--r-l); padding: 1.2rem 1.1rem 1.2rem 1.4rem; } .pl-send__q, .pl-send__a { grid-column: 1; } .pl-send__a { font-size: .95rem; } .pl-send .line__go { grid-column: 2; grid-row: 1 / span 2; display: grid; width: 52px; height: 52px; } }
+/* Ask your yard: a yellow card with the three numbers. */
+.pl-ask { position: sticky; top: calc(var(--mast) + 1.5rem); display: grid; padding: clamp(1.4rem, 2.2vw, 2rem); background: var(--yellow); color: var(--black); border-radius: var(--r-l); }
+.pl-ask__k { margin: 0 0 .6rem; font-size: var(--t-label); font-weight: 800; font-stretch: var(--wide); letter-spacing: .08em; text-transform: uppercase; line-height: 1.2; }
+.pl-ask__t { font-size: clamp(1.7rem, 1.1rem + 1.9vw, 2.6rem); line-height: .9; font-weight: 900; font-stretch: var(--wide); letter-spacing: -.025em; text-transform: uppercase; }
+.pl-ask__p { margin: .9rem 0 1.2rem; font-weight: 500; line-height: 1.45; }
+@media (max-width: 999px) {
+  .pl-spec__grid { grid-template-columns: minmax(0, 1fr); }
+  .pl-ask { position: static; border-radius: var(--r-m); }
+}
+@media (max-width: 699px) {
+  .pl-item { grid-template-columns: 3.3rem minmax(0, 1fr); padding: 1.15rem 0 1.1rem; }
+  .pl-item__note { grid-column: 2; }
+  .pl-item:target::before { inset: -2px -.6rem; }
+}
+
+/* ---------- Line page: round out the load ---------- */
+.pl-svcs { margin-bottom: clamp(.75rem, 1.4vw, 1.25rem); }
+/* Three tiles, never two and an orphan: three across down to 900px (the longest word, COORDINATION,
+   needs that much), then two with the third running full width, then rows on phones. */
+@media (max-width: 980px) and (min-width: 900px) { .pl-svcs { grid-template-columns: repeat(3, minmax(0, 1fr)); } .pl-svcs .svc { padding-inline: 1.1rem; } }
+@media (max-width: 899px) and (min-width: 601px) { .pl-svcs > li:last-child { grid-column: 1 / -1; } }
+/* The load ticket: this line, plus whatever else is ticked, goes to the quote form as one list. */
+.pl-load { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 1.5rem clamp(1.5rem, 4vw, 4rem); padding: clamp(1.4rem, 2.6vw, 2.4rem) clamp(1.4rem, 3vw, 2.75rem); background: var(--black); color: var(--paper); border-radius: var(--r-l); }
+.pl-load__more { min-width: 0; margin: 0; padding: 0; border: 0; }
+.pl-load__q { padding: 0; font-size: clamp(1.2rem, .8rem + 1.5vw, 2rem); line-height: .95; font-weight: 900; font-stretch: var(--wide); letter-spacing: -.02em; text-transform: uppercase; }
+.pl-load__hint { margin: .5rem 0 1.1rem; color: var(--ash); }
+.pl-picks { display: flex; flex-wrap: wrap; gap: .45rem; }
+.pl-pick { position: relative; display: block; cursor: pointer; }
+.pl-pick input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
+.pl-pick span { display: inline-flex; align-items: center; gap: .6em; min-height: 46px; padding: 0 1.1em 0 .95em; border: var(--line) solid #77736A; border-radius: var(--r-pill); font-size: .94rem; font-weight: 700; line-height: 1.1; transition: background var(--t-tap) linear, color var(--t-tap) linear, border-color var(--t-tap) linear, transform var(--t-flip) var(--spring); }
+.pl-pick b { font-size: .75rem; font-weight: 800; font-stretch: var(--wide); letter-spacing: .05em; color: var(--yellow); transition: color var(--t-tap) linear; }
+/* A plus that turns into a tick. */
+.pl-pick span::before { content: ''; flex: none; width: 14px; height: 14px; background: linear-gradient(currentColor, currentColor) 50% / 100% 2px no-repeat, linear-gradient(currentColor, currentColor) 50% / 2px 100% no-repeat; transition: transform var(--t-flip) var(--spring); }
+.pl-pick input:checked + span::before { width: 13px; height: 7px; margin: 0 .5px 4px; background: none; border: solid currentColor; border-width: 0 0 2.5px 2.5px; transform: rotate(-45deg); }
+.pl-pick:hover span { border-color: var(--paper); transform: translateY(-2px); }
+.pl-pick input:checked + span { background: var(--yellow); border-color: var(--yellow); color: var(--black); }
+.pl-pick input:checked + span b { color: var(--black); }
+.pl-pick input:focus-visible + span { outline: 3px solid var(--yellow); outline-offset: 3px; }
+.pl-load__go { display: grid; justify-items: stretch; gap: .9rem; }
+.pl-load__sum { display: flex; align-items: center; gap: .8rem; margin: 0; font-size: var(--t-label); font-weight: 800; font-stretch: var(--wide); letter-spacing: .08em; text-transform: uppercase; line-height: 1.2; }
+.pl-load__sum b { display: grid; place-items: center; width: 2.3em; height: 2.3em; border-radius: 50%; background: var(--yellow); color: var(--black); font-size: 1.5rem; font-weight: 900; letter-spacing: -.03em; }
+.pl-load .btn { --sh: rgba(245, 184, 0, .45); }
+.pl-load :focus-visible { outline-color: var(--yellow); box-shadow: 0 0 0 3px var(--black); }
+/* Without script the ticks could not reach the quote form, so the ticket says so in a line
+   and keeps its button. (It is far below the first screen, so nothing visible moves when script arrives.) */
+.pl-load__plain { display: grid; gap: .5rem; margin: 0; }
+.pl-load__plain .pl-load__hint { margin: 0; max-width: 52ch; }
+.js .pl-load__plain, html:not(.js) .pl-load__more, html:not(.js) .pl-load__sum { display: none; }
+@media (max-width: 999px) {
+  .pl-load { grid-template-columns: minmax(0, 1fr); border-radius: var(--r-m); }
+  .pl-load__go { grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 1rem 1.5rem; }
+}
+@media (max-width: 559px) {
+  .pl-load__go { grid-template-columns: minmax(0, 1fr); }
+  .pl-picks { display: grid; grid-template-columns: minmax(0, 1fr); }
+  .pl-pick span { display: flex; }
+}
+
+/* ---------- Line page: previous and next ---------- */
+/* The keyline below only shows when a half flips to yellow against the yellow band that follows. */
+.pl-pager { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); border-bottom: var(--line) solid var(--black); }
+.pl-pager__half {
+  --pad: max(var(--gutter), calc((100vw - var(--wrap)) / 2));
+  position: relative; display: grid; grid-template-columns: 60px minmax(0, 1fr) auto; grid-template-areas: "go k win" "go name win"; align-items: center; gap: .35rem clamp(1rem, 2.2vw, 2.25rem);
+  min-height: clamp(150px, 15vw, 230px); padding: 1.5rem clamp(4rem, 9vw, 8.5rem) 1.5rem var(--pad);
+  color: var(--paper); text-decoration: none; transition: background var(--t-tap) linear, color var(--t-tap) linear;
+}
+.pl-pager__half--next { grid-template-columns: auto minmax(0, 1fr) 60px; grid-template-areas: "win k go" "win name go"; padding: 1.5rem var(--pad) 1.5rem clamp(4rem, 9vw, 8.5rem); border-left: var(--line) solid var(--black-3); text-align: right; }
+.pl-pager__half .line__go { grid-area: go; background: var(--yellow); color: var(--black); }
+.pl-pager__half--prev .line__go .i { transform: scaleX(-1); }
+.pl-pager__k { grid-area: k; align-self: end; font-size: var(--t-label); font-weight: 800; font-stretch: var(--wide); letter-spacing: .09em; text-transform: uppercase; color: var(--yellow); transition: color var(--t-tap) linear; }
+.pl-pager__name { grid-area: name; align-self: start; font-size: clamp(1.1rem, .55rem + 1.55vw, 2.3rem); line-height: .95; font-weight: 900; font-stretch: var(--wide); letter-spacing: -.022em; text-transform: uppercase; text-wrap: balance; }
+.pl-pager__name .nums { display: block; margin-bottom: .5em; font-size: .8rem; letter-spacing: .04em; font-weight: 800; }
+.pl-pager__win { grid-area: win; width: clamp(64px, 6.4vw, 96px); aspect-ratio: 4 / 5; background: var(--yellow); color: var(--black); transition: transform .42s var(--spring), background var(--t-tap) linear, color var(--t-tap) linear; }
+.pl-pager__half:focus-visible { background: var(--yellow); color: var(--black); outline-offset: -6px; outline-color: var(--black); box-shadow: none; }
+.pl-pager__half:focus-visible .pl-pager__k { color: var(--black); }
+.pl-pager__half:focus-visible .line__go, .pl-pager__half:focus-visible .pl-pager__win { background: var(--black); color: var(--yellow); }
+@media (hover: hover) {
+  .pl-pager__half:hover { background: var(--yellow); color: var(--black); }
+  .pl-pager__half:hover .pl-pager__k { color: var(--black); }
+  .pl-pager__half:hover .line__go { background: var(--black); color: var(--yellow); }
+  .pl-pager__half--prev:hover .line__go { transform: translateX(-6px); } .pl-pager__half--next:hover .line__go { transform: translateX(6px); }
+  .pl-pager__half--prev:hover .pl-pager__win { transform: scale(1.25) rotate(-7deg); } .pl-pager__half--next:hover .pl-pager__win { transform: scale(1.25) rotate(7deg); }
+  .pl-pager__half:hover .pl-pager__win { background: var(--black); color: var(--yellow); }
+}
+/* Between the two, a round way back to all nine. */
+.pl-pager__all { position: absolute; z-index: 2; left: 50%; top: 50%; display: grid; place-content: center; justify-items: center; width: clamp(92px, 9vw, 128px); aspect-ratio: 1; margin: calc(clamp(92px, 9vw, 128px) / -2) 0 0 calc(clamp(92px, 9vw, 128px) / -2); border-radius: 50%; background: var(--yellow); color: var(--black); border: var(--line) solid var(--black); text-decoration: none; font-size: .62rem; font-weight: 800; font-stretch: var(--wide); letter-spacing: .09em; text-transform: uppercase; line-height: 1; transition: transform var(--t-flip) var(--spring), background var(--t-tap) linear, color var(--t-tap) linear; }
+.pl-pager__all b { margin: .06em 0 .1em; font-size: clamp(2rem, 3.4vw, 3.1rem); font-weight: 900; letter-spacing: -.04em; line-height: .85; }
+.pl-pager__all:hover, .pl-pager__all:focus-visible { background: var(--paper); transform: rotate(-8deg) scale(1.08); }
+.pl-pager__all:focus-visible { outline-color: var(--yellow); box-shadow: 0 0 0 3px var(--black); border-radius: 50%; }
+/* Narrow halves: the name needs the room the window was taking. */
+@media (max-width: 1099px) and (min-width: 800px) {
+  .pl-pager__win { display: none; }
+  .pl-pager__half { grid-template-columns: 60px minmax(0, 1fr); grid-template-areas: "go k" "go name"; padding-right: clamp(3.5rem, 7vw, 5rem); }
+  .pl-pager__half--next { grid-template-columns: minmax(0, 1fr) 60px; grid-template-areas: "k go" "name go"; padding-left: clamp(3.5rem, 7vw, 5rem); }
+}
+@media (max-width: 799px) {
+  .pl-pager { grid-template-columns: minmax(0, 1fr); }
+  .pl-pager__half, .pl-pager__half--next { grid-template-columns: minmax(0, 1fr) auto 52px; grid-template-areas: "k win go" "name win go"; min-height: 118px; padding: 1.1rem var(--pad); text-align: left; border-left: 0; }
+  .pl-pager__half--next { border-top: var(--line) solid var(--black-3); }
+  .pl-pager__half .line__go { display: grid; width: 52px; height: 52px; }
+  .pl-pager__win { width: 56px; }
+  .pl-pager__all { position: static; grid-row: 3; width: auto; aspect-ratio: auto; margin: 0; display: flex; align-items: baseline; justify-content: center; gap: .45em; padding: 1.15rem var(--gutter); background: var(--black); color: var(--yellow); border: 0; border-top: var(--line) solid var(--black-3); border-radius: 0; font-size: .8rem; }
+  .pl-pager__all b { margin: 0; font-size: 1em; letter-spacing: .09em; font-weight: 800; }
+  .pl-pager__all:hover, .pl-pager__all:focus-visible { transform: none; background: var(--yellow); color: var(--black); border-radius: 0; }
+  .pl-pager__all:focus-visible { outline-offset: -6px; outline-color: var(--black); box-shadow: none; }
+}

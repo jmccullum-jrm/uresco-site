@@ -4,7 +4,7 @@
 
 /* ---------- Cover ---------- */
 .cover { --edge: max(var(--gutter), calc((100vw - var(--rail) - var(--max)) / 2)); }
-.cover__copy { display: grid; justify-items: start; padding: clamp(1.75rem, 6vw, 3rem) var(--gutter) 1.75rem; }
+.cover__copy { display: grid; justify-items: start; }
 .cover__kicker { color: var(--ink); display: flex; flex-wrap: wrap; align-items: center; gap: 0 .5em; }
 .cover__kicker::before { content: ""; width: .55rem; height: .55rem; margin-right: .2em; background: var(--yellow); }
 .cover__kicker span { color: var(--ink-3); }
@@ -13,25 +13,54 @@
 .cover__title span { display: block; }
 .cover__lede { margin-top: clamp(1.1rem, 3vh, 2rem); max-width: 29em; }
 .cover__actions { margin-top: clamp(1.25rem, 3.2vh, 2.25rem); }
-.cover__media { position: relative; margin: 0; height: clamp(20rem, 112vw, 34rem); overflow: hidden; background: #C5CCCD; }
+.cover__media { position: relative; margin: 0; height: clamp(15rem, 80vw, 26rem); overflow: hidden; background: #C5CCCD; }
 .cover__media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 /* The fog at the top of the photograph runs out into the paper. */
-.cover__media::before { content: ""; position: absolute; z-index: 1; inset: 0; background: linear-gradient(180deg, var(--paper) 0%, rgba(244, 239, 230, .6) 9%, rgba(244, 239, 230, 0) 30%); pointer-events: none; }
-.cover__cap { position: absolute; z-index: 2; left: var(--gutter); right: var(--gutter); bottom: .9rem; display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; font: 400 var(--t-label)/1.3 var(--mono); letter-spacing: .04em; color: var(--paper); }
+.cover__media::before { content: ""; position: absolute; z-index: 1; inset: 0; background: linear-gradient(180deg, var(--paper) 0%, rgba(244, 239, 230, .6) 8%, rgba(244, 239, 230, 0) 24%); pointer-events: none; }
+.cover__cap { position: absolute; z-index: 2; left: var(--gutter); right: var(--gutter); bottom: .9rem; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: .15rem 1rem; font: 400 var(--t-label)/1.3 var(--mono); letter-spacing: .04em; color: var(--paper); }
 .cover__cap .fig__place { letter-spacing: .09em; }
-.cover__cap > span:first-child { display: none; }
-.cover__strip { padding-inline: var(--gutter); background: var(--paper); }
-.cover__strip .ystrip { border-top: 0; }
-@media (min-width: 1200px) { .cover__cap > span:first-child { display: inline; } }
+.cover__cap > span:first-child, .cover__credit { display: none; }
+.cover__credit { flex-basis: 100%; text-align: right; }
+.cover__strip { background: var(--paper); }
+/* Under 1440px the fog takes too much of the photograph to hold a long line: the place alone. */
+@media (min-width: 1440px) { .cover__cap > span:first-child, .cover__credit { display: inline; } }
+
+/* The three numbers, as a timetable under the headline. Below 1000px this strip is the one on the
+   page; from there up .cover__strip takes over along the foot of the cover. */
+.cover__calls .ystrip__item { gap: .3rem 1rem; padding-block: .55rem .65rem; }
+.cover__calls .ystrip__city b { font-size: 1.5rem; }
+.cover__calls .ystrip__num { font-size: 1.125rem; text-decoration: underline; text-decoration-color: var(--yellow); text-decoration-thickness: 2px; text-underline-offset: .25em; }
+.cover__calls .ystrip__item:hover .ystrip__num { text-decoration-color: var(--ink); }
+.cover__jump { display: flex; justify-content: space-between; gap: 0 .75rem; border-bottom: 1px solid var(--rule-2); }
+.cover__jump a { display: inline-block; padding-block: 1rem; font: 400 var(--t-label)/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink); text-decoration: none; white-space: nowrap; }
+.cover__jump a:hover { text-decoration: underline; text-decoration-color: var(--yellow); text-decoration-thickness: 2px; text-underline-offset: .35em; }
+@media (max-width: 369px) { .cover__jump span { display: none; } }
+
 @media (max-width: 999px) {
-  .cover__actions { flex-wrap: nowrap; }
+  /* One column, reordered so the numbers come straight after the headline. Only the standfirst
+     moves out of source order, and it holds no links, so tabbing still follows the screen. */
+  .cover { display: flex; flex-direction: column; padding-top: clamp(1.25rem, 5vw, 2.25rem); }
+  .cover__top, .cover__copy { display: contents; }
+  .cover__kicker, .cover__title, .cover__calls, .cover__lede, .cover__actions, .cover__jump { margin-inline: var(--gutter); }
+  .cover__kicker { order: 1; }
+  .cover__title { order: 2; margin-top: .85rem; }
+  .cover__calls { order: 3; margin-top: 1.1rem; }
+  .cover__actions { order: 4; margin-top: .9rem; flex-wrap: nowrap; }
+  .cover__jump { order: 5; margin-top: .35rem; }
+  .cover__media { order: 6; }
+  .cover__lede { order: 7; margin-top: 1.25rem; }
+  .cover__strip { display: none; }
   @media (max-width: 349px) { .cover__actions { flex-wrap: wrap; } }
   .cover__actions .btn { flex: 1 1 auto; padding-inline: .75rem; }
-  .cover__actions { align-self: stretch; justify-self: stretch; }
 }
 @media (min-width: 600px) and (max-width: 999px) {
-  .cover__media { height: clamp(22rem, 62vw, 36rem); }
-  .cover__cap > span:first-child { display: inline; }
+  /* A tablet has the height for the standfirst, so it goes back above the numbers. */
+  .cover__lede { order: 3; margin-top: 1.1rem; }
+  .cover__calls { order: 4; }
+  .cover__actions { order: 5; }
+  .cover__jump { order: 6; }
+  .cover__media { order: 7; height: clamp(22rem, 62vw, 36rem); }
+  .cover__cap > span:first-child, .cover__credit { display: inline; }
 }
 @media (min-width: 1000px) {
   .cover { display: grid; grid-template-rows: 1fr auto; min-height: calc(100svh - var(--mast) - 2.25rem); }
@@ -40,13 +69,20 @@
   .cover__copy { position: relative; z-index: 2; align-content: center; padding: clamp(1.25rem, 4.4vh, 4rem) 0 clamp(1.25rem, 4.4vh, 4rem) var(--edge); container-type: inline-size; }
   .cover__title { font-size: clamp(3.25rem, min(18.2cqi, 11.5vh), 8.75rem); white-space: nowrap; }
   .cover__lede { max-width: 26em; padding-right: .5rem; }
+  .cover__calls { display: none; }
   .cover__media { height: auto; min-height: 21rem; }
   .cover__media::before { background: linear-gradient(90deg, var(--paper) 0%, rgba(244, 239, 230, .9) 6%, rgba(244, 239, 230, .62) 14%, rgba(244, 239, 230, .28) 22%, rgba(244, 239, 230, .08) 29%, rgba(244, 239, 230, 0) 36%), linear-gradient(180deg, var(--paper) 0%, rgba(244, 239, 230, .5) 8%, rgba(244, 239, 230, 0) 22%); }
-  .cover__cap { left: auto; right: var(--gutter); bottom: 1.1rem; gap: 1.5rem; }
-  .cover__strip { padding-inline: var(--edge) var(--gutter); }
-  .cover__strip .ystrip { border-bottom: 0; }
-  .cover__strip { border-top: 1px solid var(--ink); border-bottom: 1px solid var(--rule-2); }
+  .cover__cap { display: grid; grid-template-columns: auto auto; justify-content: end; left: auto; right: var(--gutter); bottom: 1.1rem; gap: .15rem 1.5rem; }
+  .cover__credit { grid-column: 1 / -1; justify-self: end; }
+  .cover__strip { padding-inline: var(--edge) var(--gutter); border-top: 1px solid var(--ink); border-bottom: 1px solid var(--rule-2); }
+  .cover__strip .ystrip { border: 0; }
+  /* The menu carries Products, Alaska and Locations up here, so only the account link is left. It
+     needs a line of its own, which short laptop screens cannot spare above the numbers. */
+  .cover__jump { display: none; margin-top: clamp(.75rem, 2vh, 1.25rem); border: 0; }
+  .cover__jump a:not(:last-child) { display: none; }
+  .cover__jump a { padding-block: .35rem; font: 600 .9375rem/1.2 var(--sans); letter-spacing: 0; text-transform: none; text-decoration: underline; text-decoration-color: var(--rule-2); text-decoration-thickness: 1px; text-underline-offset: .3em; }
 }
+@media (min-width: 1000px) and (min-height: 840px) { .cover__jump { display: flex; } }
 /* The cover settles in once, with CSS alone. The photograph is on screen from the first frame. */
 @media (prefers-reduced-motion: no-preference) {
   .cover__title span { animation: settle 1.2s var(--ease) both; }
@@ -62,8 +98,11 @@
 
 /* ---------- Prologue ---------- */
 .prologue { padding-block: var(--section) calc(var(--section) * .9); }
+/* On a phone the standfirst sits right above this, under the photograph. */
+@media (max-width: 599px) { .prologue { padding-top: calc(var(--section) * .55); } }
 .prologue__grid { display: grid; gap: 2rem var(--col-gap); }
 .prologue__side { display: grid; gap: 1rem; justify-items: start; align-content: start; }
+@media (max-width: 599px) { .prologue__side { display: none; } }
 .prologue__span { display: flex; align-items: center; gap: .75rem; font: 400 var(--t-caption)/1 var(--mono); color: var(--ink); }
 .prologue__span i { width: 3.5rem; height: 1px; background: var(--ink); position: relative; }
 .prologue__span i::after { content: ""; position: absolute; right: 0; top: -3px; width: 7px; height: 7px; border-top: 1px solid var(--ink); border-right: 1px solid var(--ink); transform: rotate(45deg); }
@@ -73,8 +112,9 @@
 .prologue__text em { font-style: italic; }
 .facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 var(--col-gap); margin-top: clamp(1rem, 3vw, 3rem); }
 .facts div { display: grid; align-content: start; gap: .6rem; padding: 1.1rem 0 1.4rem; border-top: 1px solid var(--ink); }
-.facts dt { font: 370 clamp(1.75rem, 1.2rem + 2vw, 3rem)/1 var(--serif); letter-spacing: -.024em; }
-.facts dt em { font-style: italic; }
+.facts dt { font: 440 clamp(1.75rem, 1.2rem + 2vw, 3rem)/1 var(--serif); letter-spacing: -.024em; }
+.facts dt em { font-style: italic; font-weight: 400; }
+.facts__plus { font: 600 .52em/1 var(--sans); vertical-align: .62em; margin-left: .06em; letter-spacing: 0; }
 .facts dd { font-size: .9375rem; line-height: 1.4; color: var(--ink-2); max-width: 17em; }
 @media (min-width: 900px) {
   .prologue__grid { grid-template-columns: minmax(0, 3fr) minmax(0, 9fr); }
@@ -85,7 +125,6 @@
 /* ---------- Chapters ---------- */
 .chapter { padding-block: var(--section); }
 .chapter--kent { padding-top: 0; }
-.fig--bleed .fig__cap { width: min(100% - 2 * var(--gutter), var(--max)); margin-inline: auto; }
 .chapter .fig--bleed { margin-bottom: clamp(3rem, 7vw, 7rem); }
 
 /* 01 Kent */
@@ -94,35 +133,24 @@
 .kent__copy .h3 { max-width: 11em; margin-bottom: .4rem; font-size: clamp(1.75rem, 1.3rem + 2vw, 3rem); }
 .kent__copy p { max-width: 30em; color: var(--ink-2); font-size: var(--t-lede); line-height: 1.45; }
 .kent__copy .actions { margin-top: .75rem; gap: 1rem 1.75rem; }
-.kent__prints { position: relative; padding: 0 0 3.5rem 22%; }
-.print { position: absolute; left: 0; bottom: 0; width: min(46%, 12.5rem); margin: 0; padding: .5rem .5rem .7rem; background: var(--paper-3); color: var(--ink); box-shadow: var(--shadow-2); rotate: -3deg; --ink-3: #59645E; }
-.print img { width: 100%; aspect-ratio: 1; object-fit: cover; }
-.kent__main .fig__cap { justify-content: flex-end; text-align: right; }
-.kent__main .fig__cap span { max-width: 58%; }
-.print--inline { position: static; width: 12.5rem; margin-top: clamp(2rem, 4vw, 3.5rem); rotate: 2.5deg; }
-.print figcaption { padding-top: .55rem; font: 400 .6875rem/1.35 var(--mono); color: var(--ink-3); }
+/* Uresco's own two photographs. They are small originals, so they stay at print size. */
+.kent__prints { position: relative; display: grid; justify-items: end; padding: 0 0 2.75rem 14%; }
+.print--archive { width: min(84%, 22rem); rotate: 1.4deg; }
+@media (min-width: 900px) { .print--archive { width: min(100%, 22rem); } }
+.print--archive img { aspect-ratio: 357 / 322; }
 @media (min-width: 900px) {
   .kent { grid-template-columns: minmax(0, 6fr) minmax(0, 6fr); }
-  .kent__prints { padding: 0 0 2.5rem 30%; }
+  .kent__prints { padding: 0 0 2.5rem 22%; }
+  /* The tag print tucks under the corner of the yard print. */
+  .kent__prints .print--over { left: max(0px, calc(100% - 22rem - 8.75rem)); }
 }
 .stockhead { display: grid; gap: 1rem var(--col-gap); align-items: end; margin: var(--section) 0 clamp(1.5rem, 3vw, 2.5rem); }
 .stockhead p { color: var(--ink-2); max-width: 26em; }
 @media (min-width: 900px) { .stockhead { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); } }
-.stocknote { margin-top: 1.25rem; max-width: 44em; color: var(--ink-2); }
-
 /* 02 The crossing */
 .chapter--crossing .steps { margin-bottom: var(--section); }
 .crossing__mid { display: grid; gap: 3rem var(--col-gap); margin-bottom: var(--section); }
 .svc { display: grid; gap: .9rem; align-content: start; }
-.svc__list { border-top: 1px solid var(--on-dark); }
-.svc__list a { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 1rem; padding: .9rem 0; border-bottom: 1px solid var(--rule-dark); text-decoration: none; }
-.svc__list a > .i:first-child { color: var(--glacier); }
-.svc__list span { display: grid; gap: .15rem; }
-.svc__list b { font: 460 1.25rem/1.15 var(--serif); letter-spacing: -.008em; }
-.svc__list small { color: var(--on-dark-2); font-size: .875rem; line-height: 1.35; }
-.svc__go { color: var(--glacier); transition: transform var(--d-2) var(--ease); }
-.svc__list a:hover .svc__go { transform: translateX(.35rem); color: var(--yellow); }
-.svc__list a:hover b { text-decoration: underline; text-decoration-color: var(--yellow); text-decoration-thickness: 2px; text-underline-offset: .2em; }
 @media (min-width: 1000px) { .crossing__mid { grid-template-columns: minmax(0, 6fr) minmax(0, 6fr); align-items: start; } .crossing__lead { position: sticky; top: calc(var(--mast) + 3rem); } }
 
 /* 04 The last mile */
@@ -142,11 +170,12 @@
 .sector__media { display: block; aspect-ratio: 4 / 5; overflow: hidden; margin-bottom: .5rem; background: var(--paper-2); }
 .sector__media img { width: 100%; height: 100%; object-fit: cover; transition: scale 1.2s var(--ease); }
 .sector:hover .sector__media img { scale: 1.04; }
-.sector__title { font: 400 clamp(1.25rem, 1.05rem + .8vw, 1.75rem)/1.1 var(--serif); letter-spacing: -.014em; }
+.sector__title { font: 480 clamp(1.25rem, 1.05rem + .8vw, 1.75rem)/1.1 var(--serif); letter-spacing: -.014em; }
 .sector__text { font-size: .9375rem; line-height: 1.45; color: var(--ink-2); }
-@media (max-width: 599px) { .sector__text { display: none; } .sector__media { aspect-ratio: 1; } }
+@media (max-width: 599px) { .sector__text, .sector__media, .sectors__note { display: none; } .sector { padding-top: .75rem; border-top: 1px solid var(--ink); } }
+.sectors__note { margin-top: 1.25rem; font: 400 var(--t-caption)/1.35 var(--mono); color: var(--ink-3); }
 @media (min-width: 1000px) { .sectors { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
-.account { display: grid; gap: 1.5rem var(--col-gap); margin-top: var(--section); padding-top: 1.5rem; border-top: 1px solid var(--ink); }
+.account { display: grid; gap: 1.5rem var(--col-gap); margin-top: clamp(3.5rem, 8vw, 7rem); padding-top: 1.5rem; border-top: 1px solid var(--ink); }
 .account .label { margin-bottom: 1.1rem; display: flex; align-items: center; gap: .6rem; color: var(--ink); }
 .account .label::before { content: ""; width: .55rem; height: .55rem; background: var(--yellow); }
 .account .h2 { max-width: 10em; }
@@ -156,14 +185,24 @@
 
 /* ---------- Directory ---------- */
 .dir { display: grid; gap: 0 var(--col-gap); }
-.dir__yard { display: grid; gap: .5rem; align-content: start; justify-items: start; padding: 1.4rem 0 1.9rem; border-top: 1px solid var(--ink); }
+.dir__yard { display: grid; gap: .4rem; align-content: start; justify-items: start; padding: 1.2rem 0 1.5rem; border-top: 1px solid var(--ink); }
 .dir__city { font: 360 clamp(2.5rem, 1.8rem + 2.6vw, 4rem)/1 var(--serif); letter-spacing: -.028em; }
 .dir__city span { color: var(--ink-3); }
-.dir__for { color: var(--ink-2); min-height: 2.9em; max-width: 19em; }
+.dir__for { color: var(--ink-2); max-width: 19em; }
 .dir__for .label { display: block; margin-bottom: .2rem; }
-.dir__tel { margin-top: .4rem; padding-block: .2rem; font-size: clamp(1.5rem, 1.3rem + .7vw, 1.875rem); font-weight: 600; letter-spacing: -.01em; font-variant-numeric: tabular-nums; text-decoration: underline; text-decoration-color: var(--yellow); text-decoration-thickness: 3px; text-underline-offset: .22em; }
+@media (min-width: 900px) { .dir__for { min-height: 2.9em; } }
+.dir__tel { margin-top: .4rem; display: inline-flex; align-items: center; min-height: 2.75rem; font-size: clamp(1.5rem, 1.3rem + .7vw, 1.875rem); font-weight: 600; letter-spacing: -.01em; font-variant-numeric: tabular-nums; text-decoration: underline; text-decoration-color: var(--yellow); text-decoration-thickness: 3px; text-underline-offset: .22em; }
 .dir__tel:hover { text-decoration-color: var(--ink); }
 .dir__meta { display: flex; flex-wrap: wrap; gap: .3rem 1rem; align-items: center; font-size: .9375rem; color: var(--ink-2); margin-top: .4rem; }
-.dir__links { display: flex; flex-wrap: wrap; gap: .25rem 1.25rem; font-size: .9375rem; }
-.dir__links a { padding-block: .35rem; }
+.dir__lines { justify-self: stretch; margin-top: .5rem; border-top: 1px solid var(--rule-2); }
+.dir__lines div { display: grid; grid-template-columns: 5.25rem minmax(0, 1fr); align-items: center; min-height: 2.5rem; border-bottom: 1px solid var(--rule); }
+
+.dir__lines dt { font: 400 var(--t-label)/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); }
+@media (max-width: 899px) { .dir__lines .dir__none { display: none; } }
+.dir__lines dd { font-size: .9375rem; font-variant-numeric: tabular-nums; }
+.dir__lines a { display: inline-flex; align-items: center; min-height: 2.5rem; }
+.dir__links { display: flex; flex-wrap: wrap; gap: 0 1.25rem; margin-top: .35rem; font-size: .9375rem; }
+.dir__links a { display: inline-flex; align-items: center; min-height: 2.75rem; }
+.dir__foot { display: flex; flex-wrap: wrap; align-items: baseline; gap: .25rem 1rem; margin-top: 2.25rem; padding-top: 1rem; border-top: 1px solid var(--ink); font: 480 clamp(1.375rem, 1.1rem + 1.1vw, 2rem)/1.2 var(--serif); letter-spacing: -.016em; }
+.dir__foot .link { font: 600 .9375rem/1.2 var(--sans); letter-spacing: 0; }
 @media (min-width: 900px) { .dir { grid-template-columns: repeat(3, minmax(0, 1fr)); } }

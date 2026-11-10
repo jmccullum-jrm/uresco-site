@@ -94,8 +94,10 @@ const curve = (pts) => {
 };
 // Ocean freight: Puget Sound to Southcentral Alaska across the Gulf.
 const sea = [[-122.42, 47.3], [-122.75, 48.1], [-123.6, 48.25], [-124.9, 48.45], [-128.5, 50.6], [-134, 53.6], [-141, 56.6], [-148, 58.4], [-151.6, 59.3], [-151.4, 60.4], [-149.89, 61.24]];
-// The Inside Passage spur to Southeast Alaska.
+// The Inside Passage spur to Southeast Alaska (Juneau), and a branch around Cape Ommaney to Sitka,
+// so the lanes reach both ends of "from Sitka to Utqiaġvik".
 const inside = [[-128.5, 50.6], [-130.2, 53.4], [-131.4, 55.0], [-132.9, 56.4], [-134.42, 58.3]];
+const sitka = [[-132.7, 55.9], [-134.0, 55.95], [-135.05, 56.45], [-135.65, 56.9], [-135.33, 57.05]];
 // Road system, simplified: Parks and Dalton highways north; Seward and Sterling south;
 // Glenn and Richardson east to Valdez, Tok and back to Fairbanks.
 const roads = [
@@ -134,7 +136,7 @@ const out = {
   washington: outline(wa, { tol: 0.15, minArea: 0.5 }),
   graticule: d3.geoPath(projection).digits(0)(d3.geoGraticule().step([10, 5]).extent([[-200, 40], [-100, 80.001]])()) || '',
   gratLabels,
-  sea: curve(sea), inside: curve(inside),
+  sea: curve(sea), inside: curve(inside) + curve(sitka),
   roads: roads.map(curve), barges: barges.map(curve),
   yards: yards.map((y) => ({ ...y, xy: xy([y.lon, y.lat]) })),
   places: PLACES.map((p) => ({ name: p.name, xy: xy([p.lon, p.lat]) })),

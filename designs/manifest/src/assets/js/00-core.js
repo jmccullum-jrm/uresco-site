@@ -36,46 +36,23 @@
   document.addEventListener('focusin', (e) => { if (e.target.matches?.(TYPING)) document.body.classList.add('is-typing'); });
   document.addEventListener('focusout', (e) => { if (e.target.matches?.(TYPING)) document.body.classList.remove('is-typing'); });
 
-  /* Open / closed, computed in each yard's own time zone.
+  /* Open / closed, computed in each yard's own time zone. The words are all a visitor sees: the hours are placeholders.
      data-hours = {"tz":"America/Anchorage","week":[null,[420,990],…]}  (Sunday first, minutes after midnight) */
   const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-  const clock = (m) => {
-    const h = Math.floor(m / 60), mm = m % 60, ap = h < 12 ? 'a.m.' : 'p.m.';
-    return `${((h + 11) % 12) + 1}${mm ? ':' + String(mm).padStart(2, '0') : ''} ${ap}`;
-  };
-  const yardStatus = ({ tz, week }) => {
+  const isOpen = ({ tz, week }) => {
     const parts = Object.fromEntries(new Intl.DateTimeFormat('en-US', { timeZone: tz, weekday: 'short', hour: 'numeric', minute: 'numeric', hourCycle: 'h23' })
       .formatToParts(new Date()).map((p) => [p.type, p.value]));
-    const day = DAYS.indexOf(parts.weekday), now = +parts.hour * 60 + +parts.minute;
-    const today = week[day];
-    if (today && now >= today[0] && now < today[1]) return { open: true, text: `Open now · until ${clock(today[1])}` };
-    for (let i = 0; i < 8; i++) {
-      const d = (day + i) % 7, h = week[d];
-      if (h && (i > 0 || now < h[0])) return { open: false, text: `Closed · opens ${i === 0 ? 'today' : i === 1 ? 'tomorrow' : DAYS[d]} ${clock(h[0])}` };
-    }
-    return { open: false, text: 'Closed' };
+    const today = week[DAYS.indexOf(parts.weekday)], now = +parts.hour * 60 + +parts.minute;
+    return !!today && now >= today[0] && now < today[1];
   };
   const paintHours = () => $$('[data-hours]').forEach((el) => {
     try {
-      const s = yardStatus(JSON.parse(el.dataset.hours));
-      el.textContent = el.hasAttribute('data-short') ? (s.open ? 'Open' : 'Closed') : s.text;
-      el.classList.toggle('is-open', s.open);
+      const open = isOpen(JSON.parse(el.dataset.hours));
+      el.textContent = open ? 'Open' : 'Closed';
+      el.classList.toggle('is-open', open);
       el.hidden = false;
     } catch { /* leave hidden */ }
   });
   paintHours();
   setInterval(paintHours, 60 * 1000);
-
-  /* Projects filter */
-  const filters = $('[data-filters]');
-  if (filters) {
-    filters.addEventListener('click', (e) => {
-      const b = e.target.closest('button[data-filter]');
-      if (!b) return;
-      const f = b.dataset.filter;
-      $$('button', filters).forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
-      $$('[data-sector]').forEach((card) => { card.hidden = f !== 'all' && card.dataset.sector !== f; });
-      $('.proj-grid').classList.toggle('is-filtered', f !== 'all');
-    });
-  }
 })();

@@ -1,0 +1,108 @@
+/* ================= Projects =================
+   Kinds of work, not a list of jobs: four sectors, two kinds of work in each, shown as an
+   arcade of yellow-printed arches on black. Class names on this page start with pj-. */
+
+/* Hero: the second word of the headline keeps inside the column beside the window. */
+@media (min-width: 900px) { .pj-hero .phero__title { font-size: min(var(--t-d1), 7.7vw); } }
+
+/* The four sectors, as a line of links under the hero's buttons. */
+.pj-jump { display: flex; flex-wrap: wrap; align-items: baseline; gap: .5rem 1.1rem; margin-top: clamp(1.4rem, 2.6vw, 2.1rem); font-size: .76rem; font-weight: 750; font-stretch: 112%; letter-spacing: .05em; text-transform: uppercase; line-height: 1.3; }
+.pj-jump__k { font-weight: 800; font-stretch: 125%; letter-spacing: .09em; }
+.pj-jump ul { display: flex; flex-wrap: wrap; gap: .3rem 1.15rem; }
+.pj-jump li + li::before { content: '/'; }
+.pj-jump a { display: inline-flex; align-items: center; min-height: 40px; margin-inline: -.6em; padding: 0 .6em; border-radius: var(--r-pill); text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: .32em; transition: background var(--t-tap) linear, color var(--t-tap) linear; }
+.pj-jump a:hover { background: var(--black); color: var(--yellow); text-decoration: none; }
+.pj-jump li + li::before { margin-right: 1.15rem; }
+
+/* ---------- The work: four sectors side by side ---------- */
+.pj-work { padding-top: calc(var(--section) + clamp(70px, 13vw, 210px)); }
+.pj-work .shead { margin-bottom: clamp(1.75rem, 3vw, 2.75rem); }
+.pj-work .shead .lede { color: var(--paper); }
+
+/* Sector pills: the shared .toggle control. These only add what the row needs. */
+.pj-filter { display: flex; flex-wrap: wrap; gap: .4rem; margin-bottom: clamp(2rem, 3.6vw, 3.25rem); }
+html:not(.js) .pj-filter { display: none; }
+.pj-pill { flex: none; min-height: 46px; padding: 0 1.2em; }
+
+.pj-sectors { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(2.5rem, 4vw, 3.5rem) clamp(1rem, 2.2vw, 2.25rem); align-items: start; }
+.pj-sector { min-width: 0; scroll-margin-top: calc(var(--mast) + 1.5rem); }
+/* Four across, the columns share their rows, so the second row of arches starts on one line. */
+@supports (grid-template-rows: subgrid) {
+  @media (min-width: 1100px) {
+    .pj-sectors:not(.is-filtered) .pj-sector { display: grid; grid-template-rows: subgrid; grid-row: span 3; row-gap: 0; }
+    .pj-sectors:not(.is-filtered) .pj-kinds { grid-template-rows: subgrid; grid-row: span 2; }
+  }
+}
+/* A sector's name hangs under a yellow keyline, numbered like everything else on the site. */
+.pj-sector__head { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: baseline; gap: .3rem .7rem; margin-bottom: clamp(1.1rem, 2vw, 1.6rem); padding-top: .85rem; border-top: var(--line) solid var(--yellow); }
+.pj-sector__no { font-size: .76rem; font-weight: 800; font-stretch: 125%; letter-spacing: .05em; color: var(--yellow); }
+.pj-sector__name { font-size: clamp(1.05rem, .8rem + .75vw, 1.5rem); line-height: 1; font-weight: 900; font-stretch: var(--wide); letter-spacing: -.02em; text-transform: uppercase; color: var(--yellow); }
+.pj-sector__line { grid-column: 2; margin: 0; font-size: .92rem; line-height: 1.3; color: var(--ash); }
+.pj-kinds { display: grid; gap: clamp(2rem, 3.4vw, 3.25rem); }
+.pj-kind { display: grid; align-content: start; min-width: 0; }
+.pj-kind__win { aspect-ratio: 4 / 5; margin-bottom: 1.15rem; }
+.pj-kind__body { display: grid; grid-template-columns: minmax(0, 1fr); gap: .5rem; justify-items: start; min-width: 0; }
+.pj-kind__title { font-size: clamp(1.1rem, .9rem + .7vw, 1.45rem); line-height: 1.02; font-weight: 900; font-stretch: 118%; letter-spacing: -.015em; text-transform: uppercase; text-wrap: balance; }
+.pj-kind__where { margin: 0; font-size: var(--t-label); font-weight: 800; font-stretch: 125%; letter-spacing: .08em; text-transform: uppercase; color: var(--yellow); }
+.pj-kind__scope { margin: 0; font-size: .95rem; line-height: 1.42; color: var(--ash); }
+.pj-kind__mats { display: flex; flex-wrap: wrap; gap: .3rem; margin-top: .2rem; }
+.pj-kind__mats li { padding: .34em .75em .3em; border: var(--line) solid var(--black-3); border-radius: var(--r-pill); font-size: .78rem; font-weight: 650; line-height: 1.2; color: var(--paper); }
+.pj-kind__go { margin-top: .55rem; }
+.pj-kind__go-s { display: none; }
+@media (max-width: 479px) { .pj-kind__go-l { display: none; } .pj-kind__go-s { display: inline; } }
+.pj-note { margin: clamp(2.25rem, 4vw, 3.5rem) 0 0; font-size: .86rem; color: var(--ash); }
+
+/* One sector chosen: its name grows and its two kinds stand side by side. */
+.pj-sectors.is-filtered { grid-template-columns: minmax(0, 1fr); }
+.is-filtered .pj-sector { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2.5fr); gap: clamp(1.5rem, 4.5vw, 5rem); align-items: start; }
+.is-filtered .pj-sector__head { container-type: inline-size; position: sticky; top: calc(var(--mast) + 1.5rem); grid-template-columns: minmax(0, 1fr); margin: 0; }
+/* Sized from the column, so the longest name (Institutional) stays on one line. */
+.is-filtered .pj-sector__name { font-size: clamp(1.25rem, 9.3cqi, 3.3rem); line-height: .92; }
+.is-filtered .pj-sector__line { grid-column: 1; margin-top: .5rem; font-size: 1.05rem; }
+.is-filtered .pj-kinds { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(1rem, 2.2vw, 2.25rem); }
+@media (prefers-reduced-motion: no-preference) { .is-filtered .pj-kind { animation: pj-in .5s var(--spring) backwards; animation-delay: calc(var(--i, 0) * 70ms); } }
+@keyframes pj-in { from { opacity: 0; transform: translateY(26px); } }
+
+@media (max-width: 1099px) {
+  .pj-sectors { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .is-filtered .pj-sector { grid-template-columns: minmax(0, 1fr); gap: 1.5rem; }
+  .is-filtered .pj-sector__head { position: static; }
+}
+@media (max-width: 699px) {
+  /* Phones: sectors stack; each kind is a row with its arch on the left. */
+  .pj-jump ul { gap: .15rem 1.7rem; } .pj-jump li + li::before { content: none; }
+  .pj-filter { flex-wrap: nowrap; margin-inline: calc(var(--gutter) * -1); padding: 4px var(--gutter); overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+  .pj-filter::-webkit-scrollbar { display: none; }
+  .pj-sectors, .pj-sectors.is-filtered { grid-template-columns: minmax(0, 1fr); gap: 2.5rem; }
+  .pj-kinds, .is-filtered .pj-kinds { grid-template-columns: minmax(0, 1fr); gap: 1.75rem; }
+  .pj-kind { grid-template-columns: clamp(92px, 29vw, 124px) minmax(0, 1fr); column-gap: 1.1rem; align-items: start; }
+  .pj-kind__win { margin: .15rem 0 0; }
+  .is-filtered .pj-sector__name { font-size: clamp(1.25rem, 7.4cqi, 2.4rem); }
+}
+
+/* ---------- Where's the job: three rows, one tap each ---------- */
+.pj-call { padding-bottom: calc(var(--section) * .8); }
+.pj-yards { border-top: var(--line) solid var(--black); }
+.pj-yard {
+  --pad: max(var(--gutter), calc((100% - var(--wrap)) / 2));
+  display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(0, .62fr) auto 60px; align-items: center; gap: 0 clamp(1rem, 2.4vw, 2.75rem);
+  min-height: clamp(92px, 8.4vw, 126px); padding: .9rem var(--pad); border-bottom: var(--line) solid var(--black);
+  color: var(--black); text-decoration: none; transition: background var(--t-tap) linear, color var(--t-tap) linear;
+}
+.pj-yard__where { font-size: clamp(1.25rem, .7rem + 2.1vw, 2.6rem); line-height: .95; font-weight: 900; font-stretch: var(--wide); letter-spacing: -.022em; text-transform: uppercase; text-wrap: balance; }
+.pj-yard__city { display: grid; gap: .3rem; justify-items: start; }
+.pj-yard__city b { font-size: .8rem; font-weight: 800; font-stretch: 125%; letter-spacing: .08em; text-transform: uppercase; }
+.pj-yard__num { font-size: clamp(1.25rem, .8rem + 1.5vw, 2.1rem); line-height: 1; font-weight: 800; letter-spacing: -.01em; white-space: nowrap; }
+.pj-yard:hover, .pj-yard:focus-visible { background: var(--black); color: var(--yellow); }
+.pj-yard:hover .pj-yard__num, .pj-yard:focus-visible .pj-yard__num { color: var(--paper); }
+.pj-yard:hover .line__go, .pj-yard:focus-visible .line__go { background: var(--yellow); color: var(--black); transform: rotate(-18deg) scale(1.12); }
+.pj-yard:hover .status.is-open::before, .pj-yard:focus-visible .status.is-open::before { box-shadow: none; }
+.pj-yard:focus-visible { outline-offset: -6px; outline-color: var(--yellow); box-shadow: none; }
+.pj-call .ticket { margin-top: clamp(1.5rem, 3vw, 2.5rem); }
+@media (max-width: 799px) {
+  .pj-yard { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "where where" "city go" "num go"; gap: .2rem 1rem; padding-block: 1.15rem 1.2rem; }
+  .pj-yard__where { grid-area: where; margin-bottom: .6rem; font-size: clamp(1.2rem, 5.6vw, 1.7rem); }
+  .pj-yard__city { grid-area: city; grid-auto-flow: column; justify-content: start; align-items: center; gap: .7rem; }
+  .pj-yard__num { grid-area: num; font-size: 1.45rem; }
+  .pj-yard .line__go { grid-area: go; align-self: end; display: grid; width: 52px; height: 52px; }
+}

@@ -8,6 +8,7 @@ import { join, dirname, resolve, relative } from 'path';
 import { fileURLToPath } from 'url';
 import { createServer } from 'http';
 import { createRequire } from 'module';
+import { LOCATIONS } from '../src/data/locations.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const DOCS = process.env.OUT ? resolve(process.env.OUT) : join(ROOT, 'docs');
@@ -44,6 +45,29 @@ for (const file of pages) {
     if (clean.endsWith('/') || clean === '' || clean === '.' || clean === './') target = join(target, 'index.html');
     if (!existsSync(target)) fail(rel, `broken link ${ref}`);
   }
+}
+// Things the site must never say (see the review rules). Checked on visible text only.
+const NEVER = [/one point of contact/i, /from quote to landing/i, /price it delivered/i, /delivered pricing/i, /quoted together/i, /takes? about \w+ minutes/i,
+  /stock varies/i, /last sailings/i, /estimators,? designers and drivers/i, /\bon (the )?puget sound\b/i, /priced and ready to order/i, /carrier bookings/i, /ships together/i, /\bbuilds? the take-?off/i];
+// The only contact details the site may print (data/locations.mjs, which FACTS.md backs).
+const PHONES = new Set(LOCATIONS.flatMap((l) => [l.phone, l.tollFree, l.fax]).filter(Boolean));
+const MAILS = new Set(LOCATIONS.map((l) => l.email));
+for (const file of pages) {
+  const rel = relative(DOCS, file);
+  const src = readFileSync(file, 'utf8');
+  if (/http-equiv="refresh"/.test(src)) continue;
+  const ld = [...src.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)].map((m) => m[1]).join(' ');
+  const text = src.replace(/<(script|style)[\s\S]*?<\/\1>/g, ' ').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ');
+  for (const re of NEVER) if (re.test(text) || re.test(ld)) fail(rel, `says something the rules forbid: ${(text.match(re) || ld.match(re))[0]}`);
+  // The yard hours are placeholders: they appear in the Locations details and nowhere else.
+  if (rel !== join('locations', 'index.html') && /Mon[–-]Fri|Sat[–-]Sun|\b\d{1,2}(:\d\d)? ?[ap]\.m\./.test(text)) fail(rel, 'prints yard hours');
+  if (/\buntil\b/i.test(text)) fail(rel, `says "until": ${text.match(/.{30}\buntil\b.{20}/i)[0]}`);
+  if (/openingHours/.test(src)) fail(rel, 'structured data states opening hours');
+  // Every phone number, fax and email on the page is one of the yards' own.
+  for (const m of text.matchAll(/\(\d{3}\) ?\d{3}-\d{4}/g)) if (!PHONES.has(m[0])) fail(rel, `unknown number ${m[0]}`);
+  for (const m of src.matchAll(/\bmailto:([^"?]+)/g)) if (!MAILS.has(m[1])) fail(rel, `unknown email ${m[1]}`);
+  // A control that opens the call sheet or the menu is a link, so it still goes somewhere without the script.
+  if (/<button\b[^>]*\bdata-open=/.test(src)) fail(rel, 'a button opens a dialog; it does nothing without JavaScript');
 }
 console.log(`static: ${pages.length} pages checked`);
 
@@ -154,6 +178,11 @@ for (const [name, viewport, mobile] of [['small phone', { width: 360, height: 74
     // Arriving from the Alaska route finder: yard and place are already filled in.
     await page.goto(base + 'quote/?yard=fairbanks&location=Galena%2C%20AK', { waitUntil: 'networkidle' });
     if ((await page.inputValue('#location')) !== 'Galena, AK' || (await page.inputValue('#yard')) !== 'Fairbanks') fail('desktop /quote/', 'route finder prefill missing');
+    // An off-road place arrives with remote shipping chosen, and the note says how freight generally gets there.
+    await page.evaluate(() => localStorage.clear());
+    await page.goto(base + 'quote/?yard=anchorage&location=Bethel%2C%20AK&delivery=Remote%20Alaska%20shipping', { waitUntil: 'networkidle' });
+    if (!(await page.isChecked('input[name=delivery][value="Remote Alaska shipping"]'))) fail('desktop /quote/', 'delivery prefill missing');
+    if (!/^Bethel: barge/.test(await page.textContent('[data-way-note]'))) fail('desktop /quote/', 'no note on how freight reaches Bethel');
     await page.evaluate(() => localStorage.clear());
     await page.goto(base + 'quote/?product=Cedar%2C%20Decking%20%26%20Fencing', { waitUntil: 'networkidle' });
     if (!(await page.inputValue('#materials')).startsWith('Cedar, Decking & Fencing:')) fail('desktop /quote/', 'product prefill missing');
@@ -191,6 +220,162 @@ for (const [name, viewport, mobile] of [['small phone', { width: 360, height: 74
   await ctx.close();
 }
 
+// Shared components at the widths that have broken them.
+for (const w of [320, 360, 390, 600, 699, 768, 999]) {
+  const ctx = await browser.newContext({ viewport: { width: w, height: 844 }, hasTouch: w < 1000 });
+  const page = await ctx.newPage();
+  await page.goto(base, { waitUntil: 'networkidle' });
+  // Every place name on the delivery map is whole and inside the map.
+  const cut = await page.$$eval('.dmap__town, .dmap__yard', (els) => {
+    const box = els[0].closest('.dmap__canvas').getBoundingClientRect();
+    return els.filter((e) => getComputedStyle(e).display !== 'none').filter((e) => {
+      const r = e.querySelector('b').getBoundingClientRect();
+      return r.left < box.left || r.right > box.right || r.top < box.top || r.bottom > box.bottom;
+    }).map((e) => e.textContent.trim());
+  });
+  if (cut.length) fail(`${w}px /`, `map labels cut off: ${cut}`);
+  // A yard's name, number and call button never run into each other.
+  const hit = await page.$$eval('.ystrip__item', (els) => els.some((e) => {
+    const c = e.querySelector('.ystrip__city').getBoundingClientRect();
+    const n = e.querySelector('.ystrip__num').getBoundingClientRect();
+    return n.left < c.right + 2 && n.top < c.bottom - 2 && c.top < n.bottom - 2;
+  }));
+  if (hit) fail(`${w}px /`, 'yard pill text collides');
+  // The product index never cuts off a list, and a row's picture never covers its name when it flips.
+  const rows = await page.$$eval('.lines .line', (els) => els.flatMap((row) => {
+    row.classList.add('is-on');
+    const items = row.querySelector('.line__items');
+    const r = document.createRange(); r.selectNodeContents(row.querySelector('.line__name'));
+    const name = [...r.getClientRects()];
+    const pic = row.querySelector('.line__win').getBoundingClientRect();
+    return [items.scrollHeight > items.clientHeight + 1 ? `${row.textContent.trim().slice(0, 20)}: list cut off` : null,
+      pic.width && name.some((b) => b.right > pic.left + 1 && b.bottom > pic.top && b.top < pic.bottom) ? `${row.textContent.trim().slice(0, 20)}: picture over the name` : null].filter(Boolean);
+  }));
+  rows.forEach((m) => fail(`${w}px /`, m));
+  // The route finder's map: every name stays whole, including a place someone has just picked.
+  await page.goto(base + 'alaska/', { waitUntil: 'networkidle' });
+  for (const town of ['', 'juneau', 'unalaska', 'utqiagvik']) {
+    if (town) await page.$eval(`.town[data-town="${town}"]`, (b) => b.click());
+    await page.waitForTimeout(350);
+    const lost = await page.$$eval('.finder .dmap__town, .finder .dmap__yard', (els) => {
+      const box = els[0].closest('.dmap__canvas').getBoundingClientRect();
+      return els.filter((e) => getComputedStyle(e).display !== 'none').filter((e) => {
+        const r = e.querySelector('b').getBoundingClientRect();
+        return r.left < box.left - 1 || r.right > box.right + 1 || r.top < box.top - 1 || r.bottom > box.bottom + 1;
+      }).map((e) => e.textContent.trim());
+    });
+    if (lost.length) fail(`${w}px /alaska/${town ? ' ' + town : ''}`, `map labels cut off: ${lost}`);
+  }
+  await ctx.close();
+}
+
+// What every page promises at phone and desktop width.
+for (const [name, viewport, mobile] of [['phone', { width: 390, height: 844 }, true], ['desktop', { width: 1440, height: 900 }, false]]) {
+  const ctx = await browser.newContext({ viewport, isMobile: mobile, hasTouch: mobile });
+  const page = await ctx.newPage();
+  for (const p of paths) {
+    await page.goto(base + p, { waitUntil: 'networkidle' });
+    // Everything that arrives on scroll does arrive: nothing stays hidden or clipped away.
+    const H = await page.evaluate(() => document.documentElement.scrollHeight);
+    for (let y = 0; y < H; y += Math.round(viewport.height * 0.7)) {
+      await page.evaluate((top) => window.scrollTo({ top, behavior: 'instant' }), y);
+      await page.waitForTimeout(40);
+    }
+    await page.waitForTimeout(150);
+    const unseen = await page.$$eval('[data-reveal]:not(.is-in)', (els) => els.filter((e) => e.offsetParent).map((e) => e.className));
+    if (unseen.length) fail(`${name} /${p}`, `never revealed: ${[...new Set(unseen)].slice(0, 4)}`);
+    // A stock photograph in a hero or a closing band says what it shows.
+    const bare = await page.evaluate(() => ['.phero', '.qband'].filter((s) => { const el = document.querySelector(s); return el && el.querySelector('.win img') && !el.querySelector('.wcap'); }));
+    if (bare.length) fail(`${name} /${p}`, `photograph without a caption in ${bare}`);
+    if (!mobile) continue;
+    // Nothing important under 12px on a phone; controls at least 40px tall on touch screens.
+    const problems2 = await page.evaluate(() => {
+      const shown = (el) => { const s = getComputedStyle(el), b = el.getBoundingClientRect(); return s.display !== 'none' && s.visibility !== 'hidden' && b.width > 1 && b.height > 1; };
+      const out = [];
+      const walk = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+      while (walk.nextNode()) {
+        const t = walk.currentNode, el = t.parentElement;
+        if (!t.textContent.trim() || !el || el.closest('.sr-only, script, style, dialog:not([open]), .megamenu, .print-only, sup') || !shown(el)) continue;
+        const fs = parseFloat(getComputedStyle(el).fontSize);
+        if (fs > 0 && fs < 11.99) out.push(`text under 12px (${fs.toFixed(1)}): ${t.textContent.trim().slice(0, 24)}`);
+      }
+      for (const el of document.querySelectorAll('main a[href], main button, main summary, main select, .footer a, .footer button, .masthead a, .actionbar a')) {
+        if (el.closest('.sr-only') || !shown(el)) continue;
+        const after = getComputedStyle(el, '::after');
+        const h = Math.max(el.getBoundingClientRect().height, after.content !== 'none' && after.position === 'absolute' ? parseFloat(after.height) || 0 : 0);
+        if (h < 39.5) out.push(`control ${Math.round(h)}px tall: ${el.textContent.trim().slice(0, 24)}`);
+      }
+      return out;
+    });
+    [...new Set(problems2)].slice(0, 6).forEach((m) => fail(`phone /${p}`, m));
+  }
+  await ctx.close();
+}
+
+// With JavaScript off, every Call, Directions and Menu control still leads somewhere.
+{
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, javaScriptEnabled: false });
+  const page = await ctx.newPage();
+  for (const p of ['', 'alaska/', 'products/framing-lumber/']) {
+    await page.goto(base + p, { waitUntil: 'load' });
+    const dead = await page.$$eval('[data-open]', (els) => els.filter((e) => e.tagName !== 'A' || !e.getAttribute('href')).map((e) => e.outerHTML.slice(0, 60)));
+    if (dead.length) fail(`no-JS /${p}`, `controls that go nowhere: ${dead}`);
+    for (const [sel, want] of [['.actionbar [data-open]', /\/locations\/$/], ['.actionbar [data-open] + [data-open]', /\/locations\/$/], ['.masthead__call', /\/locations\/$/], ['.masthead__menu', /#site-index$/]]) {
+      await page.goto(base + p, { waitUntil: 'load' });
+      await page.click(sel);
+      await page.waitForTimeout(150);
+      if (!want.test(page.url())) fail(`no-JS /${p}`, `${sel} went to ${page.url()}`);
+      if (want.test('#site-index') && !(await page.isVisible('#site-index'))) fail(`no-JS /${p}`, 'the site index is not on the page');
+    }
+  }
+  await page.goto(base + 'alaska/', { waitUntil: 'load' });
+  if (!(await page.isVisible('.way--yards')) || await page.isVisible('.way--live')) fail('no-JS /alaska/', 'the three yards do not replace the route finder');
+  await ctx.close();
+}
+
+// Products, services and projects: what each page promises.
+{
+  const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+  const page = await ctx.newPage();
+  // Index: nine rows, every item linked, the finder narrows them.
+  await page.goto(base + 'products/', { waitUntil: 'networkidle' });
+  if ((await page.$$('.pl-lines .pl-line')).length !== 9) fail('/products/', 'expected 9 rows in the index');
+  if ((await page.$$('.pl-line__items a')).length !== 32) fail('/products/', 'expected 32 linked products');
+  await page.fill('#pl-q', 'hangers');
+  const found = await page.$$eval('.pl-line:not([hidden])', (els) => els.length);
+  if (found !== 1) fail('/products/', `finder: "hangers" left ${found} rows, expected 1`);
+  // A line page: the quote links carry the line, and ticking more lines lists them all.
+  await page.goto(base + 'products/cedar-decking/', { waitUntil: 'networkidle' });
+  const carried = 'quote/?product=Cedar%2C%20Decking%20%26%20Fencing';
+  for (const sel of ['.phero .actions a.btn', '.qband .actions a.btn']) {
+    if (!(await page.getAttribute(sel, 'href')).endsWith(carried)) fail('/products/cedar-decking/', `${sel} does not carry the product line`);
+  }
+  await page.$$eval('.pl-pick input', (els) => { els[0].click(); els[1].click(); });
+  await page.evaluate(() => { localStorage.clear(); document.querySelector('.pl-load').submit(); });
+  await page.waitForURL(/quote\//);
+  const asked = (await page.inputValue('#materials')).trim().split('\n').filter(Boolean);
+  if (asked.length !== 3 || asked.some((l) => !l.endsWith(':'))) fail('/products/cedar-decking/', `load ticket sent ${JSON.stringify(asked)}`);
+  await page.evaluate(() => localStorage.clear());
+  // Services: six stops, and every hook on the rack lands on one.
+  await page.goto(base + 'services/', { waitUntil: 'networkidle' });
+  if ((await page.$$('.sv-stop[id]')).length !== 6) fail('/services/', 'expected 6 service sections');
+  const hooks = await page.$$eval('.sv-hook[href^="#"]', (els) => els.map((a) => !!document.querySelector(a.getAttribute('href'))));
+  if (hooks.length !== 6 || hooks.includes(false)) fail('/services/', `rack links: ${hooks}`);
+  // Projects: a sector pill shows that sector's two kinds of work; a link to a sector opens it.
+  await page.goto(base + 'projects/', { waitUntil: 'networkidle' });
+  await page.click('.pj-pill[data-filter="Institutional"]');
+  const shown = await page.$$eval('.pj-sector:not([hidden])', (els) => [els.length, els.reduce((n, e) => n + e.querySelectorAll('.pj-kind').length, 0)]);
+  if (shown[0] !== 1 || shown[1] !== 2) fail('/projects/', `filter showed ${shown[0]} sectors, ${shown[1]} kinds`);
+  await page.goto(base + 'projects/#commercial', { waitUntil: 'networkidle' });
+  if (!(await page.isVisible('.pj-pill[data-filter="Commercial"][aria-pressed="true"]'))) fail('/projects/#commercial', 'link did not open the sector');
+  // A stock photograph in a hero says what it shows.
+  for (const p of ['products/', 'services/', 'projects/']) {
+    await page.goto(base + p, { waitUntil: 'networkidle' });
+    if (!(await page.isVisible('.phero .wcap'))) fail(`/${p}`, 'hero photograph has no caption');
+  }
+  await ctx.close();
+}
+
 // The yard phone numbers are the point of the hero: on common screens they show without scrolling.
 // Hinted text runs wider and wraps sooner, so check with font hinting on as well. Only the
 // headless shell (Playwright's default browser) obeys this flag; full Chromium ignores it.
@@ -219,4 +404,4 @@ if (problems.length) {
   console.log(`\n${problems.length} problem(s):\n` + problems.map((p) => '  ✗ ' + p).join('\n'));
   process.exit(1);
 }
-console.log(`browser: ${paths.length} pages × 5 widths clean; quote form, credit application, hours, dialogs and the fold work\nALL CHECKS PASSED`);
+console.log(`browser: ${paths.length} pages × 5 widths clean; quote form, credit application, hours, dialogs, shared components, products, services, projects and the fold work\nALL CHECKS PASSED`);

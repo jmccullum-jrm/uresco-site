@@ -18,9 +18,10 @@
   --rule: #D3D0C6;         /* hairline */
   --rule-2: #A8A69C;       /* stronger hairline */
   --yellow: #F5B800;       /* UCM yellow: highlighter, primary action, the highlighted member */
-  --yellow-2: #FFD95C;     /* yellow on hover over ink */
   --blue: #1F45C2;         /* annotation only: dimensions, callouts, sea lanes, focus */
-  --blue-2: #9DB2FF;       /* annotation on ink */
+  /* Status lamp only: a yard that is open. Never a text colour, a fill or an accent. */
+  --go: #1B7F45;           /* on paper */
+  --go-ink: #46D98A;       /* on ink */
   /* The board, footer and bars are ink objects set on the paper. */
   --board: #121311;
   --tile: #20211E;
@@ -36,12 +37,10 @@
   --fs-h3: clamp(1.25rem, 1.1rem + .55vw, 1.625rem);
   --fs-lede: clamp(1.0625rem, 1rem + .35vw, 1.25rem);
   --fs-body: 1.0625rem;
-  --fs-small: .9375rem;
-  --fs-label: .75rem;      /* mono labels */
+  --fs-label: .8125rem;    /* mono labels */
   --fs-data: .875rem;      /* mono data */
 
-  /* Space: a 4px module */
-  --s1: .25rem; --s2: .5rem; --s3: .75rem; --s4: 1rem; --s5: 1.5rem; --s6: 2rem; --s7: 3rem; --s8: 4rem; --s9: 6rem;
+  /* Space */
   --section: clamp(4.25rem, 2.6rem + 6.4vw, 8.5rem);
 
   /* Grid: 12 columns */
@@ -66,9 +65,3 @@
 }
 @media (min-width: 1000px) { :root { --util: 34px; --mast: 68px; --bar: 0px; } }
 @media (max-width: 999px) and (max-height: 500px) { :root { --bar: 46px; } }
-
-/* Aliases for the pages that have not been rebuilt in this system yet (see 90-legacy.css). */
-:root {
-  --bone: var(--paper-2); --sand: var(--rule); --stone: var(--ink-3); --mist: var(--board-mute);
-  --ink-line: var(--board-rule); --yellow-hi: var(--yellow-2); --yellow-deep: #C99300; --gutter: var(--margin);
-}

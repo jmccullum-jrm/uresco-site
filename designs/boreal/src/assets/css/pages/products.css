@@ -1,0 +1,314 @@
+/* ================= Products =================
+   /products/         the index: a filter field, the nine lines as a ledger, brands, and an A–Z.   (.pidx-*)
+   /products/<slug>/  one line: what is in it, who to ask, what goes with it, the next line.       (.pline-*)
+   Both open on the shared page hero and close on the shared dark call to action. */
+
+/* ---------- Index: the filter field ----------
+   The same field the home page uses to ask "Where are you building?", asking what you need. */
+.pidx { padding-top: 0; }
+.pidx-find { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: .7rem 1.5rem; align-items: center; padding: 1rem; border-radius: var(--r-lg); background: var(--white); box-shadow: var(--sh-2); }
+.pidx-find__label { font-size: .9375rem; font-weight: 600; }
+.pidx-find__count { margin: 0; justify-self: end; font-family: var(--mono); font-size: var(--t-micro); font-weight: 500; letter-spacing: .06em; text-transform: uppercase; color: var(--slate); }
+.pidx-find__count i { font-style: normal; opacity: .55; margin-inline: .2em; }
+.pidx-find__field { position: relative; display: flex; align-items: center; }
+.pidx-find__field > .i { position: absolute; left: .95rem; color: var(--slate); pointer-events: none; }
+.pidx-find__input { width: 100%; height: 54px; padding: 0 2.9rem; border: 1.5px solid var(--mist); border-radius: var(--r-md); background: var(--snow); font: inherit; font-size: 1.0625rem; color: var(--ink); -webkit-appearance: none; appearance: none; }
+.pidx-find__input::-webkit-search-cancel-button, .pidx-find__input::-webkit-search-decoration { -webkit-appearance: none; appearance: none; }
+.pidx-find__input::placeholder { color: var(--slate); opacity: 1; }
+.pidx-find__input:hover { border-color: var(--fog); }
+.pidx-find__input:focus { outline: none; border-color: var(--ink); background: var(--white); box-shadow: 0 0 0 4px rgba(245, 184, 0, .45); }
+.pidx-find__clear { position: absolute; right: .25rem; display: grid; place-items: center; width: 44px; height: 44px; border: 0; border-radius: 10px; background: none; color: var(--slate); }
+.pidx-find__clear:hover { background: var(--ice); color: var(--ink); }
+.pidx-find__chips { display: flex; align-items: center; gap: .4rem; }
+@media (max-width: 999px), (pointer: coarse) { .pidx-find__chips .chip { height: 40px; padding: 0 .85rem; font-size: .875rem; } }
+.pidx-find__try { margin-right: .15rem; font-family: var(--mono); font-size: .75rem; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; color: var(--slate); }
+
+/* ---------- Index: the nine lines as a ledger ----------
+   Number, picture, the line and what it is; then everything in it; then the way in. */
+/* Column labels, as on a ledger. Wide screens only: below that the rows stop being columns. */
+.pidx-cols { display: grid; grid-template-columns: 1.75rem 96px minmax(0, 5fr) minmax(0, 6fr) 36px; column-gap: 1.5rem; margin: 1.5rem 0 0; padding: 0 .75rem .6rem .25rem; font-family: var(--mono); font-size: .75rem; font-weight: 500; letter-spacing: .06em; line-height: 1.5; text-transform: uppercase; color: var(--slate); }
+.pidx-cols span:nth-child(2) { grid-column: 3; }
+.pidx-cols span:nth-child(3) { grid-column: 4; padding-left: 1.05rem; }
+html:not(.js) .pidx-cols { margin-top: 0; }
+.pidx-list { list-style: none; border-top: 1px solid var(--mist); }
+.pidx-row { display: grid; grid-template-columns: 1.75rem 96px minmax(0, 5fr) minmax(0, 6fr) 36px; column-gap: 1.5rem; align-items: start; padding: 1.25rem .75rem 1.25rem .25rem; border-bottom: 1px solid var(--mist); }
+.pidx-row__no { padding-top: .45rem; font-family: var(--mono); font-size: var(--t-micro); font-weight: 500; color: var(--slate); }
+.pidx-row__thumb { width: 96px; height: 96px; border-radius: 16px; }
+.pidx-row__name { font-size: 1.3125rem; font-weight: 600; letter-spacing: -.02em; line-height: 1.25; }
+.pidx-row__name a { text-decoration: none; }
+/* The whole row is the link. */
+.pidx-row__name a::after { content: ''; position: absolute; inset: 4px -8px; z-index: 1; border-radius: var(--r-lg); }
+.pidx-row__name a:focus-visible { outline: none; }
+.pidx-row__name a:focus-visible::after { outline: 2px solid var(--ring); outline-offset: 0; }
+.pidx-row__lede { margin: .35rem 0 0; max-width: 30em; font-size: .9375rem; line-height: 1.5; color: var(--slate); }
+.pidx-row__brands { margin-top: .75rem; }
+/* Straight to the quote form with this line on it. Sits above the row's stretched link. */
+.pidx-row__quote { position: relative; z-index: 2; grid-column: 3; grid-row: 2; justify-self: start; margin-top: .85rem; font-size: .875rem; }
+.pidx-row__items { columns: 2; column-gap: 1.5rem; padding-top: .2rem; list-style: none; font-size: .9375rem; line-height: 1.45; }
+.pidx-row__items li { position: relative; break-inside: avoid; padding: .24rem 0 .24rem 1.05rem; }
+.pidx-row__items li::before { content: ''; position: absolute; left: .1rem; top: .82em; width: 5px; height: 5px; border-radius: 50%; background: var(--fog); }
+.pidx-row__items small { display: block; margin-top: .1rem; font-size: .8125rem; line-height: 1.4; color: var(--slate); }
+.pidx-row__go { margin-top: .1rem; }
+/* Rows arrive one after another the first time. */
+.pidx-row:nth-child(2) { --i: 1; } .pidx-row:nth-child(3) { --i: 2; } .pidx-row:nth-child(4) { --i: 3; }
+
+/* While the field has something in it: matches step forward and say what they are for. */
+.pidx.is-filtered .pidx-row__items li:not(.is-hit) { color: var(--slate); }
+.pidx.is-filtered .is-narrowed .pidx-row__items { columns: 1; }
+.pidx-row__items .is-hit > span { font-weight: 600; }
+.pidx-row__items .is-hit::before { background: var(--ink); }
+.pidx.is-filtered .pidx-row { transition: none; }
+.pidx-none { padding: clamp(1.5rem, 4vw, 3rem) 0; border-bottom: 1px solid var(--mist); }
+.pidx-none__title { margin: 0 0 .5rem; font-size: var(--t-h3); font-weight: 600; letter-spacing: -.02em; line-height: 1.2; }
+.pidx-none p:not(.pidx-none__title) { margin: 0; max-width: 34em; color: var(--slate); }
+.pidx-none .actions { margin-top: 1.25rem; }
+.pidx-more { margin-top: clamp(1.5rem, 3vw, 2.5rem); }
+
+@media (max-width: 999px) {
+  /* Stacked, the photograph is a band: the field and the list stay close to the top. */
+  .pidx-top .phero__media { aspect-ratio: 2 / 1; }
+  .pidx-find { grid-template-columns: minmax(0, 1fr); }
+  .pidx-find__count { grid-row: 4; justify-self: start; }
+  .pidx-find__chips { overflow-x: auto; scrollbar-width: none; margin-right: -1rem; padding-right: 1rem; }
+  .pidx-find__chips::-webkit-scrollbar { display: none; }
+  .pidx-cols { display: none; }
+  .pidx-list { margin-top: 1.25rem; }
+  html:not(.js) .pidx-list { margin-top: 0; }
+  /* Picture, then the line; what is in it runs underneath, in the same column. */
+  .pidx-row { grid-template-columns: 80px minmax(0, 1fr) 36px; column-gap: 1.25rem; padding-inline: 0; }
+  .pidx-row__no { display: none; }
+  .pidx-row__thumb { width: 80px; height: 80px; grid-row: span 2; }
+  .pidx-row__items { grid-column: 2 / -1; margin-top: .75rem; }
+  .pidx-row__quote { grid-column: 2 / -1; grid-row: 3; }
+  .pidx-row__go { grid-column: 3; grid-row: 1; }
+}
+@media (max-width: 699px) {
+  /* The action bar already offers Call and Quote: the first screen goes to the field and the list. */
+  .pidx-top .actions { display: none; }
+  .pidx-top .phero { padding-bottom: 1.25rem; }
+  .pidx-top .phero__grid { gap: 1.5rem; }
+  .pidx-find { padding: .85rem; }
+  .pidx-row { grid-template-columns: 56px minmax(0, 1fr) 28px; column-gap: .85rem; padding-block: 1rem; }
+  .pidx-row::before, .pidx-row__name a::after { inset: 3px -6px; }
+  .pidx-row__thumb { width: 56px; height: 56px; border-radius: 12px; }
+  .pidx-row__quote { margin-top: .35rem; }
+  .pidx-row__name { font-size: 1.0625rem; }
+  .pidx-row__lede { display: none; }
+  /* Everything in the line as one run of text: nothing cut short, nothing to open. */
+  .pidx-row__items { columns: auto; margin-top: .3rem; font-size: .875rem; line-height: 1.5; color: var(--slate); }
+  .pidx-row__items li { display: inline; padding: 0; }
+  .pidx-row__items li::before { display: none; }
+  .pidx-row__items li:not(:last-child)::after { content: ' · '; color: var(--fog); }
+  /* The brand names are already in the run of products. */
+  .pidx-row__brands { display: none; }
+  .pidx-row__go { width: 28px; height: 28px; margin-top: 0; }
+  .pidx.is-filtered .pidx-row__items li { display: none; }
+  .pidx.is-filtered .pidx-row:not(.is-narrowed) .pidx-row__items li { display: inline; }
+  .pidx.is-filtered .pidx-row__items .is-hit { display: block; padding: .2rem 0; color: var(--ink); }
+  .pidx.is-filtered .pidx-row__items .is-hit::after { content: none; }
+}
+
+/* ---------- Index: brands ----------
+   The FAQ layout (.faq-wrap): the head stays put on the left, white rows on the right. */
+.pidx-brands__head { position: sticky; top: calc(var(--mast) + 2rem); }
+.pidx-brands__head .shead { position: static; margin-bottom: 1.25rem; }
+@media (max-width: 900px) { .pidx-brands__head { position: static; } }
+.pidx-brandlist { display: grid; gap: .5rem; list-style: none; }
+.pidx-brand { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: .35rem 1.5rem; align-items: baseline; padding: 1.15rem 1.5rem 1.2rem; border-radius: var(--r-lg); background: var(--white); box-shadow: var(--sh-1); }
+.pidx-brand:nth-child(2) { --i: 1; } .pidx-brand:nth-child(3) { --i: 2; } .pidx-brand:nth-child(4) { --i: 3; } .pidx-brand:nth-child(5) { --i: 4; }
+.pidx-brand__name { font-size: clamp(1.1875rem, 1.1rem + .4vw, 1.375rem); font-weight: 600; letter-spacing: -.02em; line-height: 1.2; }
+.pidx-brand__what { grid-column: 1; margin: 0; font-size: .9375rem; line-height: 1.5; }
+.pidx-brand__what span { color: var(--slate); }
+.pidx-brand__line { grid-column: 2; grid-row: 1; justify-self: end; font-size: .9375rem; white-space: nowrap; }
+.pidx-brand__lit { grid-column: 2; grid-row: 2; justify-self: end; display: inline-flex; align-items: center; gap: .3rem; font-size: .875rem; color: var(--slate); text-decoration: none; white-space: nowrap; }
+.pidx-brand__lit:hover { color: var(--ink); text-decoration: underline; }
+@media (max-width: 699px) {
+  .pidx-brand { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: .3rem 1.25rem; padding: 1.1rem 1.15rem 1.15rem; }
+  .pidx-brand__name, .pidx-brand__what { flex: 0 0 100%; }
+  .pidx-brand__line, .pidx-brand__lit { margin-top: .6rem; }
+  .pidx-brand__lit { min-height: 40px; }
+}
+
+/* ---------- Index: A–Z ----------
+   Set like the index at the back of a book: a hanging letter, the entry, a dotted leader, the line it is in. */
+.pidx-azs { padding-bottom: calc(var(--section) * .8); }
+.pidx-az { columns: 3; column-gap: 2.5rem; list-style: none; }
+.pidx-az li { position: relative; break-inside: avoid; padding-left: 1.5rem; }
+/* A little air before each new letter. */
+.pidx-az__first:not(:first-child) { margin-top: .8rem; }
+.pidx-az__letter { position: absolute; left: 0; top: .58rem; font-family: var(--mono); font-size: var(--t-micro); font-weight: 500; letter-spacing: .06em; line-height: 1.5; color: var(--slate); }
+.pidx-az__letter--phone { display: none; }
+.pidx-az a { display: flex; align-items: baseline; gap: .45rem; padding: .36rem 0; font-size: .9375rem; line-height: 1.35; text-decoration: none; }
+.pidx-az__name { font-weight: 500; }
+.pidx-az__dots { flex: 1; min-width: .5rem; border-bottom: 1px dotted var(--fog); transform: translateY(-.28em); }
+.pidx-az small { flex: none; font-size: .8125rem; color: var(--slate); white-space: nowrap; }
+.pidx-az a:hover .pidx-az__name { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .22em; }
+.pidx-az a:hover small { color: var(--ink); }
+@media (max-width: 1359px) { .pidx-az { columns: 2; column-gap: clamp(1.5rem, 5vw, 4rem); } }
+/* Too narrow for entry, leader and line on one row: the line sits under the entry. */
+@media (min-width: 700px) and (max-width: 919px) {
+  .pidx-az a { display: grid; gap: .05rem; padding: .4rem 0; }
+  .pidx-az__dots { display: none; }
+  .pidx-az small { white-space: normal; }
+}
+@media (max-width: 699px) {
+  /* On a phone the field above does this job: the A–Z is kept short, names only, without the second names. */
+  .pidx-az { column-gap: 1rem; }
+  .pidx-az li { padding-left: 1.4rem; }
+  .pidx-az__also, .pidx-az__dots, .pidx-az small, .pidx-az__letter--wide { display: none; }
+  .pidx-az__letter--phone { display: block; }
+  .pidx-az__first:not(:first-child) { margin-top: 0; }
+  .pidx-az__pfirst { margin-top: .5rem; }
+  .pidx-az a { display: block; padding: .42rem 0; }
+  .pidx-az__letter { top: .62rem; }
+}
+
+@media (pointer: coarse) { .pidx-az a { min-height: 40px; align-items: center; } }
+
+/* ---------- Line: the hero ----------
+   The shared page hero, with what is in the line set over the photograph as a glass panel. */
+.pline-hero__over { position: absolute; inset: 0; z-index: 2; display: flex; flex-direction: column; justify-content: space-between; align-items: flex-start; gap: 1rem; padding: 1rem; }
+.pline-hero__cap { position: static; }
+.pline-hero__panel { align-self: stretch; padding: .85rem .85rem .9rem; border-radius: calc(var(--r-2xl) - 1rem); background: rgba(14, 14, 12, .8); }
+.pline-hero__panel li { min-height: 26px; padding: 0 .55rem; font-size: .8125rem; }
+.pline-hero__has { display: none; }
+/* The eyebrow says where this line sits among the nine; the arrows beside it step through them. */
+@media (max-width: 359px) { .pline-hero__w { display: none; } }
+.pline-step { display: flex; gap: .35rem; flex: none; }
+@media (pointer: coarse) { .pline-step .go { width: 44px; height: 44px; } }
+/* Line names run long: the action may wrap rather than push the page wide. */
+.pline-qbtn { white-space: normal; text-align: center; text-wrap: balance; padding-block: .55rem; line-height: 1.25; }
+@media (max-width: 699px) {
+  /* On a phone the photograph is small: what is in the line moves into the words above it,
+     and the action bar already has Call. */
+  .pline-hero__panel, .pline-hero__call { display: none; }
+  .pline-hero__cap { margin-top: auto; }
+  .pline-hero__has { display: block; margin: 1rem 0 0; font-size: .875rem; line-height: 1.5; color: var(--slate); }
+  .pline-hero__has b { display: block; margin-bottom: .2rem; font-family: var(--mono); font-size: .75rem; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; }
+  .pline-hero .actions { margin-top: 1.5rem; }
+  .pline-hero .actions .btn { flex: 1 1 100%; }
+}
+
+/* ---------- Line: what is in it, and who to ask ---------- */
+.pline { padding-top: calc(var(--section) * .5); }
+.pline-grid { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 4.4fr); gap: clamp(1.25rem, 3vw, 3rem); align-items: start; }
+.pline-list { border-radius: var(--r-xl); background: var(--white); box-shadow: var(--sh-1); }
+.pline-list__bar { display: flex; justify-content: space-between; gap: 1rem; margin: 0; padding: 1rem 1.5rem; border-bottom: 1px solid var(--mist); font-family: var(--mono); font-size: var(--t-micro); font-weight: 500; letter-spacing: .06em; text-transform: uppercase; color: var(--slate); }
+.pline-list__rows { list-style: none; }
+.pline-item { display: grid; grid-template-columns: 1.75rem minmax(0, 1fr) auto; column-gap: 1rem; align-items: center; padding: 1.35rem 1.5rem; border-bottom: 1px solid var(--mist); scroll-margin-top: calc(var(--mast) + 4.5rem); }
+.pline-item__no { align-self: start; padding-top: .42rem; font-family: var(--mono); font-size: var(--t-micro); font-weight: 500; color: var(--slate); }
+.pline-item__name { font-size: var(--t-h3); font-weight: 600; letter-spacing: -.02em; line-height: 1.2; }
+.pline-item p { margin: .35rem 0 0; max-width: 34em; color: var(--slate); }
+/* Arriving from the A–Z or a brand: the product asked for is marked. */
+.pline-item:target { background: var(--snow); box-shadow: inset 3px 0 0 var(--ink); }
+.pline-item.is-picked .pline-item__no { color: var(--ink); }
+.pline-item__pick { position: relative; display: inline-flex; align-items: center; gap: .4rem; height: 40px; padding: 0 .85rem 0 .65rem; border: 1px solid var(--fog); border-radius: 10px; background: transparent; font-size: .875rem; font-weight: 500; white-space: nowrap; }
+.pline-item__pick:hover { background: var(--snow); border-color: var(--ink); }
+.pline-item__plus, .pline-item__check { display: inline-flex; }
+.pline-item__pick:not([data-on]) :is(.pline-item__check, .pline-item__on), .pline-item__pick[data-on] :is(.pline-item__plus, .pline-item__add) { display: none; }
+.pline-item__pick[data-on] { background: var(--ink); border-color: var(--ink); color: #fff; }
+.pline-item__pick[data-on]:hover { background: var(--ink-hi); }
+/* The last row is the one thing the list cannot say. */
+.pline-list__foot { display: grid; grid-template-columns: 1.75rem minmax(0, 1fr) auto; column-gap: 1rem; align-items: center; padding: 1.1rem 1.5rem 1.2rem; border-radius: 0 0 var(--r-xl) var(--r-xl); background: var(--snow); box-shadow: inset 0 0 0 1px var(--white); }
+.pline-list__q { display: grid; place-items: center; margin-left: -.1rem; color: var(--slate); }
+.pline-list__foot p { margin: 0; font-size: .9375rem; line-height: 1.45; color: var(--slate); }
+.pline-list__foot b { display: block; font-weight: 600; color: var(--ink); }
+.pline-list__foot .btn { min-height: 40px; background: var(--white); }
+
+.pline-brands { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr); gap: 1.25rem 2rem; align-items: start; margin-top: 1.25rem; padding: 1.25rem 1.5rem 1.1rem; border-radius: var(--r-xl); background: var(--white); box-shadow: var(--sh-1); }
+.pline-brands__h { margin-bottom: .8rem; font-family: var(--mono); font-size: var(--t-micro); font-weight: 500; letter-spacing: .06em; line-height: 1.5; text-transform: uppercase; color: var(--slate); }
+.pline-brands--none { grid-template-columns: minmax(0, 1fr); gap: 0; padding-bottom: 1.25rem; }
+.pline-brands--none .pline-brands__h { margin-bottom: .5rem; }
+.pline-brands--none p { margin: 0; max-width: 36em; font-size: .9375rem; line-height: 1.5; color: var(--slate); }
+.pline-brands__lit { display: grid; margin-top: -.5rem; list-style: none; }
+.pline-brands__lit a { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: .7rem; min-height: 44px; padding: .5rem 0; font-size: .9375rem; font-weight: 500; line-height: 1.35; text-decoration: none; color: var(--ink); }
+.pline-brands__lit li + li a { border-top: 1px solid var(--mist); }
+.pline-brands__lit a > .i { color: var(--slate); }
+.pline-brands__lit a:hover > span { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .22em; }
+
+/* The yards and the quote: a small instrument that stays alongside the list. */
+.pline-ask { --ring: var(--yellow); position: sticky; top: calc(var(--mast) + 1.5rem); padding: 1.5rem; border-radius: var(--r-xl); color: #fff; background: radial-gradient(120% 80% at 100% 0%, rgba(227, 231, 230, .1), transparent 62%), var(--night); }
+.pline-ask .eyebrow { margin-bottom: .9rem; color: var(--haze); }
+.pline-ask__title { font-size: clamp(1.75rem, 1.4rem + 1.2vw, 2.25rem); font-weight: 500; letter-spacing: -.035em; line-height: 1.05; }
+.pline-ask__text { margin: .8rem 0 1.25rem; font-size: .9375rem; line-height: 1.5; color: var(--frost); }
+.pline-ask__yards { list-style: none; margin-bottom: .75rem; border-radius: var(--r-md); background: rgba(255, 255, 255, .05); box-shadow: inset 0 0 0 1px var(--night-line); }
+.pline-ask__yards li { display: flex; justify-content: space-between; align-items: center; gap: .75rem; min-height: 56px; padding: .5rem .5rem .5rem 1rem; }
+.pline-ask__yards li + li { border-top: 1px solid var(--night-line); }
+.pline-ask__who { display: flex; flex-wrap: wrap; align-items: center; gap: 0 .6rem; }
+.pline-ask__who b { font-weight: 600; letter-spacing: -.01em; }
+.pline-ask .status { font-size: .75rem; color: var(--haze); }
+.pline-ask .status.is-open { color: var(--aurora); }
+.pline-ask .status.is-open::before { background: var(--aurora); box-shadow: 0 0 0 3px rgba(95, 224, 176, .2); }
+.pline-ask__num { display: inline-flex; align-items: center; gap: .45rem; flex: none; height: 40px; padding: 0 .75rem 0 .65rem; border: 1px solid rgba(255, 255, 255, .2); border-radius: 10px; background: rgba(255, 255, 255, .08); color: #fff; font-size: .9375rem; font-weight: 500; font-variant-numeric: tabular-nums; text-decoration: none; white-space: nowrap; }
+.pline-ask__num:hover { background: rgba(255, 255, 255, .16); }
+.pline-ask__picked { margin: .8rem 0 0; font-size: .8125rem; line-height: 1.45; color: var(--haze); }
+.pline-ask__picked.is-on { color: var(--frost); }
+
+/* Name over status wherever the card is narrow, so the three rows always match. */
+@media (max-width: 1199px) { .pline-ask__who { display: grid; gap: .1rem; } .pline-ask__yards li { min-height: 64px; } }
+@media (max-width: 899px) {
+  .pline-grid { grid-template-columns: minmax(0, 1fr); }
+  .pline-ask { position: static; }
+}
+@media (min-width: 700px) and (max-width: 899px) { .pline-ask__who { display: flex; gap: 0 .6rem; } .pline-ask__yards li { min-height: 56px; } }
+@media (max-width: 699px) {
+  .pline-list__bar { padding-inline: 1.1rem; }
+  .pline-list__foot { grid-template-columns: minmax(0, 1fr); row-gap: .85rem; padding: 1.1rem; }
+  .pline-list__q { display: none; }
+  .pline-list__foot .btn { justify-self: start; }
+  .pline-item { grid-template-columns: minmax(0, 1fr) auto; column-gap: .75rem; padding: 1.1rem 1.1rem 1.15rem; }
+  .pline-item__no { display: none; }
+  /* The button shrinks to its sign; its name stays for screen readers. */
+  .pline-item__pick { justify-content: center; width: 44px; height: 44px; padding: 0; border-radius: 12px; }
+  .pline-item__label { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .pline-brands { grid-template-columns: minmax(0, 1fr); padding: 1.1rem 1.1rem .6rem; }
+  /* The card that follows already says to ask the yard. */
+  .pline-brands--none { display: none; }
+  .pline-ask { padding: 1.25rem 1.1rem 1.1rem; }
+}
+@media (max-width: 359px) { .pline-ask__num .i { display: none; } .pline-ask__yards li { padding-left: .8rem; } }
+
+/* ---------- Line: the services that go with it (shared .modes cards, each one a link) ---------- */
+.pline-svc { position: relative; }
+.pline-svc::before { content: ''; position: absolute; inset: 0; border-radius: inherit; box-shadow: var(--sh-2); opacity: 0; pointer-events: none; transition: opacity var(--ui) var(--ease); }
+.pline-svc:hover::before { opacity: 1; }
+.pline-svc .h3 { padding-right: 2.5rem; }
+.pline-svc .h3 a { text-decoration: none; }
+.pline-svc .h3 a::after { content: ''; position: absolute; inset: 0; border-radius: var(--r-xl); }
+.pline-svc .h3 a:focus-visible { outline: none; }
+.pline-svc .h3 a:focus-visible::after { outline: 2px solid var(--ring); outline-offset: 2px; }
+.pline-svc > p:not(.mode__where) { margin: 0; color: var(--slate); }
+.pline-svc__go { position: absolute; top: 1.5rem; right: 1.5rem; }
+.pline-svc:nth-child(2) { --i: 1; } .pline-svc:nth-child(3) { --i: 2; }
+@media (max-width: 860px) { .pline-svc__go { top: 1.1rem; right: 1rem; } }
+
+/* ---------- Line: the rest of the load, then the next line ---------- */
+.pline-rel { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.25rem; list-style: none; }
+.pline-rel li:nth-child(2) { --i: 1; } .pline-rel li:nth-child(3) { --i: 2; }
+.pline-rel__card { position: relative; display: grid; grid-template-columns: 72px minmax(0, 1fr) auto; align-items: center; gap: 1rem; height: 100%; padding: .6rem .9rem .6rem .6rem; border-radius: var(--r-xl); background: var(--white); box-shadow: var(--sh-1); text-decoration: none; }
+.pline-rel__card::after { content: ''; position: absolute; inset: 0; border-radius: inherit; box-shadow: var(--sh-2); opacity: 0; pointer-events: none; transition: opacity var(--ui) var(--ease); }
+.pline-rel__card:hover::after { opacity: 1; }
+.pline-rel__thumb { width: 72px; height: 72px; border-radius: calc(var(--r-xl) - .6rem); }
+.pline-rel__text { display: grid; gap: .2rem; min-width: 0; }
+.pline-rel__text b { font-size: 1.0625rem; font-weight: 600; letter-spacing: -.02em; line-height: 1.25; }
+.pline-rel__text small { font-size: .8125rem; line-height: 1.4; color: var(--slate); }
+
+.pline-pager { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); margin-top: clamp(2.5rem, 5vw, 4.5rem); border-block: 1px solid var(--mist); }
+.pline-pager__link { display: flex; align-items: center; gap: 1.1rem; padding: 1.5rem 1.5rem 1.5rem 0; text-decoration: none; }
+.pline-pager__link--next { justify-content: flex-end; padding: 1.5rem 0 1.5rem 1.5rem; border-left: 1px solid var(--mist); text-align: right; }
+.pline-pager__text { display: grid; gap: .3rem; min-width: 0; }
+.pline-pager__text small { font-family: var(--mono); font-size: var(--t-micro); font-weight: 500; letter-spacing: .06em; text-transform: uppercase; color: var(--slate); }
+.pline-pager__text small i { font-style: normal; opacity: .55; margin-inline: .15em; }
+.pline-pager__text b { font-size: var(--t-h3); font-weight: 600; letter-spacing: -.02em; line-height: 1.2; }
+.pline-pager__short { display: none; }
+.pline-more { padding-bottom: calc(var(--section) * .8); }
+@media (max-width: 999px) {
+  .pline-rel { grid-template-columns: minmax(0, 1fr); gap: .6rem; }
+}
+@media (max-width: 699px) {
+  .pline-pager__full, .pline-pager__w { display: none; }
+  .pline-pager__short { display: inline; }
+  .pline-pager__link { flex-direction: column; align-items: flex-start; gap: .9rem; padding: 1.25rem .75rem 1.25rem 0; }
+  .pline-pager__link--next { flex-direction: column-reverse; align-items: flex-end; padding: 1.25rem 0 1.25rem .75rem; }
+  .pline-pager__text b { font-size: 1.0625rem; }
+}

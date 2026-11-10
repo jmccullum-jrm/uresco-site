@@ -39,47 +39,52 @@
   document.addEventListener('focusin', (e) => { if (e.target.matches?.(TYPING)) document.body.classList.add('is-typing'); });
   document.addEventListener('focusout', (e) => { if (e.target.matches?.(TYPING)) document.body.classList.remove('is-typing'); });
 
-  /* Open / closed, computed in each yard's own time zone.
+  /* Open / closed, computed in each yard's own time zone. Only the word is shown: the hours
+     themselves are placeholders until the yards confirm them, so no closing time is ever printed.
      data-hours = {"tz":"America/Anchorage","week":[null,[420,990],…]}  (Sunday first, minutes after midnight) */
   const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-  const clock = (m) => {
-    const h = Math.floor(m / 60), mm = m % 60, ap = h < 12 ? 'a.m.' : 'p.m.';
-    return `${((h + 11) % 12) + 1}${mm ? ':' + String(mm).padStart(2, '0') : ''} ${ap}`;
-  };
-  const yardStatus = ({ tz, week }) => {
+  const isOpen = ({ tz, week }) => {
     const parts = Object.fromEntries(new Intl.DateTimeFormat('en-US', { timeZone: tz, weekday: 'short', hour: 'numeric', minute: 'numeric', hourCycle: 'h23' })
       .formatToParts(new Date()).map((p) => [p.type, p.value]));
-    const day = DAYS.indexOf(parts.weekday), now = +parts.hour * 60 + +parts.minute;
-    const today = week[day];
-    if (today && now >= today[0] && now < today[1]) return { open: true, text: `Open now · until ${clock(today[1])}` };
-    for (let i = 0; i < 8; i++) {
-      const d = (day + i) % 7, h = week[d];
-      if (h && (i > 0 || now < h[0])) return { open: false, text: `Closed · opens ${i === 0 ? 'today' : i === 1 ? 'tomorrow' : DAYS[d]} ${clock(h[0])}` };
-    }
-    return { open: false, text: 'Closed' };
+    const today = week[DAYS.indexOf(parts.weekday)], now = +parts.hour * 60 + +parts.minute;
+    return !!(today && now >= today[0] && now < today[1]);
   };
   const paintHours = () => $$('[data-hours]').forEach((el) => {
     try {
-      const s = yardStatus(JSON.parse(el.dataset.hours));
-      el.textContent = el.hasAttribute('data-short') ? (s.open ? 'Open' : 'Closed') : s.text;
-      el.classList.toggle('is-open', s.open);
+      const open = isOpen(JSON.parse(el.dataset.hours));
+      el.textContent = open ? 'Open' : 'Closed';
+      el.classList.toggle('is-open', open);
       el.hidden = false;
     } catch { /* leave hidden */ }
   });
   paintHours();
   setInterval(paintHours, 60 * 1000);
 
-  /* Projects filter */
+  /* Projects filter: a sector pill shows one sector. A link to a sector (#remote-alaska, from the
+     hero or from another page) opens that sector's view. */
   const filters = $('[data-filters]');
   if (filters) {
-    filters.addEventListener('click', (e) => {
-      const b = e.target.closest('button[data-filter]');
-      if (!b) return;
+    const status = $('[data-filter-status]');
+    const sectors = $$('[data-sector]');
+    const buttons = $$('button[data-filter]', filters);
+    const choose = (b) => {
       const f = b.dataset.filter;
-      $$('button', filters).forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
-      $$('[data-sector]').forEach((card) => { card.hidden = f !== 'all' && card.dataset.sector !== f; });
-      $('.proj-grid').classList.toggle('is-filtered', f !== 'all');
-    });
+      buttons.forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+      sectors.forEach((s) => { s.hidden = f !== 'all' && s.dataset.sector !== f; });
+      $('[data-filter-grid]').classList.toggle('is-filtered', f !== 'all');
+      if (status) status.textContent = `Showing ${f === 'all' ? 'all work' : b.textContent.trim()}: ${sectors.filter((s) => !s.hidden).reduce((n, s) => n + s.querySelectorAll('[data-kind]').length, 0)} kinds of work.`;
+    };
+    filters.addEventListener('click', (e) => { const b = e.target.closest('button[data-filter]'); if (b) choose(b); });
+    const open = () => {
+      const sector = location.hash.length > 1 && document.getElementById(decodeURIComponent(location.hash.slice(1)));
+      const b = sector && buttons.find((x) => x.dataset.filter === sector.dataset.sector);
+      if (!b) return;
+      choose(b);
+      filters.scrollLeft = b.offsetLeft - 16;
+      filters.scrollIntoView({ block: 'start' });
+    };
+    window.addEventListener('hashchange', open);
+    open();
   }
 
   /* Forms: the quote request and the credit application share this. */
@@ -91,6 +96,8 @@
     const DRAFT = 'uresco.draft.' + kind;
     const MAX = 25 * 1024 * 1024;
     let bag = new DataTransfer();
+    // Without this script the browser still checks required fields; with it, the inline messages take over.
+    form.noValidate = true;
 
     // Drafts: a request half-typed on a job site survives a dropped signal or a closed tab.
     const fields = () => $$('input, select, textarea', form).filter((el) => el.name && el.type !== 'file' && el.type !== 'hidden');
@@ -109,19 +116,32 @@
         if (!(el.name in d)) return;
         if (el.type === 'radio') el.checked = d[el.name] === el.value; else if (el.type === 'checkbox') el.checked = !!d[el.name]; else el.value = d[el.name];
       });
+      // Tell a returning visitor what was kept, and let them clear it (a shared office computer, say).
+      const kept = $('[data-restored]', form);
+      if (d && kept && fields().some((el) => !el.matches('select, [type=radio], [type=checkbox]') && el.value.trim())) {
+        kept.hidden = false;
+        $('[data-draft-clear]', kept).addEventListener('click', () => { try { localStorage.removeItem(DRAFT); } catch { /* ignore */ } location.reload(); });
+      }
     } catch { /* ignore */ }
     form.addEventListener('input', save);
     form.addEventListener('change', save);
 
-    // Arriving from a product page: start the materials list with that line.
-    const product = new URLSearchParams(location.search).get('product');
+    // Arriving from a product page: start the materials list with that line. A line added on top
+    // of a saved draft goes at the end, so what was already typed is kept.
+    const params = new URLSearchParams(location.search);
+    const product = params.get('product');
     const materials = $('textarea[name=materials]', form);
-    if (product && materials && !materials.value) materials.value = product + ':\n';
-    // Arriving from the Alaska route finder: the place is already known.
-    const place = new URLSearchParams(location.search).get('location');
+    if (product && materials) {
+      if (!materials.value) materials.value = product + ':\n';
+      else if (!materials.value.includes(product)) materials.value = materials.value.replace(/\s*$/, '\n\n') + product + ':\n';
+    }
+    // Arriving from the Alaska route finder: the place and how it ships are already known, and are newer than any draft.
+    const place = params.get('location');
     const placeField = $('input[name=location]', form);
-    if (place && placeField && !placeField.value) placeField.value = place;
-    const yardParam = new URLSearchParams(location.search).get('yard');
+    if (place && placeField) placeField.value = place;
+    const delivery = params.get('delivery');
+    if (delivery) $$('input[name=delivery]', form).forEach((r) => { r.checked = r.value === delivery; });
+    const yardParam = (params.get('yard') || '').toLowerCase();
     const yardSel = $('select[name=yard]', form);
     if (yardParam && yardSel) $$('option', yardSel).forEach((o) => { if (o.value.toLowerCase() === yardParam) yardSel.value = o.value; });
 
@@ -163,6 +183,10 @@
       drop.addEventListener('drop', (e) => add(e.dataTransfer.files));
     }
 
+    // What the visitor reads under a field: its own message if it has one, or a plain default.
+    const message = (el) => (el.type === 'checkbox' ? el.dataset.msg || 'Please confirm to continue.'
+      : el.validity.valueMissing ? el.dataset.msg || 'Required.'
+      : el.type === 'email' ? 'Enter an email address like name@company.com.' : 'Check this field.');
     // Marks one field and returns whether it passes.
     const check = (el) => {
       const err = document.getElementById(el.id + '-err');
@@ -170,19 +194,39 @@
       el.setAttribute('aria-invalid', String(bad));
       if (err) {
         err.hidden = !bad;
-        err.textContent = !bad ? '' : el.type === 'checkbox' ? 'Please confirm to continue.' : el.validity.valueMissing ? 'Required.' : el.type === 'email' ? 'Enter an email address like name@company.com.' : 'Check this field.';
+        err.textContent = bad ? message(el) : '';
       }
       return !bad;
     };
+    const nameOf = (el) => el.dataset.label || form.querySelector(`label[for="${el.id}"]`)?.childNodes[0]?.textContent.trim() || el.name;
+    // Beside the submit button: what is still missing, each one a link to the field.
+    const errs = $('[data-errs]', form);
+    const paintErrs = (bad) => {
+      if (!errs) return;
+      errs.hidden = !bad.length;
+      errs.textContent = '';
+      if (!bad.length) return;
+      const lead = document.createElement('b');
+      lead.textContent = bad.length === 1 ? 'One thing left:' : `${bad.length} things left:`;
+      errs.append(lead);
+      bad.forEach((el) => {
+        const a = document.createElement('a');
+        a.href = '#' + el.id; a.textContent = nameOf(el);
+        a.addEventListener('click', (e) => { e.preventDefault(); el.focus(); });
+        errs.append(' ', a);
+      });
+    };
+    const stillBad = () => $$('[aria-invalid="true"]', form);
     // On submit: mark everything, then take the visitor to the first problem.
     const validate = () => {
       const bad = $$('[required]', form).filter((el) => !check(el));
+      paintErrs(bad);
       if (bad.length) bad[0].focus();
       return !bad.length;
     };
     // Once a field has been flagged, re-check just that field as it is corrected.
-    $$('[required]', form).forEach((el) => ['blur', 'change'].forEach((t) => el.addEventListener(t, () => {
-      if (el.getAttribute('aria-invalid') === 'true') check(el);
+    $$('[required]', form).forEach((el) => ['blur', 'change', 'input'].forEach((t) => el.addEventListener(t, () => {
+      if (el.getAttribute('aria-invalid') === 'true') { check(el); paintErrs(stillBad()); }
     })));
 
     // Plain-text summary of everything filled in, labelled as on screen, for the email fallback.
@@ -240,10 +284,26 @@
       // No form service configured yet: hand the request to the visitor's email app.
       const { text, files } = summary();
       const subject = `${form.dataset.subject} — ${data.get('company') || data.get('name')}${data.get('location') ? ' — ' + data.get('location') : ''}`;
-      window.location.href = `mailto:${to}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(text)}`;
+      const mail = `mailto:${to}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(text)}`;
+      window.location.href = mail;
       const note = $('[data-mail-note]', done);
       if (note) note.hidden = !files.length;
       $('[data-mail-to]', done).textContent = to;
+      // If no email app opened, the form is gone by now: offer the same message again, or the text itself.
+      const again = $('[data-mail-again]', done);
+      if (again) again.href = mail;
+      const toAttach = $('[data-mail-files]', done);
+      if (toAttach) {
+        toAttach.hidden = !files.length;
+        toAttach.textContent = '';
+        files.forEach((n) => { const li = document.createElement('li'); li.textContent = n; toAttach.append(li); });
+      }
+      const copy = $('[data-mail-copy]', done);
+      if (copy) copy.onclick = async () => {
+        const label = $('span', copy);
+        try { await navigator.clipboard.writeText(`To: ${to}\nSubject: ${subject}\n\n${text}`); label.textContent = 'Copied'; }
+        catch { label.textContent = 'Copy didn’t work'; }
+      };
       finish();
     });
   });

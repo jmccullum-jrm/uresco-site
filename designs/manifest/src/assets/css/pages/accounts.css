@@ -1,0 +1,53 @@
+/* ---------- Contractor accounts ---------- */
+/* The hero's ticket, the account schedule beside a specimen statement, then the sheet (40-forms.css). */
+
+.ac-stub { margin-top: clamp(.25rem, 1vw, 1rem); }
+
+/* What an account does: a schedule, the way a door or a truss has one */
+.ac-terms { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); column-gap: clamp(1.5rem, 4vw, 4.5rem); align-items: start; }
+.ac-sched { list-style: none; margin: 0; padding: 0; border-top: var(--line) solid var(--ink); }
+.ac-sched__row { display: grid; grid-template-columns: 5.5rem minmax(0, 15rem) minmax(0, 1fr); column-gap: var(--gap); align-items: baseline; padding: 1.15rem 0 1.25rem; border-bottom: 1px solid var(--rule-2); }
+.ac-sched__mk { font-size: var(--fs-data); font-weight: 600; letter-spacing: .04em; color: var(--blue); }
+.ac-sched__t { font-size: var(--fs-h3); font-weight: 600; letter-spacing: -.02em; line-height: 1.12; }
+.ac-sched__row p { margin: 0; color: var(--ink-2); }
+
+/* A specimen statement. No figures; the job column is the idea. */
+.ac-stmt { position: relative; background: var(--sheet); border: var(--line) solid var(--ink); box-shadow: 8px 8px 0 var(--ink); font-family: var(--mono); font-size: var(--fs-data); padding: clamp(1rem, 2vw, 1.5rem) clamp(1rem, 2vw, 1.5rem) 3.2rem; }
+.ac-stmt__head { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; padding-bottom: .9rem; border-bottom: var(--line) solid var(--ink); font-size: var(--fs-label); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); }
+.ac-stmt__head b { font-family: var(--font); font-size: 1.25rem; font-weight: 600; letter-spacing: -.03em; text-transform: none; color: var(--ink); }
+.ac-stmt__cols, .ac-stmt__row { display: grid; grid-template-columns: 2rem minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1fr); column-gap: .75rem; align-items: stretch; border-bottom: 1px solid var(--rule); }
+.ac-stmt__cols { font-size: var(--fs-label); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); padding-block: .5rem; border-bottom-color: var(--ink); }
+.ac-stmt__row > span { padding-block: .55rem; }
+.ac-stmt__row > span:first-child { color: var(--ink-3); }
+.ac-stmt__job { position: relative; isolation: isolate; padding-inline: .5rem; }
+.ac-stmt__job b { font-family: var(--font); font-size: .9375rem; font-weight: 600; }
+.ac-stmt__job::before { content: ''; position: absolute; inset: 4px 0; z-index: -1; background: var(--yellow); transform-origin: left; }
+.ac-stmt__blank { position: relative; }
+.ac-stmt__blank::before { content: ''; position: absolute; left: 0; right: 0; top: 50%; border-top: 1px solid var(--rule-2); }
+.ac-stmt__note { position: absolute; left: calc(clamp(1rem, 2vw, 1.5rem) + 2.75rem + 1.5rem); bottom: .9rem; margin: 0; font-size: var(--fs-label); font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--blue); }
+/* A leader from the note up to the job column, with its arrowhead. */
+.ac-stmt__note::before { content: ''; position: absolute; left: -1.5rem; bottom: .55em; width: 1.1rem; height: 1.15rem; border: solid var(--blue); border-width: 0 0 1px 1px; }
+.ac-stmt__note::after { content: ''; position: absolute; left: calc(-1.5rem - 4px); bottom: calc(.55em + 1.15rem); width: 9px; height: 8px; background: var(--blue); clip-path: polygon(50% 0, 100% 100%, 0 100%); }
+@media (prefers-reduced-motion: no-preference) {
+  html.js .ac-stmt[data-reveal]:not(.is-in) .ac-stmt__job::before { transform: scaleX(0); }
+  html.js .ac-stmt[data-reveal]:not(.is-in) .ac-stmt__note { opacity: 0; }
+  .ac-stmt__job::before { transition: transform 160ms linear calc(var(--i, 0) * 70ms); }
+  .ac-stmt__note { transition: opacity 1ms steps(1) 520ms; }
+  .ac-stmt__row:nth-of-type(4) .ac-stmt__job { --i: 1; } .ac-stmt__row:nth-of-type(5) .ac-stmt__job { --i: 2; } .ac-stmt__row:nth-of-type(6) .ac-stmt__job { --i: 3; } .ac-stmt__row:nth-of-type(7) .ac-stmt__job { --i: 4; }
+}
+
+/* How an account opens, then the application */
+.ac-seq { margin-bottom: clamp(2.5rem, 2rem + 2vw, 4rem); }
+.ac-print { background: none; border-width: 0 0 var(--line); cursor: pointer; }
+
+@media (max-width: 1099px) {
+  .ac-terms { grid-template-columns: minmax(0, 1fr); row-gap: 2.5rem; }
+  .ac-stmt { box-shadow: 6px 6px 0 var(--ink); margin-right: 6px; max-width: 34rem; }
+}
+@media (max-width: 479px) {
+  .ac-stmt { padding-bottom: 4.25rem; }
+}
+@media (max-width: 767px) {
+  .ac-sched__row { grid-template-columns: 4.5rem minmax(0, 1fr); row-gap: .35rem; }
+  .ac-sched__row p { grid-column: 2; }
+}

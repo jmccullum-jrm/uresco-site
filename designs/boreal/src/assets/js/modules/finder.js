@@ -16,7 +16,7 @@
     const aliases = Object.entries(data.aliases).map(([alias, name]) => ({ alias, key: fold(alias), place: byName.get(name) }));
     const SUGGEST = ['Anchorage', 'Fairbanks', 'Bethel', 'Nome', 'Kotzebue', 'Utqiaġvik', 'Juneau', 'Seattle'].map((s) => ({ p: byName.get(s) }));
 
-    const input = $('.finder__input', finder), list = $('.finder__list', finder), clear = $('[data-clear]', finder);
+    const input = $('.finder__input', finder), list = $('.finder__list', finder), clear = $('[data-clear]', finder), go = $('[data-go]', finder);
     const route = $('[data-route]', finder), live = $('[data-live]', finder);
     const cam = $('[data-cam]', map), arc = $('[data-arc]', map), dest = $('[data-dest]', map), destName = $('[data-dest-name]', map);
     const reset = $('[data-reset]', stage);
@@ -77,7 +77,7 @@
       field('how').hidden = true; field('else').hidden = false; field('note').hidden = true;
       field('short').textContent = text;
       field('quote').href = quoteUrl(text);
-      live.textContent = `${text} is not on our short list. Any yard can help. Use the quote button, or call a yard.`;
+      live.textContent = `${text} is not on our short list. Any yard can help: Kent for Puget Sound and the Pacific Northwest, Anchorage for Southcentral and remote Alaska, Fairbanks for the Interior and points north.`;
     };
 
     /* ---- The map ---- */
@@ -103,19 +103,25 @@
       const mr = map.getBoundingClientRect(), cr = map.parentElement.getBoundingClientRect(), sr = stage.getBoundingClientRect(), fr = finder.getBoundingClientRect();
       let left = Math.max(0, cr.left - mr.left, sr.left - mr.left), right = Math.min(W, cr.right - mr.left, sr.right - mr.left);
       let top = Math.max(0, cr.top - mr.top, sr.top - mr.top), bottom = Math.min(H, cr.bottom - mr.top, sr.bottom - mr.top);
+      // Where a phone crops the map, the camera may slide into the part of the drawing the crop hides.
+      const slideX = left, slideY = top;
       const beside = fr.top < mr.top + bottom - 40 && fr.bottom > mr.top + top + 40 && fr.right < mr.left + (left + right) / 2;
       if (beside) left = Math.max(left, fr.right - mr.left + 16);          // wide: the finder sits over the map's left
       else if (fr.top < mr.top + bottom) bottom = Math.max(top + 80, fr.top - mr.top); // band, phone: it overlaps the bottom edge
       // Label room: the yard's tag sits on the far side from the place; the place's tag on its own far
       // side (wide screens) or above or below its dot (phones).
-      const east = place[0] >= yard[0], yardTag = 150, placeTag = phone ? 56 : 44 + name.length * 8;
+      // Phones: the place's tag is centred on its dot, so half its width must fit inside the crop.
+      const east = place[0] >= yard[0], yardTag = 150, placeTag = phone ? 8 + name.length * 4.5 : 44 + name.length * 8;
       const roomL = 20 + (east ? yardTag : placeTag), roomR = 20 + (east ? placeTag : yardTag);
       const roomT = phone ? 64 : 48, roomB = phone ? 52 : 64;
       const x0 = Math.min(yard[0], place[0]) * k, x1 = Math.max(yard[0], place[0]) * k, y0 = Math.min(yard[1], place[1]) * k, y1 = Math.max(yard[1], place[1]) * k;
       const fw = Math.max(40, right - left - roomL - roomR), fh = Math.max(40, bottom - top - roomT - roomB);
       const z = Math.max(1, Math.min(MAX_ZOOM, fw / Math.max(1, x1 - x0), fh / Math.max(1, y1 - y0)));
-      const tx = Math.min(0, Math.max(W - z * W, left + roomL + fw / 2 - z * (x0 + x1) / 2));
-      const ty = Math.min(0, Math.max(H - z * H, top + roomT + fh / 2 - z * (y0 + y1) / 2));
+      let tx = left + roomL + fw / 2 - z * (x0 + x1) / 2;
+      // When yard and place are too far apart to frame together, the place is the one that must stay in view.
+      if (phone) { const px = place[0] * k * z; tx = Math.min(right - placeTag - 10 - px, Math.max(left + placeTag + 10 - px, tx)); }
+      tx = Math.min(slideX, Math.max(W - z * W, tx));
+      const ty = Math.min(slideY, Math.max(H - z * H, top + roomT + fh / 2 - z * (y0 + y1) / 2));
       setCam(tx, ty, z);
     };
     const yardPins = $$('[data-yard]', map);
@@ -146,16 +152,28 @@
 
     /* ---- Choosing ---- */
     const press = (name) => $$('.chip[data-place]', finder).forEach((c) => c.setAttribute('aria-pressed', String(c.dataset.place === name)));
+    // The Go button stands in for a keyboard's Enter: it shows while there is something unanswered in the field.
+    let answered = '';
+    const syncButtons = () => { clear.hidden = !input.value; go.hidden = !input.value.trim() || input.value === answered; };
     const choose = (p, { typed = false } = {}) => {
       current = p;
       close();
-      input.value = p.name; clear.hidden = false;
+      input.value = p.name; answered = p.name; syncButtons();
       press(p.name); swap(); fill(p); draw(p);
       if (typed) input.blur();
     };
     const chooseUnknown = (text) => {
       current = null;
-      close(); clear.hidden = false; press(''); swap(); fillUnknown(text.slice(0, 60)); draw(null);
+      answered = input.value; syncButtons();
+      close(); press(''); swap(); fillUnknown(text.slice(0, 60)); draw(null);
+      input.blur();
+    };
+    // Enter and the Go button: the row in focus if the list is open, else the best match, else the words as typed.
+    const submit = () => {
+      const text = input.value.trim();
+      const pick = (!list.hidden && options[active]) || (text ? search(text)[0] : null);
+      if (pick && pick.p) choose(pick.p, { typed: true });
+      else if (text) chooseUnknown(text);
     };
 
     /* ---- The combobox ---- */
@@ -184,19 +202,24 @@
         li.append(name, meta);
         list.append(li);
       });
+      // Not on the list: still a real choice, and it still gets an answer.
       if (!options.length) {
+        const text = input.value.trim();
+        options = [{ unknown: text }];
         const li = document.createElement('li');
-        li.className = 'is-none'; li.setAttribute('role', 'option'); li.setAttribute('aria-disabled', 'true'); li.setAttribute('aria-selected', 'false');
-        li.textContent = 'Not on our short list. Press Enter and we will still point you to a yard.';
+        li.setAttribute('role', 'option'); li.id = `${list.id}-0`; li.setAttribute('aria-selected', 'false');
+        const name = document.createElement('span'); name.textContent = `Use ${text}`;
+        const meta = document.createElement('small'); meta.textContent = 'Any yard can help';
+        li.append(name, meta);
         list.append(li);
       }
       list.hidden = false;
       input.setAttribute('aria-expanded', 'true');
-      setActive(options.length && input.value.trim() ? 0 : -1);
+      setActive(input.value.trim() ? 0 : -1);
     };
     function close() { list.hidden = true; input.setAttribute('aria-expanded', 'false'); input.removeAttribute('aria-activedescendant'); active = -1; }
 
-    input.addEventListener('input', () => { clear.hidden = !input.value; open(); });
+    input.addEventListener('input', () => { syncButtons(); open(); });
     input.addEventListener('focus', () => {
       input.select(); open();
       // On a phone, lift the field above the keyboard's reach.
@@ -207,14 +230,10 @@
       if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
         e.preventDefault();
         if (list.hidden) return open();
-        if (!options.length) return;
         setActive((active + (e.key === 'ArrowDown' ? 1 : -1) + options.length) % options.length);
       } else if (e.key === 'Enter') {
         e.preventDefault();
-        if (list.hidden) open();
-        const pick = options[active] || (input.value.trim() ? options[0] : null);
-        if (pick) choose(pick.p, { typed: true });
-        else if (input.value.trim()) chooseUnknown(input.value.trim());
+        submit();
       } else if (e.key === 'Escape') {
         if (!list.hidden) { e.preventDefault(); close(); }
       }
@@ -224,9 +243,12 @@
     list.addEventListener('click', (e) => {
       const li = e.target.closest('[role=option]');
       const o = li && options[Array.prototype.indexOf.call(list.children, li)];
-      if (o) choose(o.p, { typed: true });
+      if (o && o.p) choose(o.p, { typed: true }); else if (o) chooseUnknown(o.unknown);
     });
-    clear.addEventListener('click', () => { input.value = ''; clear.hidden = true; input.focus(); });
+    clear.addEventListener('click', () => { input.value = ''; syncButtons(); input.focus(); });
+    // mousedown keeps the field focused, so the list is still there when the click lands.
+    go.addEventListener('mousedown', (e) => e.preventDefault());
+    go.addEventListener('click', submit);
 
     finder.addEventListener('click', (e) => {
       const chip = e.target.closest('.chip[data-place]');

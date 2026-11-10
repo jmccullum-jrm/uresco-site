@@ -1,19 +1,6 @@
-// Projects filter, and the forms: the quote request and the credit application share one handler
+// The forms: the quote request and the credit application share one handler
 // (validation, drafts kept in the browser, file list, hand-off to a form service or to email).
 (() => {
-  /* Projects filter */
-  const filters = $('[data-filters]');
-  if (filters) {
-    filters.addEventListener('click', (e) => {
-      const b = e.target.closest('button[data-filter]');
-      if (!b) return;
-      const f = b.dataset.filter;
-      $$('button', filters).forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
-      $$('[data-sector]').forEach((card) => { card.hidden = f !== 'all' && card.dataset.sector !== f; });
-      $('.proj-grid').classList.toggle('is-filtered', f !== 'all');
-    });
-  }
-
   /* Forms: the quote request and the credit application share this. */
   $$('form[data-form]').forEach((form) => {
     const kind = form.dataset.form;
@@ -35,23 +22,82 @@
       });
       try { localStorage.setItem(DRAFT, JSON.stringify(d)); } catch { /* private mode */ }
     };
+    let restored = false;
     try {
       const d = JSON.parse(localStorage.getItem(DRAFT) || 'null');
       if (d) fields().forEach((el) => {
         if (!(el.name in d)) return;
-        if (el.type === 'radio') el.checked = d[el.name] === el.value; else if (el.type === 'checkbox') el.checked = !!d[el.name]; else el.value = d[el.name];
+        if (el.type === 'radio') el.checked = d[el.name] === el.value; else if (el.type === 'checkbox') el.checked = !!d[el.name]; else { el.value = d[el.name]; if (el.tagName !== 'SELECT' && d[el.name]) restored = true; }
       });
     } catch { /* ignore */ }
     form.addEventListener('input', save);
     form.addEventListener('change', save);
 
     // Arriving from a product page: start the materials list with that line.
-    const product = new URLSearchParams(location.search).get('product');
+    const query = new URLSearchParams(location.search);
+    const product = query.get('product');
     const materials = $('textarea[name=materials]', form);
     if (product && materials && !materials.value) materials.value = product + ':\n';
-    const yardParam = new URLSearchParams(location.search).get('yard');
+    const yardParam = query.get('yard');
     const yardSel = $('select[name=yard]', form);
-    if (yardParam && yardSel) $$('option', yardSel).forEach((o) => { if (o.value.toLowerCase() === yardParam) yardSel.value = o.value; });
+    if (yardParam && yardSel) $$('option', yardSel).forEach((o) => { if (o.value.toLowerCase() === yardParam.toLowerCase()) yardSel.value = o.value; });
+    // A link that names a place fills the job location. The delivery choice stays with the visitor.
+    const place = query.get('location');
+    const job = $('input[name=location]', form);
+    if (place && job && !job.value) job.value = place;
+
+    // The manifest beside the form: each row reads as an instruction until the form fills it in.
+    // Also the line under the yard select that says who will answer, and the mark on that yard's number.
+    const named = (n) => form.elements.namedItem(n);
+    const val = (n) => (named(n)?.value || '').trim();
+    const needName = (el) => el.dataset.need || el.dataset.label || form.querySelector(`label[for="${el.id}"]`)?.childNodes[0]?.textContent.trim() || el.name;
+    const slips = $$('[data-slip]');
+    let painted = false;
+    const setSlot = (slot, text) => slips.forEach((s) => {
+      const dd = $(`[data-slot="${slot}"]`, s);
+      if (!dd) return;
+      if (dd.dataset.blank === undefined) dd.dataset.blank = dd.textContent;
+      const next = text || dd.dataset.blank;
+      if (dd.textContent !== next) {
+        dd.textContent = next;
+        if (painted) { dd.classList.remove('is-new'); void dd.offsetWidth; dd.classList.add('is-new'); }
+      }
+      dd.classList.toggle('is-set', !!text);
+    });
+    const paint = () => {
+      setSlot('from', [val('name'), val('company')].filter(Boolean).join(', '));
+      const count = bag.files.length;
+      const first = (val('materials').split('\n')[0] || '').replace(/:$/, '').trim();
+      setSlot('send', [count ? (count === 1 ? bag.files[0].name : `${count} files`) : '', first].filter(Boolean).join(' · '));
+      if (yardSel) {
+        const opt = yardSel.selectedOptions[0];
+        setSlot('to', opt ? `The ${yardSel.value} yard` : '');
+        $$('[data-yard-note]', form).forEach((n) => { n.hidden = n.dataset.yardNote !== yardSel.value; });
+        $$('[data-yard-row]').forEach((n) => n.classList.toggle('is-on', n.dataset.yardRow === yardSel.value));
+      }
+      const how = val('delivery');
+      if (how) {
+        const where = val('location');
+        const when = val('needed') ? new Date(val('needed') + 'T12:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '';
+        const line = how === 'Pick up at the yard' ? `Pick up at the ${yardSel?.value} yard` : where ? `${how} to ${where}` : how;
+        setSlot('ships', when ? `${line}, by ${when}` : line);
+      }
+      const missing = $$('[required]', form).filter((el) => !el.checkValidity()).map(needName);
+      $$('[data-need]').forEach((n) => {
+        n.classList.toggle('is-ready', !missing.length);
+        n.textContent = !missing.length ? 'Ready to send.' : missing.length > 4 ? `${missing.length} required fields to go.` : 'Still needed: ' + missing.join(', ') + '.';
+      });
+      painted = true;
+    };
+    form.addEventListener('input', paint);
+    form.addEventListener('change', paint);
+
+    // The draft note: what is kept, and a way to throw it away.
+    const draftText = $('[data-draft-text]', form);
+    const draftClear = $('[data-draft-clear]', form);
+    if (draftText) draftText.dataset.text = draftText.textContent;
+    if (draftText && restored) { draftText.textContent = 'Your draft from last time is filled in.'; draftClear.hidden = false; }
+    form.addEventListener('input', () => { if (draftClear) draftClear.hidden = false; });
 
     // File drop zone, if the form has one.
     const input = $('input[type=file]', form);
@@ -74,6 +120,7 @@
         li.append(name, meta, rm);
         list.append(li);
       });
+      paint();
     };
     const add = (files) => {
       const tooBig = [];
@@ -91,6 +138,28 @@
       drop.addEventListener('drop', (e) => add(e.dataTransfer.files));
     }
 
+    draftClear?.addEventListener('click', () => {
+      try { localStorage.removeItem(DRAFT); } catch { /* ignore */ }
+      form.reset();
+      bag = new DataTransfer();
+      if (input) input.files = bag.files;
+      render();
+      $$('[aria-invalid]', form).forEach((el) => el.removeAttribute('aria-invalid'));
+      $$('.err', form).forEach((el) => { el.hidden = true; });
+      draftClear.hidden = true;
+      if (draftText) draftText.textContent = draftText.dataset.text;
+      paint();
+      form.querySelector('input:not([type=file]), select, textarea')?.focus();
+    });
+    paint();
+
+    // Paper: a choice left at its default prints blank, so it can be ticked by hand.
+    window.addEventListener('beforeprint', () => {
+      $$('.seg label', form).forEach((l) => { const r = $('input', l); l.classList.toggle('is-marked', r.checked && !r.defaultChecked); });
+      $$('[data-paper-for]', form).forEach((o) => { const s = named(o.dataset.paperFor); o.classList.toggle('is-marked', !!s && s.selectedIndex > 0 && s.value === o.dataset.value); });
+      $$('[data-paper-copy]', form).forEach((o) => { o.textContent = val(o.dataset.paperCopy); });
+    });
+
     // Marks one field and returns whether it passes.
     const check = (el) => {
       const err = document.getElementById(el.id + '-err');
@@ -98,7 +167,7 @@
       el.setAttribute('aria-invalid', String(bad));
       if (err) {
         err.hidden = !bad;
-        err.textContent = !bad ? '' : el.type === 'checkbox' ? 'Please confirm to continue.' : el.validity.valueMissing ? 'Required.' : el.type === 'email' ? 'Enter an email address like name@company.com.' : 'Check this field.';
+        err.textContent = !bad ? '' : el.type === 'checkbox' ? el.dataset.msg || 'Please confirm to continue.' : el.validity.valueMissing ? el.dataset.msg || 'Required.' : el.type === 'email' ? 'Enter an email address like name@company.com.' : 'Check this field.';
       }
       return !bad;
     };
@@ -109,7 +178,7 @@
       return !bad.length;
     };
     // Once a field has been flagged, re-check just that field as it is corrected.
-    $$('[required]', form).forEach((el) => ['blur', 'change'].forEach((t) => el.addEventListener(t, () => {
+    $$('[required]', form).forEach((el) => ['blur', 'change', 'input'].forEach((t) => el.addEventListener(t, () => {
       if (el.getAttribute('aria-invalid') === 'true') check(el);
     })));
 
@@ -168,10 +237,22 @@
       // No form service configured yet: hand the request to the visitor's email app.
       const { text, files } = summary();
       const subject = `${form.dataset.subject} — ${data.get('company') || data.get('name')}${data.get('location') ? ' — ' + data.get('location') : ''}`;
-      window.location.href = `mailto:${to}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(text)}`;
+      const mail = `mailto:${to}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(text)}`;
+      window.location.href = mail;
       const note = $('[data-mail-note]', done);
       if (note) note.hidden = !files.length;
       $('[data-mail-to]', done).textContent = to;
+      const again = $('[data-mail-link]', done);
+      if (again) again.href = mail;
+      const copy = $('[data-copy]', done);
+      if (copy) {
+        const label = copy.textContent;
+        const full = `To: ${to}\nSubject: ${subject}\n\n${text}`;
+        copy.addEventListener('click', async () => {
+          try { await navigator.clipboard.writeText(full); copy.textContent = 'Copied'; } catch { copy.textContent = 'Copy failed. Email us instead.'; }
+          setTimeout(() => { copy.textContent = label; }, 2400);
+        });
+      }
       finish();
     });
   });

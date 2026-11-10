@@ -1,0 +1,231 @@
+/* ================= Services =================
+   One sequence, six stops, from plans to the delivered load. The idea that ties the page
+   together is a rack of six hooks: the black band under the hero hangs all six (the index),
+   and each section hangs the same rack from its own top edge with the load one hook further
+   along. Class names on this page start with sv-. */
+
+/* Hero: each sentence of the headline keeps to one line beside the window. */
+@media (min-width: 900px) { .sv-hero .phero__title { font-size: min(var(--t-d1), 7.7vw); } }
+
+/* ---------- The rack: six hooks hanging from the hero, in three pairs ---------- */
+.sv-rack { position: relative; padding-bottom: clamp(1.9rem, 3.4vw, 3rem); }
+.sv-rack__acts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 clamp(1rem, 2.6vw, 2.75rem); }
+.sv-act { display: grid; gap: clamp(1rem, 1.8vw, 1.6rem); }
+.sv-act__stops { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(.5rem, 1.4vw, 1.5rem); }
+.sv-hook { display: grid; justify-items: start; align-content: start; gap: .3rem; height: 100%; color: var(--paper); text-decoration: none; }
+/* Each hook is a small yellow U, as on the service tiles: it hangs from the band's top edge. */
+.sv-hook__u { display: grid; place-items: center; width: 84px; height: 102px; margin-bottom: clamp(.7rem, 1.4vw, 1.2rem); padding-bottom: 8px; background: var(--yellow); color: var(--black); border-radius: 0 0 var(--r-pill) var(--r-pill); transform-origin: 50% 0; transition: transform .45s var(--spring), background var(--t-tap) linear; }
+.sv-hook__u .i { stroke-width: 2; }
+.sv-hook__no { font-size: .76rem; font-weight: 800; font-stretch: 125%; letter-spacing: .05em; color: var(--yellow); }
+.sv-hook__name { font-size: clamp(.92rem, .3rem + 1.3vw, 1.7rem); line-height: 1; font-weight: 900; font-stretch: 118%; letter-spacing: -.018em; text-transform: uppercase; white-space: nowrap; transition: color var(--t-tap) linear; }
+.sv-hook:hover .sv-hook__u, .sv-hook:focus-visible .sv-hook__u { transform: scaleY(1.14); background: var(--paper); }
+.sv-hook:hover .sv-hook__name, .sv-hook:focus-visible .sv-hook__name { color: var(--yellow); }
+/* On arrival the six hooks drop out of the hero one after another. */
+@media (prefers-reduced-motion: no-preference) { .js .sv-hook__u { animation: sv-drop .7s var(--spring) backwards; animation-delay: calc(var(--i, 0) * 70ms + 250ms); } }
+@keyframes sv-drop { from { transform: scaleY(.18); } }
+/* The pair's name sits on a keyline under its two hooks, like a bracket. */
+.sv-act__name { order: 1; margin: 0; padding-top: .7rem; border-top: var(--line) solid var(--black-3); font-size: var(--t-label); font-weight: 750; font-stretch: var(--wide); letter-spacing: .09em; text-transform: uppercase; line-height: 1.2; color: var(--ash); }
+@media (max-width: 759px) {
+  /* Phones: one pair to a row; each pair hangs from its own keyline, named above it. */
+  .sv-rack { padding-top: 1.4rem; padding-bottom: 2.25rem; }
+  .sv-rack__acts { grid-template-columns: minmax(0, 1fr); gap: 1.35rem; }
+  .sv-act { gap: 0; }
+  .sv-act__name { order: 0; padding: 0 0 .5rem; border-top: 0; border-bottom: var(--line) solid var(--black-3); }
+  .sv-act__stops { gap: .5rem; }
+  .sv-hook { grid-template-columns: auto minmax(0, 1fr); grid-template-areas: "u no" "u name"; column-gap: clamp(.55rem, 3vw, .8rem); row-gap: .15rem; align-content: center; min-height: 70px; }
+  .sv-hook__u { grid-area: u; width: clamp(42px, 13.4vw, 52px); height: clamp(54px, 17vw, 66px); margin: 0; padding-bottom: 6px; align-self: start; }
+  .sv-hook__u .i { width: 24px; height: 24px; }
+  .sv-hook__no { grid-area: no; align-self: end; font-size: .75rem; }
+  .sv-hook__name { grid-area: name; align-self: start; font-size: clamp(.75rem, 3.75vw, 1.1rem); font-stretch: 112%; }
+}
+
+/* ---------- A stop: one service ---------- */
+.sv-stop { --u-w: 84px; --u-h: 102px; }
+.sv-stop__grid { display: grid; grid-template-columns: minmax(0, 1.22fr) minmax(0, 1fr); grid-template-areas: "copy show" "foot show"; gap: 0 clamp(2rem, 5.5vw, 6rem); align-items: start; }
+.sv-stop--flip .sv-stop__grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1.22fr); grid-template-areas: "show copy" "show foot"; }
+.sv-stop__copy { grid-area: copy; min-width: 0; }
+.sv-stop__foot { grid-area: foot; align-self: end; min-width: 0; margin-top: clamp(1.75rem, 3vw, 2.75rem); }
+.sv-show { grid-area: show; position: relative; min-width: 0; align-self: stretch; display: flex; flex-direction: column; }
+
+/* The rail: the rack again, small, with this stop's hook carrying the load. */
+.sv-rail { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); align-items: start; height: var(--u-h); margin: calc(var(--section) * -1) 0 clamp(1.6rem, 3vw, 2.6rem); color: var(--black); }
+.sv-rail > i { width: 22px; height: 27px; border: var(--line) solid currentColor; border-top: 0; border-radius: 0 0 var(--r-pill) var(--r-pill); }
+.sv-rail > .is-done { background: currentColor; }
+.sv-rail > .is-on { display: grid; place-items: center; width: var(--u-w); height: var(--u-h); padding-bottom: 8px; background: var(--yellow); border-color: var(--black); color: var(--black); }
+.sv-rail .i { stroke-width: 2; }
+.field-y .sv-rail > .is-on { background: var(--black); color: var(--yellow); }
+.field-k .sv-rail { color: var(--yellow); }
+.field-k .sv-rail > .is-on { border-color: var(--yellow); }
+/* The rail arrives the same way: the hooks drop in order, and the one carrying the load lands last. */
+@media (prefers-reduced-motion: no-preference) {
+  .js .sv-rail[data-reveal] { opacity: 1; transform: none; }
+  .js .sv-rail[data-reveal] > i { transform: scaleY(0); transform-origin: 50% 0; transition: transform .45s var(--spring); transition-delay: calc(var(--n) * 45ms); }
+  .js .sv-rail[data-reveal] > .is-on { transform: scaleY(.2); transition: transform .7s var(--spring) .32s; }
+  .js .sv-rail[data-reveal].is-in > i { transform: none; }
+}
+
+.sv-stop__name { margin: 0 0 1.1rem; font-size: var(--t-d4); line-height: 1.25; font-weight: 800; font-stretch: 118%; letter-spacing: -.005em; text-transform: uppercase; }
+.sv-stop__no { display: inline-block; margin-right: .55rem; vertical-align: .16em; padding: .42em .8em .38em; background: var(--black); color: var(--yellow); border-radius: var(--r-pill); font-size: .75rem; font-weight: 800; font-stretch: 125%; letter-spacing: .06em; line-height: 1; white-space: nowrap; }
+.field-k .sv-stop__name { color: var(--yellow); }
+.field-k .sv-stop__no { background: var(--yellow); color: var(--black); }
+.sv-stop__copy > .lede { margin: clamp(1.1rem, 2vw, 1.6rem) 0 0; }
+.field-k .sv-stop__copy > .lede { color: var(--paper); }
+.sv-note { margin: 1.1rem 0 0; max-width: 48ch; font-size: 1rem; color: var(--quiet); }
+.sv-stop .actions { margin-top: clamp(1.5rem, 2.6vw, 2rem); }
+
+/* Where the phone action bar already offers the same thing, the section does not repeat it. */
+@media (max-width: 999px) { .sv-stop .sv-dup { display: none; } .sv-stop .actions:not(:has(> :not(.sv-dup))) { display: none; } }
+
+/* On to the next stop. */
+.sv-next .i { transform: rotate(90deg); }
+.sv-next:hover .i { transform: rotate(90deg) translateX(5px); }
+.sv-next--end .i { transform: none; }
+.sv-next--end:hover .i { transform: translateX(5px); }
+.sv-next__k { padding: .3em .7em .26em; background: var(--black); color: var(--yellow); border-radius: var(--r-pill); font-size: .75rem; font-stretch: 125%; letter-spacing: .06em; }
+.field-k .sv-next__k { background: var(--yellow); color: var(--black); }
+
+/* Windows beside the copy: a U hangs from the section's top edge, an arch stands on its bottom edge. */
+.sv-win { width: min(100%, 400px); aspect-ratio: 4 / 5.1; }
+.sv-win--hang { margin: calc(var(--section) * -1) 0 0 auto; }
+.sv-win--stand { margin: auto auto calc(var(--section) * -1); }
+.sv-win--stand > .wcap { bottom: 1.6rem; }
+
+/* ---------- 01 Take-offs: the list itself, as a sheet ---------- */
+/* The photograph hangs over the corner of the sheet, as on a yard card. --win and --sheet are the
+   two widths; the sheet's head keeps clear of however much of it the window covers. */
+.sv-show--sheet { container-type: inline-size; --win: min(54cqi, 310px); --sheet: min(100cqi, 440px); }
+.sv-show--sheet .sv-win { z-index: 2; width: var(--win); aspect-ratio: 4 / 5; }
+.sv-sheet { position: relative; z-index: 1; width: var(--sheet); margin-top: -96px; background: var(--white); color: var(--black); border: var(--line) solid var(--black); border-radius: var(--r-m); box-shadow: var(--sh-sticker); overflow: hidden; }
+.sv-sheet__head { display: grid; align-content: center; gap: .3rem; min-height: 112px; margin: 0; padding: 1.1rem calc(var(--win) + var(--sheet) - 100cqi + .9rem) 1rem 1.3rem; background: var(--yellow); border-bottom: var(--line) solid var(--black); }
+.sv-sheet__head b { white-space: nowrap; font-size: clamp(1.15rem, .7rem + 1.05vw, 1.75rem); line-height: .95; font-weight: 900; font-stretch: var(--wide); letter-spacing: -.02em; text-transform: uppercase; }
+.sv-sheet__head span { font-size: .9rem; line-height: 1.3; font-weight: 600; color: var(--umber); }
+.sv-sheet__rows a { display: grid; grid-template-columns: 1.7rem minmax(0, 1fr) auto; align-items: center; gap: .5rem; min-height: 44px; padding: .3rem 1.1rem .3rem 1.3rem; border-bottom: 1px solid var(--paper-2); font-weight: 650; line-height: 1.15; text-decoration: none; transition: background var(--t-tap) linear, color var(--t-tap) linear; }
+.sv-sheet__rows .nums { font-size: .75rem; font-weight: 800; font-stretch: 125%; letter-spacing: .04em; }
+.sv-sheet__rows .i { padding: 3px; width: 24px; height: 24px; border-radius: 50%; background: var(--yellow); stroke-width: 2.4; transition: transform var(--t-flip) var(--spring); }
+.sv-sheet__rows a:hover, .sv-sheet__rows a:focus-visible { background: var(--black); color: var(--yellow); }
+.sv-sheet__rows a:hover .i, .sv-sheet__rows a:focus-visible .i { transform: scale(1.18) rotate(-10deg); color: var(--black); }
+.sv-sheet__rows a:focus-visible { outline-offset: -5px; outline-color: var(--yellow); box-shadow: none; }
+.sv-sheet__foot { margin: 0; padding: .8rem 1.3rem .95rem; font-size: .86rem; line-height: 1.35; color: var(--stone); }
+/* How it starts: three numbered rows between keylines. */
+.sv-how { counter-reset: how; margin-top: clamp(1.4rem, 2.6vw, 2rem); max-width: 34rem; border-top: var(--line) solid var(--black); }
+.sv-how li { counter-increment: how; display: grid; grid-template-columns: 2.6rem minmax(0, 1fr); align-items: baseline; padding: .75rem 0; border-bottom: 1px solid var(--paper-2); color: var(--stone); line-height: 1.4; }
+.sv-how li::before { content: counter(how, decimal-leading-zero); font-size: .74rem; font-weight: 800; font-stretch: 125%; letter-spacing: .05em; color: var(--black); }
+.sv-how b { color: var(--black); font-weight: 750; }
+
+/* ---------- 02 Design: the engineered line, stuck around an arch ---------- */
+.sv-show--design .sv-win { width: min(100%, 470px); aspect-ratio: 4 / 5.3; }
+.sv-members { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
+.sv-members li { position: absolute; }
+.sv-members .sticker { font-size: clamp(.78rem, .6rem + .55vw, 1.05rem); padding: .7em 1.2em .62em; }
+.sv-members li:nth-child(1) { left: 0; top: 24%; }
+.sv-members li:nth-child(2) { right: 0; top: 37%; }
+.sv-members li:nth-child(3) { left: 6%; top: 52%; }
+.sv-members li:nth-child(4) { right: -2%; top: 66%; }
+.sv-members li:nth-child(5) { left: 1%; top: 81%; }
+
+/* ---------- 03 Packages: a U built of the four layers ---------- */
+.sv-show--pack { align-self: center; width: min(100%, 520px); margin-left: auto; }
+.sv-pack__win { aspect-ratio: 2.7 / 1; margin-bottom: 6px; }
+.sv-pack { display: grid; gap: 6px; --name: clamp(1.15rem, .75rem + 1.05vw, 1.7rem); }
+.sv-pack li { display: grid; grid-template-columns: calc(var(--name) * 6.5) minmax(0, 1fr); align-items: center; gap: .3rem 1rem; min-height: 76px; padding: .9rem clamp(1.1rem, 2.2vw, 2rem); background: var(--black); color: var(--paper); line-height: 1.3; }
+.sv-pack b { font-size: var(--name); line-height: 1; font-weight: 900; font-stretch: 118%; letter-spacing: -.018em; text-transform: uppercase; color: var(--yellow); }
+.sv-pack span { font-size: .95rem; font-weight: 500; }
+/* The last layer is the round bottom of the U. */
+.sv-pack li:last-child { grid-template-columns: minmax(0, 1fr); align-content: start; justify-items: center; min-height: 140px; padding-top: 1.25rem; text-align: center; border-radius: 0 0 var(--r-pill) var(--r-pill); }
+.sv-pack__sticker { position: absolute; z-index: 2; right: -3%; top: -1.1rem; font-size: clamp(.75rem, .55rem + .5vw, 1rem); }
+
+/* ---------- 04 Crating: three words, each wearing what it says ---------- */
+/* Sizes follow the width of the stack (cqi), so each word always fits its wrapper. */
+.sv-show--wraps { align-self: center; }
+.sv-wraps { container-type: inline-size; display: grid; gap: clamp(.6rem, 1.2vw, 1rem); }
+.sv-wrap { position: relative; display: grid; grid-template-columns: minmax(0, 1fr); align-content: center; gap: .35rem; min-height: clamp(104px, 27cqi, 150px); padding: 1rem 6cqi; }
+.sv-wrap b { font-size: clamp(1.7rem, 11.4cqi, 4rem); line-height: .86; font-weight: 900; font-stretch: var(--wide); letter-spacing: -.025em; text-transform: uppercase; }
+.sv-wrap span { font-size: 1rem; font-weight: 500; line-height: 1.3; }
+/* Crated: boards all the way round. */
+.sv-wrap--crate { border: var(--line) solid var(--yellow); border-radius: var(--r-s); box-shadow: inset 0 0 0 7px var(--black), inset 0 0 0 9px var(--yellow); color: var(--paper); }
+.sv-wrap--crate b { color: var(--yellow); }
+/* Banded: a yellow bundle under two black straps. */
+.sv-wrap--band { padding-inline: 15cqi; background: var(--yellow); color: var(--black); border-radius: var(--r-s); }
+.sv-wrap--band::before, .sv-wrap--band::after { content: ''; position: absolute; top: 0; bottom: 0; left: 6cqi; width: clamp(12px, 3cqi, 18px); background: var(--black); }
+.sv-wrap--band::after { left: auto; right: 6cqi; }
+/* Wrapped: the word in outline, inside a skin. */
+.sv-wrap--film { border: var(--line) solid var(--paper); border-radius: var(--r-pill); padding-inline: 9.5cqi; color: var(--ash); }
+.sv-wrap--film b { color: transparent; -webkit-text-stroke: .028em var(--paper); paint-order: stroke fill; }
+@supports not (-webkit-text-stroke: 1px black) { .sv-wrap--film b { color: var(--paper); } }
+
+/* ---------- 05 Shipping: three legs on a dashed lane ---------- */
+.sv-show--ship .sv-win { width: min(100%, 390px); aspect-ratio: 4 / 5.4; }
+.sv-stop--shipping .sv-stop__grid { grid-template-areas: "copy show" "foot foot"; }
+.sv-stop--shipping .sv-stop__foot { margin-top: clamp(2.5rem, 5vw, 4.5rem); }
+.sv-legs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.sv-leg { position: relative; display: grid; align-content: start; justify-items: start; padding-right: clamp(1rem, 2.6vw, 2.75rem); }
+/* The lane runs from each stop to the next and ends at the last one. */
+.sv-leg:not(:last-child)::after { content: ''; position: absolute; left: 84px; right: 14px; top: 34px; border-top: 3px dashed var(--black); }
+.sv-leg__icon { display: grid; place-items: center; width: 70px; height: 70px; margin-bottom: 1.4rem; border-radius: 50%; background: var(--yellow); border: var(--line) solid var(--black); }
+.sv-leg:last-child .sv-leg__icon { background: var(--black); color: var(--yellow); }
+.sv-leg b { margin-bottom: .55rem; font-size: clamp(1.1rem, .8rem + 1vw, 1.65rem); line-height: .98; font-weight: 900; font-stretch: 118%; letter-spacing: -.02em; text-transform: uppercase; text-wrap: balance; }
+.sv-leg > span:last-child { max-width: 32ch; color: var(--stone); }
+.sv-ticket { margin: clamp(2rem, 4vw, 3.5rem) 0 clamp(1.75rem, 3vw, 2.75rem); }
+
+/* ---------- 06 Delivery: the two machines ---------- */
+.sv-show--site .sv-win { width: min(100%, 470px); aspect-ratio: 4 / 5.3; }
+.sv-rigs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(.6rem, 1.3vw, 1.25rem); margin-top: clamp(1.6rem, 3vw, 2.4rem); }
+.sv-rig { display: grid; align-content: start; gap: .55rem; padding: 0 clamp(1.1rem, 2vw, 1.7rem) clamp(1.2rem, 2vw, 1.7rem); background: var(--black-2); border: var(--line) solid var(--black-3); border-radius: var(--r-l); }
+.sv-rig__icon { display: grid; place-items: center; width: 80px; height: 98px; margin: -2px 0 .7rem; padding-bottom: 8px; background: var(--yellow); color: var(--black); border-radius: 0 0 var(--r-pill) var(--r-pill); transform-origin: 50% 0; transition: transform .45s var(--spring); }
+.sv-rig__icon .i { stroke-width: 1.9; }
+.sv-rig:hover .sv-rig__icon { transform: scaleY(1.08); }
+.sv-rig b { font-size: clamp(1.1rem, .9rem + .8vw, 1.5rem); line-height: 1; font-weight: 900; font-stretch: 118%; letter-spacing: -.018em; text-transform: uppercase; }
+.sv-rig > span:last-child { color: var(--ash); line-height: 1.42; font-size: .98rem; }
+
+/* Very large screens: the windows grow with the column, as the poster does. */
+@media (min-width: 1900px) {
+  .sv-win { width: min(100%, 460px); }
+  .sv-show--design .sv-win, .sv-show--site .sv-win { width: min(100%, 540px); }
+  .sv-show--ship .sv-win { width: min(100%, 450px); }
+  .sv-show--sheet { --win: min(54cqi, 350px); --sheet: min(100cqi, 500px); }
+  .sv-show--pack { width: min(100%, 600px); }
+}
+
+/* ---------- Phones and small tablets: one column; windows stand at the bottom as arches ---------- */
+@media (max-width: 899px) {
+  .sv-stop { --u-w: clamp(44px, 14vw, 58px); --u-h: calc(var(--u-w) * 1.26); }
+  .sv-stop__grid, .sv-stop--flip .sv-stop__grid, .sv-stop--shipping .sv-stop__grid { grid-template-columns: minmax(0, 1fr); grid-template-areas: "copy" "show" "foot"; }
+  .sv-rail { margin-bottom: 1.5rem; }
+  .sv-rail > i { width: 16px; height: 20px; }
+  .sv-rail > .is-on { padding-bottom: 5px; }
+  .sv-rail .i { width: 24px; height: 24px; }
+  .sv-stop__foot { margin-top: 2rem; }
+  .sv-show { margin-top: 2.25rem; }
+  /* A photograph on a phone is an arch standing on the section's bottom edge, after everything else. */
+  .sv-stop--arch { padding-bottom: 0; }
+  .sv-stop--arch .sv-stop__grid { grid-template-areas: "copy" "foot" "show"; }
+  .sv-stop--arch .sv-show { margin-top: 2.75rem; }
+  .sv-win, .sv-show--design .sv-win, .sv-show--ship .sv-win, .sv-show--site .sv-win { width: min(66vw, 300px); aspect-ratio: 1 / 1.08; margin: 0 auto; border-radius: var(--r-pill) var(--r-pill) 0 0; }
+  /* 01: the photograph becomes the small U in the corner of the sheet, too small to carry a label. */
+  .sv-show--sheet .wcap { display: none; }
+  .sv-show--sheet { margin-top: 2rem; }
+  .sv-show--sheet .sv-win { position: absolute; z-index: 2; right: 1.1rem; top: 0; width: clamp(68px, 21vw, 84px); aspect-ratio: 3 / 4; margin: 0; border-radius: 0 0 var(--r-pill) var(--r-pill); }
+  .sv-sheet { width: 100%; margin-top: 0; }
+  .sv-sheet__head { min-height: 104px; padding-right: calc(clamp(68px, 21vw, 84px) + 1.9rem); }
+  .sv-sheet__head b { font-size: clamp(1.2rem, 6vw, 1.6rem); }
+  /* 02: the stickers sit in a loose row above the arch. */
+  .sv-members { position: static; order: -1; display: flex; flex-wrap: wrap; gap: .8rem .6rem; margin-bottom: 2.4rem; pointer-events: auto; }
+  .sv-members li { position: static; }
+  .sv-show--pack { width: 100%; margin-top: 3rem; }
+  .sv-pack__sticker { right: -.2rem; }
+  .sv-pack li { grid-template-columns: minmax(0, 1fr); min-height: 0; }
+  .sv-pack li:last-child { min-height: 118px; }
+  /* 05: the lane runs down the side. */
+  .sv-stop--shipping .sv-stop__foot { margin-top: 2rem; }
+  .sv-legs { grid-template-columns: minmax(0, 1fr); gap: 1.5rem; }
+  .sv-leg { grid-template-columns: 60px minmax(0, 1fr); grid-template-areas: "icon name" "icon text"; column-gap: 1.1rem; padding-right: 0; }
+  .sv-leg:not(:last-child)::after { left: 28px; right: auto; top: 68px; bottom: calc(-1.5rem + 8px); border-top: 0; border-left: 3px dashed var(--black); }
+  .sv-leg__icon { grid-area: icon; width: 60px; height: 60px; margin: 0; } .sv-leg__icon .i { width: 24px; height: 24px; }
+  .sv-leg b { grid-area: name; align-self: end; margin: .3rem 0 .3rem; } .sv-leg > span:last-child { grid-area: text; max-width: none; }
+}
+@media (max-width: 479px) {
+  .sv-rigs { grid-template-columns: minmax(0, 1fr); }
+  .sv-rig { grid-template-columns: auto minmax(0, 1fr); column-gap: 1.1rem; border-radius: var(--r-m); padding: 0 1.1rem 1.2rem; }
+  .sv-rig__icon { grid-row: 1 / span 2; width: 64px; height: 82px; margin-bottom: 0; } .sv-rig__icon .i { width: 32px; height: 32px; }
+  .sv-rig b { align-self: end; margin-top: 1.2rem; }
+}

@@ -20,8 +20,8 @@ main { overflow-x: hidden; overflow-x: clip; }
 .seal__spin text { font-size: 15.5px; font-weight: 800; font-stretch: 125%; text-transform: uppercase; fill: currentColor; }
 @media (prefers-reduced-motion: no-preference) { .seal__spin { animation: spin 28s linear infinite; } }
 @keyframes spin { to { transform: rotate(1turn); } }
-.seal__mid { display: grid; justify-items: center; font-size: clamp(.5rem, .75vw, .72rem); font-weight: 800; font-stretch: 125%; letter-spacing: .08em; text-transform: uppercase; line-height: 1; }
-.seal__mid b { font-size: 3.5em; font-weight: 900; letter-spacing: -.03em; line-height: .9; }
+.seal__mid { display: grid; justify-items: center; font-size: clamp(.75rem, .75vw, .8rem); font-weight: 800; font-stretch: 125%; letter-spacing: .08em; text-transform: uppercase; line-height: 1; }
+.seal__mid b { font-size: clamp(1.75rem, 3.6vw, 3.5em); font-weight: 900; letter-spacing: -.03em; line-height: .9; }
 
 /* ---------- Yard pills: the three numbers ---------- */
 .ystrip { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .6rem; }
@@ -31,7 +31,7 @@ main { overflow-x: hidden; overflow-x: clip; }
   transition: transform var(--t-flip) var(--spring), box-shadow var(--t-flip) var(--spring);
 }
 .ystrip__city { grid-area: city; align-self: end; display: flex; align-items: center; gap: .6rem; min-width: 0; }
-.ystrip__city b { font-size: .68rem; font-weight: 800; font-stretch: 125%; letter-spacing: .09em; text-transform: uppercase; color: var(--yellow); }
+.ystrip__city b { font-size: .75rem; font-weight: 800; font-stretch: 125%; letter-spacing: .08em; text-transform: uppercase; color: var(--yellow); }
 .ystrip__num { grid-area: num; align-self: start; font-size: clamp(1.05rem, .6rem + 1vw, 1.5rem); font-weight: 800; line-height: 1.1; white-space: nowrap; letter-spacing: -.01em; }
 .ystrip__go { grid-area: go; display: grid; place-items: center; width: 48px; height: 48px; border-radius: 50%; background: var(--yellow); color: var(--black); transition: transform var(--t-flip) var(--spring); }
 .ystrip__item:hover { transform: translateY(-4px); box-shadow: 0 6px 0 rgba(14, 14, 12, .28); }
@@ -41,15 +41,21 @@ main { overflow-x: hidden; overflow-x: clip; }
 @media (max-width: 999px) {
   .ystrip { grid-template-columns: minmax(0, 1fr); gap: .45rem; }
   .ystrip__item { grid-template-columns: auto minmax(0, 1fr) auto; grid-template-areas: "city num go"; min-height: 56px; padding: .35rem .4rem .35rem 1.2rem; gap: .75rem; }
-  .ystrip__city { align-self: center; flex-direction: column; align-items: flex-start; gap: .12rem; min-width: 5.7rem; }
+  .ystrip__city { align-self: center; flex-direction: column; align-items: flex-start; gap: .12rem; min-width: 6.1rem; }
   .ystrip__num { align-self: center; justify-self: end; font-size: 1.2rem; }
   .ystrip__go { width: 46px; height: 46px; }
-  .ystrip .status { font-size: .66rem; }
+  .ystrip .status { font-size: .75rem; }
 }
 @media (max-width: 374px) {
-  .ystrip__item { gap: .5rem; padding-left: 1rem; } .ystrip__city { min-width: 4.9rem; } .ystrip__city b { font-size: .56rem; letter-spacing: .05em; }
+  .ystrip__item { gap: .5rem; padding-left: 1rem; } .ystrip__city { min-width: 4.9rem; } .ystrip__city b { font-stretch: 100%; letter-spacing: .03em; }
   .ystrip__num { font-size: 1.04rem; } .ystrip__go { width: 40px; height: 40px; }
 }
+/* Stacked: one column, the city over the number, at every width (a card or an aside). */
+.ystrip--stack { grid-template-columns: minmax(0, 1fr); gap: .45rem; }
+.ystrip--stack .ystrip__item { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "city go" "num go"; gap: .1rem .6rem; min-height: 68px; padding: .55rem .6rem .55rem 1.35rem; }
+.ystrip--stack .ystrip__city { align-self: end; flex-direction: row; align-items: center; gap: .6rem; min-width: 0; }
+.ystrip--stack .ystrip__num { align-self: start; justify-self: start; font-size: 1.3rem; }
+.ystrip--stack .ystrip__go { display: grid; width: 48px; height: 48px; }
 
 /* ---------- Product lines as a bold index ---------- */
 .lines { border-top: var(--line) solid var(--black); }
@@ -64,26 +70,38 @@ main { overflow-x: hidden; overflow-x: clip; }
 .line__items { font-size: .95rem; line-height: 1.4; font-weight: 500; color: var(--umber); transition: color var(--t-tap) linear; }
 .line__win { width: clamp(58px, 5.6vw, 84px); aspect-ratio: 4 / 5; transform-origin: 50% 45%; transition: transform .42s var(--spring); z-index: 1; }
 .line__go { display: grid; place-items: center; width: 60px; height: 60px; border-radius: 50%; background: var(--black); color: var(--yellow); transition: transform var(--t-flip) var(--spring), background var(--t-tap) linear, color var(--t-tap) linear; }
+/* A product line's sign in a U: black on the yellow row; it flips to yellow when the row flips to black. */
+.line__win--sign { display: grid; place-items: center; background: var(--black); color: var(--yellow); transition: transform .42s var(--spring), background var(--t-tap) linear, color var(--t-tap) linear; }
+.sign { width: 66%; height: auto; margin-top: -9%; overflow: visible; fill: none; stroke: currentColor; stroke-width: 5; stroke-linecap: butt; stroke-linejoin: miter; }
+.sign .s { fill: currentColor; stroke: none; }
+.sign .b { stroke-width: 7; }
+.sign .r { stroke-linejoin: round; }
+.sign .d { stroke-width: 7; stroke-linecap: round; }
+/* The flipped U swells over the yellow rows either side, so it carries a keyline to stay a shape. */
+.line.is-on .line__win--sign, .line:focus-visible .line__win--sign { background: var(--yellow); color: var(--black); box-shadow: 0 0 0 var(--line) var(--black); }
+@media (hover: hover) { .line:hover .line__win--sign { background: var(--yellow); color: var(--black); box-shadow: 0 0 0 var(--line) var(--black); } }
 /* The flip. Hover and focus on desktop; on touch screens a script turns on the row at mid-screen. */
 .line.is-on, .line:focus-visible { background: var(--black); color: var(--yellow); z-index: 2; }
 .line.is-on .line__items, .line:focus-visible .line__items { color: var(--paper); }
-.line.is-on .line__win, .line:focus-visible .line__win { transform: scale(2.1) rotate(-7deg); z-index: 3; }
+.line.is-on .line__win, .line:focus-visible .line__win { transform: scale(1.75) rotate(-7deg); z-index: 3; }
 .line.is-on .line__go, .line:focus-visible .line__go { background: var(--yellow); color: var(--black); transform: translateX(6px); }
 @media (hover: hover) {
   .line:hover { background: var(--black); color: var(--yellow); z-index: 2; }
   .line:hover .line__items { color: var(--paper); }
-  .line:hover .line__win { transform: scale(2.1) rotate(-7deg); z-index: 3; }
+  .line:hover .line__win { transform: scale(1.75) rotate(-7deg); z-index: 3; }
   .line:hover .line__go { background: var(--yellow); color: var(--black); transform: translateX(6px); }
 }
 .line:focus-visible { outline-offset: -6px; outline-color: var(--yellow); box-shadow: none; }
 @media (max-width: 899px) {
-  .line { grid-template-columns: 1.7rem minmax(0, 1fr) auto; grid-template-areas: "no name win" "no items win"; align-content: center; gap: .3rem .7rem; min-height: 104px; padding-block: .9rem; }
-  .line__no { grid-area: no; align-self: start; padding-top: .3rem; font-size: .68rem; }
+  .line { grid-template-columns: 1.8rem minmax(0, 1fr) auto; grid-template-areas: "no name win" "no items win"; align-content: center; gap: .3rem .7rem; min-height: 104px; padding-block: .9rem; }
+  .line__no { grid-area: no; align-self: start; padding-top: .3rem; font-size: .75rem; }
   .line__name { grid-area: name; align-self: end; font-size: clamp(1.18rem, 5.6vw, 1.7rem); }
-  .line__items { grid-area: items; align-self: start; font-size: .82rem; line-height: 1.3; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
+  .line__items { grid-area: items; align-self: start; font-size: .84rem; line-height: 1.32; }
   .line__win { grid-area: win; width: 66px; }
   .line__go { display: none; }
-  .line.is-on .line__win, .line:focus-visible .line__win { transform: translateX(-6px) scale(1.2) rotate(-7deg); }
+  /* The window swells away from the name, towards the page edge, so it never covers the title. */
+  .line__win { transform-origin: 100% 40%; }
+  .line.is-on .line__win, .line:focus-visible .line__win { transform: scale(1.1) rotate(-5deg); }
 }
 
 /* ---------- Services: six tiles ---------- */
@@ -122,10 +140,11 @@ main { overflow-x: hidden; overflow-x: clip; }
 .arc__text { font-size: .95rem; line-height: 1.42; color: var(--quiet); }
 @media (max-width: 999px) { .arcade { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 2.5rem; } }
 @media (max-width: 599px) {
-  /* Phones: the arcade becomes a row you push sideways, each arch snapping into place. */
-  .arcade { display: flex; gap: .9rem; margin-inline: calc(var(--gutter) * -1); padding-inline: var(--gutter); overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; -webkit-overflow-scrolling: touch; scroll-padding-inline: var(--gutter); }
-  .arcade::-webkit-scrollbar { display: none; }
-  .arcade > li { flex: 0 0 68%; scroll-snap-align: start; }
+  /* Phones: each arch stands at the left of its own row, as the kinds of work do on Projects. */
+  .arcade { grid-template-columns: minmax(0, 1fr); row-gap: 1.5rem; }
+  .arc { grid-template-columns: clamp(92px, 29vw, 124px) minmax(0, 1fr); grid-template-areas: "win tag" "win title" "win text"; grid-template-rows: auto auto 1fr; column-gap: 1.1rem; row-gap: .3rem; }
+  .arc__win { grid-area: win; margin: 0; }
+  .arc__tag { grid-area: tag; align-self: end; } .arc__title { grid-area: title; } .arc__text { grid-area: text; font-size: .92rem; }
 }
 
 /* ---------- Yard cards: a freight tag for each yard ---------- */
@@ -133,33 +152,33 @@ main { overflow-x: hidden; overflow-x: clip; }
 .yards--2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .yard { container-type: inline-size; display: flex; flex-direction: column; background: var(--white); color: var(--black); border: var(--line) solid var(--black); border-radius: var(--r-l); overflow: hidden; }
 .yard__head { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) clamp(84px, 30%, 150px); grid-template-rows: auto auto 1fr; column-gap: 1rem; align-content: start; padding: 1.35rem 1.4rem 1.3rem 1.5rem; background: var(--yellow); border-bottom: var(--line) solid var(--black); }
-.yard__lat { grid-column: 1; justify-self: start; padding: .4em .8em .36em; margin-bottom: .9rem; background: var(--black); color: var(--yellow); border-radius: var(--r-pill); font-size: .68rem; font-weight: 800; font-stretch: 125%; letter-spacing: .06em; line-height: 1; }
-.yard__lat i { display: inline-block; width: .5em; height: .56em; margin-inline: .25em; border: .16em solid currentColor; border-top: 0; border-radius: 0 0 99px 99px; }
+.latpill { display: inline-block; padding: .4em .8em .36em; background: var(--black); color: var(--yellow); border-radius: var(--r-pill); font-size: .75rem; font-weight: 800; font-stretch: 125%; letter-spacing: .06em; line-height: 1; }
+.latpill i { display: inline-block; width: .5em; height: .56em; margin-inline: .25em; border: .16em solid currentColor; border-top: 0; border-radius: 0 0 99px 99px; }
+.yard__lat { grid-column: 1; justify-self: start; margin-bottom: .9rem; }
 /* The city fills the space beside the window whatever the card's width. */
 .yard__city { grid-column: 1; font-size: 2rem; font-size: clamp(.92rem, 8.5cqi - 9px, 2.5rem); line-height: .9; font-weight: 900; font-stretch: var(--wide); letter-spacing: -.03em; text-transform: uppercase; }
-.yard--plain .yard__city { font-size: clamp(1.6rem, 9cqi, 3rem); }
 .yard .yard__role { grid-column: 1; margin: .55rem 0 0; font-size: .92rem; line-height: 1.3; font-weight: 600; color: var(--umber); max-width: 24ch; }
-.yard__media { grid-column: 2; grid-row: 1 / -1; align-self: start; margin-top: -1.35rem; aspect-ratio: 3 / 4; }
-.yard--plain .yard__head { grid-template-columns: minmax(0, 1fr); min-height: 0; }
+.yard__fig { grid-column: 2; grid-row: 1 / -1; align-self: start; display: grid; justify-items: center; margin-top: -1.35rem; }
+.yard__media { aspect-ratio: 3 / 4; width: 100%; }
+/* What the photograph shows: a place, never the yard itself. */
+.yard__cap { width: calc(100% + 1.2rem); margin: .4rem -.6rem 0; font-size: .75rem; line-height: 1.15; font-weight: 600; text-align: center; color: var(--umber); text-wrap: balance; }
 .yard__body { display: flex; flex-direction: column; flex: 1; gap: .9rem; padding: 1.25rem 1.4rem 1.4rem 1.5rem; }
 .yard__addr { display: flex; gap: .6rem; line-height: 1.4; font-weight: 500; } .yard__addr .i { margin-top: .15rem; }
 .yard__hours { margin: 0; min-height: 1.2em; } .yard__hours .status { font-size: .8rem; color: var(--black); opacity: 1; }
 .yard__lines { margin: 0; border-top: var(--line) solid var(--black); font-size: .95rem; }
-.yard__lines > div { display: grid; grid-template-columns: 5.2rem minmax(0, 1fr); gap: .75rem; padding: .6rem 0; border-bottom: 1px solid var(--paper-2); }
-.yard__lines dt { font-size: .66rem; font-weight: 800; font-stretch: 125%; letter-spacing: .08em; text-transform: uppercase; padding-top: .28rem; }
+.yard__lines > div { display: grid; grid-template-columns: 5.7rem minmax(0, 1fr); gap: .75rem; padding: .6rem 0; border-bottom: 1px solid var(--paper-2); }
+.yard__lines dt { font-size: .75rem; font-weight: 800; font-stretch: 112%; letter-spacing: .06em; text-transform: uppercase; padding-top: .22rem; }
+.yard__lines--mini { font-size: .92rem; } .yard__lines--mini > div { grid-template-columns: 3.6rem minmax(0, 1fr); padding: .42rem 0; } .yard__lines--mini > div:last-child { border-bottom: 0; }
 .yard__lines dd { margin: 0; overflow-wrap: anywhere; } .yard__lines small { color: var(--stone); }
 .yard__actions { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: .5rem; margin-top: auto; }
 .yard__actions .btn { padding-inline: .8em; font-size: .82rem; }
 .yard__call { font-size: 1rem !important; letter-spacing: 0; }
-.yard__quote { align-self: flex-start; }
+.yard__quote { align-self: flex-start; white-space: normal; }
+/* Toll-free and email are tapped on phones too: each is a full target, and the row keeps its height. */
+@media (max-width: 999px) { .yard__lines a { display: inline-flex; align-items: center; min-height: 40px; } .yard__lines--mini a { margin-block: -.42rem; } }
 @media (max-width: 1279px) { .yard__actions { grid-template-columns: minmax(0, 1fr); } }
 @media (max-width: 899px) { .yards, .yards--2 { grid-template-columns: minmax(0, 1fr); } .yard__actions { grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); } .yard { border-radius: var(--r-m); } .yard__head { min-height: 0; padding-bottom: 1.1rem; } .yard--compact .yard__body { padding-top: 1rem; gap: .7rem; } }
-@media (max-width: 440px) {
-  .yard__actions { grid-template-columns: minmax(0, 1fr); }
-  /* Home cards on a phone: the number takes the row; directions is a round button beside it. */
-  .yard--compact .yard__actions { grid-template-columns: minmax(0, 1fr) auto; }
-  .yard--compact .yard__dir { width: var(--h); padding: 0; } .yard--compact .yard__dir-t { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
-}
+@media (max-width: 440px) { .yard__actions { grid-template-columns: minmax(0, 1fr); } }
 
 /* ---------- Ticket: one wide, loud link ---------- */
 .ticket { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; grid-template-areas: "k t go" "k d go"; align-items: center; gap: .2rem clamp(1rem, 3vw, 3rem); margin-top: clamp(1rem, 2vw, 1.75rem); padding: clamp(1.1rem, 2vw, 1.6rem) clamp(1.1rem, 2vw, 1.6rem) clamp(1.1rem, 2vw, 1.6rem) clamp(1.4rem, 3vw, 2.75rem); background: var(--black); color: var(--paper); border-radius: var(--r-pill); text-decoration: none; transition: background var(--t-tap) linear, color var(--t-tap) linear; }
@@ -178,9 +197,8 @@ main { overflow-x: hidden; overflow-x: clip; }
 .divider > i:nth-child(1) { background: currentColor; z-index: 3; --plx-y0: 0px; --plx-y1: 0px; }
 .divider > i:nth-child(2) { height: clamp(74px, 13vw, 196px); border: clamp(8px, 1.5vw, 22px) solid currentColor; border-top: 0; --plx-y0: -34px; --plx-y1: 14px; }
 .divider > i:nth-child(3) { height: clamp(104px, 17.5vw, 264px); border: clamp(8px, 1.5vw, 22px) solid currentColor; border-top: 0; --plx-y0: -70px; --plx-y1: 30px; }
-.divider--p { color: var(--paper); } .divider--k { color: var(--black); }
+.divider--p { color: var(--paper); }
 .divider + * { position: relative; }
-.has-divider { padding-top: calc(var(--section) + clamp(60px, 13vw, 200px)); }
 
 /* ---------- The delivery map: a flat poster ---------- */
 .dmap { position: relative; margin: 0; }
@@ -205,7 +223,7 @@ main { overflow-x: hidden; overflow-x: clip; }
 .dmap__town, .dmap__yard { position: absolute; width: 0; height: 0; text-decoration: none; }
 .dmap__town > i { position: absolute; left: -5.5px; top: -5.5px; width: 11px; height: 11px; border-radius: 50%; background: var(--black); border: 2px solid var(--paper); transition: transform var(--t-flip) var(--spring); }
 .dmap__town > b, .dmap__yard > b { position: absolute; white-space: nowrap; line-height: 1; border-radius: var(--r-pill); }
-.dmap__town > b { padding: .3em .6em .28em; background: var(--paper); color: var(--black); font-size: clamp(.58rem, .5rem + .25vw, .74rem); font-weight: 700; transition: transform var(--t-flip) var(--spring), background var(--t-tap) linear, color var(--t-tap) linear; }
+.dmap__town > b { padding: .3em .6em .28em; background: var(--paper); color: var(--black); font-size: clamp(.75rem, .5rem + .25vw, .78rem); font-weight: 700; transition: transform var(--t-flip) var(--spring), background var(--t-tap) linear, color var(--t-tap) linear; }
 [data-side="e"] > b { left: 10px; top: 0; transform: translateY(-50%); transform-origin: 0 50%; }
 [data-side="w"] > b { right: 10px; top: 0; transform: translateY(-50%); transform-origin: 100% 50%; }
 [data-side="n"] > b { left: 0; bottom: 9px; transform: translateX(-50%); transform-origin: 50% 100%; }
@@ -213,7 +231,7 @@ main { overflow-x: hidden; overflow-x: clip; }
 /* Yards carry the mark. */
 .dmap__yard > i { position: absolute; left: -15px; top: -15px; width: 30px; height: 30px; border-radius: 8px; background: var(--black); box-shadow: 0 0 0 2px var(--paper); transition: transform var(--t-flip) var(--spring); }
 .dmap__yard > i::before { content: ''; position: absolute; inset: 6px 8px 8px; border: 4px solid var(--yellow); border-top: 0; border-radius: 0 0 99px 99px; }
-.dmap__yard > b { padding: .42em .8em .38em; background: var(--yellow); color: var(--black); border: var(--line) solid var(--black); font-size: clamp(.6rem, .5rem + .35vw, .82rem); font-weight: 800; font-stretch: 125%; letter-spacing: .05em; text-transform: uppercase; }
+.dmap__yard > b { padding: .42em .8em .38em; background: var(--yellow); color: var(--black); border: var(--line) solid var(--black); font-size: clamp(.75rem, .5rem + .35vw, .82rem); font-weight: 800; font-stretch: 125%; letter-spacing: .05em; text-transform: uppercase; }
 .dmap__yard[data-side="e"] > b { left: 22px; } .dmap__yard[data-side="w"] > b { right: 22px; }
 .dmap__yard[data-side="ne"] > b { left: 12px; bottom: 15px; }
 .dmap__yard:hover > i, .dmap__yard:focus-visible > i { transform: scale(1.25) rotate(-8deg); }
@@ -231,8 +249,9 @@ main { overflow-x: hidden; overflow-x: clip; }
 .dmap[data-mode="road"] .lane--road, .dmap[data-mode="sea"] .lane--sea, .dmap[data-mode="barge"] .lane--barge, .dmap[data-mode="barge"] .lane--sea { opacity: 1; stroke-width: 5.5; }
 .dmap--compact .dmap__town--minor { display: none; }
 .dmap__kent { display: none; }
-.dmap__legend { display: flex; flex-wrap: wrap; gap: .5rem 1.4rem; margin-top: 1.1rem; font-size: .7rem; font-weight: 750; font-stretch: 112%; letter-spacing: .06em; text-transform: uppercase; color: var(--ash); }
+.dmap__legend { display: flex; flex-wrap: wrap; gap: .5rem 1.4rem; margin-top: 1.1rem; font-size: .75rem; font-weight: 750; font-stretch: 112%; letter-spacing: .06em; text-transform: uppercase; color: var(--ash); }
 .dmap__legend span { display: inline-flex; align-items: center; gap: .55rem; }
+.dmap__note { flex-basis: 100%; font-size: .78rem; font-weight: 500; font-stretch: 100%; letter-spacing: 0; text-transform: none; }
 .lg { display: inline-block; width: 26px; height: 0; border-top: 3px solid var(--paper); }
 .lg--yard { width: 16px; height: 16px; border: 0; border-radius: 4px; background: var(--yellow); }
 /* The road is a black line on yellow land, so its key is too. */
@@ -243,35 +262,58 @@ main { overflow-x: hidden; overflow-x: clip; }
 /* Phones: the map zooms to Alaska; Kent is off the page to the south-east, and says so. */
 @media (max-width: 699px) {
   .dmap__canvas { overflow: hidden; aspect-ratio: 10 / 9; }
-  .dmap__inner { width: 172%; margin-left: -13%; margin-top: 2%; }
+  .dmap__inner { width: 150%; margin-left: -4%; margin-top: 2%; }
   .dmap__town--minor { display: none; }
   .dmap__yard[href$="#kent"] { display: none; }
-  .dmap__kent { position: absolute; right: 0; bottom: .25rem; display: inline-flex; align-items: center; gap: .4em; padding: .45em .8em; background: var(--yellow); color: var(--black); border: var(--line) solid var(--black); border-radius: var(--r-pill); font-size: .64rem; font-weight: 800; font-stretch: 125%; letter-spacing: .05em; text-transform: uppercase; }
+  .dmap__yard > b { font-stretch: 100%; letter-spacing: .03em; }
+  /* Every name stays on the map: Juneau and Fairbanks sit above their marks, clear of the edge and of each other. */
+  .dmap__town[data-town="juneau"] > b { left: 0; right: auto; top: auto; bottom: 9px; transform: translateX(-50%); transform-origin: 50% 100%; }
+  .dmap__yard[href$="#fairbanks"] > b { left: 0; right: auto; top: auto; bottom: 19px; transform: translateX(-50%); transform-origin: 50% 100%; }
+  .dmap__town.is-on[data-side="e"] > b { transform: translate(3px, -50%) scale(1.08); } .dmap__town.is-on[data-side="w"] > b { transform: translate(-3px, -50%) scale(1.08); }
+  .dmap__town.is-on[data-side="n"] > b, .dmap__town[data-town="juneau"].is-on > b { transform: translate(-50%, -3px) scale(1.08); } .dmap__town.is-on[data-side="s"] > b { transform: translate(-50%, 3px) scale(1.08); }
+  .dmap__kent { position: absolute; right: 0; bottom: .25rem; display: inline-flex; align-items: center; gap: .4em; padding: .45em .8em; background: var(--yellow); color: var(--black); border: var(--line) solid var(--black); border-radius: var(--r-pill); font-size: .75rem; font-weight: 800; font-stretch: 112%; letter-spacing: .04em; text-transform: uppercase; }
   .dmap__kent .i { transform: rotate(40deg); }
+}
+/* The smallest phones: the arch's shoulder would cut Deadhorse, so its name reads inward. */
+@media (max-width: 379px) {
+  .dmap__town[data-town="deadhorse"] > b { left: auto; right: 10px; transform-origin: 100% 50%; }
+  .dmap__town[data-town="deadhorse"].is-on > b { transform: translate(-3px, -50%) scale(1.08); }
 }
 
 /* ---------- Page hero: a yellow poster with a U hanging in the mark's rings ---------- */
 .phero { position: relative; }
 .phero__grid { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: clamp(1.5rem, 5vw, 5rem); min-height: clamp(440px, 66vh, 660px); }
 .phero__copy { position: relative; z-index: 2; align-self: center; padding-block: clamp(2.25rem, 5vw, 4.5rem) clamp(2.75rem, 6vw, 5.5rem); min-width: 0; }
+.phero__seal { position: absolute; z-index: 3; left: -15%; bottom: 7%; }
+@media (max-width: 899px) { .phero__seal { left: -19%; bottom: auto; top: 16%; } }
 .phero__title--long { font-size: clamp(1.6rem, .9rem + 3.4vw, 4.4rem); line-height: .9; }
 .phero__lede { margin-top: clamp(1.1rem, 2vw, 1.75rem); max-width: 44ch; }
 .phero__art { position: relative; z-index: 1; justify-self: center; align-self: start; width: min(100%, calc(var(--wrap) * .293)); margin-right: clamp(0px, 3vw, 3rem); }
 .phero__media { aspect-ratio: 4 / 5.3; }
-.phero__u { aspect-ratio: 4 / 5.3; background: var(--black); border-radius: 0 0 var(--r-pill) var(--r-pill); }
-.phero--plain .phero__art { width: min(100%, 300px); } .phero--plain .phero__u { aspect-ratio: 1 / 1.25; }
 .crumbs { margin-bottom: 1.4rem; font-size: .76rem; font-weight: 750; font-stretch: 112%; letter-spacing: .05em; text-transform: uppercase; }
 .crumbs ol { display: flex; flex-wrap: wrap; gap: .3rem .55rem; }
 .crumbs li + li::before { content: '/'; margin-right: .55rem; }
-.crumbs a { text-decoration: none; border-bottom: var(--line) solid currentColor; }
+.crumbs a { position: relative; text-decoration: none; border-bottom: var(--line) solid currentColor; }
+/* On touch screens a crumb's hit area is 40px tall without moving the line it sits on. */
+@media (max-width: 999px), (pointer: coarse) { .crumbs a::after { content: ''; position: absolute; inset: -.8rem -.3rem; } }
 @media (max-width: 899px) {
   /* Phones: the U turns over and stands on the bottom edge as an arch. */
   .phero__grid { grid-template-columns: minmax(0, 1fr); gap: 0; min-height: 0; }
   .phero__copy { padding-block: 1.75rem 2.25rem; }
   .phero__art { align-self: end; width: min(66vw, 300px); margin: clamp(1.75rem, 9vw, 3rem) auto 0; }
-  .phero__media, .phero__u { aspect-ratio: 1 / 1.08; border-radius: var(--r-pill) var(--r-pill) 0 0; }
+  .phero__media { aspect-ratio: 1 / 1.08; border-radius: var(--r-pill) var(--r-pill) 0 0; }
   .phero__art .rings > i { inset: calc(var(--n) * var(--step) * -1) calc(var(--n) * var(--step) * -1) 0; border: var(--w) solid currentColor; border-bottom: 0; border-radius: var(--r-pill) var(--r-pill) 0 0; }
 }
+
+/* ---------- Photo caption: a label tied to the foot of a window ---------- */
+/* What a stock photograph literally shows and who took it. On a U it sits on the lowest point of
+   the curve; on an arch it sits inside the flat bottom. Absolute, so it can never move anything. */
+.wcap { position: absolute; z-index: 3; left: 50%; bottom: -1.05rem; display: grid; justify-items: center; width: max-content; max-width: min(94%, 18rem); margin: 0; padding: .4rem .8rem .36rem; transform: translateX(-50%); background: var(--white); color: var(--black); border: var(--line) solid var(--black); border-radius: var(--r-m); font-size: .75rem; font-weight: 700; line-height: 1.2; text-align: center; text-wrap: balance; }
+.wcap__by { font-weight: 500; color: var(--stone); }
+.qband__art .wcap, .win--arch > .wcap, .win--pill > .wcap { bottom: .9rem; }
+.win--u > .wcap { bottom: 16%; }
+@media (max-width: 899px) { .phero__art .wcap { bottom: 1.5rem; } }
+@media (max-width: 480px) { .wcap { max-width: calc(100% + 1rem); padding-inline: .6rem; } .win > .wcap { max-width: calc(100% - .75rem); } }
 
 /* ---------- Closing call to action: an arch standing on a yellow field ---------- */
 .qband { position: relative; padding-top: var(--section); }
@@ -281,6 +323,17 @@ main { overflow-x: hidden; overflow-x: clip; }
 .qband__media { aspect-ratio: 4 / 4.9; }
 .qband__copy { padding-bottom: var(--section); }
 .qband__copy .lede { margin-top: 1.4rem; }
+/* The take-off sheet: a paper arch; the Qty column is the part Uresco fills in. */
+.tsheet { container-type: inline-size; position: relative; display: flex; flex-direction: column; overflow: hidden; background: var(--white); color: var(--black); border: var(--line) solid var(--black); border-bottom: 0; border-radius: var(--r-pill) var(--r-pill) 0 0; }
+.tsheet__title { margin: 15cqi 0 0; padding: 0 12cqi; font-size: 9.4cqi; line-height: 1; font-weight: 900; font-stretch: var(--wide); letter-spacing: -.02em; text-transform: uppercase; text-align: center; }
+.tsheet__rows { flex: 1; display: flex; flex-direction: column; margin-top: 6.5cqi; border-top: var(--line) solid var(--black); background: linear-gradient(90deg, transparent 72%, var(--black) 72%, var(--black) calc(72% + 2px), var(--yellow) calc(72% + 2px)); }
+.tsheet__row { flex: 1; display: grid; grid-template-columns: 72% 28%; align-items: center; margin: 0; padding-left: 7cqi; border-bottom: 1px solid var(--paper-2); font-size: clamp(.75rem, 4.2cqi, 1.02rem); font-weight: 650; line-height: 1.05; }
+.tsheet__row:last-child { border-bottom: 0; }
+.tsheet__row span { min-width: 0; padding-right: .5em; }
+.tsheet__row--head { flex: none; padding-block: .55em .45em; border-bottom: var(--line) solid var(--black); font-size: .75rem; font-weight: 800; font-stretch: 118%; letter-spacing: .08em; text-transform: uppercase; }
+.tsheet__row--head span:last-child { justify-self: center; padding: 0; }
+.tsheet__row:not(.tsheet__row--head) span:last-child { justify-self: center; width: 44%; height: 2px; padding: 0; background: var(--black); opacity: .35; }
+.tsheet__note { position: absolute; right: 4cqi; bottom: 9cqi; font-size: .75rem; white-space: normal; width: min-content; min-width: 7.2em; text-align: center; line-height: 1.12; padding: .6em .9em .52em; }
 @media (max-width: 899px) {
   .qband__grid { grid-template-columns: minmax(0, 1fr); gap: 0; }
   .qband__copy { order: -1; padding-bottom: 0; }
@@ -300,11 +353,29 @@ main { overflow-x: hidden; overflow-x: clip; }
 .faq details > p { margin: 0; padding: 0 3.5rem 1.5rem 0; max-width: 64ch; font-size: 1.05rem; }
 .field-k .faq summary::after { background: var(--yellow); color: var(--black); }
 
-/* ---------- Steps (generic, numbered) ---------- */
-.steps { counter-reset: step; display: grid; gap: 1.1rem; }
-.steps li { counter-increment: step; display: grid; grid-template-columns: 2.4rem minmax(0, 1fr); column-gap: 1rem; }
-.steps li::before { content: counter(step); grid-row: span 2; display: grid; place-items: center; width: 2.4rem; height: 2.4rem; border-radius: 50%; background: var(--yellow); color: var(--black); font-weight: 900; font-stretch: 125%; font-size: .95rem; }
-.steps b { font-weight: 800; align-self: end; } .steps span { color: var(--quiet, var(--stone)); grid-column: 2; }
+/* ---------- Snapshot: Uresco's own small photographs, shown at their size and stuck to the page ---------- */
+.snap { --rot: -3deg; position: relative; width: min(260px, 62%); margin: 0; transform: rotate(var(--rot)); }
+.snap__win { aspect-ratio: 1; border: var(--line) solid var(--black); border-radius: var(--r-m); box-shadow: var(--sh-sticker); }
+.snap__win--tag > img { object-position: 62% 12%; }
+.snap figcaption { position: absolute; left: -9%; bottom: -.7rem; padding: .5em .95em .45em; background: var(--yellow); border: var(--line) solid var(--black); border-radius: var(--r-pill); transform: rotate(-6deg); font-size: .75rem; font-weight: 800; font-stretch: 125%; letter-spacing: .05em; text-transform: uppercase; white-space: nowrap; }
 
-/* Small windows set inside a line of large text. */
+/* ---------- Ask: a speech sticker whose last word keeps changing (Alaska and Pacific Northwest heroes) ---------- */
+.ask { --rot: -2.5deg; position: relative; z-index: 1; display: inline-grid; gap: .3rem; margin: .35rem 0 clamp(1.3rem, 2.6vw, 2.1rem); padding: .8rem 1.4rem .75rem 1.2rem; background: var(--white); border: var(--line) solid var(--black); border-radius: 24px 24px 24px 4px; box-shadow: var(--sh-sticker); transform: rotate(var(--rot)); transform-origin: 0 100%; }
+.ask__q { font-size: var(--t-label); font-weight: 800; font-stretch: 125%; letter-spacing: .07em; text-transform: uppercase; line-height: 1.2; }
+.ask__swap { display: grid; justify-content: start; overflow: hidden; overflow: clip; font-size: clamp(1.45rem, 1rem + 2vw, 2.6rem); line-height: 1; font-weight: 900; font-stretch: 125%; letter-spacing: -.028em; text-transform: uppercase; padding-block: .04em; }
+.ask__swap > span { grid-area: 1 / 1; opacity: 0; transform: translateY(105%); white-space: nowrap; }
+.ask__swap > .is-on { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: no-preference) {
+  .ask__swap > span { transition: transform .45s var(--spring), opacity .12s linear; }
+  .ask__swap > .was-on { opacity: 0; transform: translateY(-105%); transition: transform .3s cubic-bezier(.5, 0, .9, .4), opacity .2s linear .08s; }
+}
+@media (max-width: 899px) { .ask { margin-bottom: 1.25rem; } }
+
+/* ---------- Toggle pills: pick one of several (route-finder towns, project sectors) ---------- */
+.toggle { min-height: 44px; padding: 0 1.05em; border-radius: var(--r-pill); border: var(--line) solid #77736A; background: transparent; color: var(--paper); font-size: .94rem; font-weight: 700; white-space: nowrap; transition: background var(--t-tap) linear, color var(--t-tap) linear, border-color var(--t-tap) linear, transform var(--t-flip) var(--spring); }
+.toggle:hover { border-color: var(--paper); transform: translateY(-2px); }
+.toggle[aria-pressed="true"] { background: var(--yellow); border-color: var(--yellow); color: var(--black); }
+
+/* Small windows set inside a line of large text. On phones they would be 40px smudges, so they go. */
 .chip-win { display: inline-block; width: 1.75em; height: .95em; vertical-align: -.1em; margin-inline: .05em; }
+@media (max-width: 599px) { .chip-win { display: none; } }

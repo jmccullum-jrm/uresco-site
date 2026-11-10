@@ -1,6 +1,6 @@
 // Product categories. The item lists are the lines uresco.com says Uresco carries;
 // the one-line notes describe what each product is, not specific stock or sizes.
-// Availability varies by yard, so pages tell people to call rather than promise.
+// Pages tell people to ask their yard rather than promise.
 // literature: manufacturer pages for spec sheets and installation guides (opened in a new tab).
 
 export const CATEGORIES = [
@@ -8,7 +8,6 @@ export const CATEGORIES = [
     slug: 'framing-lumber',
     name: 'Framing Lumber & Timbers',
     short: 'Framing & Timbers',
-    photo: 'lumber-stack',
     lede: 'Dimensional lumber and timbers for framing, in the grades and treatments a project calls for.',
     body: 'Framing packages are the core of what we ship, from a single load for a Kent job site to a full house package crated for a barge. Tell us the plan and we will build the list.',
     items: [
@@ -23,7 +22,6 @@ export const CATEGORIES = [
     slug: 'panels-sheathing',
     name: 'Plywood, OSB & Sheathing',
     short: 'Panels & Sheathing',
-    photo: 'plywood',
     lede: 'Structural panels for floors, walls and roofs, plus exterior gypsum sheathing.',
     body: 'Plywood and OSB for subfloors, wall and roof sheathing, and DensGlass Gold where an exterior gypsum sheathing is specified.',
     items: [
@@ -38,7 +36,6 @@ export const CATEGORIES = [
     slug: 'engineered-wood',
     name: 'Engineered Wood & Trusses',
     short: 'Engineered Wood',
-    photo: 'framing-joists',
     lede: 'Long spans, straight members and floor systems that go in fast.',
     body: 'I-joist floor systems, glulam, LVL and PSL beams, and truss packages, quoted from your plans so the members match the design.',
     items: [
@@ -55,7 +52,6 @@ export const CATEGORIES = [
     slug: 'concrete-forming',
     name: 'Concrete Forming Panels',
     short: 'Forming Panels',
-    photo: 'concrete-forms',
     lede: 'Overlaid plywood built to come off the pour clean and go back up again.',
     body: 'Medium- and high-density overlay panels for foundations, walls and commercial concrete work.',
     items: [
@@ -68,7 +64,6 @@ export const CATEGORIES = [
     slug: 'cedar-decking',
     name: 'Cedar, Decking & Fencing',
     short: 'Cedar & Decking',
-    photo: 'cedar',
     lede: 'Western red cedar and composite for siding, trim, decks and fences.',
     body: 'Cedar siding and trims, cedar decking and fencing, and composite decking for low-maintenance outdoor work.',
     items: [
@@ -83,7 +78,6 @@ export const CATEGORIES = [
     slug: 'siding-exterior',
     name: 'Siding, Roofing & Wraps',
     short: 'Siding & Exterior',
-    photo: 'siding',
     lede: 'Fiber-cement siding, roofing and the weather barrier behind it.',
     body: 'James Hardie and CertainTeed siding systems, roofing, and the house wraps and sealants that keep an envelope tight.',
     items: [
@@ -99,7 +93,6 @@ export const CATEGORIES = [
     slug: 'insulation-drywall',
     name: 'Insulation & Drywall',
     short: 'Insulation & Drywall',
-    photo: 'insulation',
     lede: 'Envelope and interior materials, including cold-climate insulation.',
     body: 'Rigid foam and batt insulation for walls, roofs and foundations, and drywall for the interior.',
     items: [
@@ -113,7 +106,6 @@ export const CATEGORIES = [
     slug: 'windows-doors-cabinets',
     name: 'Windows, Doors & Cabinets',
     short: 'Windows, Doors & Cabinets',
-    photo: 'windows',
     lede: 'Openings and casework, packaged with the rest of the job.',
     body: 'Windows and doors, and custom cabinets, quoted alongside the framing and envelope so the whole project ships together.',
     items: [
@@ -127,7 +119,6 @@ export const CATEGORIES = [
     slug: 'hardware-supplies',
     name: 'Hardware, Fasteners & Jobsite Supplies',
     short: 'Hardware & Supplies',
-    photo: 'hardware',
     lede: 'The connectors, fasteners and consumables that finish a load.',
     body: 'Simpson Strong-Tie connectors, fasteners, and the tarps, poly, caulking and adhesives a crew goes through every week.',
     items: [

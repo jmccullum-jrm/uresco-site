@@ -10,7 +10,6 @@
 .fig--cine .fig__frame { aspect-ratio: 21 / 9; }
 .fig--wide .fig__frame { aspect-ratio: 16 / 9; }
 .fig--land .fig__frame { aspect-ratio: 3 / 2; }
-.fig--sq .fig__frame { aspect-ratio: 1; }
 .fig--port .fig__frame { aspect-ratio: 4 / 5; }
 .fig--tall .fig__frame { aspect-ratio: 3 / 4; }
 @media (max-width: 699px) { .fig--cine .fig__frame { aspect-ratio: 4 / 3; } .fig--wide .fig__frame { aspect-ratio: 4 / 3; } }
@@ -18,6 +17,10 @@
 .fig__cap { display: flex; justify-content: space-between; align-items: baseline; gap: .4rem 1.5rem; flex-wrap: wrap; padding-top: .75rem; font: 400 var(--t-caption)/1.4 var(--mono); color: var(--ink-3); }
 .fig__place { margin-left: auto; text-transform: uppercase; letter-spacing: .09em; font-size: var(--t-label); white-space: nowrap; }
 .fig__place::before { content: ""; display: inline-block; width: .5rem; height: .5rem; margin-right: .6rem; background: var(--yellow); }
+/* The photographer's name: every stock picture says so, so none can be taken for Uresco's own. */
+.fig__credit { font-size: inherit; color: inherit; }
+/* A figure outside .wrap runs edge to edge; its caption stays on the column. */
+.fig--bleed .fig__cap { width: min(100% - 2 * var(--gutter), var(--max)); margin-inline: auto; }
 /* A frame whose picture drifts as it crosses the screen (site.js). The picture is cut a little
    tall so there is something to drift into. */
 [data-parallax] { position: relative; overflow: hidden; }
@@ -68,21 +71,33 @@
 .phero__media { margin: 0; }
 .phero__frame { height: clamp(16rem, 58vw, 40rem); background: var(--paper-2); }
 @media (max-width: 599px) { .phero__row .actions { display: grid; } }
+.phero__lede { margin-top: 1.25rem; }
+.phero__row .phero__lede { margin-top: 0; }
 .phero__media .fig__cap { padding-bottom: .25rem; }
 /* Plain variant, for pages that open on a form rather than a photograph. */
 .phero--plain { padding-bottom: clamp(2rem, 4vw, 3.5rem); border-bottom: 1px solid var(--rule-2); }
 
 /* ---------- Yard strip: latitude, city, number ---------- */
 .ystrip { display: grid; border-top: 1px solid var(--ink); }
-.ystrip__item { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: baseline; gap: .45rem 1rem; padding: .9rem 0 1rem; border-bottom: 1px solid var(--rule-2); text-decoration: none; }
-.ystrip__lat { font: 400 var(--t-label)/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.ystrip .status { justify-self: end; }
+/* Each cell is its own container: what fits depends on the cell, not on the screen. */
+.ystrip__item { container-type: inline-size; display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: baseline; gap: .45rem 1rem; padding: .9rem 0 1rem; border-bottom: 1px solid var(--rule-2); text-decoration: none; }
+/* The latitude and the status share the first row, whatever the number below them needs. */
+.ystrip__lat { grid-area: 1 / 1 / 2 / -1; font: 400 var(--t-label)/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); white-space: nowrap; }
+.ystrip .status { grid-area: 1 / 1 / 2 / -1; justify-self: end; }
 .ystrip__city { display: flex; align-items: baseline; gap: .5rem; min-width: 0; }
 .ystrip__city b { font: 400 1.75rem/1 var(--serif); letter-spacing: -.02em; }
 .ystrip__city small { font: 400 var(--t-label)/1 var(--mono); letter-spacing: .08em; color: var(--ink-3); }
 .ystrip__num { grid-column: 2; display: inline-flex; align-items: center; gap: .5rem; font-weight: 600; font-size: 1.1875rem; letter-spacing: -.005em; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .ystrip__num .i { color: var(--ink-3); }
 .ystrip__item:hover .ystrip__num { text-decoration: underline; text-decoration-color: var(--yellow); text-decoration-thickness: 2px; text-underline-offset: .25em; }
+/* Three steps down as the cell narrows: the state and handset go, the type comes down a size, and
+   last the number takes its own row, because a yard name must never run into its number. */
+@container (max-width: 20.5rem) { .ystrip__city small, .ystrip__num .i { display: none; } }
+@container (max-width: 17.5rem) { .ystrip__city b { font-size: 1.5rem; } .ystrip__num { font-size: 1.0625rem; } }
+@container (max-width: 15.75rem) {
+  .ystrip__lat span { display: none; }
+  .ystrip__city, .ystrip__num { grid-column: 1 / -1; justify-self: start; }
+}
 @media (min-width: 760px) {
   .ystrip { grid-template-columns: repeat(3, minmax(0, 1fr)); border-bottom: 1px solid var(--rule-2); }
   .ystrip li + li { border-left: 1px solid var(--rule-2); }
@@ -90,17 +105,12 @@
   .ystrip li:first-child .ystrip__item { padding-left: 0; }
   .ystrip li:last-child .ystrip__item { padding-right: 0; }
 }
-@media (min-width: 760px) and (max-width: 1179px) {
-  .ystrip__num .i, .ystrip__city small, .ystrip__lat span { display: none; }
-  .ystrip__city b { font-size: 1.5rem; }
-  .ystrip__num { font-size: 1.0625rem; }
-}
 
 /* ---------- Steps ---------- */
 .steps { display: grid; gap: 0 var(--col-gap); counter-reset: step; }
 .steps li { display: grid; grid-template-columns: 3rem 1fr; gap: .3rem 0; padding: 1.25rem 0 1.4rem; border-top: 1px solid var(--rule-2); }
 .steps__no { grid-row: span 2; font: 400 var(--t-label)/1.8 var(--mono); letter-spacing: .08em; color: var(--ink-3); }
-.steps__title { font: 460 var(--t-h4)/1.15 var(--serif); letter-spacing: -.008em; }
+.steps__title { font: 480 var(--t-h4)/1.15 var(--serif); letter-spacing: -.006em; }
 .steps p { grid-column: 2; color: var(--ink-2); font-size: 1rem; }
 @media (min-width: 900px) {
   .steps { grid-template-columns: repeat(4, minmax(0, 1fr)); }
@@ -123,7 +133,7 @@
 .manifest__rows div { display: grid; grid-template-columns: 5.25rem 1fr; gap: 1rem; align-items: baseline; padding: .95rem clamp(1.1rem, 3vw, 2.25rem); border-bottom: 1px dashed var(--rule-2); }
 .manifest__rows div:last-child { border-bottom: 0; }
 .manifest__rows dt { font: 400 var(--t-label)/1.4 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); }
-.manifest__rows dd { font: 440 1.1875rem/1.25 var(--serif); letter-spacing: -.004em; }
+.manifest__rows dd { font: 480 1.1875rem/1.25 var(--serif); letter-spacing: -.002em; }
 .manifest .btn:hover { background: var(--ink); color: var(--paper); }
 .manifest .btn--line { border-color: var(--ink); color: var(--ink); }
 .manifest .btn--line:hover { background: var(--ink); color: var(--paper); }
@@ -139,24 +149,14 @@
 /* ---------- FAQ ---------- */
 .faq { border-top: 1px solid var(--ink); }
 .faq details { border-bottom: 1px solid var(--rule-2); }
-.faq summary { display: flex; justify-content: space-between; align-items: center; gap: 1.5rem; padding: 1.2rem 0; cursor: pointer; list-style: none; font: 400 clamp(1.25rem, 1.1rem + .7vw, 1.75rem)/1.2 var(--serif); letter-spacing: -.012em; }
+.faq summary { display: flex; justify-content: space-between; align-items: center; gap: 1.5rem; padding: 1.2rem 0; cursor: pointer; list-style: none; font: 480 clamp(1.25rem, 1.1rem + .7vw, 1.75rem)/1.2 var(--serif); letter-spacing: -.012em; }
 .faq summary::-webkit-details-marker { display: none; }
 .faq summary .i { flex: none; transition: transform var(--d-2) var(--ease); }
 .faq details[open] summary .i { transform: rotate(180deg); }
 .faq summary:hover span { text-decoration: underline; text-decoration-color: var(--yellow); text-decoration-thickness: 2px; text-underline-offset: .2em; }
 .faq p { max-width: 42em; padding: 0 3rem 1.6rem 0; color: var(--ink-2); }
 
-/* ---------- Yard card ---------- */
-.yards { display: grid; gap: clamp(2rem, 4vw, 3rem) var(--col-gap); }
-@media (min-width: 760px) { .yards--2 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (min-width: 1000px) { .yards:not(.yards--2) { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
-.yard { display: grid; align-content: start; }
-.yard__media { aspect-ratio: 3 / 2; overflow: hidden; background: var(--paper-2); }
-.yard__media img { width: 100%; height: 100%; object-fit: cover; }
-.yard__body { display: grid; gap: .5rem; justify-items: start; padding-top: 1.25rem; }
-.yard__city { font: 370 clamp(2.25rem, 1.7rem + 2vw, 3.5rem)/1 var(--serif); letter-spacing: -.024em; }
-.yard__city span { color: var(--ink-3); }
-.yard__role { color: var(--ink-2); }
+/* ---------- A yard's details: ruled rows of address, numbers and email ---------- */
 .yard__lines { justify-self: stretch; margin-top: .75rem; border-top: 1px solid var(--ink); }
 .yard__lines > div { display: grid; grid-template-columns: 5.5rem minmax(0, 1fr); gap: 1rem; padding: .7rem 0; border-bottom: 1px solid var(--rule); }
 .yard__lines .status { white-space: normal; }
@@ -164,6 +164,18 @@
 .yard__lines dt { font: 400 var(--t-label)/1.7 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); }
 .yard__lines dd small { color: var(--ink-3); }
 .yard__lines a { text-decoration-color: var(--rule-2); }
+.yard__tz { margin-left: .5rem; font: 400 var(--t-label)/1.2 var(--mono); letter-spacing: .08em; text-transform: uppercase; white-space: nowrap; }
+/* On touch screens a number or an address is a control: at least 44px tall, without padding the rows out. */
+@media (max-width: 999px), (pointer: coarse) {
+  .yard__lines > div:has(a) { align-items: baseline; padding-block: .05rem; }
+  .yard__lines dd a { display: inline-flex; align-items: center; min-height: 2.75rem; }
+  .yard__lines dd:has(.yard__tz) { display: flex; flex-wrap: wrap; align-items: center; gap: 0 .75rem; padding-bottom: .55rem; }
+  .yard__lines dd:has(.yard__tz) .yard__tel { margin-right: 0; }
+  .yard__tz { margin-left: 0; }
+  .crumbs a { display: inline-flex; align-items: center; min-height: 2.5rem; }
+  .link { min-height: 2.5rem; }
+  .crumbs ol { align-items: center; row-gap: 0; }
+}
 .yard__tel { font-weight: 600; font-size: 1.1875rem; font-variant-numeric: tabular-nums; text-decoration: none; margin-right: .75rem; }
 .yard__actions { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: 1rem; }
 .yard__quote { margin-top: .75rem; }
@@ -188,9 +200,16 @@
 .pull::before { content: ""; display: block; width: 3.5rem; height: 3px; margin-bottom: 1.5rem; background: var(--yellow); }
 .pull em { font-style: italic; color: var(--ink-3); }
 
+/* ---------- Archive print: Uresco's own small photographs, shown as the small prints they are ---------- */
+.print { margin: 0; padding: .5rem .5rem .7rem; background: var(--paper-3); color: var(--ink); box-shadow: var(--shadow-2); --ink-3: #59645E; }
+/* Hung over the corner of a larger photograph. */
+.print--over { position: absolute; left: 0; bottom: 0; width: min(46%, 12.5rem); rotate: -3deg; }
+.print img { width: 100%; aspect-ratio: 1; object-fit: cover; }
+.print--inline { width: 12.5rem; margin-top: clamp(2rem, 4vw, 3.5rem); rotate: 2.5deg; }
+figure.print figcaption { padding-top: .55rem; font: 400 .75rem/1.35 var(--mono); color: var(--ink-3); }
+
 /* ---------- Interlude: one photograph, edge to edge, one line under it ---------- */
 .interlude__frame { height: clamp(16rem, 52vw, 44rem); background: var(--paper-2); }
-.interlude__frame img { width: 100%; height: 100%; object-fit: cover; }
 .interlude__text { padding-block: .25rem clamp(3rem, 6vw, 6rem); }
 .interlude__line { margin-top: clamp(2rem, 4vw, 4rem); font: 350 var(--t-h2)/1 var(--serif); letter-spacing: -.022em; max-width: 12em; text-wrap: balance; }
 .interlude__line em { font-style: italic; }
@@ -204,9 +223,10 @@
 
 /* ---------- The route plate ---------- */
 .plate { margin: 0; }
-/* width 0 + min-width 100%: the wide sheet inside never widens a grid or flex parent. */
-.plate__scroll { width: 0; min-width: 100%; overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: thin; scrollbar-color: var(--ink-3) transparent; background: var(--paper-3); border: 1px solid var(--rule-2); }
-.plate__sheet { position: relative; min-width: 47rem; aspect-ratio: 1200 / 880; container-type: inline-size; }
+/* width 0 + min-width 100%: the sheet inside never widens a grid or flex parent. The frame is the
+   container the crop below answers to; the sheet is the container the labels' sizes answer to. */
+.plate__scroll { container: plate-frame / inline-size; width: 0; min-width: 100%; background: var(--paper-3); border: 1px solid var(--rule-2); }
+.plate__sheet { position: relative; aspect-ratio: 1200 / 880; container-type: inline-size; }
 .plate__base { position: absolute; inset: 0; width: 100%; height: 100%; }
 .plate__lanes { position: absolute; inset: 0; width: 100%; height: 100%; }
 .plate__labels { position: absolute; inset: 0; font-family: var(--sans); color: var(--ink); }
@@ -259,6 +279,8 @@
 .plate__town[data-side="n"], .plate__yard[data-side="n"] { transform: translate(-50%, calc(-100% - .5em)); }
 .plate__town[data-side="s"], .plate__yard[data-side="s"] { transform: translate(-50%, .5em); }
 .plate__yard { display: inline-flex; align-items: baseline; gap: .5em; padding: .42em .6em .4em; background: var(--ink); color: var(--paper); font-size: clamp(.75rem, 1.1cqw, .9375rem); text-decoration: none; }
+/* The label is small; the thing you tap is not. */
+.plate__yard::after { content: ""; position: absolute; inset: -.75rem -.35rem; }
 .plate__yard[data-side="e"] { transform: translate(1.15em, -50%); }
 .plate__yard[data-side="w"] { transform: translate(calc(-100% - 1.15em), -50%); }
 .plate__yard b { font-weight: 600; }
@@ -276,13 +298,58 @@
   .plate__yard[data-side="w"] { transform: translate(calc(-100% - .95em), -50%); }
 }
 
-/* Shown only when the sheet really is wider than its frame (plate.js), or on small screens without JavaScript. */
-.plate__hint { display: none; align-items: center; gap: .5rem; color: var(--ink); }
-.plate.is-pannable .plate__hint { display: flex; }
-@media (max-width: 740px) { .no-js .plate__hint { display: flex; } }
+/* In a narrow frame the plate is re-cut rather than panned: the sheet's three layers are enlarged
+   and shifted so the frame shows Kent to Utqiaġvik, with the blank margin and the edge marks gone.
+   Crop: x 128 to 1086, y 60 to 826 of the 1200 x 880 sheet. contain: paint keeps the cut-off parts
+   out of the frame's scrollable area, so nothing pans. */
+@container plate-frame (max-width: 53.99rem) {
+  .plate__sheet { aspect-ratio: 958 / 766; contain: paint; }
+  .plate__base, .plate__lanes, .plate__labels { inset: auto; left: -13.361%; top: -7.833%; width: 125.261%; max-width: none; height: 114.883%; }
+  /* Linework and marks are drawn for the full sheet: a little heavier here, and heavier again in the phone cut. */
+  .sea { stroke-width: 3.4; } .sea--minor { stroke-width: 2.3; }
+  .roadbed { stroke-width: 5.6; } .roadbed--minor { stroke-width: 4; }
+  .road { stroke-width: 2.3; } .road--minor { stroke-width: 1.6; }
+  .barge { stroke-width: 2.8; stroke-dasharray: 10 7; }
+  .air { stroke-width: 2; stroke-dasharray: .1 7; }
+  .lane--mask { stroke-width: 12; }
+  .town { r: 5.5px; stroke-width: 2; }
+  .yardmark { transform-box: fill-box; transform-origin: center; transform: scale(1.25); }
+  /* What would be cut, or crowd the route, gives way. */
+  .plate__deg, .plate__scale, .scalebar, .plate__sea[data-sea="Bering Sea"] { display: none; }
+  .plate__sea { font-size: .75rem; letter-spacing: .14em; }
+  .plate__sea[data-sea="Gulf of Alaska"] { translate: -1.1rem 1.2rem; }
+  /* Clear of the top edge and of Utqiaġvik. (The Aleutians label flips so it is not cut at the left.) */
+  .plate__sea[data-sea="Arctic Ocean"] { translate: 10.3cqw 3.6cqw; }
+  .plate__town[data-side="n"][data-region="southwest"] { transform: translate(.55em, -50%); }
+  .plate__land { font-size: .75rem; letter-spacing: .34em; }
+  .plate__town, .plate__circle { font-size: .75rem; }
+  .plate__title { right: 12.5%; top: 9.5%; padding: .6em .75em .65em; font-size: .6875rem; gap: .25em; outline-offset: 2px; }
+  .plate__title b { font-size: 1.75em; }
+  .plate__title i, .plate__title span { display: none; }
+}
+/* The phone cut: only the places a load is routed to by name. */
+@container plate-frame (max-width: 38.99rem) {
+  .sea { stroke-width: 5; } .sea--minor { stroke-width: 3.4; }
+  .roadbed { stroke-width: 8; } .roadbed--minor { stroke-width: 6; }
+  .road { stroke-width: 3.4; } .road--minor { stroke-width: 2.4; }
+  .barge { stroke-width: 4; stroke-dasharray: 14 10; }
+  .air { stroke-width: 3; stroke-dasharray: .1 10; }
+  .lane--mask { stroke-width: 16; }
+  .town { r: 8.5px; stroke-width: 3; }
+  .yardmark { transform: scale(1.75); }
+  .plate__circle, .plate__sea[data-sea="Arctic Ocean"], .plate__sea[data-sea="Chukchi Sea"], .plate__town--r2 { display: none; }
+  .plate__land[data-land="Alaska"] { translate: 0 -.9rem; }
+  .plate__town[data-pside="e"] { transform: translate(.8em, -50%); }
+  .plate__yard[data-pside="e"] { transform: translate(1.2em, -50%); }
+  .plate__yard { font-size: .8125rem; padding: .3em .5em .28em; }
+}
+/* A phone gets the whole width of the screen for it. */
+@media (max-width: 699px) {
+  .plate__scroll { width: auto; min-width: 0; margin-inline: calc(var(--gutter) * -1); border-inline: 0; }
+}
 .plate__legend { display: grid; gap: .9rem; padding-top: 1.1rem; font: 400 var(--t-caption)/1.4 var(--mono); color: var(--ink-3); }
 .plate__legend ul { display: flex; flex-wrap: wrap; gap: .6rem 1.75rem; list-style: none; padding: 0; color: var(--ink); }
-.section--deep .plate__legend, .section--sea .plate__legend, .section--dark .plate__legend { --ink: var(--on-dark); --sea: var(--glacier); }
+.section--deep .plate__legend { --ink: var(--on-dark); --sea: var(--glacier); }
 .plate__legend li { display: flex; align-items: center; gap: .6rem; }
 .lg { flex: none; display: inline-block; width: 1.75rem; height: 0; }
 .lg--sea { border-top: 2.5px solid var(--sea); }
@@ -297,15 +364,31 @@
 /* ---------- Stock list: the nine product lines, as an index ---------- */
 .stock { display: grid; gap: var(--col-gap); }
 .stock__view { display: none; }
-.stock__list { border-top: 1px solid var(--ink); counter-reset: stock; }
-.stock__row { display: grid; grid-template-columns: auto 1fr auto; align-items: center; column-gap: 1rem; padding: .8rem 0; border-bottom: 1px solid var(--rule-2); text-decoration: none; transition: background-color var(--d-1), padding var(--d-2) var(--ease); }
+.stock__list { border-top: 1px solid var(--ink); }
+.stock__row { position: relative; isolation: isolate; display: grid; grid-template-columns: auto 1fr auto; align-items: center; column-gap: 1rem; padding: .8rem 0; border-bottom: 1px solid var(--rule-2); text-decoration: none; }
 .stock__thumb { width: 3.75rem; height: 3.75rem; object-fit: cover; background: var(--paper-2); }
-.stock__no { display: none; font: 400 var(--t-label)/1 var(--mono); letter-spacing: .08em; color: var(--ink-3); }
+.stock__no { display: block; min-width: 1.75rem; font: 400 var(--t-label)/1 var(--mono); letter-spacing: .08em; color: var(--ink-3); }
 .stock__text { display: grid; gap: .3rem; min-width: 0; }
-.stock__name { font: 400 clamp(1.3125rem, 1.1rem + 1vw, 2.125rem)/1.08 var(--serif); letter-spacing: -.016em; }
-.stock__items { font-size: .875rem; line-height: 1.35; color: var(--ink-3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.stock__name { font: 480 clamp(1.3125rem, 1.1rem + 1vw, 2.125rem)/1.08 var(--serif); letter-spacing: -.014em; }
+@media (max-width: 639px) { .stock__name { font-weight: 480; } }
+/* Every item, however long: this is what the visitor came to read. */
+.stock__items { font-size: .875rem; line-height: 1.35; color: var(--ink-3); }
 .stock__go { color: var(--ink-3); transition: transform var(--d-2) var(--ease), color var(--d-1); }
 .stock__row:hover .stock__go, .stock__row:focus-visible .stock__go { transform: translateX(.35rem); color: var(--ink); }
+/* A row of the full list also has a quote link beside it, which carries the line to the form. */
+.stock__li { position: relative; }
+.stock__li .stock__row { padding-right: 4.5rem; }
+.stock__add { position: absolute; top: 0; right: 0; bottom: 1px; display: flex; align-items: center; justify-content: center; gap: .25em; width: 3.75rem; border-left: 1px solid var(--rule); font: 400 var(--t-label)/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink); text-decoration: none; }
+.stock__add::before { content: "+"; }
+.stock__add:hover { background: var(--paper-2); text-decoration: underline; text-decoration-color: var(--yellow); text-decoration-thickness: 2px; text-underline-offset: .3em; }
+.stocknote { margin-top: 1.25rem; max-width: 44em; color: var(--ink-2); }
+.stocknote a { font-weight: 600; white-space: nowrap; }
+@media (max-width: 999px), (pointer: coarse) { .stocknote a { display: inline-flex; align-items: center; min-height: 2.75rem; } }
+@media (max-width: 999px) {
+  .stock__li .stock__go { display: none; }
+  /* Below the frame's width, a thumbnailed row has no room for the number too. */
+  .stock__list--thumbs .stock__no { display: none; }
+}
 @media (min-width: 1000px) {
   .stock { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); align-items: start; }
   .stock__view { display: block; position: sticky; top: calc(var(--mast) + 2rem); }
@@ -313,47 +396,43 @@
   .stock__frame img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity .7s var(--ease), scale 1.4s var(--ease); scale: 1.05; }
   .stock__frame img.is-on { opacity: 1; scale: 1; }
   .stock__thumb { display: none; }
-  .stock__no { display: block; width: 2.5rem; }
+  .stock__no { width: 2.5rem; }
   .stock__row { grid-template-columns: auto minmax(0, 1fr) auto; padding: 1.05rem .5rem 1.1rem 0; }
-  .stock__row:hover, .stock__row:focus-visible, .stock__row.is-on { padding-left: .9rem; background: var(--paper-2); }
+  .stock__li .stock__row { padding-right: 5.25rem; }
+  .stock__add { width: 4.5rem; }
+  /* The band behind a row fades in; the text slides over a little. Nothing else moves. */
+  .stock__row::before { content: ""; position: absolute; z-index: -1; inset: 0; background: var(--paper-2); opacity: 0; transition: opacity var(--d-1); }
+  .stock__row > :not(.stock__go) { transition: translate var(--d-2) var(--ease); }
+  .stock__row:is(:hover, :focus-visible, .is-on)::before { opacity: 1; }
+  .stock__row:is(:hover, :focus-visible, .is-on) > :not(.stock__go) { translate: .9rem 0; }
   .stock__row.is-on .stock__no { color: var(--ink); }
   .stock__text { grid-template-columns: minmax(0, 1fr); }
-  .stock__items { white-space: normal; }
+  /* A short list with no frame beside it keeps its thumbnails on wide screens too. */
+  .stock__list--thumbs .stock__thumb { display: block; }
+  .stock__list--thumbs .stock__row { grid-template-columns: auto auto minmax(0, 1fr) auto; column-gap: 1.25rem; }
 }
 .brandline { display: flex; flex-wrap: wrap; align-items: baseline; gap: .5rem 1.75rem; padding-top: 1.25rem; }
-.brandline ul { display: flex; flex-wrap: wrap; gap: .25rem 1.5rem; list-style: none; padding: 0; font: 400 1.1875rem/1.3 var(--serif); font-style: italic; color: var(--ink-2); }
+.brandline ul { display: flex; flex-wrap: wrap; gap: .25rem 1.5rem; list-style: none; padding: 0; font: 480 1.1875rem/1.3 var(--serif); font-style: italic; color: var(--ink-2); }
 
-/* ---------- Forms (quote request, credit application) ---------- */
-.form { display: grid; gap: 2rem; }
-.fieldset { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.1rem var(--col-gap); margin: 0; padding: 1.5rem 0 0; border: 0; border-top: 1px solid var(--ink); }
-.fieldset legend { float: left; grid-column: 1 / -1; width: 100%; padding: 0; margin-bottom: .5rem; font: 400 var(--t-h3)/1.1 var(--serif); letter-spacing: -.014em; }
-.fieldset legend > span:first-child { margin-right: .9rem; font: 400 var(--t-label)/1 var(--mono); letter-spacing: .08em; color: var(--ink-3); vertical-align: .55em; }
-.field { display: grid; gap: .4rem; align-content: start; grid-column: span 2; }
-@media (min-width: 640px) { .field { grid-column: span 1; } .field--full { grid-column: 1 / -1; } }
-.field label, .field .label { font: 600 .9375rem/1.3 var(--sans); letter-spacing: 0; text-transform: none; color: var(--ink); }
-.hint { font-weight: 400; color: var(--ink-3); }
-.req { color: #A3341E; margin-left: .15em; }
-.input, .field input:not([type=radio], [type=checkbox], [type=file]), .field select, .field textarea { width: 100%; min-height: 3.25rem; padding: .75rem .9rem; background: var(--paper-3); border: 1px solid var(--ink-3); border-radius: var(--r-1); }
-.field textarea { min-height: 7.5rem; resize: vertical; }
-.field input:focus-visible, .field select:focus-visible, .field textarea:focus-visible { outline-offset: 0; border-color: var(--ink); }
-[aria-invalid="true"] { border-color: #A3341E !important; }
-.err { color: #A3341E; font-size: .875rem; font-weight: 500; }
-.seg { display: flex; flex-wrap: wrap; gap: .5rem; }
-.seg label { display: inline-flex; align-items: center; gap: .5rem; min-height: 3rem; padding: .5rem 1rem; border: 1px solid var(--ink-3); border-radius: var(--r-1); font-weight: 500; cursor: pointer; }
-.seg label:has(:checked) { background: var(--ink); color: var(--paper); border-color: var(--ink); }
-.seg input { accent-color: var(--yellow); }
-.check { display: flex; gap: .75rem; align-items: flex-start; }
-.check input { width: 1.25rem; height: 1.25rem; margin-top: .2rem; accent-color: var(--ink); }
-.drop { display: grid; justify-items: center; gap: .4rem; padding: 2rem 1rem; border: 1px dashed var(--ink-3); background: var(--paper-3); text-align: center; cursor: pointer; }
-.drop.is-over, .drop:hover { border-color: var(--ink); background: var(--paper-2); }
-.drop:focus-within { outline: 2px solid var(--ink); outline-offset: 3px; }
-.files { display: grid; gap: .4rem; list-style: none; padding: 0; margin: 0; }
-.files li { display: flex; align-items: center; gap: .75rem; padding: .6rem .8rem; background: var(--paper-2); font-size: .9375rem; }
-.files li span { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.files button { background: none; border: 0; padding: .25rem; text-decoration: underline; }
-.form__foot { display: grid; gap: 1rem; justify-items: start; }
-.form__foot p { color: var(--ink-3); font-size: .9375rem; max-width: 34em; }
-.notice { display: grid; grid-template-columns: auto 1fr; gap: 1rem; padding: 1.5rem; border: 1px solid var(--ink); border-left: 3px solid var(--yellow); background: var(--paper-3); }
-.notice h2 { font: 400 var(--t-h3)/1.1 var(--serif); margin-bottom: .4rem; }
-.print-only { display: none; }
-@media print { .print-only { display: block; } }
+/* ---------- Service rows, on the dark sheet: icon, name, one line, an arrow ---------- */
+.svc__list { border-top: 1px solid var(--on-dark); }
+.svc__list a { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 1rem; padding: .9rem 0; border-bottom: 1px solid var(--rule-dark); text-decoration: none; }
+.svc__list a > .i:first-child { color: var(--glacier); }
+.svc__list a > span { display: grid; gap: .15rem; }
+.svc__list b { font: 480 1.25rem/1.15 var(--serif); letter-spacing: -.008em; }
+.svc__list small { color: var(--on-dark-2); font-size: .875rem; line-height: 1.35; }
+.svc__go { color: var(--glacier); transition: transform var(--d-2) var(--ease), color var(--d-1); }
+.svc__list a:hover .svc__go { transform: translateX(.35rem); color: var(--yellow); }
+.svc__list a:hover b { text-decoration: underline; text-decoration-color: var(--yellow); text-decoration-thickness: 2px; text-underline-offset: .2em; }
+/* A short list that has the width to itself. */
+.svc__list--lg a { gap: 1.1rem; padding: 1.15rem 0 1.25rem; }
+.svc__list--lg a > span { gap: .25rem; }
+.svc__list--lg b { font: 480 clamp(1.375rem, 1.2rem + .8vw, 1.875rem)/1.1 var(--serif); letter-spacing: -.012em; }
+.svc__list--lg small { font-size: .9375rem; line-height: 1.4; }
+
+/* ---------- Closing: the quote prompt, then the three numbers ---------- */
+.closing__call { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1rem; margin-top: clamp(3rem, 6vw, 5rem); }
+@media (min-width: 700px) {
+  .closing__call { grid-template-columns: minmax(0, 1fr) auto; align-items: baseline; }
+  .closing__call .ystrip { grid-column: 1 / -1; }
+}

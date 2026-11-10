@@ -18,9 +18,6 @@ OUT = ROOT / 'src' / 'assets' / 'img'
 DATA = ROOT / 'src' / 'data' / 'photos.generated.json'
 WIDTHS = [240, 480, 800, 1200, 1600]
 HERO_WIDTHS = [240, 640, 960, 1280, 1920, 2400]
-# Page heroes also get a 3:4 crop, so phones in portrait load a sharp, small file instead of
-# stretching a landscape one to fill a tall screen.
-PORTRAIT_WIDTHS = [640, 960, 1280]
 QUALITY = 74
 PLATE_QUALITY = 58  # two-ink plates hide compression well
 
@@ -36,18 +33,6 @@ def source(key, spec):
                 path.write_bytes(r.read())
         return path
     return ROOT / src
-
-
-def crop_portrait(im, focal):
-    """Largest 3:4 crop, placed the way CSS object-position would place it."""
-    fx, fy = 0.5, 0.5
-    if focal:
-        parts = focal.replace('%', '').split()
-        fx, fy = float(parts[0]) / 100, float(parts[1]) / 100
-    w, h = im.size
-    cw, ch = (round(h * 3 / 4), h) if w / h > 3 / 4 else (w, round(w * 4 / 3))
-    left, top = round((w - cw) * fx), round((h - ch) * fy)
-    return im.crop((left, top, left + cw, top + ch))
 
 
 def main(force=False):
@@ -76,17 +61,6 @@ def main(force=False):
             if force or not dest.exists():
                 h = round(im.height * w / im.width)
                 im.resize((w, h), Image.LANCZOS).save(dest, 'WEBP', quality=PLATE_QUALITY if spec.get('plate') else QUALITY, method=6)
-        portrait, pw, ph = [], None, None
-        if spec.get('art', base.get('art')):
-            crop_im = crop_portrait(im, spec.get('focal') or base.get('focal'))
-            pw, ph = crop_im.size
-            portrait = [w for w in PORTRAIT_WIDTHS if w <= pw]
-            if not portrait or pw > portrait[-1] * 1.1:
-                portrait.append(pw)
-            for w in portrait:
-                dest = OUT / f'{key}-p-{w}.webp'
-                if force or not dest.exists():
-                    crop_im.resize((w, round(ph * w / pw)), Image.LANCZOS).save(dest, 'WEBP', quality=QUALITY, method=6)
         out[key] = {
             'widths': widths,
             'width': widths[-1],
@@ -97,15 +71,11 @@ def main(force=False):
             'page': base.get('page'),
             'standIn': bool(alias) and not spec.get('crop'),
             'cropOf': alias if alias and spec.get('crop') else None,
-            'portrait': portrait,
-            'pwidth': portrait[-1] if portrait else None,
-            'pheight': round(ph * portrait[-1] / pw) if portrait else None,
             # Average colour, painted behind the image while it loads.
             'color': '#%02x%02x%02x' % im.resize((1, 1), Image.LANCZOS).getpixel((0, 0)),
         }
     # Drop renditions no longer referenced.
     keep = {f'{k}-{w}.webp' for k, v in out.items() for w in v['widths']}
-    keep |= {f'{k}-p-{w}.webp' for k, v in out.items() for w in v['portrait']}
     for f in OUT.glob('*.webp'):
         if f.name not in keep:
             f.unlink()

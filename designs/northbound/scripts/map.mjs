@@ -6,6 +6,7 @@
 //   <tools-dir> is a folder with d3-geo, topojson-client, world-atlas and us-atlas installed.
 import { createRequire } from 'module';
 import { writeFileSync, readFileSync } from 'fs';
+import { PLACES } from '../src/data/places.mjs';
 const [toolsDir, outPath] = process.argv.slice(2);
 const require = createRequire(toolsDir + '/package.json');
 const d3 = require('d3-geo');
@@ -53,7 +54,7 @@ const towns = [
   ['Unalaska', -166.54, 53.87, 'n', 'southwest', 'sea', 1],
   ['Kodiak', -152.41, 57.79, 'w', 'southwest', 'sea', 2],
   ['Valdez', -146.35, 61.13, 'e', 'southcentral', 'road', 2],
-  ['Cordova', -145.76, 60.54, 'e', 'southcentral', 'sea', 3],
+  ['Cordova', -145.76, 60.54, 'e', 'southwest', 'sea', 3],
   ['Juneau', -134.42, 58.3, 'e', 'southeast', 'sea', 2],
   ['Sitka', -135.33, 57.05, 'w', 'southeast', 'sea', 1],
   ['Ketchikan', -131.64, 55.34, 'e', 'southeast', 'sea', 2],
@@ -131,9 +132,11 @@ const out = {
   air: AIR.map(arc),
   yards: yards.map((y) => ({ ...y, xy: P(y.lon, y.lat) })),
   towns: towns.map(([name, lon, lat, side, region, mode, rank]) => ({ name, side, region, mode, rank, lat, xy: P(lon, lat) })),
+  // Every place the Alaska page's finder knows, so a chosen one can be marked on the sheet.
+  places: Object.fromEntries(PLACES.map((p) => [p.name, P(p.lon, p.lat)])),
   seas: [
     { name: 'Gulf of Alaska', xy: P(-144.6, 58.1) }, { name: 'Bering Sea', xy: P(-171.5, 58.6) },
-    { name: 'Arctic Ocean', xy: P(-152, 72.55) }, { name: 'Pacific Ocean', xy: P(-140.5, 50.2) },
+    { name: 'Arctic Ocean', xy: P(-144.2, 72.3) }, { name: 'Pacific Ocean', xy: P(-140.5, 50.2) },
     { name: 'Chukchi Sea', xy: P(-168.3, 69.6) },
   ],
   lands: [{ name: 'Canada', xy: P(-131.5, 62.6) }, { name: 'Alaska', xy: P(-155.2, 68.2) }],

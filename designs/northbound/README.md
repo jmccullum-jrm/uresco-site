@@ -9,15 +9,16 @@ It is a fast, static, mobile-first site. There is no CMS, database or plugin to 
 | Page | URL | Purpose |
 |---|---|---|
 | Home | `/` | A chaptered trip north: the cover and the three yards' phone numbers, Kent and the product lines, the crossing (packaging, freight, the take-off prompt), the Anchorage and Fairbanks yards, remote delivery and the route map, who we build for, contractor accounts, the yard directory |
-| Products | `/products/` + 9 category pages | Every product line, brands, and a price/availability panel with each yard's number |
-| Services | `/services/` | Take-offs and estimates, design, job-site delivery, remote and export packages, shipping, crating |
-| Alaska delivery | `/alaska/` | Route map with a region finder, how a remote package moves, road/sea/air, barge season, Anchorage and Fairbanks yards, FAQ |
-| Pacific Northwest | `/pacific-northwest/` | The Kent yard |
-| Projects | `/projects/` | Filterable gallery by sector (see the note below) |
-| Locations | `/locations/` | All three yards, with call and directions buttons |
+| Products | `/products/` + 9 line pages | A stock list you can search, brands, an A to Z of every product, and on each line page the items, the three yards' numbers and a quote link that carries the line |
+| Services | `/services/` | One load from the plans to the ground: take-offs and estimates, design, remote and export packages, crating, shipping, job-site delivery |
+| Alaska delivery | `/alaska/` | "Can you get a building package to my community?" A place finder over the route map that says how freight typically gets there and who to call, the six regions, how a remote package moves, road/sea/air, barge season, Anchorage and Fairbanks yards, FAQ |
+| Pacific Northwest | `/pacific-northwest/` | The Kent yard, the boom truck and Moffett forklift drawn as blueprints, the product lines, the start of the lane north |
+| Projects | `/projects/` | Kinds of work by sector, filterable, each with what goes on the list (see the note below) |
+| Locations | `/locations/` | "Which yard should I call?" as three tap-to-call rows, then each yard sorted into Call, Visit and Write, with the route map. The only page that prints hours |
 | Request a quote | `/quote/` | Form with plan upload, routed to the yard the customer picks |
 | Contractor accounts | `/accounts/` | Account benefits and an online credit application, routed to the chosen home yard and printable as a paper form |
-| About | `/about/` | Mission, values, photos from Uresco's own yards |
+| About | `/about/` | Who you are buying from: 35 drawn growth rings, a one-sheet company record, the mission line by line, photos from Uresco's own yards |
+| Not found | `404.html` | "This page missed the barge", a numbered index of the main pages and the three numbers |
 
 On phones a bar fixed to the bottom of the screen gives **Call · Directions · Quote** on every page. Each yard shows a live **open/closed** status worked out in its own time zone. Both forms save a draft in the browser as people type. Product pages pass their product line into the quote form, and each yard card has a quote link that preselects that yard.
 
@@ -42,7 +43,7 @@ Requirements: Node 18+ and Python 3 with Pillow (`pip install pillow`). Playwrig
 npm run build       # src/ → docs/ (preview: noindex)
 npm run build:live  # the same, for uresco.com: indexable, base '/', writes docs/CNAME
 npm run serve       # http://localhost:8080
-npm run check       # build + link/SEO checks + every page in Chromium at 5 widths, plus the forms
+npm run check       # build + link/SEO/facts checks + every page in Chromium at 5 widths, the forms, JavaScript off, and the shared pieces
 npm run images      # after changing scripts/photos.json
 npm run brand       # after changing the logo
 npm run fonts       # re-subset the fonts (needs: pip install fonttools brotli)
@@ -58,10 +59,10 @@ Every pull request runs `.github/workflows/check.yml`. It rebuilds the site, fai
 - **Projects**: `src/data/projects.mjs`.
 - **Site settings** (preview mode, form endpoint, base path): `src/config.mjs`.
 - **Photos**: `scripts/photos.json` lists every photo with its alt text and credit. Run `npm run images` after editing it. Credits are in `PHOTO-CREDITS.md`.
-  - **To use Uresco's own photos:** put the originals in `originals/uresco/`. Point an entry's `src` at the file, for example `"yard-kent": { "src": "originals/uresco/kent-yard.jpg", "alt": "…" }`, then run `npm run images && npm run build`.
+  - **To use Uresco's own photos:** put the originals in `originals/uresco/`. Point an entry's `src` at the file, for example `"uresco-yard": { "src": "originals/uresco/kent-yard.jpg", "alt": "…" }`, then run `npm run images && npm run build`. Keys starting `uresco-` print no photographer credit; everything else does.
   - Large, unedited camera files are best; the script handles resizing.
   - A photo used as a full-width hero needs `"hero": true, "art": true`, which adds the larger sizes and the phone crop. Add `"focal": [x, y]` (0 to 1) if the crop misses the subject.
-  - The first ones to replace: `yard-kent`, `framer` (accounts and design), `unloading` (job-site delivery) and `tug-barge` (remote packages).
+  - The first ones to replace: `combilift` (accounts), `unloading` (job-site delivery), `tug-barge` (home, the crossing) and the small `uresco-*` originals.
 - **Manufacturer literature links**: the `literature` field on each category in `src/data/products.mjs`.
 - **Pages**: `src/pages/*.mjs`. **Styles**: `src/assets/css/*.css` then `src/assets/css/pages/*.css`, joined in name order into one `site.css`. **Behavior**: `src/assets/js/*.js` then `src/assets/js/modules/*.js`, joined the same way; no frameworks.
 
@@ -84,7 +85,7 @@ While `preview` is on, every page is `noindex` and `robots.txt` blocks crawlers,
 - **Yard hours.** Placeholder hours are in place (Mon–Fri 7:00 a.m.–4:30 p.m. local time, closed weekends). Confirm or correct them per yard; the open/closed status depends on them.
 - **Delivery area and minimums** per yard, if Uresco wants to publish them.
 - **Credit terms.** The credit application asks for references and a requested limit, and promises nothing about terms. If Uresco has a standard credit agreement or a PDF application, link it from `/accounts/`.
-- **Real photos.** Uresco has them, but none were found in the connected Google Drive. Upload them or share a folder (see **Photos** above for how they go in). The old site's "Lumber by UCM" truck and yard photos are on the About page, but they are only 714 px wide.
+- **Real photos.** Uresco has them, but none were found in the connected Google Drive. Upload them or share a folder (see **Photos** above for how they go in). The old site's yard photos and the printed "Lumber by UCM" load tag are on the About page, but they are only 714 px wide.
 - **Real projects** for the gallery, as described above.
 - **Founding year**, if Uresco wants it shown ("35+ years" is used now).
 - **Logo.** The new mark is a proposal. If Uresco keeps the classic UCM logo, swap it into `src/lib/layout.mjs` (`brand`).

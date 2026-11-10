@@ -1,7 +1,13 @@
 (() => {
   const { $, $$ } = UCM;
 
-  /* Dialogs: [data-open="id"] opens, [data-close] or a backdrop click closes. */
+  /* Dialogs: [data-open="id"] opens, [data-close] or a backdrop click closes.
+     Openers are links wherever they can be, so without this script (or a browser without <dialog>)
+     they still lead to the locations page or the footer index. */
+  const onBackdrop = (e, d) => {
+    const r = d.getBoundingClientRect();
+    return e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom;
+  };
   document.addEventListener('click', (e) => {
     const opener = e.target.closest('[data-open]');
     if (opener) {
@@ -16,7 +22,7 @@
       return;
     }
     if (e.target.closest('[data-close]')) { e.target.closest('dialog')?.close(); return; }
-    if (e.target instanceof HTMLDialogElement) e.target.close();
+    if (e.target instanceof HTMLDialogElement && onBackdrop(e, e.target)) e.target.close();
     if (e.target.closest('[data-print]')) window.print();
   });
   // A link inside a dialog that points at this page would otherwise leave it open.
@@ -45,21 +51,31 @@
     document.addEventListener('click', (e) => { if (!item.contains(e.target)) set(false); });
   });
 
+  /* Motion that runs on its own can be paused. One setting for the whole site, remembered between pages.
+     html.is-still pauses only the endless animations (see 30-components.css), so a line that is still
+     drawing itself finishes, and a loop that starts later obeys the same setting. */
+  const root = document.documentElement;
+  const toggles = $$('[data-motion]');
+  const STILL = 'ucm-still';
+  const isLoop = (a) => { try { return a.effect.getComputedTiming().iterations === Infinity; } catch { return false; } };
+  if (toggles.length && document.getAnimations) {
+    let still = false;
+    try { still = localStorage.getItem(STILL) === '1'; } catch { /* no storage: lasts for this page */ }
+    const label = () => {
+      root.classList.toggle('is-still', still);
+      toggles.forEach((b) => { $('span', b).textContent = still ? 'Play motion' : 'Pause motion'; });
+    };
+    if (document.getAnimations().some(isLoop)) toggles.forEach((b) => { b.hidden = false; });
+    label();
+    toggles.forEach((b) => b.addEventListener('click', () => {
+      still = !still;
+      label();
+      try { still ? localStorage.setItem(STILL, '1') : localStorage.removeItem(STILL); } catch { /* fine */ }
+    }));
+  }
+
   /* The phone action bar steps aside while the keyboard is up. */
   const TYPING = 'input:not([type=radio],[type=checkbox],[type=file]), textarea, select';
   document.addEventListener('focusin', (e) => { if (e.target.matches?.(TYPING)) document.body.classList.add('is-typing'); });
   document.addEventListener('focusout', (e) => { if (e.target.matches?.(TYPING)) document.body.classList.remove('is-typing'); });
-
-  /* Projects filter */
-  const filters = $('[data-filters]');
-  if (filters) {
-    filters.addEventListener('click', (e) => {
-      const b = e.target.closest('button[data-filter]');
-      if (!b) return;
-      const f = b.dataset.filter;
-      $$('button', filters).forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
-      $$('[data-sector]').forEach((card) => { card.hidden = f !== 'all' && card.dataset.sector !== f; });
-      $('.proj-grid').classList.toggle('is-filtered', f !== 'all');
-    });
-  }
 })();

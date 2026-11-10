@@ -8,18 +8,20 @@ It is a fast, static, mobile-first site. There is no CMS, database or plugin to 
 
 | Page | URL | Purpose |
 |---|---|---|
-| Home | `/` | Dispatch board (three yards, live), the product manifest with drawings, delivery map, services, take-off prompt, who we build for, yards, contractor accounts |
-| Products | `/products/` + 9 category pages | Every product line, brands, and a price/availability panel with each yard's number |
-| Services | `/services/` | Take-offs and estimates, design, job-site delivery, remote and export packages, shipping, crating |
-| Alaska delivery | `/alaska/` | Delivery map, road/sea/air, barge season, how a remote package works, what ships, Anchorage and Fairbanks yards, questions |
-| Pacific Northwest | `/pacific-northwest/` | The Kent yard |
-| Projects | `/projects/` | Filterable gallery by sector (see the note below) |
-| Locations | `/locations/` | All three yards, with call and directions buttons |
+| Home | `/` | Dispatch board (three yards, live), the product manifest with drawings, delivery map, services, take-off prompt, who we supply, yards, contractor accounts |
+| Products | `/products/` + 9 category pages | Every product line three ways (by line with a live Find, by name, by brand); each line page has its drawing, every item, the three yard numbers and quote links that carry the line |
+| Services | `/services/` | The six services as stations on one line, each with what you bring, what we do and a drawing |
+| Alaska delivery | `/alaska/` | "Where are you building?" finder, delivery map, road/water/air, barge season, how a remote package works, what ships, Anchorage and Fairbanks yards, questions |
+| Pacific Northwest | `/pacific-northwest/` | Job-site delivery from Kent, the product lines as a build schedule, the Kent yard, the lane north |
+| Projects | `/projects/` | A schedule of the kinds of work by sector, filterable, and which product lines each draws on (see the note below) |
+| Locations | `/locations/` | The dispatch board, then all three yards with call, visit, fax and email; the only page that prints yard hours |
 | Request a quote | `/quote/` | Form with plan upload, routed to the yard the customer picks |
-| Contractor accounts | `/accounts/` | Account benefits and an online credit application, routed to the chosen home yard and printable as a paper form |
-| About | `/about/` | Mission, values, photos from Uresco's own yards |
+| Contractor accounts | `/accounts/` | What an account does, and an online credit application, routed to the chosen home yard and printable as a paper form |
+| About | `/about/` | Who Uresco is, in general notes; delivery; the mission and what backs it |
 
-On phones a bar fixed to the bottom of the screen gives **Call · Directions · Quote** on every page. Each yard shows a live **open/closed** status worked out in its own time zone. Both forms save a draft in the browser as people type. Product pages pass their product line into the quote form, and each yard card has a quote link that preselects that yard.
+On phones a bar fixed to the bottom of the screen gives **Call · Directions · Quote** on every page, and the masthead has a call control at every width. Each yard shows a live **open/closed** status worked out in its own time zone. Both forms save a draft in the browser as people type. Product pages pass their product line into the quote form, each yard card has a quote link that preselects that yard, and the Alaska finder carries the place.
+
+Without JavaScript the content and navigation still work: Call and Directions go to the Locations page or the yards on the page, Menu goes to the footer index, and the Alaska finder gives the three yards.
 
 The old `/products-services/` URL redirects to `/products/`, `/contact/` redirects to `/locations/`, and `/credit/` redirects to `/accounts/`. `/alaska/`, `/pacific-northwest/` and `/locations/` keep their old addresses, so existing links and search results still work.
 
@@ -33,9 +35,9 @@ The design system is called **Manifest** and is documented in full in [`DESIGN.m
 - **Dispatch board.** The home page opens with the three yards on a departures board: local time, open or closed, the number. Every row is a tap-to-call link.
 - **Manifest.** Products are a load manifest, lines 001 to 009; each line opens a section drawing of what is in it (`src/lib/drawings.mjs`). There are no product photographs.
 - **Map.** A real projection of Natural Earth data (`scripts/map.mjs`) drawn as an engineer's plate: graticule, lettered lanes, a scale bar and a title block. Each yard name links to its details.
-- **Photographs.** One per page, in the hero, printed in two inks by the stylesheet and captioned as a figure with its credit.
+- **Photographs.** At most one stock photograph per page, in the hero, printed in two inks by the stylesheet and captioned as a figure with its credit. Uresco's own two photographs appear on Home and About.
 
-**Status.** Chrome, Home and Alaska delivery are built in Manifest. The other pages still use their earlier markup, restyled through `src/assets/css/90-legacy.css` until each is rebuilt (see DESIGN.md, section 9).
+Every page is built in Manifest. DESIGN.md, section 10, says what is where on each one.
 
 ## Working on it
 
@@ -45,7 +47,10 @@ Requirements: Node 18+ and Python 3 with Pillow (`pip install pillow`). Playwrig
 npm run build       # src/ → docs/ (preview: noindex)
 npm run build:live  # the same, for uresco.com: indexable, base '/', writes docs/CNAME
 npm run serve       # http://localhost:8080
-npm run check       # build + link/SEO checks + every page in Chromium at 5 widths, plus the forms
+npm run check       # build, then tests/check.mjs: links and anchors, SEO, phone numbers and emails against the yard data,
+                    # the claims and hours the review ruled out; every page in Chromium at 5 widths; the forms;
+                    # a width sweep from 320 to 2560 in both the normal and the font-hinted browser; the board at the
+                    # fold; the map, products, services and projects behaviour; and every control with the script off
 npm run images      # after changing scripts/photos.json
 npm run brand       # after changing the logo
 npm run fonts       # re-subset the fonts (needs: pip install fonttools brotli)
@@ -64,14 +69,14 @@ Every pull request runs `.github/workflows/check.yml`. It rebuilds the site, fai
   - **To use Uresco's own photos:** put the originals in `originals/uresco/`. Point an entry's `src` at the file, for example `"yard-kent": { "src": "originals/uresco/kent-yard.jpg", "alt": "…" }`, then run `npm run images && npm run build`.
   - Large, unedited camera files are best; the script handles resizing.
   - A photo used in a page hero needs `"hero": true` (larger sizes) and `"plate": true` (stored in greyscale, because hero plates are printed in two inks). Add `"focal": "x% y%"` if the crop misses the subject, or `"crop": [left, top, right, bottom]` to trim it first.
-  - The first ones to replace: `yard-kent`, `framer` (accounts and design), `unloading` (job-site delivery) and `tug-barge` (remote packages).
+  - The ones in use are listed in DESIGN.md, section 5. The rest of `photos.json` is a library for later; nothing loads them.
 - **Manufacturer literature links**: the `literature` field on each category in `src/data/products.mjs`.
 - **Pages**: `src/pages/*.mjs`. **Styles**: `src/assets/css/*.css` then `src/assets/css/pages/*.css`, joined in name order into one `site.css`. **Behavior**: `src/assets/js/*.js` then `src/assets/js/modules/*.js`, joined into one `site.js`. No frameworks.
 - **Drawings**: `src/lib/drawings.mjs` (section drawings, menu glyphs and building sketches, written as SVG).
 
-### Projects gallery
+### Projects page
 
-The gallery currently shows **kinds of work** (village housing packages, schools and clinics, multifamily framing and so on), not specific jobs. No project names, places or dates were available, and none were invented. To add real projects, add entries to `src/data/projects.mjs` with `real: true`, a title, place, year, scope and photo. Real projects sort first.
+The page currently shows **kinds of work** (village housing packages, schools and clinics, multifamily framing and so on), not specific jobs. No project names, places or dates were available, and none were invented. To add real projects, add entries to `src/data/projects.mjs` with `real: true`, a title, place, year and scope. Real projects come first in their sector and show their place and year.
 
 ## Launch checklist
 
@@ -88,7 +93,9 @@ While `preview` is on, every page is `noindex` and `robots.txt` blocks crawlers,
 - **Yard hours.** Placeholder hours are in place (Mon–Fri 7:00 a.m.–4:30 p.m. local time, closed weekends). Confirm or correct them per yard; the open/closed status depends on them.
 - **Delivery area and minimums** per yard, if Uresco wants to publish them.
 - **Credit terms.** The credit application asks for references and a requested limit, and promises nothing about terms. If Uresco has a standard credit agreement or a PDF application, link it from `/accounts/`.
-- **Real photos.** Uresco has them, but none were found in the connected Google Drive. Upload them or share a folder (see **Photos** above for how they go in). The old site's "Lumber by UCM" truck and yard photos are on the About page, but they are only 714 px wide.
-- **Real projects** for the gallery, as described above.
+- **Real photos.** Uresco has them, but none were found in the connected Google Drive. Upload them or share a folder (see **Photos** above for how they go in). The old site's "Lumber by UCM" tag photo is on the Home page and its timber-ends photo on About, both shown small because the files are small. Every other photograph is stock, and the captions say so where it could be mistaken.
+- **Real projects** for the Projects page, as described above.
+- **Wording to confirm.** The "You bring / We do / You get" lines on Services, the services and related lines suggested on each product page, and the cross-references on Projects are editorial, written from the facts and data, not taken from the old site.
+- **The drawings' typical sizes.** The product drawings print typical dressed sizes and say "Typical sizes shown. Ask your yard what is in stock." If Uresco would rather show none, `src/lib/drawings.mjs` is where to change them.
 - **Founding year**, if Uresco wants it shown ("35+ years" is used now).
 - **Logo.** The new mark is a proposal. If Uresco keeps the classic UCM logo, swap it into `src/lib/layout.mjs` (`brand`).

@@ -7,16 +7,67 @@
   $$('form[data-form]').forEach((form) => {
     const kind = form.dataset.form;
     const host = form.parentElement;
+    const area = form.closest('.fm-layout') || document;
     const done = $('[data-done]', host);
     const failed = $('[data-failed]', host);
     const DRAFT = 'uresco.draft.' + kind;
     const MAX = 25 * 1024 * 1024;
     let bag = new DataTransfer();
 
+    // The label a person sees for a field, for the email summary and the "still needed" line.
+    const labelOf = (el) => el.dataset.label || (el.type === 'radio' ? $('#' + el.name + '-label', form) : form.querySelector(`label[for="${el.id}"]`))?.childNodes[0]?.textContent.trim() || el.name;
+
     // Drafts: a request half-typed on a job site survives a dropped signal or a closed tab.
     const fields = () => $$('input, select, textarea', form).filter((el) => el.name && el.type !== 'file' && el.type !== 'hidden');
     // Tax IDs, bank details and signatures are never left behind on a shared computer.
     const PRIVATE = /^(ein|bank|bank_contact|signature|signed|agree)$/;
+    const typed = () => fields().filter((el) => el.tagName !== 'SELECT' && el.type !== 'radio' && el.type !== 'checkbox');
+
+    // The yard statement: every [data-route] shows the yard currently chosen.
+    const yardSel = $('select[name=yard]', form);
+    const showYard = () => {
+      if (!yardSel) return;
+      $$('[data-route-yard]', area).forEach((el) => { el.hidden = el.dataset.routeYard !== yardSel.value; });
+    };
+
+    // What is left to fill in: per section (bar and side index) and in one line above the send button.
+    const leftAll = $('[data-left-all]', form);
+    const progress = () => {
+      const missing = [];
+      $$('fieldset', form).forEach((fs) => {
+        const req = $$('[required]', fs);
+        const left = req.filter((el) => !el.validity.valid);
+        missing.push(...left);
+        const word = !req.length ? 'Optional' : left.length ? `${left.length} to fill` : 'Done';
+        $$(`[data-left="${fs.id}"]`, area).forEach((el) => {
+          el.textContent = word;
+          el.classList.toggle('is-open', left.length > 0);
+          el.classList.toggle('is-done', req.length > 0 && !left.length);
+        });
+      });
+      if (leftAll) {
+        leftAll.textContent = missing.length ? `Still needed: ${missing.map(labelOf).join(', ')}.` : 'Everything required is filled in.';
+        leftAll.classList.toggle('is-clear', !missing.length);
+      }
+    };
+
+    // A form that has been typed into prints with its answers; a blank one prints as empty tick boxes.
+    const paperCopy = () => {
+      const filled = typed().some((el) => el.value.trim());
+      form.classList.toggle('is-filled', filled);
+      $$('[data-paper-for]', form).forEach((row) => {
+        const sel = form.elements[row.dataset.paperFor];
+        $$('input', row).forEach((box) => { box.checked = filled && !!sel && box.value === sel.value; });
+      });
+    };
+
+    const clearBtn = $('[data-clear]', form);
+    const draftState = $('[data-draft-state]', form);
+    const showDraft = (has) => {
+      if (clearBtn) clearBtn.hidden = !has;
+      if (draftState) draftState.textContent = has ? 'Draft saved on this device' : 'Saves on this device as you type';
+    };
+
     const save = () => {
       const d = {};
       fields().filter((el) => !PRIVATE.test(el.name)).forEach((el) => {
@@ -24,23 +75,34 @@
       });
       try { localStorage.setItem(DRAFT, JSON.stringify(d)); } catch { /* private mode */ }
     };
+    const refresh = () => { showYard(); progress(); paperCopy(); };
+    let hadDraft = false;
     try {
       const d = JSON.parse(localStorage.getItem(DRAFT) || 'null');
-      if (d) fields().forEach((el) => {
-        if (!(el.name in d)) return;
-        if (el.type === 'radio') el.checked = d[el.name] === el.value; else if (el.type === 'checkbox') el.checked = !!d[el.name]; else el.value = d[el.name];
-      });
+      if (d) {
+        hadDraft = true;
+        fields().forEach((el) => {
+          if (!(el.name in d)) return;
+          if (el.type === 'radio') el.checked = d[el.name] === el.value; else if (el.type === 'checkbox') el.checked = !!d[el.name]; else el.value = d[el.name];
+        });
+      }
     } catch { /* ignore */ }
-    form.addEventListener('input', save);
-    form.addEventListener('change', save);
+    showDraft(hadDraft);
+    form.addEventListener('input', () => { save(); refresh(); showDraft(true); });
+    form.addEventListener('change', () => { save(); refresh(); showDraft(true); });
 
-    // Arriving from a product page: start the materials list with that line.
-    const product = new URLSearchParams(location.search).get('product');
+    // Arriving from a product page: add that line to the materials list.
+    const params = new URLSearchParams(location.search);
+    const product = params.get('product');
     const materials = $('textarea[name=materials]', form);
-    if (product && materials && !materials.value) materials.value = product + ':\n';
-    const yardParam = new URLSearchParams(location.search).get('yard');
-    const yardSel = $('select[name=yard]', form);
+    if (product && materials && !materials.value.includes(product)) materials.value = (materials.value.trim() ? materials.value.trimEnd() + '\n' : '') + product + ':\n';
+    // Arriving from a place on the map or a page about a region: start the job location with it.
+    const place = params.get('location');
+    const jobPlace = $('input[name=location]', form);
+    if (place && jobPlace && !jobPlace.value) jobPlace.value = place.slice(0, 120);
+    const yardParam = (params.get('yard') || '').toLowerCase();
     if (yardParam && yardSel) $$('option', yardSel).forEach((o) => { if (o.value.toLowerCase() === yardParam) yardSel.value = o.value; });
+    refresh();
 
     // File drop zone, if the form has one.
     const input = $('input[type=file]', form);
@@ -51,7 +113,6 @@
       list.innerHTML = '';
       Array.from(bag.files).forEach((f, i) => {
         const li = document.createElement('li');
-        li.innerHTML = '<svg class="i" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4"/></svg>';
         const name = document.createElement('span'); name.textContent = f.name;
         const meta = document.createElement('small'); meta.textContent = size(f.size);
         const rm = document.createElement('button'); rm.type = 'button'; rm.textContent = 'Remove'; rm.setAttribute('aria-label', 'Remove ' + f.name);
@@ -87,40 +148,67 @@
       el.setAttribute('aria-invalid', String(bad));
       if (err) {
         err.hidden = !bad;
-        err.textContent = !bad ? '' : el.type === 'checkbox' ? 'Please confirm to continue.' : el.validity.valueMissing ? 'Required.' : el.type === 'email' ? 'Enter an email address like name@company.com.' : 'Check this field.';
+        err.textContent = !bad ? '' : el.type === 'checkbox' ? 'Please confirm to continue.' : el.validity.valueMissing ? (el.dataset.msg || 'Required.') : el.type === 'email' ? 'Enter an email address like name@company.com.' : 'Check this field.';
       }
       return !bad;
     };
     // On submit: mark everything, then take the visitor to the first problem.
     const validate = () => {
       const bad = $$('[required]', form).filter((el) => !check(el));
+      form.classList.toggle('was-checked', bad.length > 0);
       if (bad.length) bad[0].focus();
       return !bad.length;
     };
     // Once a field has been flagged, re-check just that field as it is corrected.
-    $$('[required]', form).forEach((el) => ['blur', 'change'].forEach((t) => el.addEventListener(t, () => {
+    $$('[required]', form).forEach((el) => ['blur', 'change', 'input'].forEach((t) => el.addEventListener(t, () => {
       if (el.getAttribute('aria-invalid') === 'true') check(el);
     })));
+
+    // Start over. A draft on a shared computer is the next person's problem otherwise.
+    if (clearBtn) clearBtn.addEventListener('click', () => {
+      if (!window.confirm('Clear everything in this form?')) return;
+      try { localStorage.removeItem(DRAFT); } catch { /* ignore */ }
+      form.reset();
+      bag = new DataTransfer();
+      if (input) input.files = bag.files;
+      if (list) render();
+      $$('[aria-invalid]', form).forEach((el) => el.removeAttribute('aria-invalid'));
+      $$('.fm-err', form).forEach((el) => { el.hidden = true; el.textContent = ''; });
+      form.classList.remove('was-checked');
+      showDraft(false);
+      refresh();
+    });
 
     // Plain-text summary of everything filled in, labelled as on screen, for the email fallback.
     const summary = () => {
       const out = [];
       $$('fieldset', form).forEach((fs) => {
-        const legend = fs.querySelector('legend')?.textContent.replace(/^\d+/, '').trim();
+        const legend = fs.querySelector('legend')?.lastChild?.textContent.trim() || '';
         const rows = [];
         fields().filter((el) => fs.contains(el)).forEach((el) => {
           if (el.type === 'radio' && !el.checked) return;
-          if (el.type === 'checkbox' && el.closest('.seg')) { if (el.checked) rows.push(['', '• ' + el.value]); return; }
-          const label = el.dataset.label || (el.type === 'radio' ? $('#' + el.name + '-label', form) : form.querySelector(`label[for="${el.id}"]`))?.childNodes[0]?.textContent.trim() || el.name;
           const v = el.type === 'checkbox' ? (el.checked ? 'Yes' : 'No') : el.tagName === 'SELECT' ? el.selectedOptions[0]?.textContent : el.value.trim();
-          if (v) rows.push([label, v]);
+          if (v) rows.push([labelOf(el), v]);
         });
-        if (rows.length) out.push('', `— ${legend.toUpperCase()} —`, ...rows.map(([k, v]) => (k ? `${k}: ${v}` : v)));
+        if (rows.length) out.push('', `— ${legend.toUpperCase()} —`, ...rows.map(([k, v]) => `${k}: ${v}`));
       });
       const names = Array.from(bag.files).map((f) => f.name);
       if (names.length) out.push('', 'FILES TO ATTACH: ' + names.join(', '));
       return { text: out.join('\n').trim(), files: names };
     };
+
+    const copyBtn = $('[data-copy]', host);
+    if (copyBtn) copyBtn.addEventListener('click', async () => {
+      const box = $('[data-mail-text]', host);
+      try {
+        await navigator.clipboard.writeText(box.textContent);
+        copyBtn.textContent = 'Copied';
+      } catch {
+        box.closest('details').open = true;
+        window.getSelection()?.selectAllChildren(box);
+        copyBtn.textContent = 'Selected: press copy';
+      }
+    });
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -137,7 +225,7 @@
       const finish = () => {
         try { localStorage.removeItem(DRAFT); } catch { /* ignore */ }
         form.hidden = true; done.hidden = false; done.focus();
-        window.scrollTo({ top: done.getBoundingClientRect().top + window.scrollY - 120 });
+        window.scrollTo({ top: done.getBoundingClientRect().top + window.scrollY - 120, behavior: 'instant' });
       };
 
       if (endpoint) {
@@ -157,10 +245,15 @@
       // No form service configured yet: hand the request to the visitor's email app.
       const { text, files } = summary();
       const subject = `${form.dataset.subject} — ${data.get('company') || data.get('name')}${data.get('location') ? ' — ' + data.get('location') : ''}`;
-      window.location.href = `mailto:${to}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(text)}`;
+      const href = `mailto:${to}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(text)}`;
+      window.location.href = href;
       const note = $('[data-mail-note]', done);
       if (note) note.hidden = !files.length;
       $('[data-mail-to]', done).textContent = to;
+      const again = $('[data-mail-again]', done);
+      if (again) again.href = href;
+      const box = $('[data-mail-text]', done);
+      if (box) box.textContent = text;
       finish();
     });
   });

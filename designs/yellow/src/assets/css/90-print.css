@@ -1,43 +1,86 @@
-/* Print: the credit application prints as a clean, blank paper form that says where to send it. */
+/* Print: the credit application comes out as a blank paper form on two Letter pages that says
+   where to send it and can be signed. The site's chrome, the marketing around the form and the
+   controls that only make sense on a screen are all left off. */
 .print-only { display: none; }
 @media print {
-  @page { margin: 12mm 14mm; }
-  .utility, .masthead, .actionbar, .footer, dialog, .qband, .phero, .aside, .section--bone,
-  .form__foot, .drop, .files, [data-done], [data-failed], .shead, .skip, .field:has(#yard) { display: none !important; }
+  @page { size: letter; margin: 13mm 14mm 14mm; }
+  @page credit {
+    @bottom-left { content: "Uresco Construction Materials, Inc."; font: 500 7.5pt Archivo, Arial, sans-serif; }
+    @bottom-right { content: "Credit application, page " counter(page) " of " counter(pages); font: 500 7.5pt Archivo, Arial, sans-serif; }
+  }
+  .ac-apply { page: credit; }
+  html, body { background: #fff; }
+  body { color: #000; font-size: 9.5pt; line-height: 1.3; }
+  a { color: #000; text-decoration: none; }
+
+  /* Chrome and everything that isn't the form */
+  .skip, .utility, .masthead, .actionbar, .footer, dialog, .phero, .qband, .marquee,
+  .ac-perks, .ac-apply__head, .fm-aside, .fm-card__head, .fm-restored, .form__foot,
+  .drop, .files, [data-file-err], [data-done], [data-failed], .err, .fm-goes, .fm-help, .fm-yard, .hint--screen { display: none !important; }
+  .qt-next { display: none !important; }
   .print-only { display: block; }
-  body { background: #fff; color: #000; font-size: 9.5pt; line-height: 1.3; }
-  .section { padding: 0; }
-  .wrap { padding: 0; max-width: none; }
-  .qlayout { display: block; }
-  .letterhead { display: flex; justify-content: space-between; align-items: flex-start; gap: 16pt; padding-bottom: 8pt; margin-bottom: 10pt; border-bottom: 1.5pt solid #000; }
-  .letterhead__brand { display: flex; align-items: center; gap: 8pt; }
-  .letterhead__brand svg { width: 34pt; height: 34pt; }
-  .letterhead__title { font-size: 17pt; line-height: 1; font-weight: 850; font-stretch: 112%; text-transform: uppercase; }
-  .letterhead p:not(.letterhead__title) { margin: 2pt 0 0; font-size: 8.5pt; }
-  .letterhead__title { margin: 0; }
-  .letterhead__return { font-size: 8pt; line-height: 1.35; text-align: right; }
-  .form { gap: 14pt; }
-  .fieldset { break-inside: avoid; gap: 7pt 14pt; }
-  .fieldset legend { font-size: 11.5pt; margin-bottom: 4pt; gap: 5pt; }
-  .fieldset legend span { width: 14pt; height: 14pt; font-size: 7pt; background: #000; color: #fff; }
-  .field { gap: 1pt; }
-  .field label, .field .label { font-size: 8.5pt; }
-  .field .hint { font-size: 7.5pt; color: #333; }
+
+  .section, .fm-sec, .ac-apply { padding: 0 !important; background: #fff; }
+  .wrap { max-width: none; padding: 0; }
+  .fm-layout { display: block; }
+
+  /* Letterhead */
+  .letterhead { display: flex; justify-content: space-between; align-items: flex-start; gap: 18pt; padding-bottom: 8pt; margin-bottom: 11pt; border-bottom: 2pt solid #000; }
+  .letterhead__brand { display: flex; align-items: center; gap: 9pt; }
+  .letterhead__brand svg { width: 38pt; height: 38pt; flex: none; }
+  .letterhead__title { margin: 0; font-size: 19pt; line-height: 1; font-weight: 900; font-stretch: 125%; letter-spacing: -.02em; text-transform: uppercase; }
+  .letterhead p:not(.letterhead__title) { margin: 3pt 0 0; font-size: 8.5pt; }
+  .letterhead__return { font-size: 8pt; line-height: 1.4; text-align: right; font-variant-numeric: tabular-nums; }
+
+  /* The ticket becomes plain ruled paper */
+  .fm-card { display: block; border: 0; border-radius: 0; overflow: visible; background: none; width: auto; margin: 0; }
+  .fieldset { display: grid; grid-template-columns: 1fr 1fr; gap: 6pt 14pt; padding: 0 0 10pt; box-shadow: none !important; break-inside: avoid; }
+  .fieldset + .fieldset legend::before { content: none; }
+  .fieldset legend { display: flex; align-items: center; gap: 6pt; padding: 0 0 5pt; font-size: 11.5pt; }
+  .fieldset legend span { width: 15pt; height: 15pt; padding: 0; border: 1pt solid #000; border-radius: 50%; background: none; font-size: 7.5pt; }
   .fieldset--newpage { break-before: page; }
-  .input, .field select, .field textarea { border: 0; border-bottom: .75pt solid #000; border-radius: 0; min-height: 23pt; padding: 0; background: #fff; box-shadow: none; font-size: 9pt; }
-  .field select { background-image: none; -webkit-appearance: none; color: transparent; }
-  .field textarea { min-height: 54pt; border: .75pt solid #000; resize: none; }
+  .field { gap: 1pt; }
+  .field label, .field .label { font-size: 8.5pt; font-weight: 700; }
+  .field .hint { font-size: 7.5pt; color: #333; }
+  .req { display: inline; width: auto; height: auto; margin-left: 1pt; padding: 0; background: none; border: 0; font-size: 9pt; font-weight: 900; }
+
+  /* Lines to write on. A filled-in draft prints what was typed. */
+  .input, .field select, .field textarea { min-height: 24pt; padding: 0; font-size: 9.5pt; background: none !important; border: 0; border-bottom: .75pt solid #000; border-radius: 0; box-shadow: none !important; }
+  .field textarea { min-height: 52pt; border: .75pt solid #000; resize: none; }
   .input::placeholder { color: transparent; }
   .input::-webkit-calendar-picker-indicator { display: none; }
   input[type="date"]::-webkit-datetime-edit { color: transparent; }
-  .seg { display: flex; flex-wrap: wrap; gap: 3pt 14pt; }
-  .seg label, .seg label:has(input:checked) { border: 0; background: none; box-shadow: none; padding: 0; gap: 4pt; font-size: 8.5pt; font-weight: 500; }
-  .seg input { position: static; opacity: 1; appearance: none; -webkit-appearance: none; width: 9pt; height: 9pt; border: .75pt solid #000; border-radius: 2pt; margin: 0; }
-  .refs { grid-template-columns: repeat(3, 1fr); gap: 6pt; }
-  .ref { padding: 6pt 8pt; gap: 5pt; border: .75pt solid #000; border-radius: 2pt; background: #fff; }
-  .ref__title { font-size: 8.5pt; }
-  .check { padding: 4pt 6pt; border: .75pt solid #000; background: #fff; font-size: 8.5pt; }
-  .check:has(input:checked) { background: #fff; border-color: #000; }
-  .check input { width: 10pt; height: 10pt; appearance: none; -webkit-appearance: none; border: .75pt solid #000; border-radius: 2pt; }
-  a { text-decoration: none; }
+  .field select { color: transparent; background-image: none; appearance: none; }
+  .field--boxes select { display: none; }
+
+  /* Tick boxes */
+  .pboxes { display: flex; flex-wrap: wrap; gap: 3pt 12pt; padding-top: 2pt; }
+  .pbox { display: inline-flex; align-items: center; gap: 4pt; font-size: 8.5pt; }
+  .pbox::before { content: ''; flex: none; width: 9pt; height: 9pt; border: .75pt solid #000; }
+  .seg { display: flex; flex-wrap: wrap; gap: 3pt 14pt; padding-top: 2pt; }
+  .seg label, .seg label:has(input:checked) { display: inline-flex; min-height: 0; padding: 0; gap: 4pt; font-size: 8.5pt; font-weight: 500; background: none; border: 0; }
+  .seg label:has(input:checked)::after { content: none; }
+  .seg input { position: static; opacity: 1; appearance: none; flex: none; width: 9pt; height: 9pt; margin: 0; border: .75pt solid #000; border-radius: 0; }
+  .fm-half { grid-column: span 1; }
+
+  /* References */
+  .refs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8pt; }
+  .ref { display: grid; grid-template-columns: 1fr; gap: 8pt; padding: 8pt 9pt 11pt; background: none; border: .75pt solid #000; border-radius: 0; }
+  .ref__title { margin: 0; font-size: 8.5pt; font-weight: 800; }
+  .ref .field { gap: 2pt; }
+  .ref .input { min-height: 34pt; background: none; }
+
+  /* Certify and sign */
+  .fm-filefield { display: none; }
+  .check { padding: 6pt 8pt; gap: 7pt; background: none; border: .75pt solid #000; border-radius: 0; font-size: 8.5pt; font-weight: 500; }
+  .check:has(input:checked) { background: none; }
+  .check input { width: 10pt; height: 10pt; margin-top: 1pt; appearance: none; border: .75pt solid #000; }
+  .fm-sign { grid-column: span 1; }
+  .fm-sign .input, .fm-signdate .input { min-height: 46pt; font-style: normal; }
+
+  /* Where it goes, at the end of the last page */
+  .ac-return { margin-top: 18pt; padding-top: 8pt; border-top: 2pt solid #000; break-inside: avoid; }
+  .ac-return__k { margin: 0 0 5pt; font-size: 11.5pt; font-weight: 900; font-stretch: 125%; letter-spacing: -.015em; word-spacing: .14em; text-transform: uppercase; }
+  .ac-return__yards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14pt; font-size: 8.5pt; line-height: 1.4; font-variant-numeric: tabular-nums; }
+  .ac-return__yards p { margin: 0; }
 }

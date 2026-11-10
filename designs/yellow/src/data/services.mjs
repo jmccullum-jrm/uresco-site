@@ -1,15 +1,21 @@
 // Services, as described on uresco.com. Icons refer to symbols in lib/icons.mjs.
+// `step` is each service's place in the order a job meets them, from plans to the delivered load
+// (the services page tells them in that order); `label` is the one-word name used where space is short.
 
 export const SERVICES = [
   {
     id: 'takeoffs',
+    step: 1,
+    label: 'Take-offs',
     icon: 'ruler',
     name: 'Estimates & material take-offs',
-    short: 'Send plans, get a complete, priced material list back.',
-    body: 'Send drawings and we build the take-off: the materials list for the job, priced and ready to order. On a remote job it catches the gaps before they become a second freight bill.',
+    short: 'Send plans or a list. We’ll help with the take-off and the estimate.',
+    body: 'Send drawings and we’ll help with the take-off: the materials list for the job, with an estimate. On a remote job it catches the gaps before they become a second freight bill.',
   },
   {
     id: 'design',
+    step: 2,
+    label: 'Design',
     icon: 'pencil',
     name: 'Design services',
     short: 'Help with layouts, members and packages for unique projects.',
@@ -17,6 +23,8 @@ export const SERVICES = [
   },
   {
     id: 'delivery',
+    step: 6,
+    label: 'Delivery',
     icon: 'truck',
     name: 'Job-site delivery',
     short: 'Boom trucks and truck-mounted Moffett forklifts.',
@@ -24,20 +32,26 @@ export const SERVICES = [
   },
   {
     id: 'remote',
+    step: 3,
+    label: 'Packages',
     icon: 'ship',
     name: 'Remote & export packages',
     short: 'Complete building packages for places without a lumber yard.',
-    body: 'We are fully equipped to handle remote-location and export building packages, so the whole job ships together and nothing gets left on the dock.',
+    body: 'We are fully equipped to handle remote-location and export building packages. One complete package beats a second freight bill.',
   },
   {
     id: 'shipping',
+    step: 5,
+    label: 'Shipping',
     icon: 'route',
     name: 'Shipping coordination',
-    short: 'Barge, freight and dock delivery, coordinated for you.',
-    body: 'We work with you on every part of getting materials there: carrier bookings, dock delivery and the last leg into rural Alaska.',
+    short: 'Shipping coordination, dock delivery and rural Alaska delivery, worked out with you.',
+    body: 'We can work with you on all aspects of shipping coordination, dock delivery and rural Alaska delivery.',
   },
   {
     id: 'crating',
+    step: 4,
+    label: 'Crating',
     icon: 'crate',
     name: 'Crating & packaging',
     short: 'Crated, banded and wrapped to survive the trip.',

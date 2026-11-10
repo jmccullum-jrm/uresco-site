@@ -24,8 +24,6 @@ export const LOCATIONS = [
     email: 'sales@uresco.com',
     hours: { tz: 'America/Los_Angeles', week: weekdays(7 * 60, 16 * 60 + 30) },
     page: 'pacific-northwest/',
-    photo: 'yard-kent',
-    blurb: 'Our headquarters and Pacific Northwest distribution center, delivering to Puget Sound job sites by boom truck and Moffett forklift.',
     geo: { lat: 47.4277, lng: -122.2335 },
   },
   {
@@ -43,8 +41,6 @@ export const LOCATIONS = [
     email: 'anchorage@uresco.com',
     hours: { tz: 'America/Anchorage', week: weekdays(7 * 60, 16 * 60 + 30) },
     page: 'alaska/',
-    photo: 'anchorage',
-    blurb: 'Our Southcentral Alaska distribution center on the Old Seward Highway, with remote-site delivery anywhere in the state.',
     geo: { lat: 61.1105, lng: -149.859 },
   },
   {
@@ -61,8 +57,6 @@ export const LOCATIONS = [
     email: 'fairbanks@uresco.com',
     hours: { tz: 'America/Anchorage', week: weekdays(7 * 60, 16 * 60 + 30) },
     page: 'alaska/',
-    photo: 'fairbanks',
-    blurb: 'Our Interior Alaska distribution center, serving Fairbanks and the communities beyond it.',
     geo: { lat: 64.8326, lng: -147.784 },
   },
 ];
@@ -92,10 +86,3 @@ export const hoursLines = (l) => {
 };
 export const tzLabel = (l) => (l.hours?.tz === 'America/Los_Angeles' ? 'Pacific time' : 'Alaska time');
 export const hoursAttr = (l) => (l.hours ? JSON.stringify({ tz: l.hours.tz, week: l.hours.week }) : null);
-// schema.org openingHoursSpecification
-export const openingHoursLd = (l) => {
-  if (!l.hours) return undefined;
-  const names = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-  const hhmm = (m) => `${String(Math.floor(m / 60)).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`;
-  return l.hours.week.map((h, i) => (h ? { '@type': 'OpeningHoursSpecification', dayOfWeek: names[i], opens: hhmm(h[0]), closes: hhmm(h[1]) } : null)).filter(Boolean);
-};

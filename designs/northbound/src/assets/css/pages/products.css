@@ -1,0 +1,204 @@
+/* ==========================================================================
+   Products. The index: the stock list with its finder, brands, the A to Z.
+   The line page: what is in the line, the yard slip, services, the rest of the load.
+   Everything here is prefixed prod-. The stock list's frame and thumbnails are the
+   shared .stock pieces from 30-components.css.
+   ========================================================================== */
+
+/* ---------- Index · the stock list ---------- */
+.prod-ledger__body { min-width: 0; }
+.prod-ledger__list { border-top: 1px solid var(--ink); }
+
+/* Find a product: one line to write on, above the list it filters. Only there with JavaScript. */
+.prod-find { display: none; }
+.js .prod-find { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: .15rem 1rem; padding-bottom: .5rem; }
+.prod-find__label { grid-column: 1 / -1; display: flex; align-items: center; gap: .6rem; color: var(--ink); }
+.prod-find__label::before { content: ""; width: .55rem; height: .55rem; background: var(--yellow); }
+.prod-find__field { display: flex; align-items: center; gap: .75rem; min-width: 0; padding-inline: .6rem .5rem; }
+.prod-find__field > .i { flex: none; color: var(--ink-3); }
+.prod-find__input { flex: 1; min-width: 0; height: 3.25rem; padding: 0; background: none; border: 0; border-radius: 0; -webkit-appearance: none; appearance: none; font: 400 clamp(1.3125rem, 1.15rem + .75vw, 1.875rem)/1.2 var(--serif); letter-spacing: -.014em; color: var(--ink); }
+.prod-find__input::placeholder { color: var(--ink-3); font-style: italic; opacity: 1; }
+.prod-find__input::-webkit-search-cancel-button, .prod-find__input::-webkit-search-decoration { -webkit-appearance: none; display: none; }
+.prod-find__input:focus-visible { outline: none; }
+.prod-find__field:focus-within { outline: 2px solid var(--ink); outline-offset: 0; }
+.prod-find__clear { flex: none; min-height: 2.75rem; padding: 0 .25rem; background: none; border: 0; font: 400 var(--t-label)/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--ink); text-decoration: underline; text-decoration-color: var(--yellow); text-decoration-thickness: 2px; text-underline-offset: .3em; }
+.prod-find__clear:hover { text-decoration-color: var(--ink); }
+.prod-find__count { font: 400 var(--t-label)/1.3 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); white-space: nowrap; }
+
+/* A row: thumbnail, name, what is in the line, the way in. The name is the link; it covers the row. */
+.prod-row { position: relative; display: grid; grid-template-columns: 3.75rem minmax(0, 1fr) auto; gap: .4rem 1rem; align-items: start; padding: 1rem 0 1.1rem; border-bottom: 1px solid var(--rule-2); transition: background-color var(--d-1); }
+.prod-row .stock__thumb { grid-row: 1 / span 2; }
+.prod-row__main { grid-column: 2; display: grid; gap: .35rem; min-width: 0; }
+.prod-row__name { font: 480 clamp(1.3125rem, 1.1rem + 1vw, 2rem)/1.08 var(--serif); letter-spacing: -.014em; text-wrap: balance; }
+.prod-row__name a { text-decoration: none; }
+.prod-row__name a::after { content: ""; position: absolute; inset: 0; }
+.prod-row__name a:focus-visible { outline: none; }
+.prod-row__name a:focus-visible::after { outline: 2px solid var(--ink); outline-offset: -2px; }
+.prod-row__no { display: block; margin-bottom: .4rem; font: 400 var(--t-label)/1 var(--mono); letter-spacing: .08em; color: var(--ink-3); }
+.prod-row__lede { display: none; font-size: .9375rem; line-height: 1.4; color: var(--ink-2); }
+.prod-row__items { grid-column: 2; font-size: .875rem; line-height: 1.45; color: var(--ink-3); }
+.prod-row__items li { display: inline; }
+.prod-row__items li:not(:last-child)::after { content: " · "; color: var(--ink-3); font-weight: 400; }
+.prod-row__items .is-hit { color: var(--ink); font-weight: 600; text-decoration: underline; text-decoration-color: var(--yellow); text-decoration-thickness: 2px; text-underline-offset: .22em; }
+.prod-row .stock__go { grid-column: 3; grid-row: 1 / span 2; align-self: center; }
+/* The second way out of a row: straight to the quote form with this line on it. Sits above the row's link. */
+.prod-row__quote { grid-column: 2; justify-self: start; position: relative; z-index: 1; display: inline-flex; align-items: center; min-height: 2.75rem; margin-block: -.4rem -.5rem; font: 400 var(--t-label)/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--ink); text-decoration: underline; text-decoration-color: var(--yellow); text-decoration-thickness: 2px; text-underline-offset: .3em; }
+.prod-row__quote:hover { text-decoration-color: var(--ink); }
+.prod-row:hover .stock__go, .prod-row:focus-within .stock__go { transform: translateX(.35rem); color: var(--ink); }
+.prod-none { display: grid; gap: .5rem; padding: 1.5rem 0 1.75rem; border-bottom: 1px solid var(--rule-2); color: var(--ink-2); }
+.prod-none__line { font: 400 var(--t-h3)/1.1 var(--serif); letter-spacing: -.014em; color: var(--ink); }
+.prod-none a { font-weight: 600; white-space: nowrap; text-decoration-color: var(--yellow); text-decoration-thickness: 2px; text-underline-offset: .22em; }
+@media (min-width: 700px) {
+  .js .prod-find { grid-template-columns: auto minmax(0, 1fr) auto; gap: 1.25rem; padding-bottom: .35rem; }
+  .prod-find__label { grid-column: auto; }
+  .prod-row { grid-template-columns: 3.75rem minmax(0, 1.15fr) minmax(0, .85fr) auto; column-gap: 1.25rem; padding-block: 1.15rem 1.3rem; }
+  .prod-row .stock__thumb, .prod-row .stock__go { grid-row: 1; }
+  .prod-row .stock__go { grid-column: 4; align-self: start; margin-top: .35rem; }
+  .prod-row__no { display: inline; margin: 0 .6rem 0 0; vertical-align: .32em; }
+  .prod-row__lede { display: block; max-width: 25em; }
+  .prod-row__items { grid-column: 3; grid-row: 1 / span 2; display: grid; gap: .22rem; padding-top: .3rem; font-size: .9375rem; line-height: 1.35; color: var(--ink-2); }
+  .prod-row__items li { display: block; }
+  .prod-row__items li:not(:last-child)::after { content: none; }
+  .prod-row__quote { grid-column: 2; grid-row: 2; margin-block: -.25rem -.6rem; }
+}
+@media (min-width: 1000px) {
+  .stock.prod-ledger { grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); column-gap: clamp(1.5rem, 3.4vw, 3.5rem); }
+  /* The number stands in its own column; the thumbnail gives way to the frame on the left. */
+  .prod-row { grid-template-columns: 2.25rem minmax(0, 1.15fr) minmax(0, .85fr) auto; padding: 1.2rem .9rem 1.35rem; }
+  .prod-row__no { position: absolute; left: .9rem; top: 1.85rem; margin: 0; }
+  .prod-row:hover, .prod-row.is-on { background: var(--paper-2); }
+  .prod-row.is-on .prod-row__no { color: var(--ink); }
+  .prod-none { padding-inline: .9rem; }
+}
+@media (min-width: 1000px) and (max-width: 1239px) { .prod-row__lede { display: none; } }
+
+/* ---------- Index · brands, on the dark sheet ---------- */
+.prod-brands__grid { display: grid; gap: 3.5rem var(--col-gap); }
+.prod-brands__bar { margin: 0; }
+.prod-brands__list a { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: .45rem 1.25rem; padding: 1.05rem 0 1.15rem; border-bottom: 1px solid var(--rule-dark); text-decoration: none; }
+.prod-brands__name { font: italic 330 clamp(1.875rem, 1.2rem + 3vw, 3.5rem)/1 var(--serif); letter-spacing: -.028em; }
+.prod-brands__go { color: var(--glacier); transition: transform var(--d-2) var(--ease), color var(--d-1); }
+.prod-brands__meta { grid-column: 1 / -1; display: flex; justify-content: space-between; gap: .2rem 1.5rem; font: 400 var(--t-label)/1.3 var(--mono); letter-spacing: .1em; text-transform: uppercase; }
+.prod-brands__what { color: var(--glacier); }
+.prod-brands__line { color: var(--on-dark-2); white-space: nowrap; }
+.prod-brands__list a:hover .prod-brands__go { transform: translateX(.35rem); color: var(--yellow); }
+.prod-brands__list a:hover .prod-brands__name { text-decoration: underline; text-decoration-color: var(--yellow); text-decoration-thickness: 2px; text-underline-offset: .16em; }
+.prod-also { display: grid; gap: 1.25rem; justify-items: start; align-content: start; }
+.prod-also__text { font: 350 clamp(1.625rem, 1.3rem + 1.3vw, 2.375rem)/1.14 var(--serif); letter-spacing: -.018em; text-wrap: balance; }
+.prod-also__text em { font-style: italic; color: var(--glacier); }
+.prod-also > p:not([class]) { color: var(--on-dark-2); max-width: 26em; }
+.prod-also .btn { margin-top: .5rem; }
+@media (max-width: 599px) { .prod-brands__short { display: none; } }
+@media (min-width: 1000px) {
+  .prod-brands__grid { grid-template-columns: minmax(0, 7.4fr) minmax(0, 4.6fr); column-gap: clamp(2.5rem, 7vw, 8rem); align-items: start; }
+  .prod-also { position: sticky; top: calc(var(--mast) + 3rem); padding-top: .1rem; }
+}
+
+/* ---------- Index · A to Z, set like the back of a book ---------- */
+.prod-az__cols { columns: 1; column-gap: clamp(1.5rem, 3.2vw, 3.25rem); }
+.prod-az__group { break-inside: avoid; display: grid; grid-template-columns: 2.5rem minmax(0, 1fr); align-items: start; padding: .55rem 0 .9rem; border-top: 1px solid var(--rule-2); }
+.prod-az__letter { padding-top: .32rem; font: italic 340 1.75rem/1 var(--serif); letter-spacing: -.02em; }
+.prod-az__group ul, .prod-makers__lit ul { list-style: none; padding: 0; }
+.prod-az__group a { display: flex; align-items: baseline; gap: .5rem; padding: .65rem 0; font-size: .9375rem; line-height: 1.3; text-decoration: none; }
+.prod-az__dots { flex: 1; min-width: 1.25rem; height: 0; border-bottom: 1px dotted var(--ink-3); transform: translateY(-.2em); }
+.prod-az__no { font: 400 var(--t-label)/1 var(--mono); letter-spacing: .08em; color: var(--ink-3); }
+.prod-az__group a:hover .prod-az__name { text-decoration: underline; text-decoration-color: var(--yellow); text-decoration-thickness: 2px; text-underline-offset: .22em; }
+.prod-az__group a:hover .prod-az__no { color: var(--ink); }
+@media (min-width: 560px) { .prod-az__cols { columns: 2; } }
+@media (min-width: 900px) { .prod-az__cols { columns: 3; } }
+@media (min-width: 1280px) { .prod-az__cols { columns: 4; } }
+
+/* ---------- Line page · hero ---------- */
+/* Line names run long ("Hardware, Fasteners & Jobsite Supplies"); a size down keeps them to two lines. */
+[data-prod-line] .phero__title { font-size: clamp(2.5rem, 1.35rem + 4.9vw, 5.75rem); max-width: 12em; }
+/* When the name has to break, it breaks before the italic part, never inside it. */
+[data-prod-line] .phero__title em { display: inline-block; }
+
+/* ---------- Line page · what is in the line ---------- */
+.prod-in__grid { display: grid; gap: 3rem var(--col-gap); }
+.prod-items { border-top: 1px solid var(--ink); }
+.prod-items li { display: grid; grid-template-columns: 2.75rem minmax(0, 1fr); gap: .4rem 0; padding: 1.2rem 0 1.4rem; border-bottom: 1px solid var(--rule-2); }
+.prod-items__no { grid-row: span 2; font: 400 var(--t-label)/2.1 var(--mono); letter-spacing: .08em; color: var(--ink-3); }
+.prod-items__name { font: 400 clamp(1.5rem, 1.25rem + 1.15vw, 2.125rem)/1.08 var(--serif); letter-spacing: -.016em; text-wrap: balance; }
+.prod-items__note { grid-column: 2; color: var(--ink-2); max-width: 30em; }
+/* A line of two or three products gets a bigger hand, so the shortest list holds the page like the longest. */
+.prod-items--few .prod-items__name { font-size: clamp(1.75rem, 1.3rem + 2vw, 2.75rem); letter-spacing: -.02em; }
+.prod-items--few li { padding-block: 1.4rem 1.6rem; }
+.prod-items--few .prod-items__no { grid-row: auto; line-height: 3; }
+/* The serif's own registered mark is as tall as a capital; set it small. */
+.prod-reg { font: 400 .4em/1 var(--sans); font-style: normal; vertical-align: 1.05em; margin-left: .08em; letter-spacing: 0; }
+.prod-makers { display: grid; gap: 1.75rem var(--col-gap); margin-top: clamp(2rem, 4vw, 3rem); }
+.prod-makers .label { margin-bottom: .7rem; }
+.prod-makers__names { display: flex; flex-wrap: wrap; gap: .25rem 1.75rem; font: italic 340 clamp(1.625rem, 1.3rem + 1.4vw, 2.5rem)/1.05 var(--serif); letter-spacing: -.022em; }
+.prod-makers__names li { white-space: nowrap; }
+.prod-makers__lit ul { display: grid; gap: .5rem; justify-items: start; }
+/* An inline link, so a long manufacturer name can wrap and keep its rule under the words. */
+.prod-makers__link { display: inline-block; padding-block: .55rem; font-size: .9375rem; font-weight: 600; line-height: 1.5; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .32em; }
+.prod-makers__link > span { white-space: nowrap; }
+.prod-makers__link .i { display: inline-block; vertical-align: -.12em; margin-left: .35rem; }
+.prod-makers__link:hover { text-decoration-color: var(--yellow); text-decoration-thickness: 2px; }
+/* The yard slip: what the page cannot know, and who does. */
+.prod-ask { background: var(--paper-3); border: 1px solid var(--ink); container-type: inline-size; }
+.prod-ask__head { padding: .8rem clamp(1.1rem, 2.4vw, 1.5rem); border-bottom: 1px solid var(--ink); }
+.prod-ask__body { display: grid; gap: .8rem; padding: clamp(1.4rem, 2.6vw, 1.9rem) clamp(1.1rem, 2.4vw, 1.5rem) clamp(1.3rem, 2.4vw, 1.6rem); }
+.prod-ask__title { font: 370 clamp(2.125rem, 1.7rem + 1.7vw, 3rem)/1 var(--serif); letter-spacing: -.024em; }
+.prod-ask__title em { font-style: italic; font-weight: 330; }
+.prod-ask__body p { color: var(--ink-2); max-width: 28em; }
+.prod-ask__yards a { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: baseline; gap: .4rem 1rem; padding: .8rem clamp(1.1rem, 2.4vw, 1.5rem) .9rem; border-top: 1px dashed var(--rule-2); text-decoration: none; }
+.prod-ask__lat { font: 400 var(--t-label)/1 var(--mono); letter-spacing: .08em; color: var(--ink-3); }
+.prod-ask__yards .status { justify-self: end; }
+.prod-ask__city { grid-column: 1; font: 400 1.625rem/1 var(--serif); letter-spacing: -.02em; }
+.prod-ask__num { grid-column: 2; font-weight: 600; font-size: 1.1875rem; letter-spacing: -.005em; font-variant-numeric: tabular-nums; white-space: nowrap; text-decoration: underline; text-decoration-color: var(--yellow); text-decoration-thickness: 2px; text-underline-offset: .25em; }
+.prod-ask__yards a:hover .prod-ask__num { text-decoration-color: var(--ink); }
+@container (max-width: 21rem) { .prod-ask__city { font-size: 1.375rem; } .prod-ask__num { font-size: 1.0625rem; } }
+.prod-ask__foot { padding: .9rem clamp(1.1rem, 2.4vw, 1.5rem) 1.2rem; border-top: 1px solid var(--ink); }
+.prod-ask__foot .link { font-size: .9375rem; }
+@media (min-width: 700px) {
+  .prod-items li { grid-template-columns: 2.75rem minmax(0, 1fr) minmax(0, 1fr); column-gap: 0; align-items: baseline; }
+  .prod-items__no { grid-row: auto; line-height: 1; }
+  .prod-items__name { padding-right: 1.5rem; }
+  .prod-items__note { grid-column: 3; }
+  .prod-items--few li { grid-template-columns: 2.75rem minmax(0, 1fr); row-gap: .55rem; padding-block: 1.6rem 1.8rem; }
+  .prod-items--few .prod-items__no { line-height: 1; }
+  .prod-items--few .prod-items__name { padding-right: 0; }
+  .prod-items--few .prod-items__note { grid-column: 2; }
+  .prod-makers { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); padding-left: 2.75rem; }
+}
+@media (min-width: 1000px) and (max-width: 1239px) { .prod-makers { grid-template-columns: minmax(0, 1fr); } }
+@media (min-width: 1000px) {
+  .prod-in__grid { grid-template-columns: minmax(0, 7.4fr) minmax(0, 4.6fr); column-gap: clamp(2.5rem, 5.5vw, 5.5rem); align-items: start; }
+  .prod-ask { position: sticky; top: calc(var(--mast) + 2rem); }
+}
+
+/* ---------- Line page · services, on the dark sheet ---------- */
+.prod-svc .shead__bar { margin-bottom: clamp(1.75rem, 3.5vw, 3.5rem); }
+.prod-svc__grid { display: grid; gap: 2.5rem var(--col-gap); }
+.prod-svc__lead { display: grid; gap: 1.25rem; justify-items: start; align-content: start; }
+.prod-svc__lead .lede { max-width: 25em; }
+.prod-svc__more { margin-top: 1.1rem; font-size: .9375rem; line-height: 1.9; color: var(--on-dark-2); }
+.prod-svc__more a { display: inline-block; color: var(--on-dark); padding-block: .4rem; text-decoration-color: var(--rule-2); }
+.prod-svc__more a:hover { text-decoration-color: var(--yellow); }
+@media (min-width: 1000px) {
+  .prod-svc__grid { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); column-gap: clamp(2.5rem, 6vw, 6rem); }
+}
+.prod-svc__print { margin-top: clamp(1.5rem, 3vw, 2.5rem); }
+/* On wide screens the print hangs off the dark sheet onto the paper below. */
+@media (min-width: 1000px) { .prod-svc__print { position: relative; z-index: 1; margin-bottom: calc(-1 * var(--section) - 3.5rem); } }
+
+/* ---------- Line page · the rest of the load, and the way to the next line ---------- */
+.prod-pager { display: grid; margin-top: clamp(3rem, 7vw, 6.5rem); border-top: 1px solid var(--ink); }
+.prod-pager__cell { display: grid; gap: .7rem; align-content: start; padding: 1.2rem 0 1.5rem; border-bottom: 1px solid var(--rule-2); text-decoration: none; }
+.prod-pager__dir { display: inline-flex; align-items: center; gap: .6rem; font: 400 var(--t-label)/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); }
+.prod-pager__dir .i { transition: transform var(--d-2) var(--ease); }
+.prod-pager__back { rotate: 180deg; }
+.prod-pager__name { font: 400 clamp(1.5rem, 1.2rem + 1.5vw, 2.5rem)/1.06 var(--serif); letter-spacing: -.018em; text-wrap: balance; }
+.prod-pager__no { display: inline-block; margin-right: .6rem; font: 400 var(--t-label)/1 var(--mono); letter-spacing: .08em; color: var(--ink-3); vertical-align: .4em; }
+.prod-pager__cell:hover .prod-pager__name { text-decoration: underline; text-decoration-color: var(--yellow); text-decoration-thickness: 2px; text-underline-offset: .18em; }
+.prod-pager__cell:hover .prod-pager__dir { color: var(--ink); }
+.prod-pager__cell:hover .prod-pager__dir .i { transform: translateX(.3rem); }
+.prod-pager__cell--next { justify-items: end; text-align: right; }
+@media (min-width: 760px) {
+  .prod-pager { grid-template-columns: repeat(2, minmax(0, 1fr)); border-bottom: 1px solid var(--rule-2); }
+  .prod-pager__cell { padding: 1.4rem 2rem 1.9rem 0; border-bottom: 0; }
+  .prod-pager__cell--next { padding: 1.4rem 0 1.9rem 2rem; border-left: 1px solid var(--rule-2); }
+}

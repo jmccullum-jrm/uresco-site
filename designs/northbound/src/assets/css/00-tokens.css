@@ -21,6 +21,7 @@
   --ink-3: #59645E;      /* captions, labels (4.5:1 on every paper) */
   --rule: rgba(18, 32, 27, .16);
   --rule-2: rgba(18, 32, 27, .34);
+  --black: #0E0E0C;      /* UCM black, the mark's: the strip above the masthead, the footer, the Call control */
   --yellow: #F5B800;     /* UCM yellow: buttons, the needle, a rule under a current link */
   --yellow-2: #E0A600;   /* yellow, pressed */
   --sea: #1E4A57;        /* cold accent, deep: links on paper, map linework */

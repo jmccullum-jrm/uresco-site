@@ -1,28 +1,41 @@
-import { html, raw, esc } from './html.mjs';
+import { html, raw } from './html.mjs';
 import { icon, mark } from './icons.mjs';
 import { SITE } from '../config.mjs';
-import { LOCATIONS, tel, address, mapsUrl, openingHoursLd } from '../data/locations.mjs';
+import { LOCATIONS, tel, mapsUrl } from '../data/locations.mjs';
 import { openStatus, latOf, deg } from './components.mjs';
 import { CATEGORIES } from '../data/products.mjs';
 
-export const NAV = [
+const NAV = [
   { href: 'products/', label: 'Products', menu: true },
   { href: 'services/', label: 'Services' },
-  { href: 'alaska/', label: 'Alaska Delivery' },
+  { href: 'alaska/', label: 'Alaska delivery' },
   { href: 'projects/', label: 'Projects' },
   { href: 'locations/', label: 'Locations' },
   { href: 'about/', label: 'About' },
 ];
 
 // The mark stays; the wordmark is set in the display serif with a mono descriptor under it.
-export const brand = (ctx, { cls = '' } = {}) => html`
+// `reading` puts the latitude reading in the descriptor's slot: on phones it takes over while the
+// reader is inside a chapter of a journey page (modules/rail.js), and is hidden from wide screens up.
+export const brand = (ctx, { cls = '', reading = null } = {}) => html`
   <a class="brand ${cls}" href="${ctx.u('')}">
     <span class="brand__mark">${mark({ id: 'mk' + ctx.uid() })}</span>
-    <span class="brand__word"><span class="brand__name">Uresco</span> <span class="brand__desc">Construction Materials</span></span>
+    <span class="brand__word"><span class="brand__name">Uresco</span> <span class="brand__desc">Construction Materials</span>${reading ? html`<span class="latchip" aria-hidden="true"><span data-read>${deg(reading.lat)}</span><span data-place>${reading.name}</span></span>` : ''}</span>
   </a>`;
 
 const isCurrent = (ctx, href) => (href === '' ? ctx.path === '' : ctx.path.startsWith(href));
 const two = (n) => String(n).padStart(2, '0');
+const current = (ctx, href, exact = false) => raw((exact ? ctx.path === href : isCurrent(ctx, href)) ? ' aria-current="page"' : '');
+
+// Quote links in the chrome carry what the visitor is looking at.
+const quoteHref = (ctx) => {
+  const base = ctx.u('quote/');
+  const line = CATEGORIES.find((c) => ctx.path === `products/${c.slug}/`);
+  if (line) return `${base}?product=${encodeURIComponent(line.name)}`;
+  if (ctx.path === 'pacific-northwest/') return `${base}?yard=kent`;
+  if (ctx.path === 'alaska/') return `${base}?yard=anchorage`;
+  return base;
+};
 
 // Products menu: the nine lines as a numbered index. Opens on hover, or from the caret button
 // (keyboard and touch); without JavaScript the Products link simply goes to the products page.
@@ -63,6 +76,18 @@ const rail = (ctx, stops) => html`
     </div>
   </nav>`;
 
+// The Products row of the phone menu. Native <details>, so the nine lines need no script of their own.
+const drawerProducts = (ctx, n, i) => html`
+  <li><details class="drawer__more"${raw(ctx.path.startsWith(n.href) ? ' open' : '')}>
+    <summary><span class="drawer__no">${two(i + 1)}</span>${n.label}${icon('chevron-down', { size: 22, cls: 'drawer__caret' })}</summary>
+    <ol class="drawer__lines">
+      <li><a class="drawer__all" href="${ctx.u(n.href)}"${current(ctx, n.href, true)}>All products ${icon('arrow', { size: 16 })}</a></li>
+      ${CATEGORIES.map((c, j) => html`<li><a href="${ctx.u('products/' + c.slug + '/')}"${current(ctx, 'products/' + c.slug + '/')}><span class="drawer__no">${two(j + 1)}</span>${c.short}</a></li>`)}
+    </ol>
+  </details></li>`;
+
+// Dialog openers are links, so without JavaScript Call and Directions land on the yards and Menu
+// on the footer index. 00-core.js opens the dialog instead when it can.
 const header = (ctx) => html`
   <a class="skip" href="#main">Skip to content</a>
   <div class="dateline" role="region" aria-label="Call a yard">
@@ -70,28 +95,26 @@ const header = (ctx) => html`
       ${LOCATIONS.map((l) => html`<li><span class="dateline__lat">${deg(latOf(l))}</span><span class="dateline__city">${l.city}</span><a href="${tel(l.phone)}">${l.phone}</a>${openStatus(l, { short: true })}</li>`)}
     </ul>
     <div class="dateline__links">
-      <a href="${ctx.u('accounts/')}">Contractor accounts</a>
-      <a href="mailto:${SITE.email}">${SITE.email}</a>
+      <a href="${ctx.u('accounts/')}">Open an account</a>
     </div>
   </div>
   <header class="masthead" data-masthead>
     <div class="masthead__row">
-      ${brand(ctx)}
+      ${brand(ctx, { reading: ctx.rail ? ctx.rail[0] : null })}
       <nav class="nav" aria-label="Main">
         <ul class="nav__list">
           ${NAV.map((n) => html`<li class="${n.menu ? 'nav__item nav__item--menu' : 'nav__item'}"${n.menu ? html` data-menu` : ''}>
-            <a class="nav__link" href="${ctx.u(n.href)}"${raw(isCurrent(ctx, n.href) ? ' aria-current="page"' : '')}>${n.label}</a>${n.menu ? html`<button type="button" class="nav__toggle" aria-expanded="false" aria-controls="mega">${icon('chevron-down', { size: 14 })}<span class="sr-only">Show product lines</span></button>
+            <a class="nav__link" href="${ctx.u(n.href)}"${current(ctx, n.href)}>${n.label}</a>${n.menu ? html`<button type="button" class="nav__toggle" aria-expanded="false" aria-controls="mega">${icon('chevron-down', { size: 14 })}<span class="sr-only">Show product lines</span></button>
             ${mega(ctx)}` : ''}
           </li>`)}
         </ul>
       </nav>
-      ${ctx.rail ? html`<p class="latchip" aria-hidden="true"><span data-read>${deg(ctx.rail[0].lat)}</span><span data-place>${ctx.rail[0].name}</span></p>` : ''}
       <div class="masthead__acts">
-        <button type="button" class="btn btn--sm btn--line masthead__call" data-open="call-sheet" aria-haspopup="dialog">${icon('phone', { size: 16 })}Call a yard</button>
-        <a class="btn btn--sm masthead__cta" href="${ctx.u('quote/')}">Request a quote</a>
-        <button class="masthead__menu" type="button" data-open="drawer" aria-haspopup="dialog" aria-controls="drawer">
+        <a class="btn btn--sm masthead__call" href="${ctx.u('locations/')}" data-open="call-sheet" aria-haspopup="dialog">${icon('phone', { size: 16 })}<span>Call<span class="masthead__more"> a yard</span></span></a>
+        <a class="btn btn--sm masthead__cta" href="${quoteHref(ctx)}"><span class="masthead__cta-long">Request a quote</span><span class="masthead__cta-short">Quote</span></a>
+        <a class="masthead__menu" href="#footer-index" data-open="drawer" aria-haspopup="dialog" aria-controls="drawer">
           <span>Menu</span>${icon('menu', { size: 20 })}
-        </button>
+        </a>
       </div>
     </div>
     ${ctx.rail ? html`<span class="masthead__progress" data-progress aria-hidden="true"></span>` : ''}
@@ -103,49 +126,56 @@ const header = (ctx) => html`
     </div>
     <nav class="drawer__body" aria-label="Mobile">
       <ol class="drawer__nav">
-        ${NAV.map((n, i) => html`<li><a href="${ctx.u(n.href)}"${raw(isCurrent(ctx, n.href) ? ' aria-current="page"' : '')}><span class="drawer__no">${two(i + 1)}</span>${n.label}</a></li>`)}
+        ${NAV.map((n, i) => (n.menu ? drawerProducts(ctx, n, i) : html`<li><a href="${ctx.u(n.href)}"${current(ctx, n.href)}><span class="drawer__no">${two(i + 1)}</span>${n.label}</a></li>`))}
       </ol>
       <ul class="drawer__minor">
-        <li><a href="${ctx.u('accounts/')}">Contractor accounts</a></li>
         <li><a href="${ctx.u('pacific-northwest/')}">Pacific Northwest</a></li>
         <li><a href="mailto:${SITE.email}">${SITE.email}</a></li>
       </ul>
     </nav>
     <div class="drawer__foot">
-      <a class="btn btn--block" href="${ctx.u('quote/')}">Request a quote ${icon('arrow', { size: 18 })}</a>
+      <div class="drawer__cta">
+        <a class="btn" href="${quoteHref(ctx)}">Request a quote</a>
+        <a class="btn btn--line" href="${ctx.u('accounts/')}">Open an account</a>
+      </div>
       <ul class="drawer__yards">
         ${LOCATIONS.map((l) => html`<li><a href="${tel(l.phone)}"><span class="drawer__lat">${deg(latOf(l))}</span><b>${l.city}</b><span class="drawer__num">${l.phone}</span></a></li>`)}
       </ul>
     </div>
   </dialog>`;
 
-const callSheet = () => html`
+// Call and Directions both open this. On the Alaska page modules/placefinder.js moves Kent to the end.
+const callSheet = (ctx) => html`
   <dialog class="sheet" id="call-sheet" aria-labelledby="call-sheet-title">
     <div class="sheet__head">
-      <h2 id="call-sheet-title" class="sheet__title">Call a yard</h2>
+      <h2 id="call-sheet-title" class="sheet__title">Call or visit a yard</h2>
       <button type="button" class="iconbtn" data-close>${icon('close', { size: 22 })}<span class="sr-only">Close</span></button>
     </div>
     <ul class="sheet__list">
       ${LOCATIONS.map((l) => html`<li class="sheet__yard">
         <div class="sheet__who">
-          <span class="sheet__lat">${deg(latOf(l))}</span>
-          <b>${l.city}, ${l.state}</b>
-          <small>${l.street}</small>
-          ${openStatus(l)}
+          <span class="sheet__lat">${deg(latOf(l))} · ${l.callFor}</span>
+          ${openStatus(l, { short: true })}
+          <p class="sheet__place"><b>${l.city}, ${l.state}</b> <small>${l.street}</small></p>
         </div>
         <div class="sheet__acts">
-          <a class="sheet__num" href="${tel(l.phone)}">${icon('phone', { size: 18 })}${l.phone}</a>
-          <a class="sheet__dir" href="${mapsUrl(l)}" target="_blank" rel="noopener" aria-label="Directions to the ${l.city} yard">${icon('directions', { size: 18 })}</a>
-        </div></li>`)}
+          <a class="sheet__num" href="${tel(l.phone)}">${icon('phone', { size: 18 })}<span><span class="sr-only">Call ${l.city}: </span>${l.phone}</span></a>
+          <a class="sheet__dir" href="${mapsUrl(l)}" target="_blank" rel="noopener">${icon('directions', { size: 18 })}<span>Directions<span class="sr-only"> to the ${l.city} yard</span></span></a>
+        </div>
+        <ul class="sheet__more">
+          <li><a href="mailto:${l.email}">${l.email}</a></li>
+          <li>Fax ${l.fax}</li>
+          <li class="sheet__details"><a href="${ctx.u('locations/')}#${l.id}"><span class="sr-only">${l.city} yard </span>Details ${icon('arrow', { size: 14 })}</a></li>
+        </ul></li>`)}
     </ul>
-    <p class="sheet__note">Any yard can help. They work as one team. <a href="mailto:${SITE.email}">${SITE.email}</a></p>
+    <p class="sheet__note">Any yard can help. They work as one team.</p>
   </dialog>`;
 
 const actionBar = (ctx) => html`
   <div class="actionbar" role="region" aria-label="Quick actions">
-    <button type="button" class="actionbar__btn" data-open="call-sheet" aria-haspopup="dialog">${icon('phone', { size: 20 })}Call</button>
-    <a class="actionbar__btn" href="${ctx.u('locations/')}">${icon('directions', { size: 20 })}Directions</a>
-    <a class="actionbar__btn actionbar__btn--primary" href="${ctx.u('quote/')}">${icon('file', { size: 20 })}Quote</a>
+    <a class="actionbar__btn actionbar__btn--call" href="${ctx.u('locations/')}" data-open="call-sheet" aria-haspopup="dialog">${icon('phone', { size: 20 })}Call</a>
+    <a class="actionbar__btn" href="${ctx.u('locations/')}" data-open="call-sheet" aria-haspopup="dialog">${icon('directions', { size: 20 })}Directions</a>
+    <a class="actionbar__btn actionbar__btn--primary" href="${quoteHref(ctx)}">${icon('file', { size: 20 })}Quote</a>
   </div>`;
 
 const footer = (ctx) => html`
@@ -154,22 +184,24 @@ const footer = (ctx) => html`
       <div class="footer__lead">
         <p class="footer__line">Quality materials, <em>trusted service.</em></p>
         <div class="footer__cta">
-          <a class="btn" href="${ctx.u('quote/')}">Request a quote ${icon('arrow', { size: 18 })}</a>
+          <a class="btn" href="${quoteHref(ctx)}">Request a quote ${icon('arrow', { size: 18 })}</a>
           <a class="btn btn--line" href="${ctx.u('accounts/')}">Open an account</a>
         </div>
       </div>
       <div class="footer__cols">
         ${LOCATIONS.map((l) => html`
           <div class="footer__yard">
-            <h3 class="footer__h"><span>${deg(latOf(l))}</span>${l.city}, ${l.state}</h3>
-            <address>${l.street}<br>${l.city}, ${l.state} ${l.zip}</address>
+            <p class="footer__meta"><span>${deg(latOf(l))}</span>${openStatus(l, { short: true })}</p>
+            <h3 class="footer__h">${l.city}, ${l.state}</h3>
             <a class="footer__tel" href="${tel(l.phone)}">${l.phone}</a>
             ${l.tollFree ? html`<a href="${tel(l.tollFree)}">${l.tollFree} <small>toll-free</small></a>` : ''}
             <a href="mailto:${l.email}">${l.email}</a>
-            ${openStatus(l)}
+            <p class="footer__fax">Fax ${l.fax}</p>
+            <address>${l.street}<br>${l.city}, ${l.state} ${l.zip}</address>
           </div>`)}
-        <nav class="footer__nav" aria-label="Footer">
-          <h3 class="footer__h"><span>Index</span>Explore</h3>
+        <nav class="footer__nav" id="footer-index" aria-label="Footer">
+          <p class="footer__meta">Index</p>
+          <h3 class="footer__h">Explore</h3>
           <ul>
             <li><a href="${ctx.u('products/')}">Products</a></li>
             <li><a href="${ctx.u('services/')}">Services</a></li>
@@ -178,8 +210,8 @@ const footer = (ctx) => html`
             <li><a href="${ctx.u('projects/')}">Projects</a></li>
             <li><a href="${ctx.u('locations/')}">Locations</a></li>
             <li><a href="${ctx.u('about/')}">About</a></li>
-            <li><a href="${ctx.u('accounts/')}">Contractor accounts</a></li>
-            <li><a href="${ctx.u('quote/')}">Request a quote</a></li>
+            <li><a href="${ctx.u('accounts/')}">Open an account</a></li>
+            <li><a href="${quoteHref(ctx)}">Request a quote</a></li>
           </ul>
         </nav>
       </div>
@@ -215,7 +247,6 @@ export const orgJsonLd = (ctx) => {
       email: l.email,
       address: { '@type': 'PostalAddress', streetAddress: l.street, addressLocality: l.city, addressRegion: l.state, postalCode: l.zip, addressCountry: 'US' },
       geo: { '@type': 'GeoCoordinates', latitude: l.geo.lat, longitude: l.geo.lng },
-      openingHoursSpecification: openingHoursLd(l),
     })),
   };
   return html`<script type="application/ld+json">${raw(JSON.stringify(org).replace(/</g, '\\u003c'))}</script>`;
@@ -275,10 +306,9 @@ ${body}
 </main>
 ${footer(ctx)}
 ${actionBar(ctx)}
-${callSheet()}
+${callSheet(ctx)}
 </body>
 </html>
 `;
 };
 
-export { esc, address };
