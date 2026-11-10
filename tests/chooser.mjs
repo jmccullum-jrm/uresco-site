@@ -1,8 +1,9 @@
 // Checks for the design chooser (docs/index.html). Run after `node build.mjs`:  node tests/chooser.mjs
 //  1. Static: the chooser lists every design, one is featured, every design was built and they all have the same pages.
 //  2. Browser: switching designs keeps the page, the address follows what the frame shows, links to a design and page
-//     open there, Back works, the phone view works, the bar fits from 320px up, it works without JavaScript, and a
-//     missing address inside a design lands on that design's own "not found" page.
+//     open there, Back works, the phone view is a true 390 by 844 screen, the description row, draft marker and
+//     "send my pick" work, the bar fits from 320px up in any font, it works without JavaScript, and a missing
+//     address inside a design lands on that design's own "not found" page.
 import { existsSync, readFileSync } from 'fs';
 import { join, dirname, resolve } from 'path';
 import { fileURLToPath } from 'url';
@@ -12,7 +13,10 @@ import { createRequire } from 'module';
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const DOCS = join(ROOT, 'docs');
 const BASE = (process.env.BASE || '/uresco-site/').replace(/\/*$/, '/');
-const { featured, designs } = JSON.parse(readFileSync(join(ROOT, 'designs/designs.json'), 'utf8'));
+const config = JSON.parse(readFileSync(join(ROOT, 'designs/designs.json'), 'utf8'));
+const designs = config.designs.filter((d) => !(config.hide || []).includes(d.key));
+const featured = designs.some((d) => d.key === config.featured) ? config.featured : designs[0].key;
+if (designs.length < 2) { console.log('Only one design is showing, so there is no chooser to check.'); process.exit(0); }
 const keys = designs.map((d) => d.key);
 const problems = [];
 const fail = (msg) => problems.push(msg);
@@ -81,7 +85,8 @@ const settled = (page, key, path = '') => page.waitForFunction(([k, p, b]) => {
 }, [key, path, BASE], { timeout: 15000 }).catch(() => fail(`timed out waiting for ${key}/${path} to show`));
 
 {
-  const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+  const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 }, permissions: ['clipboard-read', 'clipboard-write'] });
+  const page = await ctx.newPage();
   watch(page, 'chooser');
   await page.goto(home, { waitUntil: 'load' });
   await settled(page, featured);
@@ -125,11 +130,43 @@ const settled = (page, key, path = '') => page.waitForFunction(([k, p, b]) => {
   });
   if (ext !== 'none') eq(ext, '_blank', 'target of an outside link clicked in the frame');
 
-  // Phone view narrows the frame and back again.
+  // Phone view is a true 390 by 844 screen (scaled down if the window is short) that sits wholly inside the stage.
   await page.click('#view');
-  eq(await page.evaluate(() => Math.round(document.getElementById('frame').getBoundingClientRect().width)), 390, 'frame width in phone view');
+  const phone = await page.evaluate(() => {
+    const f = document.getElementById('frame');
+    const r = f.getBoundingClientRect();
+    const st = document.querySelector('.stage').getBoundingClientRect();
+    return { size: `${f.contentWindow.innerWidth}x${f.contentWindow.innerHeight}`, inside: r.top >= st.top && r.bottom <= st.bottom + 0.5 && r.left >= st.left && r.right <= st.right, ratio: Math.round((r.width / r.height) * 1000) };
+  });
+  eq(phone.size, '390x844', 'screen size inside the phone view');
+  eq(phone.inside, true, 'phone view fits inside the stage');
+  eq(phone.ratio, Math.round((390 / 844) * 1000), 'phone view proportions');
   await page.click('#view');
   eq(await page.evaluate(() => Math.round(document.getElementById('frame').getBoundingClientRect().width)), 1440, 'frame width after leaving phone view');
+
+  // The description row names the design showing, can be closed and reopened, and stays closed for the visit.
+  const aboutText = () => page.evaluate(() => (document.getElementById('about').hidden ? null : document.getElementById('about').textContent.replace(/\s+/g, ' ').trim()));
+  const here = designs.find((d) => d.key === a);
+  if (!(await aboutText())?.startsWith(`${here.name}. ${here.blurb}`)) fail(`the description row does not describe ${a}: ${await aboutText()}`);
+  if (config.finished) {
+    eq(await page.isVisible('#about-draft'), !config.finished.includes('alaska/'), 'draft marker on the Alaska page');
+    await page.evaluate((k) => { location.hash = `#${k}/products/`; }, a);
+    await settled(page, a, 'products/');
+    eq(await page.isVisible('#about-draft'), !config.finished.includes('products/'), 'draft marker on the products page');
+  }
+  await page.click('#about-close');
+  eq(await aboutText(), null, 'description row after closing it');
+  eq(await page.getAttribute('#info', 'aria-expanded'), 'false', 'About button state after closing the row');
+  await page.reload({ waitUntil: 'load' });
+  eq(await aboutText(), null, 'description row after a reload (it should stay closed for the visit)');
+  await page.click('#info');
+  if (!(await aboutText())) fail('the About button did not bring the description row back');
+
+  // "Send my pick" puts a sentence naming the design and a link to it on the clipboard.
+  await page.click('#send');
+  const copied = await page.evaluate(() => navigator.clipboard.readText());
+  if (!copied.includes(`the ${here.name} design`) || !copied.endsWith(`${BASE}#${a}/`)) fail(`"Send my pick" copied ${JSON.stringify(copied)}`);
+  if (!(await page.isVisible('#said'))) fail('"Send my pick" gave no confirmation');
 
   // Addresses that name a design and page open there; nonsense falls back sensibly.
   const last = keys[keys.length - 1];
@@ -145,7 +182,7 @@ const settled = (page, key, path = '') => page.waitForFunction(([k, p, b]) => {
   // Editing the address by hand also switches.
   await page.evaluate((k) => { location.hash = `#${k}/quote/`; }, a);
   await settled(page, a, 'quote/');
-  await page.close();
+  await ctx.close();
 }
 
 // The bar fits at every width, whichever design is showing, and whatever font the device gives it:
@@ -166,22 +203,32 @@ const settled = (page, key, path = '') => page.waitForFunction(([k, p, b]) => {
         }
         const r = await page.evaluate(() => {
           const bar = document.querySelector('.bar');
-          const shown = [...bar.querySelectorAll('.pick, .tool, .bar__title, .bar__blurb')].filter((e) => e.offsetParent !== null);
+          const strip = document.querySelector('.picks').getBoundingClientRect();
+          const vis = (e) => e.getClientRects().length > 0 && getComputedStyle(e).visibility !== 'hidden';
+          const controls = [...document.querySelectorAll('.pick, .tool, .mini, .about__close')].filter(vis);
+          const cur = document.querySelector('.pick[aria-current="true"]').getBoundingClientRect();
           return {
             over: document.documentElement.scrollWidth - innerWidth,
-            right: Math.max(...shown.map((e) => e.getBoundingClientRect().right)),
+            barOver: bar.scrollWidth - bar.clientWidth,
             height: bar.getBoundingClientRect().height,
-            picks: [...bar.querySelectorAll('.pick')].filter((e) => e.offsetParent !== null).length,
-            small: shown.filter((e) => e.matches('.pick, .tool') && (e.getBoundingClientRect().width < 36 || e.getBoundingClientRect().height < 36)).length,
-            cut: [...bar.querySelectorAll('.pick__name')].filter((n) => getComputedStyle(n).position !== 'absolute' && n.scrollWidth > n.clientWidth + 0.5).map((n) => n.textContent).join(', '),
+            // names a visitor can read without scrolling the row sideways
+            names: [...bar.querySelectorAll('.pick__name')].filter((n) => { const b = n.getBoundingClientRect(); return vis(n) && b.width > 8 && b.left >= strip.left - 0.5 && b.right <= strip.right + 0.5; }).length,
+            scrolls: document.querySelector('.picks').scrollWidth - document.querySelector('.picks').clientWidth > 0.5,
+            currentInView: cur.left >= strip.left - 0.5 && cur.right <= strip.right + 0.5,
+            small: controls.filter((e) => e.getBoundingClientRect().width < 40 || e.getBoundingClientRect().height < 40).map((e) => e.id || e.className).join(', '),
+            star: [...document.querySelectorAll('.pick__tag, .pick__star')].some(vis),
+            offscreen: controls.filter((e) => !e.closest('.picks') && e.getBoundingClientRect().right > innerWidth + 0.5).length,
           };
         });
         const at = `${w}px${wide ? ' in a wide font' : ''} with ${k} showing`;
-        if (r.over > 0 || r.right > w + 0.5) fail(`${at}: the bar is wider than the screen (reaches ${Math.round(r.right)}px)`);
-        if (r.height > 56) fail(`${at}: the bar wrapped to ${Math.round(r.height)}px tall`);
-        if (r.picks !== keys.length) fail(`${at}: only ${r.picks} of ${keys.length} choices are visible`);
-        if (r.small) fail(`${at}: ${r.small} bar buttons are smaller than 36px`);
-        if (r.cut && !(wide && w < 400)) fail(`${at}: design names are cut short (${r.cut})`);
+        if (r.over > 0 || r.barOver > 0 || r.offscreen) fail(`${at}: the bar is wider than the screen`);
+        if (r.height > 60) fail(`${at}: the bar wrapped to ${Math.round(r.height)}px tall`);
+        if (!r.currentInView) fail(`${at}: the design that is showing is scrolled out of view in the bar`);
+        if (r.small) fail(`${at}: controls smaller than 40px: ${r.small}`);
+        if (!r.star) fail(`${at}: nothing marks the featured design`);
+        // In the normal font every name is readable at once from 360px up; in a much wider font the row may scroll on phones.
+        if (!wide && w >= 360 && (r.scrolls || r.names !== keys.length)) fail(`${at}: only ${r.names} of ${keys.length} design names are visible without scrolling`);
+        if (wide && w >= 600 && r.names !== keys.length) fail(`${at}: only ${r.names} of ${keys.length} design names are visible`);
       }
     }
   }
@@ -225,4 +272,4 @@ if (problems.length) {
   console.error(`\n${problems.length} problem(s):\n` + problems.map((p) => '  - ' + p).join('\n'));
   process.exit(1);
 }
-console.log('browser: switching, same-page switching, addresses, Back, phone view, bar widths, no-JavaScript and not-found pages work\nCHOOSER CHECKS PASSED');
+console.log('browser: switching, same-page switching, addresses, Back, phone view, description row, send my pick, bar fit in two fonts, no-JavaScript and not-found pages work\nCHOOSER CHECKS PASSED');

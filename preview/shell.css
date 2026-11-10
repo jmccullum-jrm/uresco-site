@@ -3,82 +3,121 @@
 *, *::before, *::after { box-sizing: border-box; }
 html, body { height: 100%; }
 body {
-  margin: 0; display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr);
+  margin: 0; display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: auto auto minmax(0, 1fr);
   height: 100vh; height: 100dvh; overflow: hidden;
   background: #0c0c0d; color: #ecebe7;
   font: 500 14px/1.2 system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 a { color: inherit; }
+button { font: inherit; color: inherit; }
 :focus-visible { outline: 2px solid #F5B800; outline-offset: 2px; border-radius: 6px; }
+.vh { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .skip { position: absolute; left: 8px; top: -60px; z-index: 5; padding: 10px 14px; background: #F5B800; color: #0c0c0d; border-radius: 8px; text-decoration: none; font-weight: 700; }
 .skip:focus { top: 6px; }
 
-.bar { display: flex; align-items: center; gap: 12px; min-height: 48px; padding: 6px 12px; border-bottom: 1px solid #2a2a2c; }
-.bar__title { display: flex; flex-direction: column; gap: 2px; margin: 0 4px 0 2px; white-space: nowrap; }
+/* Row one: the four designs and the tools. */
+.bar { display: flex; align-items: center; gap: 12px; min-height: 52px; padding: 6px 12px; border-bottom: 1px solid #2a2a2c; }
+.bar__title { flex: none; display: flex; flex-direction: column; gap: 2px; margin: 0 4px 0 2px; white-space: nowrap; }
 .bar__title b { font-size: 13px; font-weight: 700; letter-spacing: .01em; }
 .bar__title span { font-size: 11px; font-weight: 500; color: #a3a19b; }
 
-.bar nav { min-width: 0; }
-.picks { display: flex; align-items: center; gap: 6px; margin: 0; padding: 0; list-style: none; min-width: 0; }
-.picks li { flex: 0 1 auto; min-width: 36px; }
+.bar nav { flex: 0 1 auto; min-width: 0; }
+/* If the names cannot all fit, the row scrolls sideways rather than hiding any of them. */
+.picks { display: flex; align-items: center; gap: 6px; margin: 0; padding: 2px; list-style: none; overflow-x: auto; scrollbar-width: none; overscroll-behavior-x: contain; }
+.picks::-webkit-scrollbar { display: none; }
+.picks li { flex: none; }
 .pick {
-  display: flex; align-items: center; gap: 8px; height: 36px; padding: 0 12px 0 6px;
-  border: 1px solid #3a3a3d; border-radius: 999px; text-decoration: none; white-space: nowrap; color: #ecebe7; min-width: 0; max-width: 100%;
+  display: flex; align-items: center; gap: 8px; height: 40px; padding: 0 14px 0 8px;
+  border: 1px solid #3a3a3d; border-radius: 999px; text-decoration: none; white-space: nowrap; color: #ecebe7;
   transition: background-color .15s, border-color .15s, color .15s;
 }
 .pick:hover { border-color: #8a8880; background: #1b1b1d; }
 .pick__n { flex: none; display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: #2a2a2d; font-size: 12px; font-weight: 700; font-variant-numeric: tabular-nums; }
-.pick__name { min-width: 0; overflow: hidden; text-overflow: ellipsis; font-weight: 650; }
+.pick__name { font-weight: 650; }
 .pick__tag { margin-left: 2px; padding: 3px 7px; border-radius: 999px; background: #2a2a2d; color: #d7d5cf; font-size: 10px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+.pick__star { display: none; margin-left: -2px; color: #F5B800; font-size: 12px; line-height: 1; }
 .pick[aria-current="true"] { background: #F5B800; border-color: #F5B800; color: #0c0c0d; }
 .pick[aria-current="true"] .pick__n { background: #0c0c0d; color: #F5B800; }
 .pick[aria-current="true"] .pick__tag { background: rgba(12, 12, 13, .14); color: #0c0c0d; }
+.pick[aria-current="true"] .pick__star { color: #0c0c0d; }
 
-.bar__blurb { flex: 1 1 0; min-width: 0; margin: 0; color: #b9b7b0; font-size: 12.5px; font-weight: 450; line-height: 1.35; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
 .bar__tools { flex: none; display: flex; align-items: center; gap: 6px; margin-left: auto; }
 .tool {
-  display: inline-flex; align-items: center; gap: 7px; height: 36px; padding: 0 12px; border: 1px solid #3a3a3d; border-radius: 8px;
-  background: none; color: #ecebe7; font: inherit; font-weight: 600; text-decoration: none; white-space: nowrap; cursor: pointer;
+  position: relative; display: inline-flex; align-items: center; gap: 7px; height: 40px; padding: 0 12px; border: 1px solid #3a3a3d; border-radius: 8px;
+  background: none; color: #ecebe7; font-weight: 600; text-decoration: none; white-space: nowrap; cursor: pointer;
 }
 .tool:hover { border-color: #8a8880; background: #1b1b1d; }
 .tool svg { width: 16px; height: 16px; flex: none; }
-.tool[aria-pressed="true"] { background: #ecebe7; border-color: #ecebe7; color: #0c0c0d; }
+.tool[aria-pressed="true"], .tool[aria-expanded="true"] { background: #ecebe7; border-color: #ecebe7; color: #0c0c0d; }
+.tool--send { background: #F5B800; border-color: #F5B800; color: #0c0c0d; }
+.tool--send:hover { background: #ffcb2e; border-color: #ffcb2e; }
 
-.stage { position: relative; min-height: 0; display: grid; place-items: stretch; background: #fff; }
+/* Row two: what the chosen design is, and whether the page showing is finished. Can be closed. */
+.about { display: flex; align-items: flex-start; gap: 10px; padding: 8px 12px; background: #17171a; border-bottom: 1px solid #2a2a2c; color: #c9c7c0; font-size: 13px; font-weight: 450; line-height: 1.4; }
+.about__body { flex: 1 1 auto; min-width: 0; }
+.about p { margin: 0; padding-block: 3px; }
+.about b { color: #ecebe7; font-weight: 650; }
+.about__short { display: none; }
+.about__draft { display: inline-block; margin-left: 6px; padding: 1px 8px; border-radius: 999px; background: #3a2c00; color: #ffd24d; font-size: 12px; font-weight: 600; white-space: nowrap; }
+.about__actions { display: none; flex-wrap: wrap; gap: 8px; margin: 6px 0 2px; }
+.mini { display: inline-flex; align-items: center; gap: 6px; height: 40px; padding: 0 12px; border: 1px solid #3a3a3d; border-radius: 8px; background: none; color: #ecebe7; font-weight: 600; text-decoration: none; white-space: nowrap; cursor: pointer; }
+.mini svg { width: 15px; height: 15px; flex: none; }
+.mini--send { background: #F5B800; border-color: #F5B800; color: #0c0c0d; }
+.about__close { flex: none; display: grid; place-items: center; width: 40px; height: 40px; margin: -6px -8px -6px 0; border: 0; border-radius: 6px; background: none; color: #a3a19b; cursor: pointer; }
+.about__close:hover { background: #2a2a2d; color: #ecebe7; }
+.about__close svg { width: 14px; height: 14px; }
+.said { position: fixed; left: 50%; top: 60px; z-index: 6; translate: -50% 0; padding: 8px 14px; border-radius: 999px; background: #ecebe7; color: #0c0c0d; font-weight: 650; box-shadow: 0 8px 30px rgba(0, 0, 0, .5); }
+
+.stage { position: relative; min-height: 0; display: grid; place-items: stretch; background: #fff; overflow: hidden; }
 .stage iframe { display: block; width: 100%; height: 100%; border: 0; background: #fff; }
-.stage.is-phone { place-items: center; padding: 16px; background: #18181a radial-gradient(circle at 50% 0, #26262a, #121213 70%); }
-.stage.is-phone iframe { width: 390px; max-width: 100%; height: min(844px, 100%); border-radius: 28px; box-shadow: 0 0 0 10px #050506, 0 0 0 11px #3a3a3d, 0 30px 80px rgba(0, 0, 0, .6); }
+/* Phone view: a true 390 by 844 screen, scaled down by shell.js when the window is too short to hold it. */
+.stage.is-phone { place-items: center; background: #18181a radial-gradient(circle at 50% 0, #26262a, #121213 70%); }
+.stage.is-phone .device { position: relative; width: calc(390px * var(--s, 1)); height: calc(844px * var(--s, 1)); }
+.stage.is-phone iframe { position: absolute; left: 0; top: 0; width: 390px; height: 844px; transform: scale(var(--s, 1)); transform-origin: 0 0; border-radius: 28px; box-shadow: 0 0 0 10px #050506, 0 0 0 11px #3a3a3d, 0 30px 80px rgba(0, 0, 0, .6); }
+.stage:not(.is-phone) .device { display: contents; }
 .noscript { margin: 0; padding: 8px 12px; background: #2a2a2d; font-size: 13px; }
 
 /* Fitting the bar. It is set in the device's own font, whose width varies, so widths alone cannot decide what fits.
-   shell.js adds .f1 to .f5 one at a time until nothing is cut off; the media queries below are the
-   no-JavaScript baseline and apply the same five steps at cautious widths. Keep the two lists in step.
-     1 no description   2 tools as icons   3 no sub-line or "Featured" tag   4 no title   5 other designs as numbers */
-.bar.f1 .bar__blurb { display: none; }
-.bar.f2 .tool { position: relative; width: 36px; padding: 0; justify-content: center; }
-.bar.f2 .tool span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-.bar.f3 .bar__title span, .bar.f3 .pick__tag { display: none; }
-.bar.f4 .bar__title { display: none; }
-.bar.f5 .pick { position: relative; }
-.bar.f5 .pick:not([aria-current="true"]) { width: 36px; padding: 0; justify-content: center; }
-.bar.f5 .pick:not([aria-current="true"]) .pick__name { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-@media (max-width: 1359px) { .bar__blurb { display: none; } }
-@media (max-width: 1199px) {
-  .tool { position: relative; width: 36px; padding: 0; justify-content: center; }
+   shell.js adds .f1 to .f4 one at a time until the row of designs no longer has to scroll (and marks the body
+   .compact at step 4); the media queries below are the no-JavaScript baseline and apply the same steps at
+   cautious widths. Keep the two lists in step.
+     1 tools as icons   2 no sub-line; "Featured" becomes a star   3 no title
+     4 compact: the four names share the whole row, and "open" and "send" move down into the description row */
+.bar.f1 .tool { width: 40px; padding: 0; justify-content: center; }
+.bar.f1 .tool span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.bar.f2 .bar__title span, .bar.f2 .pick__tag { display: none; }
+.bar.f2 .pick__star { display: inline; }
+.bar.f3 .bar__title { display: none; }
+.bar.f4 { gap: 6px; padding: 6px 8px; }
+.bar.f4 nav { flex: 1 1 auto; }
+.bar.f4 .picks { gap: 4px; }
+.bar.f4 .picks li { flex: 1 0 auto; }
+.bar.f4 .pick { justify-content: center; gap: 5px; padding: 0 9px; font-size: 13px; }
+.bar.f4 .pick__n, .bar.f4 .tool:not(#info) { display: none; }
+.bar.f4 #info[aria-expanded="true"] { display: none; }
+body.compact .about__actions { display: flex; }
+body.compact .about__long { display: none; }
+body.compact .about__short { display: inline; }
+@media (max-width: 1279px) {
+  .tool { width: 40px; padding: 0; justify-content: center; }
   .tool span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 }
-@media (max-width: 979px) { .bar__title span, .pick__tag { display: none; } }
-@media (max-width: 779px) {
-  .bar { gap: 8px; padding: 6px 8px; }
-  .bar__title, .tool--view { display: none; }
-  .pick { position: relative; }
-  .pick:not([aria-current="true"]) { width: 36px; padding: 0; justify-content: center; }
-  .pick:not([aria-current="true"]) .pick__name { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+@media (max-width: 1099px) {
+  .bar__title span, .pick__tag { display: none; }
+  .pick__star { display: inline; }
 }
-@media (max-width: 359px) {
-  .bar { gap: 6px; padding: 6px; }
+@media (max-width: 899px) { .bar__title, .tool--view { display: none; } }
+@media (max-width: 599px) {
+  .bar { gap: 6px; padding: 6px 8px; }
+  .bar nav { flex: 1 1 auto; }
   .picks { gap: 4px; }
-  .pick[aria-current="true"] { gap: 6px; padding: 0 10px 0 5px; }
+  .picks li { flex: 1 0 auto; }
+  .pick { justify-content: center; gap: 5px; padding: 0 9px; font-size: 13px; }
+  .pick__n, .tool:not(#info), #info[aria-expanded="true"] { display: none; }
+  .about__actions { display: flex; }
+  .about__long { display: none; }
+  .about__short { display: inline; }
 }
+@media (max-width: 359px) { .pick, .bar.f4 .pick { padding: 0 6px; font-size: 12.5px; } }
 @media (prefers-reduced-motion: reduce) { .pick { transition: none; } }

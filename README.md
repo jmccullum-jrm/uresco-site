@@ -14,14 +14,21 @@ plus a chooser that shows them side by side so the owner can pick one.
 
 Open the preview and use the bar across the top:
 
-- **1 to 4** switch designs. You stay on the same page, so you can compare the Alaska page, the quote form and
-  so on like for like.
-- **Phone view** (on a computer) shows the design at phone width.
-- **Open without this bar** opens the design you are looking at on its own, exactly as visitors would see it.
+- **The four names** switch designs. You stay on the same page, so you can compare the Alaska page, the quote
+  form and so on like for like.
+- **About** shows or hides a one-line description of the design you are looking at.
+- **Phone view** (on a computer) shows the design on a 390 by 844 phone screen.
+- **Open without this bar** opens the design on its own, exactly as visitors would see it.
+- **Send my pick** shares (on a phone) or copies (on a computer) a sentence naming the design and a link to it.
 - The address remembers where you are (`…/#yellow/alaska/`), so a link can be sent to someone else.
 
-The design marked *Featured* is the one that loads first. Change it with `"featured"` in
-[`designs/designs.json`](designs/designs.json).
+[`designs/designs.json`](designs/designs.json) controls the preview:
+
+- `"featured"` is the design that loads first.
+- `"hide"` lists designs to leave out, for example `["boreal"]` to narrow the choice to three. With only one
+  left, the chooser goes away and that design becomes the whole site.
+- `"finished"` lists the pages that are done in every design; on any other page the bar says "Draft page".
+  Remove it once every page is finished.
 
 The preview is the `docs/` folder of this branch. To serve it from GitHub Pages: repository **Settings → Pages →
 Build and deployment → Branch**, choose this branch and the `/docs` folder.
