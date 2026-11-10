@@ -11,8 +11,9 @@ import { LOCATIONS, tel } from '../data/locations.mjs';
 // The asterisk is for the eye. The input's own `required` is what a screen reader announces.
 const star = html`<span class="req" aria-hidden="true">*</span>`;
 
-// A row of empty boxes that only exists on paper, where a <select> cannot be ticked.
-export const paperBoxes = (items) => html`<span class="pboxes print-only" aria-hidden="true">${items.map((t) => html`<span class="pbox">${t}</span>`)}</span>`;
+// A row of boxes that only exists on paper, where a <select> cannot be ticked. `of` names the
+// select whose choice gets ticked on a filled-in copy (modules/forms.js).
+export const paperBoxes = (items, of) => html`<span class="pboxes print-only"${of ? html` data-boxes-of="${of}"` : ''} aria-hidden="true">${items.map((t) => html`<span class="pbox">${t}</span>`)}</span>`;
 
 // `msg` is what the visitor reads when a required field is empty. `printHint: false` keeps a
 // screen-only instruction ("type your full name") off the paper copy.
@@ -28,7 +29,7 @@ export const select = ({ id, label, options, full = false, hint, boxes = false }
   <div class="field${full ? ' field--full' : ''}${boxes ? ' field--boxes' : ''}">
     <label for="${id}">${label}${hint ? html` <span class="hint">${hint}</span>` : ''}</label>
     <select id="${id}" name="${id}">${options.map((o) => html`<option>${o}</option>`)}</select>
-    ${boxes ? paperBoxes(options) : ''}
+    ${boxes ? paperBoxes(options, id) : ''}
   </div>`;
 
 export const textarea = ({ id, label, hint, rows = 4, full = true }) => html`
@@ -66,6 +67,7 @@ export const fileDrop = ({ id = 'files', name = 'files', label, hint, title = 'D
       <span class="drop__icon">${icon('upload', { size: 26 })}</span>
       <b class="drop__title"><span class="drop__mouse">${title}</span><span class="drop__touch">${touch}</span></b>
       ${note ? html`<small>${note}</small>` : ''}
+      ${SITE.formEndpoint ? '' : html`<small class="drop__mail">Files can’t go through this page yet. Your email app opens when you send: attach them there.</small>`}
       <input class="sr-only" type="file" name="${name}" multiple accept="${accept}" aria-labelledby="${id}-label">
     </label>
     <ul class="files" data-files aria-live="polite"></ul>
@@ -79,7 +81,7 @@ export const formOpen = (kind, subject, { name, saved = 'Saved on this device as
         <p class="fm-card__name">${name || subject}</p>
         <p class="fm-card__key">${star}<span>Required</span><span class="fm-card__saved">${saved}</span></p>
       </div>
-      <p class="fm-restored" data-restored hidden>We kept what you typed last time. <button type="button" class="fm-textbtn" data-draft-clear>Start over</button></p>`;
+      <p class="fm-restored" data-restored hidden>We kept what you typed last time. <span data-restored-files hidden>Attach your files again. </span><button type="button" class="fm-textbtn" data-draft-clear>Start over</button></p>`;
 
 const THREE = () => LOCATIONS.map((l) => html`<a class="fm-mini nums" href="${tel(l.phone)}"><b>${l.city}</b> ${l.phone}</a>`);
 
@@ -99,7 +101,7 @@ export const formFoot = (label, { goes = true } = {}) => html`
     </div>
   </div>`;
 
-export const doneNotice = ({ sent, almost }) => html`
+export const doneNotice = ({ sent, almost, print = false }) => html`
   <div class="notice notice--done" data-done hidden tabindex="-1" role="status">
     <span class="notice__u">${icon('check', { size: 30 })}</span>
     <div class="notice__body">
@@ -110,7 +112,10 @@ export const doneNotice = ({ sent, almost }) => html`
       <div class="actions">
         <a class="btn" data-mail-again href="mailto:${SITE.email}">${icon('mail', { size: 18 })} Open the email again</a>
         <button type="button" class="btn btn--line" data-mail-copy>${icon('file', { size: 18 })} <span>Copy the text</span></button>
+        <button type="button" class="btn btn--line" data-mail-back>Back to the form</button>
+        ${print ? html`<button type="button" class="btn btn--line" data-print>${icon('file', { size: 18 })} Print what you filled in</button>` : ''}
       </div>`}
+      ${SITE.formEndpoint && print ? html`<div class="actions"><button type="button" class="btn btn--line" data-print>${icon('file', { size: 18 })} Print what you filled in</button></div>` : ''}
       <div class="fm-minis">${THREE()}</div>
     </div>
   </div>`;
@@ -154,7 +159,7 @@ export const yardTag = ({ kicker, lines = '', after = '', ask = 'Rather call?' }
 export const letterhead = (ctx, { title, sub }) => html`
   <div class="letterhead print-only">
     <div class="letterhead__brand">${mark({ id: 'mkp' + ctx.uid() })}<div><p class="letterhead__title">${title}</p><p>${sub}</p></div></div>
-    <div class="letterhead__return"><b>Return to your home yard:</b><br>
+    <div class="letterhead__return"><b>Ask your yard where to send this.</b><br>
       ${LOCATIONS.map((l) => html`${l.city}: fax ${l.fax} · ${l.email}<br>`)}
     </div>
   </div>`;

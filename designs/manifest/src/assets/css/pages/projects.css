@@ -10,14 +10,14 @@
 .pj-index__kinds { display: grid; gap: .1rem; font-size: .875rem; line-height: 1.35; color: var(--ink-2); }
 .pj-index a:hover b { text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: .18em; }
 .pj-index a:hover .bub, .pj-index a:focus-visible .bub { background: var(--yellow); }
-@media (max-width: 899px) {
+@media (max-width: 56.1875em) {
   .pj-index ol { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .pj-index li:nth-child(odd) { border-left: 0; }
   .pj-index li:nth-child(odd) a { padding-left: 0; }
   .pj-index li:nth-child(n+3) { border-top: 1px solid var(--rule-2); }
 }
 /* On a phone the sector key, one screen further down, does this job; without the script it is not there, so the index stays. */
-@media (max-width: 599px) {
+@media (max-width: 37.4375em) {
   html.js .pj-index { display: none; }
   .pj-index ol { grid-template-columns: minmax(0, 1fr); }
   .pj-index li + li { border-left: 0; border-top: 1px solid var(--rule-2); }
@@ -31,7 +31,7 @@
 .pj-side { grid-area: side; align-self: stretch; }
 .pj-side__in { background: var(--sheet); border: var(--line) solid var(--ink); }
 /* Held in view only where the whole key fits under the masthead; on a short screen it scrolls with the page. */
-@media (min-width: 1200px) and (min-height: 660px) { .pj-side__in { position: sticky; top: calc(var(--mast) + 1.25rem); } }
+@media (min-width: 75em) and (min-height: 41.25em) { .pj-side__in { position: sticky; top: calc(var(--mast) + 1.25rem); } }
 .pj-tblock .tblock__title { border-left: 0; }
 .pj-tblock .tblock__title b { font-size: clamp(1.5rem, 1.1rem + 1.2vw, 2rem); }
 
@@ -75,8 +75,8 @@ html:not(.js) .pj-filter, html:not(.js) .pj-status { display: none; }
 .pj-ask:hover .i { transform: translateX(3px); }
 
 /* Until the schedule's middle column is wide enough for a label beside its chips, the label goes above them. */
-@media (max-width: 1439px) { .pj-row__svc { flex-direction: column; gap: .4rem; } }
-@media (max-width: 1199px) {
+@media (max-width: 89.9375em) { .pj-row__svc { flex-direction: column; gap: .4rem; } }
+@media (max-width: 74.9375em) {
   /* One column: the key goes above the schedule. Title block across the top, then the sectors side by side. */
   .pj-sheet { grid-template-columns: minmax(0, 1fr); grid-template-areas: "side" "sched"; row-gap: var(--gap); }
   .pj-tblock { display: none; }  /* the section head says it; a yellow title over the yellow 'All work' row is one block too many */
@@ -92,7 +92,7 @@ html:not(.js) .pj-filter, html:not(.js) .pj-status { display: none; }
   html:not(.js) .pj-tblock .tblock__title { border-bottom: 0; }
   html:not(.js) .pj-side__note { border-top-color: var(--ink); }
 }
-@media (max-width: 767px) {
+@media (max-width: 47.9375em) {
   /* Phone: the key is five buttons, then the schedule line by line. */
   .pj-cols { display: none; }
   .pj-sched { border-top: 0; }
@@ -138,7 +138,7 @@ html:not(.js) .pj-filter, html:not(.js) .pj-status { display: none; }
 .pj-mx__cells .is-on::before { content: ''; position: absolute; inset: 0; background: var(--sheet); transform-origin: left; }
 .pj-mx__key { display: none; }
 .pj-mx__note { margin: .9rem 0 0; font-family: var(--mono); font-size: .75rem; line-height: 1.45; letter-spacing: .01em; color: var(--ink-3); }
-@media (max-width: 1099px) {
+@media (max-width: 68.6875em) {
   /* No room for names over the columns: the pictograms are named in the key underneath. */
   .pj-mx { --w: 12.5rem; }
   .pj-mx__col { grid-template-rows: auto auto; }
@@ -150,7 +150,7 @@ html:not(.js) .pj-filter, html:not(.js) .pj-status { display: none; }
   .pj-mx__key a:hover span:last-child { text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: .18em; }
   .pj-mx__key .num { font-size: .75rem; font-weight: 500; color: var(--ink-3); }
 }
-@media (max-width: 767px) {
+@media (max-width: 47.9375em) {
   /* Phone: each line of the schedule is a strip of nine cells; the pictograms are named in the key underneath. */
   .pj-mx__head { display: none; }
   .pj-mx__row { grid-template-columns: minmax(0, 1fr); padding-block: .9rem 1rem; }

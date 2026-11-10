@@ -3,35 +3,17 @@ import { icon, mark } from '../lib/icons.mjs';
 import { layout } from '../lib/layout.mjs';
 import { pageHero, sectionHead, sequence, quoteBand, stub } from '../lib/components.mjs';
 import { field, select, textarea, radios, yardSelect, fileDrop, group, sheetLayout } from '../lib/forms.mjs';
-import { LOCATIONS, tel } from '../data/locations.mjs';
+import { LOCATIONS } from '../data/locations.mjs';
 import { SITE } from '../config.mjs';
 
-// Contractor charge accounts. Terms (limits, due dates) are set by Uresco per account
-// and are deliberately not published here.
-const TERMS = [
-  ['01', 'Buy on account', 'Order by phone, email or quote and pay against a statement instead of at the counter.'],
-  ['02', 'Job accounts', 'Track materials by project, so every invoice lands on the right job.'],
-  ['03', 'Authorized buyers', 'Name the people on your crew who can pick up or order on your account.'],
-  ['04', 'Tax-exempt & resale on file', 'Send your certificates once and we keep them on your account.'],
-];
-
+// The contractor credit application. What an account includes (limits, terms, statements) is not stated
+// here until the owner confirms it: the page says to ask your yard.
 const OPENING = [
-  { no: '01', name: 'Apply', body: 'Online here, or print a paper copy and return it to your home yard.' },
-  { no: '02', name: 'We review', body: 'We check references and confirm your limit and terms.' },
-  { no: '03', name: 'Start ordering', body: 'Your home yard sets up your account and authorized buyers.' },
+  { no: '01', name: 'Apply', body: 'Online here, or print a paper copy and send it to your yard.' },
+  { no: '02', name: 'We review', body: 'Your yard reviews the application and tells you what happens next.' },
 ];
 
 const SECTIONS = [['business', 'A', 'Business'], ['contacts', 'B', 'Contacts'], ['account', 'C', 'Account'], ['references', 'D', 'References'], ['documents', 'E', 'Documents & signature']];
-
-// A specimen statement: what "every invoice on the right job" looks like. It carries no figures; the job column is the point.
-const SPECIMEN = [['01', 'Job A'], ['02', 'Job A'], ['03', 'Job B'], ['04', 'Job B'], ['05', 'Job C']];
-const statement = html`
-  <div class="ac-stmt" aria-hidden="true" data-reveal>
-    <div class="ac-stmt__head"><b>Statement</b><span>Specimen</span></div>
-    <div class="ac-stmt__cols"><span>Ln</span><span>Job</span><span>Invoice</span><span>Amount</span></div>
-    ${SPECIMEN.map(([ln, job]) => html`<div class="ac-stmt__row"><span>${ln}</span><span class="ac-stmt__job"><b>${job}</b></span><span class="ac-stmt__blank"></span><span class="ac-stmt__blank"></span></div>`)}
-    <p class="ac-stmt__note">Every invoice on the right job</p>
-  </div>`;
 
 const reference = (n) => html`
   <div class="fm-ref" role="group" aria-labelledby="ref${n}-t">
@@ -45,7 +27,7 @@ const letterhead = html`
   <div class="fm-paper fm-letterhead">
     <div class="fm-letterhead__brand">${mark({ id: 'mkp' })}<div><p class="fm-letterhead__title">Credit application</p><p class="fm-letterhead__firm">${SITE.legal}</p></div></div>
     <div class="fm-letterhead__return">
-      <p class="fm-letterhead__label">Return to your home yard</p>
+      <p class="fm-letterhead__label">Return to your yard</p>
       <ul>${LOCATIONS.map((l) => html`<li><b>${l.city}</b><span>Fax ${l.fax}</span><span>${l.email}</span></li>`)}</ul>
     </div>
     <p class="fm-letterhead__page">Page 1 of 2</p>
@@ -61,37 +43,25 @@ export default {
   path: 'accounts/',
   render: (ctx) => layout(ctx, {
     title: 'Contractor accounts & credit application',
-    description: 'Open a contractor charge account with Uresco Construction Materials. Apply online for credit to buy on account at our Kent, Anchorage and Fairbanks yards.',
+    description: 'Apply for a contractor account with Uresco Construction Materials, online or on paper, at our Kent, Anchorage or Fairbanks yard.',
     body: html`
 ${pageHero(ctx, {
   sheet: 'Contractor accounts',
   meta: 'Credit application',
-  title: 'One account. <em>All three yards.</em>',
-  lede: 'Set up once, then order from any of our three yards on account.',
+  title: 'Open a <em>contractor account.</em>',
+  lede: 'One form, and the name of the yard you buy from most.',
   below: stub({
     tag: 'Credit application',
     title: 'Apply online or on paper.',
-    body: 'The same form either way. On paper, sign it and return it to your home yard by fax, by email or in person.',
-    actions: html`<a class="btn btn--dark" href="#apply">Start the application ${icon('arrow', { size: 18 })}</a><button type="button" class="btn btn--line js-only" data-print>${icon('file', { size: 18 })} Print a paper copy</button>`,
+    body: 'The same form either way. Questions? Ask your yard.',
+    actions: html`<a class="btn btn--dark" href="#business">Start the application ${icon('arrow', { size: 18 })}</a><button type="button" class="btn btn--line js-only" data-print>${icon('file', { size: 18 })} Print a paper copy</button>`,
     cls: 'ac-stub',
   }),
 })}
 
-<section class="section section--panel" id="terms">
+<section class="section section--flush" id="apply">
   <div class="wrap">
-    ${sectionHead({ no: '01', eyebrow: 'What an account does', title: 'Pay on a statement, <em>not at the counter.</em>', lede: 'Credit limits and terms are confirmed by your yard once your account is approved.' })}
-    <div class="ac-terms">
-      <ul class="ac-sched">
-        ${TERMS.map(([mk, t, b]) => html`<li class="ac-sched__row"><span class="ac-sched__mk num" aria-hidden="true">${mk}</span><h3 class="ac-sched__t">${t}</h3><p>${b}</p></li>`)}
-      </ul>
-      ${statement}
-    </div>
-  </div>
-</section>
-
-<section class="section" id="apply">
-  <div class="wrap">
-    ${sectionHead({ no: '02', eyebrow: 'Credit application', title: 'Apply <em>for credit.</em>', lede: 'Fill it in here, or print it and sign it on paper. We use it to review your account.', action: html`<button type="button" class="link js-only ac-print" data-print>Print a paper copy ${icon('arrow', { size: 16 })}</button>` })}
+    ${sectionHead({ no: '01', eyebrow: 'Credit application', title: 'Apply <em>for&nbsp;credit.</em>', lede: 'For credit limits, terms and how an account works, ask your yard.', action: html`<button type="button" class="link js-only ac-print" data-print>Print a paper copy ${icon('arrow', { size: 16 })}</button>` })}
     ${sequence(OPENING, { cls: 'seq--four ac-seq' })}
     ${sheetLayout({
       kind: 'credit',
@@ -99,18 +69,18 @@ ${pageHero(ctx, {
       subject: 'Credit application',
       name: 'Credit application',
       head: 'Application for credit',
-      lead: 'Goes to your home yard',
+      lead: 'Goes to',
       steps: SECTIONS,
       send: 'Submit application',
-      done: { sent: 'Thanks, your application is in. Your home yard will contact you once it has been reviewed.', almost: 'your application' },
-      privacy: 'Tax ID, bank details and signature are never saved.',
+      done: { sent: 'Thanks. Your application has gone to the yard you chose.', almost: 'your application' },
+      privacy: SITE.formEndpoint ? 'Tax ID, bank details and signature are not kept on this device.' : 'Tax ID, bank details and signature are not kept on this device. Tax ID and bank details do not go in the email: give those to your yard by phone or fax, or use the paper copy.',
       paper: letterhead,
       body: html`
         ${group({ id: 'business', letter: 'A', title: 'Business' }, html`
           ${field({ id: 'company', label: 'Legal business name', required: true, w: 'wide', msg: 'Enter the legal name of the business.', attrs: html` autocomplete="organization"` })}
           ${field({ id: 'dba', label: 'Doing business as', hint: 'if different', w: 'third' })}
-          ${select({ id: 'entity', label: 'Business type', w: 'wide', paper: true, options: ['Corporation', 'LLC', 'Partnership', 'Sole proprietor', 'Tribal or Alaska Native corporation', 'Government or institution', 'Other'] })}
-          ${field({ id: 'ein', label: 'Federal tax ID (EIN)', hint: 'not your SSN', w: 'third', m2: true, attrs: html` inputmode="numeric" autocomplete="off"` })}
+          ${select({ id: 'entity', label: 'Business type', w: 'wide', paper: true, options: ['Corporation', 'LLC', 'Partnership', 'Sole proprietor', 'Other'] })}
+          ${field({ id: 'ein', label: 'Federal tax ID (EIN)', hint: 'not your SSN', w: 'third', m2: true, held: true, attrs: html` inputmode="numeric" autocomplete="off"` })}
           ${field({ id: 'license', label: 'Contractor license #', hint: 'WA L&I or AK', w: 'third', m2: true, attrs: html` autocomplete="off"` })}
           ${field({ id: 'years', label: 'Years in business', type: 'number', w: 'third', m2: true, attrs: html` min="0" inputmode="numeric"` })}
           ${field({ id: 'website', label: 'Website', type: 'url', w: 'third', m2: true, attrs: html` autocomplete="url" placeholder="https://"` })}
@@ -125,7 +95,7 @@ ${pageHero(ctx, {
           ${textarea({ id: 'buyers', label: 'Authorized buyers', hint: 'names of people who can order or pick up', rows: 3 })}
         `)}
         ${group({ id: 'account', letter: 'C', title: 'Account' }, html`
-          ${yardSelect({ label: 'Home yard', hint: 'where you’ll buy most', lead: 'Goes to your home yard' })}
+          ${yardSelect({ label: 'Your yard', hint: 'the one you buy from most', lead: 'Goes to' })}
           ${field({ id: 'limit', label: 'Requested credit limit', hint: 'USD', m2: true, attrs: html` inputmode="numeric" placeholder="$"` })}
           ${field({ id: 'monthly', label: 'Expected monthly purchases', hint: 'USD', m2: true, attrs: html` inputmode="numeric" placeholder="$"` })}
           ${radios('po', 'Purchase orders required on invoices?', [['No'], ['Yes']], { w: 'half' })}
@@ -134,8 +104,8 @@ ${pageHero(ctx, {
         ${pageTwo}
         ${group({ id: 'references', letter: 'D', title: 'References', cls: 'fm-set--newpage' }, html`
           <div class="fm-cell fm-cell--full fm-refs">${reference(1)}${reference(2)}${reference(3)}</div>
-          ${field({ id: 'bank', label: 'Bank', hint: 'name and branch' })}
-          ${field({ id: 'bank_contact', label: 'Bank contact & phone' })}
+          ${field({ id: 'bank', label: 'Bank', hint: 'name and branch', held: true })}
+          ${field({ id: 'bank_contact', label: 'Bank contact & phone', held: true })}
         `)}
         ${group({ id: 'documents', letter: 'E', title: 'Documents & signature' }, html`
           ${fileDrop({ id: 'docs', name: 'documents', label: 'Certificates', hint: 'resale or tax-exempt certificate, contractor license, W-9', title: 'Attach documents', tapTitle: 'Tap to attach documents', note: 'PDF or photos, up to 25 MB each.', accept: '.pdf,.jpg,.jpeg,.png,.heic' })}
@@ -144,7 +114,7 @@ ${pageHero(ctx, {
             <div class="fm-paperopts"><label><input type="checkbox" tabindex="-1"><span class="fm-opt__box"></span>Resale or tax-exempt certificate</label><label><input type="checkbox" tabindex="-1"><span class="fm-opt__box"></span>Contractor license</label><label><input type="checkbox" tabindex="-1"><span class="fm-opt__box"></span>W-9</label></div>
           </div>
           <div class="fm-cell fm-cell--full fm-cell--req fm-cell--agree">
-            <label class="fm-check"><input type="checkbox" id="agree" name="agree" value="Yes" data-label="Certified and authorized credit check" required aria-describedby="agree-err"><span class="fm-opt__box fm-opt__box--sq"></span><span class="fm-check__t">I certify the information above is true and authorize Uresco Construction Materials, Inc. to contact the references listed and obtain credit information to evaluate this application.</span><span class="fm-req" aria-hidden="true"><span>Required</span></span></label>
+            <label class="fm-check"><input type="checkbox" id="agree" name="agree" value="Yes" data-label="Certification" required aria-describedby="agree-err"><span class="fm-opt__box fm-opt__box--sq"></span><span class="fm-check__t">I certify the information above is true.</span><span class="fm-req" aria-hidden="true"><span>Required</span></span></label>
             <span class="fm-err" id="agree-err" hidden></span>
           </div>
           ${field({ id: 'signature', label: 'Signature', hint: 'type your full name', screenHint: true, required: true, w: 'wide', msg: 'Type your full name to sign.' })}
@@ -156,7 +126,7 @@ ${pageHero(ctx, {
   </div>
 </section>
 
-${quoteBand(ctx, { no: '03', eyebrow: 'Have a job to price?' })}
+${quoteBand(ctx, { no: '02', eyebrow: 'Have a job to price?' })}
 `,
   }),
 };

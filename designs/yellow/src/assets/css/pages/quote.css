@@ -1,7 +1,9 @@
 /* ---------- Quote request ---------- */
 /* The sticker over the headline says what the link that brought you here was about. */
 .qt-carried { margin: 0 0 1.1rem; max-width: 100%; }
-.qt-carried .sticker { max-width: 100%; overflow: hidden; text-overflow: ellipsis; display: inline-block; font-size: .78rem; }
+.qt-carried .sticker { max-width: 100%; display: inline-block; font-size: .78rem; white-space: normal; }
+/* Three ways it can leave the yard, so three pills. */
+.fm-delivery .seg { grid-template-columns: repeat(auto-fit, minmax(min(100%, 11.5rem), 1fr)); }
 
 /* What happens next: three arches, each taller, each numeral bigger, the words on one line across. */
 .qt-next { padding-bottom: 0; }

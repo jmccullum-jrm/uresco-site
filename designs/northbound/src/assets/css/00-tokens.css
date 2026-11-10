@@ -75,9 +75,11 @@
   --d-3: .9s;    /* reveals */
   --d-4: 1.5s;   /* a lane drawing on the map */
 }
-@media (min-width: 1000px) {
-  :root { --rail: 4rem; --mast: 4.5rem; }
+/* --inset is resolved where it is used, against that element's width: the side margin of a full-width
+   bar whose contents line up with the page's .wrap, however wide the screen. */
+@media (min-width: 62.5em) {
+  :root { --rail: 4rem; --mast: 4.5rem; --inset: max(var(--gutter), calc((100% - var(--rail) - var(--max)) / 2)); }
 }
-@media (max-width: 999px) {
+@media (max-width: 62.4375em) {
   :root { --bar: calc(3.75rem + env(safe-area-inset-bottom, 0px)); }
 }

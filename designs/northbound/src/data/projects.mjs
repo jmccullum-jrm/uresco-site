@@ -27,7 +27,7 @@ export const SECTOR_NOTES = {
   Institutional: {
     id: 'institutional',
     tail: 'Built to the specification.',
-    lede: 'Public work is built to a specification. Engineered floor systems, fire-retardant-treated lumber, exterior sheathing, and whole packages crated for export.',
+    lede: 'Engineered floor systems, fire-retardant-treated lumber, exterior sheathing, and whole packages crated for export.',
     more: ['Remote & export packages', 'services/#remote'],
   },
   Commercial: {
@@ -39,13 +39,13 @@ export const SECTOR_NOTES = {
   Residential: {
     id: 'residential',
     tail: 'Framing through finish.',
-    lede: 'A house from the framing package to the last deck board, with take-offs from your plans and delivery set by boom truck.',
+    lede: 'A house from the framing package to the last deck board, with take-off help from your plans and job-site delivery by boom truck.',
     more: ['Estimates & take-offs', 'services/#takeoffs'],
   },
   'Remote Alaska': {
     id: 'remote-alaska',
     tail: 'No road in.',
-    lede: 'Off the road system there is no lumber yard to run back to. The whole job ships as one package: crated, then generally barged in the ice-free season or flown in.',
+    lede: 'Off the road system, a forgotten item can mean a second freight bill. A complete package is crated for the trip, and freight generally goes by barge in the ice-free season or by air.',
     more: ['How remote delivery works', 'alaska/'],
   },
 };
@@ -97,7 +97,7 @@ export const PROJECTS = [
     sector: 'Residential',
     title: 'Custom homes',
     photo: 'custom-home',
-    scope: 'Framing through finish for custom builders, with take-offs from plans and delivery set by boom truck.',
+    scope: 'Framing through finish for custom builders, with take-off help from plans and job-site delivery by boom truck.',
     materials: ['Framing packages', 'Glulam', 'Cedar siding', 'Cabinets'],
     id: 'custom-homes',
     caption: 'Looking up through new wall framing and roof trusses.',
@@ -106,11 +106,11 @@ export const PROJECTS = [
   {
     sector: 'Residential',
     title: 'Decks, siding & exteriors',
-    photo: 'deck',
+    photo: 'cedar',
     scope: 'Cedar and composite decking, Hardie siding and the trim, wraps and fasteners to finish the envelope.',
     materials: ['Cedar', 'Composite decking', 'James Hardie', 'House wrap'],
     id: 'exteriors',
-    caption: 'A wood deck beside a dark-stained house.',
+    caption: 'Vertical cedar siding under a deep roof overhang.',
     links: ['products/cedar-decking/', 'products/cedar-decking/', 'products/siding-exterior/', 'products/siding-exterior/'],
   },
   {

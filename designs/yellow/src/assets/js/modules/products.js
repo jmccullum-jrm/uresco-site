@@ -36,8 +36,9 @@
         const byName = on && has(r.hay, ws);
         const show = !on || byName || hits.length > 0;
         r.row.hidden = !show;
-        // A line that matches by its own name shows everything in it; otherwise only the hits.
-        r.items.forEach((it) => { const h = hits.includes(it); it.el.hidden = on && !h && !byName; it.el.classList.toggle('is-hit', h); });
+        // When items match, only those show, so the rows always equal the count. A line that matches
+        // by its own name, with no item of that name, shows everything in it.
+        r.items.forEach((it) => { const h = hits.includes(it); it.el.hidden = on && (hits.length ? !h : !byName); it.el.classList.toggle('is-hit', h); });
         if (on && show) { lines++; products += hits.length; if (!first) first = hits.length ? hits[0].link : r.link; }
       });
       clear.hidden = !input.value;
@@ -52,6 +53,9 @@
     form.addEventListener('submit', (e) => { e.preventDefault(); if (first) location.href = first.href; });
     clear.addEventListener('click', () => { input.value = ''; run(); input.focus(); });
     input.addEventListener('keydown', (e) => { if (e.key === 'Escape' && input.value) { e.preventDefault(); input.value = ''; run(); } });
+    // "Find a product" in the hero: straight to the field, inside the tap, or a phone won't open its keyboard.
+    const go = document.querySelector('[data-find-go]');
+    if (go) go.addEventListener('click', (e) => { e.preventDefault(); input.focus(); });
     // On a phone the keyboard covers half the screen: bring the field to the top so the rows show under it.
     input.addEventListener('focus', () => { if (matchMedia('(max-width: 899px)').matches) form.scrollIntoView({ block: 'start' }); });
     // Coming back to the page restores what was typed; show the matching rows again.

@@ -8,9 +8,9 @@ export const SERVICES = [
     step: 1,
     label: 'Take-offs',
     icon: 'ruler',
-    name: 'Estimates & material take-offs',
+    name: 'Estimates & take-offs',
     short: 'Send plans or a list. We’ll help with the take-off and the estimate.',
-    body: 'Send drawings and we’ll help with the take-off: the materials list for the job, with an estimate. On a remote job it catches the gaps before they become a second freight bill.',
+    body: 'Send drawings and we’ll help with the take-off and the estimate. On a remote job, a complete list can save a second freight bill.',
   },
   {
     id: 'design',
@@ -18,8 +18,8 @@ export const SERVICES = [
     label: 'Design',
     icon: 'pencil',
     name: 'Design services',
-    short: 'Help with layouts, members and packages for unique projects.',
-    body: 'For projects that need more than a list, our team offers design services for your unique project needs, along with take-off assistance.',
+    short: 'Design services for your unique project needs.',
+    body: 'We offer design services for your unique project needs, along with material take-off assistance.',
   },
   {
     id: 'delivery',
@@ -27,8 +27,8 @@ export const SERVICES = [
     label: 'Delivery',
     icon: 'truck',
     name: 'Job-site delivery',
-    short: 'Boom trucks and truck-mounted Moffett forklifts.',
-    body: 'Our boom trucks and truck-mounted Moffett forklifts set materials where the crew needs them, not at the curb.',
+    short: 'To the job site by boom truck and Moffett forklift.',
+    body: 'We deliver to the job site by boom truck and Moffett forklift.',
   },
   {
     id: 'remote',
@@ -36,7 +36,7 @@ export const SERVICES = [
     label: 'Packages',
     icon: 'ship',
     name: 'Remote & export packages',
-    short: 'Complete building packages for places without a lumber yard.',
+    short: 'Complete building packages for remote and export jobs.',
     body: 'We are fully equipped to handle remote-location and export building packages. One complete package beats a second freight bill.',
   },
   {
@@ -54,7 +54,7 @@ export const SERVICES = [
     label: 'Crating',
     icon: 'crate',
     name: 'Crating & packaging',
-    short: 'Crated, banded and wrapped to survive the trip.',
-    body: 'Long hauls and multiple handoffs are hard on materials. We crate, band and wrap loads so they arrive the way they left.',
+    short: 'Crating and packaging for the trip.',
+    body: 'Long hauls and multiple handoffs are hard on materials. We offer crating and packaging for the trip.',
   },
 ];

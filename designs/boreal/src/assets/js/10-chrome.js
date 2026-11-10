@@ -36,20 +36,39 @@
     window.addEventListener('scroll', onScroll, { passive: true });
   }
 
-  /* Products menu. Hover and focus open it in CSS; the button makes it work by touch and keyboard,
-     and Escape closes it wherever the pointer happens to be. */
+  /* Products menu. Hover opens it in CSS; the button makes it work by touch and keyboard, and is the only
+     way in from the keyboard. aria-expanded always says what is on screen, and Escape closes the menu
+     wherever the pointer or the focus happens to be. data-shut holds it closed under a resting pointer. */
   $$('[data-menu]').forEach((item) => {
     const btn = $('.nav__toggle', item);
-    const set = (open) => { item.toggleAttribute('data-open', open); btn.setAttribute('aria-expanded', String(open)); };
-    btn.addEventListener('click', () => { item.removeAttribute('data-shut'); set(!item.hasAttribute('data-open')); });
-    item.addEventListener('keydown', (e) => {
-      if (e.key !== 'Escape') return;
-      set(false); item.setAttribute('data-shut', ''); btn.focus();
+    const showing = () => item.hasAttribute('data-open') || (item.matches(':hover') && !item.hasAttribute('data-shut'));
+    const paint = () => btn.setAttribute('aria-expanded', String(showing()));
+    const shut = () => { item.removeAttribute('data-open'); item.toggleAttribute('data-shut', item.matches(':hover')); paint(); };
+    btn.addEventListener('click', () => {
+      if (showing()) return shut();
+      item.removeAttribute('data-shut'); item.setAttribute('data-open', ''); paint();
     });
-    item.addEventListener('mouseleave', () => item.removeAttribute('data-shut'));
-    item.addEventListener('focusout', (e) => { if (!item.contains(e.relatedTarget)) { set(false); item.removeAttribute('data-shut'); } });
-    document.addEventListener('click', (e) => { if (!item.contains(e.target)) set(false); });
+    document.addEventListener('keydown', (e) => {
+      if (e.key !== 'Escape' || !showing()) return;
+      const inside = item.contains(document.activeElement);
+      shut();
+      if (inside) btn.focus();
+    });
+    item.addEventListener('mouseenter', paint);
+    item.addEventListener('mouseleave', () => { item.removeAttribute('data-shut'); paint(); });
+    item.addEventListener('focusout', (e) => { if (!item.contains(e.relatedTarget)) { item.removeAttribute('data-open'); paint(); } });
+    document.addEventListener('click', (e) => { if (!item.contains(e.target)) { item.removeAttribute('data-open'); paint(); } });
   });
+
+  /* The generic quote buttons (action bar, masthead, closing band) follow the page's own quote link, so the
+     yellow button in view always carries what was just chosen on the map or ticked on a product line. */
+  const carried = $$('[data-quote-link]');
+  const source = $('[data-r="quote"], [data-pline-quote]');
+  if (carried.length && source) {
+    const copy = () => carried.forEach((a) => a.setAttribute('href', source.href));
+    copy();
+    new MutationObserver(copy).observe(source, { attributes: true, attributeFilter: ['href'] });
+  }
 
   /* Motion that runs on its own can be paused. One setting for the whole site, remembered between pages.
      html.is-still pauses only the endless animations (see 30-components.css), so a line that is still

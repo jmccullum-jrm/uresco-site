@@ -55,4 +55,7 @@
   });
   paintHours();
   setInterval(paintHours, 60 * 1000);
+
+  /* Paper has no scrolling, so whatever draws in on first sight is drawn before it prints. */
+  window.addEventListener('beforeprint', () => $$('[data-reveal]').forEach((el) => el.classList.add('is-in')));
 })();

@@ -1,6 +1,6 @@
 /* ================= Pacific Northwest =================
    The sibling of the Alaska page, one zoom level in. It opens on a close-up of Puget Sound with the
-   Kent yard at its centre; then how a load comes off the truck, what the yard carries, and the lane
+   Kent yard at its centre; then how a load comes off the truck, the product lines, and the lane
    north. Shared pieces (.stage, .finder, .route__*, .legend, .map__*, .callout) keep their own rules;
    everything here is prefixed pn-. */
 
@@ -41,7 +41,12 @@
 }
 @keyframes pn-fade { to { opacity: 1; } }
 
-@media (min-width: 700px) and (max-width: 1099px) {
+@media (min-width: 43.75em) and (max-width: 68.6875em) {
+  /* The words come first in the markup, so the keyboard meets them first; the map still sits on top. */
+  .pn-sound { display: flex; flex-direction: column; align-items: stretch; }
+  .pn-sound .stage__map { order: 1; }
+  .pn-sound .stage__ui { order: 2; }
+  .pn-sound .legend { order: 3; }
   .pn-open .stage__ui { margin-top: 0; }
   .pn-panel { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 1.25rem; align-items: start; }
   .pn-panel .route__yard, .pn-panel .btn--block { grid-column: 1; }
@@ -49,10 +54,10 @@
   .pn-panel .route__note { grid-column: 1; }
 }
 /* A band this narrow has no room east of Kent: the tag goes on the other side, the number on its own line. */
-@media (min-width: 700px) and (max-width: 899px) {
+@media (min-width: 43.75em) and (max-width: 56.1875em) {
   .pn-plate .map__yard > .map__tag { left: auto; right: 17px; }
 }
-@media (max-width: 699px) {
+@media (max-width: 43.6875em) {
   .pn-sound { --pad: 1.1rem; }
   /* The crop is map x 960–1780, y 20–1000 of the 1800 × 1000 canvas: the towns, nothing wasted. */
   .pn-sound .stage__map { aspect-ratio: 820 / 980; margin-top: .75rem; }
@@ -60,6 +65,8 @@
   .pn-town .map__name { display: block; }
   .pn-sound .finder { margin-top: -.75rem; }
   .pn-chips { gap: .35rem; }
+}
+@media (max-width: 43.6875em), (pointer: coarse) {
   .pn-chips .chip { height: 40px; padding-inline: .85rem; font-size: .875rem; }
 }
 
@@ -71,17 +78,18 @@
 .pn-unit__body { display: flex; flex-direction: column; flex: 1; padding: 1.5rem; }
 .pn-unit__title { font-size: clamp(1.5rem, 1.3rem + .7vw, 1.875rem); font-weight: 500; letter-spacing: -.03em; line-height: 1.1; }
 .pn-unit__text { margin: .85rem 0 0; max-width: 33em; font-size: 1.0625rem; line-height: 1.5; color: var(--slate); }
-@media (max-width: 860px) { .pn-gear { grid-template-columns: minmax(0, 1fr); gap: .75rem; } }
-@media (max-width: 699px) {
+@media (max-width: 53.75em) { .pn-gear { grid-template-columns: minmax(0, 1fr); gap: .75rem; } }
+@media (max-width: 43.6875em) {
   .pn-unit__media { height: auto; aspect-ratio: 16 / 10; margin: .4rem .4rem 0; }
   .pn-unit__body { padding: 1.15rem 1.1rem 1.25rem; }
   .pn-unit__text { font-size: 1rem; }
   .pn-fig { left: .5rem; top: .35rem; width: calc(100% - 1rem); height: calc(100% - .7rem); }
 }
 
-/* ---------- The load sheet: the range, as the paperwork that goes with a load ---------- */
+/* ---------- The product lines ---------- */
 .pn-load { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(2rem, 5vw, 5rem); align-items: start; }
 .pn-load__head { position: sticky; top: calc(var(--mast) + 2rem); }
+.pn-load__head .lede { margin-top: 1rem; }
 .pn-load__more { margin: 1.25rem 0 0; max-width: 34em; color: var(--slate); }
 .pn-load__more b { color: var(--ink); font-weight: 600; }
 .pn-load__proof { display: flex; align-items: center; gap: .9rem; margin: 1.75rem 0 0; }
@@ -90,10 +98,7 @@
 .pn-load__proof figcaption span { font-family: var(--mono); font-size: var(--t-micro); font-weight: 500; letter-spacing: .06em; text-transform: uppercase; }
 .pn-bill { border-radius: var(--r-xl); background: var(--white); box-shadow: var(--sh-1); overflow: hidden; }
 .pn-bill__top { display: flex; align-items: center; gap: .9rem; padding: 1rem 1.25rem; border-bottom: 1px solid var(--mist); }
-.pn-bill__top p { display: grid; gap: .1rem; margin: 0; }
-.pn-bill__top span { font-family: var(--mono); font-size: var(--t-micro); font-weight: 500; letter-spacing: .06em; text-transform: uppercase; color: var(--slate); }
-.pn-bill__top b { font-size: 1.125rem; font-weight: 600; letter-spacing: -.02em; }
-.pn-bill__arrow { color: var(--fog); }
+.pn-bill__lab { margin: 0; font-family: var(--mono); font-size: var(--t-micro); font-weight: 500; letter-spacing: .06em; text-transform: uppercase; color: var(--slate); }
 .pn-bill__top .link { margin-left: auto; font-size: .9375rem; }
 .pn-bill__rows { list-style: none; }
 .pn-row { position: relative; display: grid; grid-template-columns: 2.25rem minmax(0, 1fr) auto; align-items: center; gap: .85rem; padding: .8rem 1rem .8rem 1.25rem; border-bottom: 1px solid var(--mist); transition: background var(--fast); }
@@ -108,17 +113,17 @@
 .pn-row__items { margin: .2rem 0 0; font-size: .875rem; line-height: 1.4; color: var(--slate); }
 .pn-row__quote { position: relative; z-index: 1; display: inline-flex; align-items: center; min-height: 40px; padding: 0 .85rem; border-radius: 10px; background: var(--ice); font-size: .875rem; font-weight: 500; text-decoration: none; transition: background var(--fast), color var(--fast); }
 .pn-row__quote:hover { background: var(--ink); color: #fff; }
-@media (max-width: 999px) {
+@media (max-width: 62.4375em) {
   .pn-load { grid-template-columns: minmax(0, 1fr); }
   .pn-load__head { position: static; }
 }
-@media (max-width: 699px) {
+@media (max-width: 43.6875em) {
   .pn-bill__top { padding: .9rem 1rem; flex-wrap: wrap; }
   .pn-row { grid-template-columns: minmax(0, 1fr) auto; padding: .8rem .85rem .8rem 1rem; }
   .pn-row__no { display: none; }
 }
 
-/* ---------- The lane north: the whole corridor, with Kent at its south end ---------- */
+/* ---------- Alaska: the whole corridor ---------- */
 .section--ice + .pn-north { margin-top: var(--inset); }
 .pn-north__lede { margin: 1rem 0 0; font-size: 1.0625rem; line-height: 1.5; color: var(--frost); }
 .pn-north__points { list-style: none; margin-top: 1.25rem; border-top: 1px solid var(--night-line); }
@@ -128,17 +133,17 @@
 .pn-north__points a:hover > .i:last-child { transform: translateX(3px); }
 .pn-north__points a:hover { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .22em; }
 .pn-north__stage .actions { margin-top: 1.5rem; }
-@media (max-width: 1099px) {
+@media (max-width: 68.6875em) {
   .pn-north__stage { display: flex; flex-direction: column; align-items: stretch; }
   .pn-north__stage .stage__ui { order: 1; display: block; position: static; width: auto; margin: 0; padding: 0; }
   .pn-north__stage .stage__copy { position: static; width: auto; padding: var(--pad) var(--pad) 0; }
   .pn-north__stage .stage__map { order: 2; }
   .pn-north__stage .legend { order: 3; }
 }
-@media (min-width: 700px) and (max-width: 1099px) {
+@media (min-width: 43.75em) and (max-width: 68.6875em) {
   .pn-north__points { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: 1.25rem; }
 }
-@media (max-width: 699px) {
+@media (max-width: 43.6875em) {
   .pn-north__stage .stage__map { margin-top: 0; }
   .pn-north__stage .actions .btn { flex: 1 1 100%; }
 }
@@ -152,4 +157,4 @@
 .pn-yard__more dd { margin: 0; overflow-wrap: anywhere; }
 .pn-yard__more a { display: inline-block; padding-block: .1rem; }
 @media (pointer: coarse) { .pn-yard__more a { padding-block: .6rem; margin-block: -.45rem; } }
-@media (max-width: 999px) { .pn-yard__grid { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 62.4375em) { .pn-yard__grid { grid-template-columns: minmax(0, 1fr); } }

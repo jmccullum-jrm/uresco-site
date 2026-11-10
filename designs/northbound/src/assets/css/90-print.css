@@ -16,7 +16,7 @@
   a { text-decoration: none; }
 
   /* Only the form goes on paper. */
-  .fp-hero, .fp-close, .ac-what, .fp-side, .ac-applyhead, .form__foot, .notice, .fp-screen-only, .err, .fp-dial, .drop, .files, .fp-yardnote, .fp-yardguide { display: none !important; }
+  .fp-hero, .fp-close, .ac-what, .fp-side, .ac-applyhead, .form__foot, .form__restored, .form__warn, .notice, .fp-screen-only, .err, .fp-dial, .drop, .files, .fp-yardnote, .fp-yardguide { display: none !important; }
   .print-only { display: block; }
   .fp-band, .fp-band.fp-band--apply { padding: 0; background: none; }
   .wrap { width: auto; margin: 0; }

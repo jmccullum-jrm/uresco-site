@@ -3,7 +3,7 @@ import { html, raw } from '../lib/html.mjs';
 import { icon } from '../lib/icons.mjs';
 import { drawing } from '../lib/drawings.mjs';
 import { layout } from '../lib/layout.mjs';
-import { plate, PHERO_SIZES, YARD_FOR, openStatus, preloadFor, sectionHead, pageHero, quoteBand, yardCard, deliveryMap, latRule, sequence, packingList } from '../lib/components.mjs';
+import { plate, PHERO_SIZES, YARD_FOR, openStatus, preloadFor, sectionHead, pageHero, quoteBand, quoteHref, yardCard, deliveryMap, latRule, sequence, packingList } from '../lib/components.mjs';
 import { LOCATIONS, tel } from '../data/locations.mjs';
 import { PLACES, ALIASES, ACCESS, EXAMPLE, CHIPS, SUGGEST } from '../data/places.mjs';
 
@@ -11,23 +11,23 @@ const MAP = JSON.parse(readFileSync(new URL('../data/map.json', import.meta.url)
 
 // How freight reaches a job in Alaska, in general terms. Uresco coordinates it; it does not run the carriers.
 const WAYS = [
-  { tag: 'B', mode: 'By road', icon: 'road', where: 'Southcentral, the Interior and the highway north', body: 'Job-site delivery by truck from our Anchorage and Fairbanks yards, with Moffett fork unload and boom trucks.' },
-  { tag: 'A · C', mode: 'By water', icon: 'ship', where: 'Southeast, the coast and the western rivers', body: 'Ocean freight generally reaches Southeast and the coast. Barges reach western Alaska and its river communities in the ice-free season. We work with you on the shipping and the dock delivery.' },
-  { tag: 'D', mode: 'By air', icon: 'plane', where: 'Communities off the road system', body: 'Some places are reached only by air. Tell us where you are building and we will work out how to get it there.' },
+  { tag: 'B', mode: 'By road', icon: 'road', where: 'Southcentral, the Interior and the highway north', body: 'Job-site delivery by truck from our Anchorage and Fairbanks yards, with Moffett forklift and boom truck unloading.' },
+  { tag: 'A · C', mode: 'By water', icon: 'ship', where: 'Southeast, the coast and the western rivers', body: 'Ocean freight generally reaches Southeast and the coast. Barges generally reach western Alaska and its river communities in the ice-free season. We can work with you on the shipping and the dock delivery.' },
+  { tag: 'D', mode: 'By air', icon: 'plane', where: 'Communities off the road system', body: 'Some places are reached only by air. Tell us where you are building and we can work out the freight with you.' },
 ];
 
 const STEPS = [
-  { no: '01', name: 'Plans in, take-off out', body: 'Send drawings or a materials list. We build the take-off and quote it, and work with you on the freight.' },
-  { no: '02', name: 'Package and crate', body: 'We assemble the complete package, then crate, band and wrap it for the trip and every handoff on the way.' },
-  { no: '03', name: 'Coordinate the freight', body: 'Truck, ocean freight, barge or air: we work with you on the shipping, against your schedule and the season.' },
+  { no: '01', name: 'Plans and take-off', body: 'Send drawings or a materials list. We will help with the take-off and quote the package, and work out the freight with you.' },
+  { no: '02', name: 'Package and crate', body: 'We put the job together as one package, then crate it for the trip and the handoffs on the way.' },
+  { no: '03', name: 'Coordinate the freight', body: 'Truck, ocean freight, barge or air: we can work with you on the shipping, around your schedule and the season.' },
   { no: '04', name: 'Dock or site delivery', body: 'It lands at the dock or on the job site, anywhere in Alaska.' },
 ];
 
 const FAQ = [
   ['Can you deliver to my community?', 'Yes. Delivery is available anywhere in Alaska, from Sitka to Utqiaġvik (Barrow). Tell us where the job is. We will quote the package and work out the freight with you: road, ocean freight, barge or air.'],
-  ['When should I order for barge season?', 'Early. Off the road system, barges generally run only in the ice-free season, so a package has to be built, crated and at the dock before the sailing it needs. Call early and we will work out the timing with you.'],
-  ['Do you ship complete building packages?', 'Yes. We are fully equipped to handle remote-location and export building packages: framing, envelope, openings and hardware, so the whole job ships together.'],
-  ['Can you work from my plans?', 'Send drawings or a materials list. We will build the take-off and quote it. Design services are available for projects with unique needs.'],
+  ['When should I order for barge season?', 'Early. In western and Arctic Alaska, barges generally run only in the ice-free season, so a package has to be built, crated and at the dock before the sailing it needs. Call early and we will work out the timing with you.'],
+  ['Do you ship complete building packages?', 'Yes. We are fully equipped to handle remote-location and export building packages: framing, envelope, openings and hardware can go as one package.'],
+  ['Can you work from my plans?', 'Send drawings or a materials list. We will help with the take-off and quote the package. Design services are available for your unique project needs.'],
   ['Who coordinates the shipping?', 'We work with you on all aspects of shipping coordination, dock delivery and rural Alaska delivery.'],
 ];
 
@@ -37,18 +37,36 @@ const placeOf = (name) => PLACES.find((p) => p.name === name);
 const yardOf = (id) => LOCATIONS.find((l) => l.id === id);
 const modeText = (m, yard) => m[1].replace('{yard}', yard.city);
 
-// Everything the ticket's script needs. Places: [name, state, region, access, yard, x%, y% on the plate].
+// What the ticket says about each place. The wording is ACCESS in data/places.mjs; these are the cases it does not fit.
+// Lane A on the plate runs to Southeast and Southcentral only, so Sand Point and Unalaska get "by sea" with no letter.
+// Deadhorse is on the road, but nothing says a Moffett can be promised there. A Puget Sound place needs no tag: its region says it.
+const LANE_A = new Set(['Southeast Alaska', 'Gulf of Alaska coast', 'Prince William Sound', 'Kodiak Island', 'Kenai Peninsula']);
+const TICKET = {
+  ...ACCESS,
+  local: { ...ACCESS.local, tag: '' },
+  north: { ...ACCESS.road, modes: [ACCESS.road.modes[0], ['', 'Ask the yard about unloading']] },
+  coastal: { ...ACCESS.coastal, remote: true },
+  sea: { ...ACCESS.coastal, remote: true, modes: [['', ACCESS.coastal.modes[0][1]], ACCESS.coastal.modes[1]] },
+  seasonal: { ...ACCESS.seasonal, remote: true, note: 'A whole package is generally planned around the barge window. Call early.' },
+};
+const ticketFor = (p) => (p.name === 'Deadhorse' ? 'north' : p.access === 'coastal' && !LANE_A.has(p.region) ? 'sea' : p.access);
+// Off the road system and north or inland, the guidance fits both Alaska yards ("a remote site" and "the Interior and points north"), so the ticket names both.
+const BOTH_YARDS = new Set(['Seward Peninsula', 'Northwest Arctic', 'North Slope', 'Interior Alaska']);
+const startsAtBoth = (p) => p.access === 'seasonal' && BOTH_YARDS.has(p.region);
+const REMOTE_DELIVERY = 'Remote Alaska shipping';   // the quote form's Delivery option for a place off the road system
+
+// Everything the ticket's script needs. Places: [name, state, region, ticket, yard, x%, y% on the plate, 1 if both Alaska yards are named].
 const finderData = (ctx) => JSON.stringify({
-  quote: ctx.u('quote/'), states: STATES, access: ACCESS, aliases: ALIASES, suggest: SUGGEST,
+  quote: ctx.u('quote/'), delivery: REMOTE_DELIVERY, states: STATES, access: TICKET, aliases: ALIASES, suggest: SUGGEST,
   yards: Object.fromEntries(LOCATIONS.map((l) => [l.id, { name: l.city, phone: l.phone }])),
-  places: PLACES.map((p) => { const [x, y] = MAP.places[p.name]; return [p.name, p.st, p.region, p.access, p.yard, pct(x, MAP.width), pct(y, MAP.height)]; }),
+  places: PLACES.map((p) => { const [x, y] = MAP.places[p.name]; return [p.name, p.st, p.region, ticketFor(p), p.yard, pct(x, MAP.width), pct(y, MAP.height), startsAtBoth(p) ? 1 : 0]; }),
 });
 
-// The ship-to ticket: name a community, get the yard to call and how freight typically gets there.
+// The ship-to ticket: name a community, get the yard to start with and how freight typically gets there.
 // It is rendered filled in for the example place; the script only swaps the fields, so nothing moves on load.
 // Without script the field and ticket are hidden and the three yards are shown instead.
 const finder = (ctx) => {
-  const ex = placeOf(EXAMPLE), acc = ACCESS[ex.access], exYard = yardOf(ex.yard);
+  const ex = placeOf(EXAMPLE), acc = TICKET[ticketFor(ex)], exYard = yardOf(ex.yard);
   return html`
   <div class="shipto" data-finder>
     <script type="application/json" data-finder-data>${raw(finderData(ctx))}</script>
@@ -77,7 +95,7 @@ const finder = (ctx) => {
         <p class="shipto__meta"><span data-r="region">${ex.region}</span><span class="shipto__tag" data-r="tag">${acc.tag}</span></p>
       </div>
       <div class="shipto__yard">
-        <p class="label shipto__lab">Yard to call</p>
+        <p class="label shipto__lab">Start with</p>
         ${LOCATIONS.map((l) => html`<div class="shipto__y" data-y="${l.id}"${l.id === ex.yard ? '' : html` hidden`}>
           <p class="shipto__city">${l.city} ${openStatus(l)}</p>
           <a class="shipto__tel num" href="${tel(l.phone)}"><span class="sr-only">Call ${l.city}: </span>${l.phone}</a>
@@ -89,13 +107,14 @@ const finder = (ctx) => {
       </div>
       <div class="shipto__how" data-r="how">
         <p class="label shipto__lab">How freight typically gets there</p>
-        <ul class="shipto__modes" data-r="modes"${acc.modes.some((m) => m[0]) ? '' : html` data-lanes="none"`}>
-          ${[0, 1].map((i) => html`<li><span class="pmap__tag${acc.modes[i][0] ? '' : ' is-none'}" data-r="t${i}" aria-hidden="true">${acc.modes[i][0]}</span><span data-r="m${i}">${modeText(acc.modes[i], exYard)}</span></li>`)}
+        <ul class="shipto__modes" data-r="modes">
+          ${[0, 1].map((i) => html`<li><span data-r="m${i}">${modeText(acc.modes[i], exYard)}</span><span class="label label--blue shipto__lane" data-r="t${i}" aria-hidden="true"${acc.modes[i][0] ? '' : html` hidden`}>${acc.modes[i][0] ? `Lane ${acc.modes[i][0]}` : ''}</span></li>`)}
         </ul>
+        <p class="shipto__season" data-r="season"${acc.note ? '' : html` hidden`}>${acc.note || ''}</p>
       </div>
-      <p class="shipto__else" data-r="else" hidden>That is not on our short list, which does not mean we cannot get there. Send the details and a yard will work out the route.</p>
+      <p class="shipto__else" data-r="else" hidden>That is not on our short list, which does not mean we cannot get there. Send the details and a yard can work out the freight with you.</p>
       <div class="shipto__foot">
-        <a class="btn" data-r="quote" href="${ctx.u('quote/')}?location=${encodeURIComponent(`${ex.name}, ${ex.st}`)}&amp;yard=${ex.yard}">Get a quote for <span data-r="short">${ex.name}</span> ${icon('arrow', { size: 18 })}</a>
+        <a class="btn" data-r="quote" href="${ctx.u('quote/')}?location=${encodeURIComponent(`${ex.name}, ${ex.st}`)}&amp;yard=${ex.yard}${acc.remote ? raw(`&amp;delivery=${encodeURIComponent(REMOTE_DELIVERY)}`) : ''}">Get a quote for <span data-r="short">${ex.name}</span> ${icon('arrow', { size: 18 })}</a>
         <p class="shipto__note" data-r="note">Typical for the region, not a schedule or a price. Any yard can help.</p>
       </div>
     </div>
@@ -105,7 +124,7 @@ const finder = (ctx) => {
       <ul class="shipto__yards">
         ${LOCATIONS.map((l) => html`<li><span class="shipto__who"><b>${l.city}, ${l.state}</b><small>${YARD_FOR[l.id]}</small></span><a class="shipto__tel num" href="${tel(l.phone)}"><span class="sr-only">Call ${l.city}: </span>${l.phone}</a></li>`)}
       </ul>
-      <a class="btn btn--block" href="${ctx.u('quote/')}">Request a quote ${icon('arrow', { size: 18 })}</a>
+      <a class="btn btn--block" href="${quoteHref(ctx, { yard: 'anchorage' })}">Request a quote ${icon('arrow', { size: 18 })}</a>
     </div>
   </div>`;
 };
@@ -129,14 +148,14 @@ export default {
     }))}</script>`,
     body: html`
 ${pageHero(ctx, {
-  cls: 'phero--ask',
+  cls: 'phero--ask ak-hero',
   sheet: 'Alaska delivery',
   meta: 'Anchorage · Fairbanks',
   title: '<span class="phero__q">Can you get a building package to my community?</span> Yes. <br><em>Anywhere in Alaska.</em>',
-  lede: 'On the road system, at the end of a barge line or reachable only by air, delivery is available from Sitka to Utqiaġvik. Two Alaska yards and one in Kent, Washington, take a job from plans to a crated package on your dock.',
+  lede: 'On the road system, by barge or reachable only by air, delivery is available anywhere in Alaska, from Sitka to Utqiaġvik. We can work with you on shipping coordination and dock delivery.',
   after: heroCalls(),
   media: heroMedia(ctx),
-  below: latRule({ highlight: [57.1, 71.3], note: 'Delivery available: Sitka to Utqiaġvik' }),
+  below: latRule({ note: 'Delivery anywhere in Alaska, from Sitka to Utqiaġvik.' }),
 })}
 
 <section class="section" id="area">
@@ -148,7 +167,7 @@ ${pageHero(ctx, {
 
 <section class="section section--panel" id="ways">
   <div class="wrap">
-    ${sectionHead({ no: '02', eyebrow: 'Ways in', meta: 'Lanes A–D', title: 'Road, water <em>or air.</em>', lede: 'Much of Alaska is off the road system. How a package travels depends on where it is going and what time of year it is.' })}
+    ${sectionHead({ no: '02', eyebrow: 'Ways in', meta: 'Lanes A–D', title: '<em>Road, water or air.</em>', lede: 'Much of Alaska is off the road system. How a package travels depends on where it is going and what time of year it is.' })}
     <div class="ways">
       ${WAYS.map((w) => html`<article class="way">
         <p class="way__tag"><span class="label">Lane</span><b class="num">${w.tag}</b></p>
@@ -160,28 +179,28 @@ ${pageHero(ctx, {
     </div>
     <div class="gnote">
       <p class="label label--blue">Note 1 · Season</p>
-      <p><strong>Plan for the barge window.</strong> Communities off the road system generally get their freight by barge in the ice-free season and by air year-round. One complete package on the right sailing beats a second freight bill, so call early.</p>
+      <p><strong>Plan for the barge window.</strong> Western and Arctic communities generally get their freight by barge in the ice-free season and by air year-round. Southeast and the Gulf coast are generally reached by sea. One complete package on the right sailing beats a second freight bill, so call early.</p>
     </div>
   </div>
 </section>
 
 <section class="section" id="how">
   <div class="wrap">
-    ${sectionHead({ no: '03', eyebrow: 'How a remote package works', title: 'One list. <em>Every leg.</em>', lede: 'Remote jobs go wrong on the details: a missing box of hangers, a load that is not on the dock when the barge is. The whole process is built around the list being right before anything moves.' })}
+    ${sectionHead({ no: '03', eyebrow: 'How a remote package works', title: 'One list. <em>Every leg.</em>', lede: 'Remote jobs go wrong on the details: a missing box of hangers, a load that is not on the dock when the barge is.' })}
     ${sequence(STEPS, { cls: 'seq--four' })}
     <div class="pack">
       <figure class="dwg pack__dwg" data-reveal>
-        <p class="dwg__bar label"><span>Dwg 010</span><span>A package, made up for freight</span><span class="dwg__nts">Typical · not to scale</span></p>
+        <p class="dwg__bar label"><span>A package, made up for freight</span><span class="dwg__nts">Typical · not to scale</span></p>
         <div class="dwg__canvas">${drawing('package', { id: 'ak' })}</div>
       </figure>
       <div class="pack__note">
         <p class="label label--blue">Note 2 · Handoffs</p>
         <h3 class="h3">Crated for the trip, not just the truck.</h3>
-        <p>Long hauls and repeated handoffs are hard on materials. We crate, band and wrap loads so they arrive the way they left.</p>
+        <p>Long hauls and multiple handoffs are hard on materials, so we crate and package loads for the trip.</p>
         <ul class="pack__list">
-          <li>Units banded and wrapped</li>
           <li>Crating and packaging</li>
-          <li>Dock delivery or straight to the site</li>
+          <li>Shipping coordination</li>
+          <li>Dock delivery or job-site delivery</li>
         </ul>
       </div>
     </div>
@@ -190,14 +209,14 @@ ${pageHero(ctx, {
 
 <section class="section section--flush" id="package">
   <div class="wrap">
-    ${sectionHead({ no: '04', eyebrow: 'What goes in the crate', title: 'The package is <em>the whole manifest.</em>', lede: 'Framing, envelope, openings and hardware ship together, so the job does not wait on a second load.', action: html`<a class="link" href="${ctx.u('products/')}">All products ${icon('arrow', { size: 16 })}</a>` })}
+    ${sectionHead({ no: '04', eyebrow: 'What goes in a package', title: 'Framing, envelope, openings <em>and&nbsp;hardware.</em>', lede: 'All of it can go as one package. Each line below lists what is on it.', action: html`<a class="link" href="${ctx.u('products/')}">All products ${icon('arrow', { size: 16 })}</a>` })}
     ${packingList(ctx)}
   </div>
 </section>
 
 <section class="section section--panel" id="yards">
   <div class="wrap">
-    ${sectionHead({ no: '05', eyebrow: 'Alaska yards', title: 'Anchorage <em>&amp; Fairbanks.</em>', lede: 'Our friendly, knowledgeable sales staff is here to help. Give us a call, email or stop by.' })}
+    ${sectionHead({ no: '05', eyebrow: 'Alaska yards', title: '<em>Anchorage &amp; Fairbanks.</em>', lede: 'Our friendly, knowledgeable sales staff is here to help. Give us a call, email or stop by.' })}
     <div class="yards yards--2">${LOCATIONS.filter((l) => l.state === 'AK').map((l) => yardCard(ctx, l))}</div>
   </div>
 </section>
@@ -214,7 +233,7 @@ ${pageHero(ctx, {
     </div>
   </div>
 </section>
-${quoteBand(ctx, { no: '07', eyebrow: 'Start a remote job', title: 'Building off <em>the road system?</em>', body: 'Send plans or a list and tell us where the job is. We will quote the package and work out the freight with you.' })}
+${quoteBand(ctx, { no: '07', yard: 'anchorage', eyebrow: 'Start a remote job', title: 'Building <em>off&nbsp;the road system?</em>', body: 'Send plans or a list and tell us where the job is. We will quote the package and work out the freight with you.' })}
 `,
   }),
 };

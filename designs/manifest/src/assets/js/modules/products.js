@@ -25,12 +25,12 @@
     clear.hidden = !words.length;
     none.hidden = shown > 0;
     if (!shown) none.querySelector('q').textContent = input.value.trim();
-    status.textContent = !words.length ? idle : shown ? shown + ' of ' + rows.length + ' lines' : 'No match';
+    status.textContent = !words.length ? idle : shown ? shown + ' of ' + rows.length + ' lines' : 'Nothing listed';
   };
   input.addEventListener('input', run);
   // On a phone the keyboard takes the lower half of the screen: bring the field up under the masthead
   // so the lines it finds stay in view while typing.
-  const narrow = window.matchMedia('(max-width: 699px)');
+  const narrow = window.matchMedia('(max-width: 43.6875em)');
   input.addEventListener('focus', () => {
     if (!narrow.matches) return;
     const mast = (document.querySelector('.masthead')?.offsetHeight || 0) + 10, top = form.getBoundingClientRect().top;

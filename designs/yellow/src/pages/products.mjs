@@ -65,6 +65,11 @@ const BRAND_AT = {
   'Georgia-Pacific DensGlass': ['panels-sheathing', 2, 'Georgia-Pacific DensGlass®'],
   Parallam: ['engineered-wood', 3, 'Parallam®'],
 };
+export const brandHref = (ctx, b) => {
+  const [slug, n] = BRAND_AT[b];
+  const c = CATEGORIES.find((x) => x.slug === slug);
+  return `${lineUrl(ctx, c)}#${itemId(c.items[n][0])}`;
+};
 const brandRows = (ctx) => BRANDS.map((b) => {
   const at = BRAND_AT[b];
   if (!at) throw new Error(`products: brand "${b}" has no place in BRAND_AT (src/pages/products.mjs)`);
@@ -109,19 +114,20 @@ const index = {
     }).replace(/</g, '\\u003c'))}</script>`,
     body: html`
 ${pageHero(ctx, {
+  cls: 'pl-top',
   eyebrow: 'Products',
-  title: 'What’s on <em>the truck.</em>',
+  title: 'What’s on<br><em>the truck.</em>',
   lede: 'Nine product lines for institutional, commercial and residential builders, from framing lumber to the last box of fasteners.',
   photoKey: 'lumber-stack',
   caption: 'Ends of stacked lumber',
-  actions: html`<a class="btn" href="#index">Find a product ${icon('arrow', { size: 18, cls: 'pl-down' })}</a>${callBtn(ctx, { cls: 'btn--line' })}${pauseBtn()}`,
+  actions: html`<a class="btn" href="#index" data-find-go>Find a product ${icon('arrow', { size: 18, cls: 'pl-down' })}</a>${callBtn(ctx, { cls: 'btn--line' })}${pauseBtn()}`,
 })}
 
 ${marquee(TAPE, { tone: 'k', tilt: true, slow: true })}
 
 <section class="section field-y pl-index" id="index">
   <div class="wrap">
-    ${sectionHead({ eyebrow: 'The index', title: 'Nine lines. <em>Look it up.</em>', lede: 'Every product on the list links to its place on its line.', action: finder })}
+    ${sectionHead({ eyebrow: 'The index', title: 'Nine lines. <br><em>Look it up.</em>', action: finder })}
   </div>
   <ol class="lines pl-lines" id="pl-lines" data-lines>
     ${CATEGORIES.map((c, i) => indexRow(ctx, c, i))}
@@ -136,7 +142,7 @@ ${marquee(TAPE, { tone: 'k', tilt: true, slow: true })}
 
 <section class="section field-k pl-brands">
   <div class="wrap">
-    ${sectionHead({ eyebrow: 'Manufacturers', title: 'Brands <em>we carry.</em>', lede: 'The manufacturers we carry by name, and the line each one rides in.' })}
+    ${sectionHead({ eyebrow: 'Manufacturers', title: 'Brands <em>we carry.</em>', lede: 'The brands we carry, and the line each one is in.' })}
   </div>
   <ul class="pl-brandlist">
     ${brandRows(ctx).map((b) => html`<li>
@@ -149,17 +155,12 @@ ${marquee(TAPE, { tone: 'k', tilt: true, slow: true })}
   </ul>
 </section>
 
-${quoteBand(ctx, { title: 'Got a list? <em>Send it.</em>', body: 'Send a materials list or the drawings. We’ll help with the take-off and quote it.', label: 'Estimates & take-offs' })}
+${quoteBand(ctx, { title: 'Got a list? <br><em>Send it.</em>', body: 'Send a materials list or the drawings. We’ll help with the take-off and quote it.', label: 'Estimates & take-offs' })}
 `,
   }),
 };
 
 // ---- A product line ----------------------------------------------------------------------
-// The headline over each line's list: one short word for what the line is made of.
-const EVERY = {
-  'framing-lumber': 'stick', 'panels-sheathing': 'sheet', 'engineered-wood': 'span', 'concrete-forming': 'pour', 'cedar-decking': 'board',
-  'siding-exterior': 'layer', 'insulation-drywall': 'wall', 'windows-doors-cabinets': 'opening', 'hardware-supplies': 'box',
-};
 // Three services to show with each line (ids from data/services.mjs). An editorial pick: every
 // service is available for every line, and the section links to all of them.
 const WITH = {
@@ -226,12 +227,11 @@ ${pageHero(ctx, {
   <div class="divider divider--u" aria-hidden="true"><i class="plx"></i><i class="plx"></i><i class="plx"></i></div>
   <div class="wrap pl-spec__grid">
     <div class="pl-spec__main">
-      ${eyebrow('In this line')}
-      <h2 class="d2">Every <em>${EVERY[c.slug] || 'item'}.</em></h2>
+      ${eyebrow(c.short)}
+      <h2 class="d2">In <em>this line.</em></h2>
       <p class="lede pl-spec__lede">${c.body}</p>
       <ol class="pl-items">
         ${c.items.map(([name, note], j) => html`<li class="pl-item" id="${itemId(name)}" style="--i:${j}" data-reveal>
-          <span class="pl-item__no nums" aria-hidden="true">${no(i)}.${j + 1}</span>
           <h3 class="pl-item__name">${marks(name)}</h3>
           <p class="pl-item__note">${note}</p>
         </li>`)}
@@ -271,7 +271,7 @@ ${pageHero(ctx, {
       <input type="hidden" name="product" value="${c.name}">
       <fieldset class="pl-load__more">
         <legend class="pl-load__q">What else is on the job?</legend>
-        <p class="pl-load__hint">Tick the lines you need. They all go on one quote request.</p>
+        <p class="pl-load__hint">Check the lines you need. They all go on one quote request.</p>
         <div class="pl-picks">
           ${others.map(([x, j]) => html`<label class="pl-pick"><input type="checkbox" value="${x.name}"><span><b class="nums" aria-hidden="true">${no(j)}</b>${x.short}</span></label>`)}
         </div>
@@ -291,7 +291,7 @@ ${pageHero(ctx, {
   ${pagerHalf(ctx, CATEGORIES[next], next, 'next')}
 </nav>
 
-${quoteBand(ctx, { href: quoteUrl(ctx, c), title: 'Send the list. <em>Get a quote.</em>', body: `Send a materials list or the plans, and we’ll quote ${lower} with the rest of the job.`, label: 'Estimates & take-offs' })}
+${quoteBand(ctx, { href: quoteUrl(ctx, c), title: 'Send the list. <br><em>Get a quote.</em>', body: `Send a materials list or the plans, and we’ll quote ${lower} with the rest of the job.`, label: 'Estimates & take-offs' })}
 `,
     });
   },

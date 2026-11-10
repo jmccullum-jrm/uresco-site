@@ -15,19 +15,21 @@
 
 /* ---------- Dateline: the three yards, one tap away, above the masthead ---------- */
 .dateline { display: none; }
-@media (min-width: 1000px) {
+@media (min-width: 62.5em) {
   .dateline {
+    --dl: 2.25rem;
     position: relative; z-index: 51;
     display: flex; justify-content: space-between; align-items: center; gap: 1.5rem;
-    height: 2.25rem; padding: 0 var(--gutter) 0 calc(var(--rail) + var(--gutter)); overflow: hidden;
+    height: var(--dl); padding: 0 var(--inset) 0 calc(var(--rail) + var(--inset)); overflow: hidden;
     background: var(--black); color: var(--on-dark);
     font: 400 var(--t-label)/1 var(--mono); letter-spacing: .06em;
   }
-  .dateline__yards { flex: none; display: flex; gap: clamp(1rem, 2.4vw, 2.5rem); }
-  .dateline__yards li { display: flex; align-items: center; gap: .55rem; white-space: nowrap; }
+  /* A yard that will not fit whole wraps out of sight onto a row nobody sees. It is on the call sheet. */
+  .dateline__yards { flex: 0 1 auto; min-width: 0; display: flex; flex-wrap: wrap; column-gap: clamp(1rem, 2.4vw, 2.5rem); height: var(--dl); overflow: hidden; }
+  .dateline__yards li { display: flex; align-items: center; gap: .55rem; height: var(--dl); white-space: nowrap; }
   .dateline__lat { display: none; color: var(--glacier); }
   .dateline__city { text-transform: uppercase; letter-spacing: .1em; }
-  .dateline a { text-decoration: none; line-height: 2.25rem; white-space: nowrap; }
+  .dateline a { text-decoration: none; line-height: var(--dl); white-space: nowrap; }
   .dateline a:hover { text-decoration: underline; text-decoration-color: var(--yellow); }
   .dateline .status { min-width: 5em; color: var(--on-dark-2); }
   .dateline .status.is-open { color: #8FD3AE; }
@@ -37,12 +39,15 @@
   .dateline__links { flex: none; display: none; }
   .dateline :focus-visible { outline-color: var(--yellow); outline-offset: -3px; }
 }
-@media (min-width: 1100px) { .dateline__links { display: block; } }
-@media (min-width: 1400px) { .dateline__lat { display: inline; } }
+@media (min-width: 68.75em) { .dateline__links { display: block; } }
+@media (min-width: 87.5em) { .dateline__lat { display: inline; } }
+/* The numbers on a tablet are controls: a full-size target, with no change to the wider strip. */
+@media (min-width: 62.5em) and (pointer: coarse) { .dateline { --dl: 2.5rem; } }
 
 /* ---------- Masthead ---------- */
 .masthead { position: sticky; top: 0; z-index: 50; background: var(--paper); border-bottom: 1px solid var(--rule-2); }
-.masthead__row { display: flex; align-items: center; gap: 1rem; height: var(--mast); padding-inline: var(--gutter); }
+/* Large browser text can leave too little room: the row wraps rather than running off the screen. */
+.masthead__row { position: relative; display: flex; flex-wrap: wrap; align-items: center; gap: 0 1rem; min-height: var(--mast); padding-inline: var(--gutter); }
 .masthead .brand { margin-right: auto; }
 .masthead__acts { display: flex; align-items: center; gap: .6rem; }
 .nav { display: none; }
@@ -69,8 +74,8 @@
   .latchip, .brand__desc, .brand__name { transition: opacity var(--d-2) var(--ease), transform var(--d-2) var(--ease); }
 }
 .masthead__progress { position: absolute; left: 0; right: 0; bottom: -2px; height: 3px; background: var(--yellow); transform: scaleX(var(--p, 0)); transform-origin: left; }
-@media (min-width: 600px) { .masthead__more { display: inline; } }
-@media (max-width: 599px) {
+@media (min-width: 37.5em) { .masthead__more { display: inline; } }
+@media (max-width: 37.4375em) {
   .masthead__menu { width: 2.75rem; padding: 0; justify-content: center; }
   .masthead__menu span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
   .masthead__row { gap: .5rem; }
@@ -79,16 +84,18 @@
   .masthead__call { padding-inline: .7rem; gap: .35rem; }
 }
 /* Narrow phones: the word and the call control come first. The name sits centred until there is a reading under it. */
-@media (max-width: 389px) {
+@media (max-width: 24.3125em) {
   .masthead .brand__desc { display: none; }
   .has-rail .masthead:not(.is-reading) .brand__name { transform: translateY(.45rem); }
 }
-@media (max-width: 359px) { .latchip [data-place] { display: none; } }
+@media (max-width: 22.4375em) { .latchip [data-place] { display: none; } }
 
-@media (min-width: 1000px) {
-  .masthead__row { padding-left: .75rem; gap: clamp(.75rem, 1.6vw, 2rem); }
+@media (min-width: 62.5em) {
+  /* The bar's contents sit on the same column as the page: past the content width they centre with it. */
+  .masthead__row { padding-left: calc(var(--rail) + var(--inset)); padding-right: var(--inset); column-gap: clamp(.75rem, 1.6vw, 2rem); }
   /* The mark caps the rail; the wordmark starts on the text margin. */
-  .masthead .brand { gap: calc(.75rem + var(--gutter)); margin-right: 0; min-width: calc(var(--rail) + var(--gutter) + 6.5rem); }
+  .masthead .brand { margin-right: 0; min-width: 6.5rem; }
+  .masthead .brand__mark { position: absolute; left: .75rem; top: 50%; translate: 0 -50%; }
   .masthead__menu, .latchip, .masthead__progress { display: none; }
   .is-reading .brand__desc { opacity: 1; }
   .masthead__cta { display: inline-flex; }
@@ -101,24 +108,34 @@
   .nav__toggle { display: grid; place-items: center; width: 1.5rem; height: 1.5rem; margin-left: -.5rem; padding: 0; background: none; border: 0; border-radius: 50%; }
   .no-js .nav__toggle { display: none; }
   .nav__toggle .i { transition: transform var(--d-2) var(--ease); }
-  .nav__item[data-open] .nav__toggle .i, .nav__item--menu:hover .nav__toggle .i { transform: rotate(180deg); }
+  .nav__item[data-open] .nav__toggle .i { transform: rotate(180deg); }
 }
-@media (min-width: 1000px) and (max-width: 1179px) { .masthead .brand__desc { display: none; } }
-@media (min-width: 1000px) and (max-width: 1279px) { .masthead__more { display: none; } }
-@media (min-width: 1100px) { .masthead__cta-long { display: inline; } .masthead__cta-short { display: none; } }
-@media (min-width: 1000px) and (pointer: coarse) { .nav__toggle { width: 2.75rem; height: 2.75rem; margin-left: -.875rem; } }
+@media (min-width: 62.5em) and (hover: hover) { .nav__item--menu:hover .nav__toggle .i { transform: rotate(180deg); } }
+/* Touch: the links and the rail's stops are full-size targets. */
+@media (min-width: 62.5em) and (pointer: coarse) {
+  .nav__link { display: flex; align-items: center; min-height: 2.75rem; }
+  .rail__stops a { left: -1.25rem; top: -1.25rem; width: 2.5rem; height: 2.5rem; }
+}
+@media (min-width: 62.5em) and (max-width: 73.6875em) { .masthead .brand__desc { display: none; } }
+@media (min-width: 62.5em) and (max-width: 79.9375em) { .masthead__more { display: none; } }
+@media (min-width: 68.75em) { .masthead__cta-long { display: inline; } .masthead__cta-short { display: none; } }
+@media (min-width: 62.5em) and (pointer: coarse) { .nav__toggle { width: 2.75rem; height: 2.75rem; margin-left: -.875rem; } }
 
 /* ---------- Product menu ---------- */
 .mega { display: none; }
-@media (min-width: 1000px) {
+@media (min-width: 62.5em) {
   .mega {
     display: block; position: absolute; left: 0; right: 0; top: 100%;
     background: var(--paper-3); border-top: 1px solid var(--rule-2); border-bottom: 1px solid var(--ink); box-shadow: var(--shadow-2);
     visibility: hidden; opacity: 0; clip-path: inset(0 0 100% 0);
     transition: opacity var(--d-2) var(--ease), clip-path var(--d-2) var(--ease), visibility 0s var(--d-2);
   }
-  .nav__item--menu:hover > .mega, .nav__item--menu[data-open] > .mega {
+  .nav__item--menu[data-open] > .mega {
     visibility: visible; opacity: 1; clip-path: inset(0 0 -4rem 0); transition-delay: .08s, .08s, 0s;
+  }
+  /* Hover opens it only for a real pointer: on touch :hover sticks, and the caret could not close it. */
+  @media (hover: hover) {
+    .nav__item--menu:hover > .mega { visibility: visible; opacity: 1; clip-path: inset(0 0 -4rem 0); transition-delay: .08s, .08s, 0s; }
   }
   .mega__inner { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 9fr); gap: var(--col-gap); padding: 2.25rem var(--gutter) 2.5rem calc(var(--rail) + var(--gutter)); max-width: calc(var(--max) + var(--rail) + 2 * var(--gutter)); margin-inline: auto; }
   .mega__lead { display: flex; flex-direction: column; align-items: flex-start; gap: 1rem; padding-right: 1.5rem; }
@@ -127,13 +144,14 @@
   .mega__list a { display: flex; align-items: flex-start; gap: .9rem; padding: .8rem 0; border-top: 1px solid var(--rule); text-decoration: none; }
   .mega__list li:nth-child(-n+3) a { border-top-color: var(--ink); }
   .mega__list img { flex: none; width: 3.75rem; height: 3.75rem; object-fit: cover; background: var(--paper-2); }
-  .mega__text { display: grid; gap: .25rem; min-width: 0; }
+  /* The number has its own column, so a long name hangs under itself. */
+  .mega__text { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: .25rem .6rem; min-width: 0; }
+  .mega__no { padding-top: .38rem; font: 400 .6875rem/1 var(--mono); letter-spacing: .08em; color: var(--ink-3); }
   .mega__name { font: 480 1.1875rem/1.15 var(--serif); letter-spacing: -.008em; }
-  .mega__no { margin-right: .6rem; font: 400 .6875rem/1 var(--mono); letter-spacing: .08em; color: var(--ink-3); vertical-align: .25em; }
-  .mega__items { font-size: .8125rem; line-height: 1.3; color: var(--ink-3); }
+  .mega__items { grid-column: 2; font-size: .8125rem; line-height: 1.3; color: var(--ink-3); }
   .mega__list a:hover .mega__name { text-decoration: underline; text-decoration-color: var(--yellow); text-decoration-thickness: 2px; text-underline-offset: .22em; }
   /* Below 1200px the lead stands over the list, so the nine lines keep their width. */
-  @media (max-width: 1199px) {
+  @media (max-width: 74.9375em) {
     .mega__inner { grid-template-columns: minmax(0, 1fr); gap: 1rem; padding-block: 1.5rem 1.75rem; }
     .mega__lead { flex-direction: row; align-items: baseline; justify-content: space-between; padding-right: 0; }
     .mega__lead .label { display: none; }
@@ -145,7 +163,7 @@
 
 /* ---------- The rail ---------- */
 .rail { display: none; }
-@media (min-width: 1000px) {
+@media (min-width: 62.5em) {
   .rail {
     display: block; position: fixed; z-index: 40; left: 0; top: 0; bottom: 0; width: var(--rail);
     padding-top: var(--mast); background: var(--paper); border-right: 1px solid var(--rule-2);
@@ -181,6 +199,9 @@
 /* ---------- Dialogs ---------- */
 dialog { padding: 0; border: 0; color: var(--ink); max-width: none; max-height: none; }
 dialog::backdrop { background: rgba(15, 36, 44, .55); }
+/* The page behind stays put; the gutter is held so nothing jumps as the scrollbar goes. */
+html:has(dialog[open]) { overflow: hidden; scrollbar-gutter: stable; }
+.sheet, .drawer { overscroll-behavior: contain; }
 @media (prefers-reduced-motion: no-preference) {
   .drawer[open] { animation: drawer-in var(--d-2) var(--ease); }
   .sheet[open] { animation: sheet-in var(--d-2) var(--ease); }
@@ -222,7 +243,7 @@ dialog::backdrop { background: rgba(15, 36, 44, .55); }
 .drawer__lat { font: 400 var(--t-label)/1 var(--mono); letter-spacing: .06em; color: var(--ink-3); }
 .drawer__yards b { font-weight: 600; }
 .drawer__num { margin-left: auto; font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
-@media (max-width: 359px) { .drawer__lat { display: none; } }
+@media (max-width: 22.4375em) { .drawer__lat { display: none; } }
 /* Short screens (a phone on its side): the foot scrolls with the list instead of crowding it. */
 @media (max-height: 560px) {
   .drawer[open] { display: block; overflow-y: auto; }
@@ -231,7 +252,7 @@ dialog::backdrop { background: rgba(15, 36, 44, .55); }
 
 /* Call or visit: all three yards, side by side actions. From the bottom on phones, centred on larger screens. */
 .sheet { width: 100%; margin: auto 0 0; padding: 0 var(--gutter) calc(1.25rem + env(safe-area-inset-bottom, 0px)); background: var(--paper); border-top: 3px solid var(--yellow); max-height: 92dvh; overflow-y: auto; }
-@media (min-width: 700px) { .sheet { width: min(100% - 2rem, 38rem); margin: auto; padding: 0 2rem 1.75rem; box-shadow: var(--shadow-2); } }
+@media (min-width: 43.75em) { .sheet { width: min(100% - 2rem, 38rem); margin: auto; padding: 0 2rem 1.75rem; box-shadow: var(--shadow-2); } }
 .sheet__head { position: sticky; top: 0; z-index: 1; display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding-block: 1rem .75rem; background: var(--paper); }
 .sheet__title { font: 370 clamp(1.75rem, 7.6vw, 2.125rem)/1 var(--serif); letter-spacing: -.02em; }
 .sheet__yard { display: grid; grid-template-columns: minmax(0, 1fr); gap: .6rem; padding: .85rem 0 .35rem; border-top: 1px solid var(--rule-2); }
@@ -258,11 +279,11 @@ dialog::backdrop { background: rgba(15, 36, 44, .55); }
 .is-still *, .is-still *::before, .is-still *::after { animation: none !important; }
 .still { justify-self: start; display: inline-flex; align-items: center; min-height: 2.5rem; padding: 0 .75rem; background: transparent; border: 1px solid var(--rule-2); border-radius: var(--r-1); font: 400 var(--t-label)/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink); white-space: nowrap; }
 .still:hover { border-color: var(--ink); box-shadow: inset 0 -2px 0 var(--yellow); }
-@media (min-width: 900px) { .plate__legend .still { grid-column: 2; justify-self: end; } }
+@media (min-width: 56.25em) { .plate__legend .still { grid-column: 2; justify-self: end; } }
 
 /* ---------- Phone action bar: Call · Directions · Quote ---------- */
 .actionbar { display: none; }
-@media (max-width: 999px) {
+@media (max-width: 62.4375em) {
   .actionbar {
     position: fixed; z-index: 60; left: 0; right: 0; bottom: 0; height: var(--bar);
     display: grid; grid-template-columns: 1fr 1fr 1.15fr; padding-bottom: env(safe-area-inset-bottom, 0px);
@@ -284,7 +305,9 @@ dialog::backdrop { background: rgba(15, 36, 44, .55); }
   .actionbar :focus-visible { outline-offset: -4px; }
   .actionbar__btn--call:focus-visible { outline-color: var(--yellow); }
 }
-@media (max-width: 359px) { .actionbar__btn { gap: .3rem; font-size: .875rem; } }
+@media (max-width: 22.4375em) { .actionbar__btn { gap: .3rem; font-size: .875rem; } }
+/* A short window (a phone on its side, or high zoom): the masthead scrolls away so reading keeps the room. The action bar, and its phone numbers, stay. */
+@media (max-width: 62.4375em) and (max-height: 30em) { .masthead { position: relative; } html { scroll-padding-top: 1rem; } }
 
 /* ---------- Footer ---------- */
 .footer { position: relative; z-index: 45; margin-left: 0; padding: clamp(3.5rem, 8vw, 7rem) 0 2rem; padding-left: var(--rail); background: var(--black); border-top: 4px solid var(--yellow); color: var(--on-dark); }
@@ -305,11 +328,11 @@ dialog::backdrop { background: rgba(15, 36, 44, .55); }
 .footer__fax { padding-block: .22rem; }
 .footer__yard address { margin-top: .3rem; }
 /* Touch: every contact link and index link is a full target. */
-@media (max-width: 999px), (pointer: coarse) {
+@media (max-width: 62.4375em), (pointer: coarse) {
   .footer__yard a, .footer__nav a { min-height: 2.5rem; }
 }
 /* On phones the number sits level with the yard's name. */
-@media (max-width: 699px) {
+@media (max-width: 43.6875em) {
   .footer__yard { grid-template-columns: minmax(0, 1fr) auto; align-items: baseline; column-gap: 1rem; padding: 1.1rem 0 1.2rem; }
   .footer__yard > * { grid-column: 1 / -1; }
   .footer__yard .footer__meta { justify-content: space-between; }
@@ -319,10 +342,10 @@ dialog::backdrop { background: rgba(15, 36, 44, .55); }
 .footer__nav ul { list-style: none; padding: 0; columns: 2; column-gap: 1.5rem; }
 .footer__nav li { break-inside: avoid; }
 .footer__base { display: grid; gap: .75rem; padding-top: 2rem; font-size: .8125rem; color: var(--on-dark-2); }
-@media (min-width: 700px) {
+@media (min-width: 43.75em) {
   .footer__cols { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--col-gap); }
 }
-@media (min-width: 1100px) {
+@media (min-width: 68.75em) {
   .footer__cols { grid-template-columns: repeat(3, minmax(0, 1fr)) minmax(0, 1.25fr); }
   .footer__yard, .footer__nav { border-bottom: 0; padding-bottom: 3rem; }
   .footer__base { grid-template-columns: auto 1fr auto; align-items: center; gap: 2.5rem; border-top: 1px solid var(--rule-dark); }

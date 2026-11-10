@@ -11,7 +11,7 @@ const MAP = JSON.parse(readFileSync(new URL('../data/map.json', import.meta.url)
 
 // Latitudes as the owner's fact sheet gives them (one decimal).
 export const LAT = { tacoma: 47.3, kent: 47.4, sitka: 57.1, juneau: 58.3, valdez: 61.1, anchorage: 61.2, denali: 63.1, fairbanks: 64.8, utqiagvik: 71.3 };
-export const latOf = (l) => LAT[l.id];
+export const latOf = (l) => l.lat ?? LAT[l.id];
 export const deg = (lat) => `${Number(lat).toFixed(1)}°N`;
 
 /* ---------- Photographs ---------- */
@@ -146,11 +146,11 @@ export const pageHero = (ctx, { eyebrow, title, lede, photoKey, actions = '', cr
 // `query` is added to both buttons so the quote form opens knowing what the visitor was looking at
 // (for example `?product=${encodeURIComponent(line)}`); `cta` is the primary button's wording;
 // `headingLevel` keeps the page outline right when the manifest opens its own section.
-export const manifest = (ctx, { title = 'Start with <em>the list.</em>', body = 'Send drawings or a materials list. The yard nearest your project builds the take-off, checks it for gaps and prices it.', rows, id = 'manifest', query = '', cta = 'Request a quote', headingLevel = 3 } = {}) => {
+export const manifest = (ctx, { title = 'Start with <em>the list.</em>', body = 'Send drawings or a materials list. The yard nearest your project helps with the take-off and gives you an estimate.', rows, id = 'manifest', query = '', cta = 'Request a quote', headingLevel = 3 } = {}) => {
   const lines = rows || [
     ['Send', 'Plans, drawings or a materials list'],
     ['To', 'The yard nearest your project'],
-    ['Returns', 'A take-off: every stick, panel and connector, priced'],
+    ['Returns', 'A take-off and an estimate'],
     ['Ships', 'To the job site down the road, or to the dock for the trip north'],
   ];
   return html`
@@ -234,7 +234,7 @@ export const yardsStrip = (ctx) => html`
   <ul class="ystrip" aria-label="Call a yard">
     ${LOCATIONS.map((l) => html`<li>
       <a href="${tel(l.phone)}" class="ystrip__item">
-        <span class="ystrip__lat">${deg(latOf(l))}<span> · ${l.id === 'kent' ? 'Headquarters' : l.id === 'anchorage' ? 'Southcentral' : 'Interior'}</span></span>
+        <span class="ystrip__lat">${deg(latOf(l))}<span> · ${l.short}</span></span>
         ${openStatus(l, { short: true })}
         <span class="ystrip__city"><b>${l.city}</b><small>${l.state}</small></span>
         <span class="ystrip__num">${icon('phone', { size: 16 })}${l.phone}</span>
@@ -253,14 +253,16 @@ const stockImg = (ctx, c, i, sizes) => {
   const set = p.widths.filter((w) => w <= 1280).map((w) => `${ctx.u(`assets/img/${c.photo}-${w}.webp`)} ${w}w`).join(', ');
   const src = ctx.u(`assets/img/${c.photo}-${p.widths.find((w) => w >= 800) || p.widths[p.widths.length - 1]}.webp`);
   const pos = p.focal ? ` style="object-position:${p.focal}"` : '';
+  const by = p.credit && !p.credit.startsWith('Uresco') ? html`<span class="stock__credit">Stock photo. Photo: ${p.credit}</span>` : '';
   return i === 0
-    ? html`<img class="is-on" src="${src}" srcset="${set}" sizes="${sizes}" width="${p.width}" height="${p.height}" alt="" loading="lazy" decoding="async"${raw(pos)}>`
-    : html`<img src="${BLANK}" data-src="${src}" data-srcset="${set}" sizes="${sizes}" width="${p.width}" height="${p.height}" alt="" decoding="async"${raw(pos)}>`;
+    ? html`<img class="is-on" src="${src}" srcset="${set}" sizes="${sizes}" width="${p.width}" height="${p.height}" alt="" loading="lazy" decoding="async"${raw(pos)}>${by}`
+    : html`<img src="${BLANK}" data-src="${src}" data-srcset="${set}" sizes="${sizes}" width="${p.width}" height="${p.height}" alt="" decoding="async"${raw(pos)}>${by}`;
 };
 
 // The sticky photograph beside the list on wide screens (modules/stock.js swaps it). Decoration:
-// every row is complete without it.
-export const stockFrame = (ctx, { sizes = '(min-width: 1000px) 36vw, 1px', caption = html`<span>Point at a line to see it.</span>` } = {}) => html`
+// every row is complete without it. Each picture's credit follows it in the markup and shows only
+// beside the picture that is on (.stock__credit), so no stock photo can be taken for Uresco's own.
+export const stockFrame = (ctx, { sizes = '(min-width: 1000px) 36vw, 1px', caption = html`<span>Point at a line to see a photo of the material.</span>` } = {}) => html`
   <div class="stock__view" aria-hidden="true">
     <div class="stock__frame">${CATEGORIES.map((c, i) => stockImg(ctx, c, i, sizes))}</div>
     <p class="fig__cap">${caption}</p>

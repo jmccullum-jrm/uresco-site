@@ -1,7 +1,7 @@
 import { html, raw } from '../lib/html.mjs';
 import { icon } from '../lib/icons.mjs';
 import { layout } from '../lib/layout.mjs';
-import { picture, preloadFor, sectionHead, pageHero, quoteBand, interlude, callLink, photoCredit } from '../lib/components.mjs';
+import { picture, preloadFor, sectionHead, pageHero, quoteBand, interlude, callLink } from '../lib/components.mjs';
 import { FIGURES, FLOOR_FRAMING, asFig, figBody } from '../lib/drawings.mjs';
 import { SERVICES } from '../data/services.mjs';
 import { CATEGORIES } from '../data/products.mjs';
@@ -9,6 +9,27 @@ import { CATEGORIES } from '../data/products.mjs';
 // The six services as one line, in the order a job meets them: plans in, delivered load out.
 const LINE = [...SERVICES].sort((a, b) => a.seq - b.seq);
 const no = (s) => String(s.seq).padStart(2, '0');
+
+// A complete building package: framing, panels, a crate of smaller goods and the windows and doors, on one deck.
+const PACKAGE = `<svg class="fig" viewBox="0 0 560 360" aria-hidden="true" focusable="false">
+<path class="l w" d="M46 296h468"/><path class="d" d="M86 296v14M204 296v14M322 296v14M440 296v14"/>
+<rect class="f" x="66" y="222" width="158" height="74" rx="3"/>
+<path class="d" d="M97.6 222v74M129.2 222v74M160.8 222v74M192.4 222v74M66 246.7h158M66 271.3h158"/>
+<rect class="f" x="66" y="172" width="158" height="50" rx="3"/>
+<path class="d" d="M66 184.5h158M66 197h158M66 209.5h158"/>
+<rect class="f" x="240" y="190" width="130" height="106" rx="3"/>
+<path class="d" d="M240 225.3h130M240 260.7h130M283.3 190v106M326.7 190v106"/>
+<rect class="f" x="258" y="148" width="62" height="42" rx="3"/><rect class="f" x="326" y="162" width="36" height="28" rx="3"/>
+<path class="d" d="M289 148v42M326 176h36"/>
+<rect class="f" x="386" y="164" width="52" height="132" rx="3"/>
+<path class="l" d="M396 176h32v44h-32zM396 232h32v52h-32z"/><path class="d" d="M412 176v44"/>
+<rect class="f" x="446" y="186" width="50" height="110" rx="3"/>
+<path class="d" d="M446 241h50M471 186v110"/>
+<path class="y w" d="M66 198h158M240 212h130M240 274h130M386 228h110"/>
+<path class="d" d="M471 186C486 158 492 128 492 102"/>
+<rect class="yf" x="402" y="68" width="146" height="34" rx="8"/><text class="tk" x="475" y="90" text-anchor="middle">ONE PACKAGE</text>
+<text class="t" x="66" y="162">FRAMING + PANELS</text><text class="t" x="240" y="138">CRATED GOODS</text>
+</svg>`;
 
 // The line drawings are the site's own (src/lib/drawings.mjs), used here as each service's picture.
 const fig = (svg, cls = '') => raw(asFig(svg, `sv-fig${cls ? ' ' + cls : ''}`));
@@ -19,6 +40,7 @@ const FIG = {
 <path class="y w" d="M400 180h58m-13-13 13 13-13 13"/>
 <g transform="translate(366 0)">${figBody(FIGURES[1])}</g>
 </svg>`),
+  remote: fig(PACKAGE),
   crating: fig(FIGURES[2]),
   shipping: fig(FIGURES[3]),
   delivery: fig(FIGURES[4]),
@@ -28,10 +50,10 @@ const FIG = {
 // What each stop adds to the service's own description in src/data/services.mjs.
 // Every line restates uresco.com; the two equipment notes say what that equipment does anywhere.
 const SPEC = {
-  takeoffs: [['You send', 'Drawings or a materials list'], ['You get', 'A take-off and an estimate'], ['Quoted by', 'The yard nearest your job']],
-  design: [['For', 'Your unique project needs'], ['Along with', 'Take-off assistance'], ['See also', (ctx) => html`<a href="${ctx.u('products/engineered-wood/')}">Engineered floor, beam and truss packages</a>`]],
-  crating: [['Service', 'Crating and packaging'], ['Built for', 'Long hauls and multiple handoffs'], ['Loads', 'Remote-site and export packages']],
-  shipping: [['Shipping', 'Coordinated with you'], ['At the dock', 'Dock delivery'], ['Last leg', 'Rural Alaska delivery']],
+  takeoffs: [['You send', 'Drawings or a materials list'], ['We help with', 'The take-off and the estimate'], ['Goes to', 'The yard you choose']],
+  design: [['Along with', 'Take-off assistance'], ['See also', (ctx) => html`<a href="${ctx.u('products/engineered-wood/')}">Engineered floor, beam and truss packages</a>`]],
+  crating: [['Built for', 'Long hauls and multiple handoffs'], ['Loads', 'Remote and export packages']],
+  shipping: [['Shipping', 'Coordinated with you'], ['Last leg', 'Rural Alaska delivery']],
   delivery: [['Boom trucks', 'Lift bundles off the bed and set them in place'], ['Moffetts', 'Truck-mounted forklifts that unload and carry across the site'], ['Goes to', 'Job sites down the road']],
 };
 
@@ -75,13 +97,13 @@ export default {
   path: 'services/',
   render: (ctx) => layout(ctx, {
     title: 'Services',
-    description: 'Material take-offs and estimates, design services, remote and export building packages, crating, shipping coordination and job-site delivery by boom truck and Moffett forklift from Uresco.',
+    description: 'Material take-off help and estimates, design services, remote and export building packages, crating, shipping coordination and job-site delivery by boom truck and Moffett forklift from Uresco.',
     preload: [preloadFor(ctx, 'unloading')],
     body: html`
 ${pageHero(ctx, {
   eyebrow: 'Services',
   title: 'From your plans <em>to your site.</em>',
-  lede: 'Take-offs, design help, complete packages, crating, freight and delivery. Six services that run as one line, from your drawings to your site.',
+  lede: 'Take-offs, design help, complete packages, crating, freight and delivery. Six services, in the order a job meets them.',
   photoKey: 'unloading',
   caption: 'Lumber coming off a flatbed',
   actions: html`<a class="btn btn--lg" href="${ctx.u('quote/#plans')}">${icon('upload', { size: 18 })} Send plans</a>${callLink(ctx, { cls: 'btn--lg btn--line' })}`,
@@ -91,10 +113,10 @@ ${pageHero(ctx, {
   <div class="sv-line__card">
     <div class="sv-line__head">
       <div>
-        <p class="eyebrow">The line</p>
-        <h2 class="h2" id="sv-line-title">Six services, <em>one line.</em></h2>
+        <p class="eyebrow">In order</p>
+        <h2 class="h2" id="sv-line-title">Six services, <em>in job order.</em></h2>
       </div>
-      <p class="sv-line__lede">Use one stop or all six. A job across town may only need a take-off and a truck. A package for a village off the road system rides the whole line.</p>
+      <p class="sv-line__lede">Use one or all six. A job across town may only need a take-off and a truck. A package for a village off the road system uses most of them.</p>
     </div>
     <nav class="sv-map" aria-label="The six services, in order">
       <ol class="sv-map__stops">
@@ -116,9 +138,9 @@ ${pageHero(ctx, {
 
 <section class="section sv-leg">
   <div class="wrap">
-    ${legHead('On paper', 'Plans in. <em>A take-off out.</em>', 'Send drawings or a materials list. We help with the take-off and the estimate, and with the design where a project needs it.')}
+    ${legHead('On paper', 'Plans in. <em>Help with the take-off.</em>', 'Send drawings or a materials list. We help with the take-off and the estimate, and with the design where a project needs it.')}
     <div class="sv-leg__grid">
-      ${stop(ctx, S.takeoffs, { wide: true, acts: html`<a class="btn btn--dark" href="${ctx.u('quote/#plans')}">${icon('upload', { size: 17 })} Send plans for a take-off</a>` })}
+      ${stop(ctx, S.takeoffs, { wide: true, acts: html`<a class="btn btn--dark" href="${ctx.u('quote/#plans')}">${icon('upload', { size: 17 })} Send plans or a list</a>` })}
       ${stop(ctx, S.design, { i: 1, acts: callLink(ctx, { label: 'Talk it through with a yard', size: 17 }) })}
     </div>
   </div>
@@ -130,23 +152,18 @@ ${pageHero(ctx, {
     <div class="sv-leg__grid">
       ${stop(ctx, S.remote, {
         wide: true,
-        media: html`<figure class="sv-stop__media sv-stop__media--photo frame">
-          ${picture(ctx, 'valdez-port', { sizes: '(min-width: 1200px) 52vw, (min-width: 1000px) 46vw, (min-width: 700px) 40vw, 94vw' })}
-          <p class="sv-stop__bar"><span>${S.remote.step}</span><span><b>${no(S.remote)}</b> / 0${LINE.length}</span></p>
-          <figcaption class="frame__cap">A port crane at Valdez, Alaska${photoCredit('valdez-port')}</figcaption>
-        </figure>`,
         side: html`<div class="sv-kit">
           <p class="sv-kit__lab">A complete package can carry</p>
-          <ul class="sv-kit__list">${CATEGORIES.map((c) => html`<li><a href="${ctx.u('products/' + c.slug + '/')}">${icon('check', { size: 14 })}${c.short}</a></li>`)}<li><span class="sv-kit__more">Tarps, wraps, adhesives and more</span></li></ul>
+          <ul class="sv-kit__list">${CATEGORIES.map((c) => html`<li><a href="${ctx.u('products/' + c.slug + '/')}">${icon('check', { size: 14 })}${c.short}</a></li>`)}<li><span class="sv-kit__more">And a large variety of other building materials</span></li></ul>
         </div>`,
-        acts: html`<a class="btn btn--dark" href="${ctx.u('alaska/')}">How remote delivery works ${icon('arrow', { size: 17 })}</a><span class="sv-stop__where">From Sitka to Utqiaġvik</span>`,
+        acts: html`<a class="btn btn--dark" href="${ctx.u('alaska/')}">How remote delivery works ${icon('arrow', { size: 17 })}</a>`,
       })}
       ${stop(ctx, S.crating, { i: 1, acts: proof(ctx, 'uresco-yard', 'Wrapped bundles and a forklift in a Uresco yard.') })}
     </div>
   </div>
 </section>
 
-${interlude(ctx, 'hero-truck-denali', { line: 'Down the road, <em>or across an ocean.</em>', note: 'A freight truck below Denali, Alaska.' })}
+${interlude(ctx, 'hero-truck-denali', { line: 'Down the road, <em>or across an ocean.</em>', note: 'Stock photograph: a freight truck below Denali, Alaska.' })}
 
 <section class="section sv-leg">
   <div class="wrap">
@@ -165,7 +182,7 @@ ${interlude(ctx, 'hero-truck-denali', { line: 'Down the road, <em>or across an o
   </div>
 </section>
 
-${quoteBand(ctx, { title: 'Send plans. <em>Start the line.</em>', body: 'Send drawings or a list and we will help with the take-off and the estimate. Add crating, freight or delivery once you know what the job needs.', href: `${ctx.u('quote/#plans')}`, label: 'Send plans' })}
+${quoteBand(ctx, { title: 'Send plans. <em>Add what the job needs.</em>', body: 'Send drawings or a list and we will help with the take-off and the estimate. Add crating, freight or delivery once you know what the job needs.', href: `${ctx.u('quote/#plans')}`, label: 'Send plans' })}
 `,
   }),
 };

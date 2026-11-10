@@ -58,10 +58,11 @@
   --t-draw: 520ms;
   --ease: cubic-bezier(.2, .6, .2, 1);
 
+  /* In rem, so the bars grow with the reader's text size. */
   --util: 0px;
-  --mast: 60px;
-  --bar: 60px;
+  --mast: 3.75rem;
+  --bar: 3.75rem;
   color-scheme: light;
 }
-@media (min-width: 1000px) { :root { --util: 34px; --mast: 68px; --bar: 0px; } }
-@media (max-width: 999px) and (max-height: 500px) { :root { --bar: 46px; } }
+@media (min-width: 62.5em) { :root { --util: 2.125rem; --mast: 4.25rem; --bar: 0px; } }
+@media (max-width: 62.4375em) and (max-height: 500px) { :root { --bar: 2.875rem; } }

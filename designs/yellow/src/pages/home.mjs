@@ -3,6 +3,7 @@ import { icon } from '../lib/icons.mjs';
 import { layout, orgJsonLd } from '../lib/layout.mjs';
 import { photo, win, winImg, winPreload, rings, eyebrow, sticker, seal, sectionHead, marquee, quoteBand, yardCard, deliveryMap, yardsStrip, lineIndex, pauseBtn, snapshot, MAP_TOWNS } from '../lib/components.mjs';
 import { BRANDS } from '../data/products.mjs';
+import { brandHref } from './products.mjs';
 import { SERVICES } from '../data/services.mjs';
 import { PROJECTS } from '../data/projects.mjs';
 import { LOCATIONS } from '../data/locations.mjs';
@@ -26,11 +27,12 @@ const HERO_MARK = html`<span class="hero__mark"><svg viewBox="0 0 400 470" prese
 // Every place named on the delivery map, yards first: the marquee's whole vocabulary.
 const PLACES = ['Kent', 'Anchorage', 'Fairbanks', ...['sitka', 'juneau', 'ketchikan', 'kodiak', 'bethel', 'nome', 'kotzebue', 'utqiagvik'].map((id) => MAP_TOWNS.find((t) => t.id === id).name)];
 
+// One kind of work from each sector, in the order the Projects page shows them. `id` is the sector's anchor there.
 const SECTORS = [
-  { tag: 'Remote Alaska', id: 'remote-alaska', project: 0 },
-  { tag: 'Institutional', id: 'institutional', project: 1 },
-  { tag: 'Commercial', id: 'commercial', project: 2 },
-  { tag: 'Residential', id: 'residential', project: 4 },
+  { id: 'remote-alaska', project: 0 },
+  { id: 'institutional', project: 1 },
+  { id: 'commercial', project: 2 },
+  { id: 'residential', project: 4 },
 ];
 
 const WHICH = { kent: 'Puget Sound and the Northwest', anchorage: 'Southcentral and remote Alaska', fairbanks: 'The Interior and points north' };
@@ -107,18 +109,18 @@ ${marquee(PLACES, { tone: 'k', tilt: true })}
 
 <section class="section field-y products" id="products">
   <div class="wrap">
-    ${sectionHead({ eyebrow: 'Products', title: 'Nine lines. <em>One supplier.</em>', lede: 'A wholesale dealer’s full line, from framing packages to the last box of fasteners.', action: html`<a class="link" href="${ctx.u('products/')}">All products ${icon('arrow', { size: 16 })}</a>` })}
+    ${sectionHead({ eyebrow: 'Products', title: 'Nine lines. <br><em>One supplier.</em>', lede: 'A wholesale dealer’s full line, from framing packages to the last box of fasteners.', action: html`<a class="link" href="${ctx.u('products/')}">All products ${icon('arrow', { size: 16 })}</a>` })}
   </div>
   ${lineIndex(ctx)}
   <div class="wrap products__foot">
     <a class="askrow" href="${ctx.u('quote/')}">
       <span class="askrow__q">Don’t see it listed?</span>
-      <span class="askrow__a">We carry plenty more: tarps, poly, caulking, adhesives, house wraps. Ask your yard.</span>
+      <span class="askrow__a">We carry a large variety of other building materials. Ask your yard.</span>
       <span class="line__go">${icon('arrow', { size: 22 })}</span>
     </a>
     <div class="brands">
       <span class="brands__label">Brands we carry</span>
-      <ul>${BRANDS.map((b, i) => html`<li>${sticker(b, { rot: [-3, 2, -1, 3, -2][i % 5], reveal: false })}</li>`)}</ul>
+      <ul>${BRANDS.map((b, i) => html`<li><a class="brands__go" href="${brandHref(ctx, b)}">${sticker(b, { rot: [-3, 2, -1, 3, -2][i % 5], reveal: false })}</a></li>`)}</ul>
     </div>
   </div>
 </section>
@@ -126,17 +128,22 @@ ${marquee(PLACES, { tone: 'k', tilt: true })}
 <section class="section field-k reach clip">
   <div class="divider divider--u" aria-hidden="true"><i class="plx"></i><i class="plx"></i><i class="plx"></i></div>
   <div class="wrap reach__grid">
-    <div class="reach__copy">
+    <div class="reach__head">
       ${eyebrow('Remote & export delivery')}
-      <h2 class="d2 reach__title">Down the road. <em>Across an ocean.</em></h2>
-      <p class="lede">We specialize in getting materials to places without a lumber yard: shipping coordination, dock delivery and rural Alaska delivery, from Sitka to Utqiaġvik.</p>
+      <h2 class="d2 reach__title">Down the road. <br><em>Across an ocean.</em></h2>
+    </div>
+    <div class="reach__copy">
+      <p class="lede">We specialize in remote location delivery: shipping coordination, dock delivery and rural Alaska delivery, from Sitka to Utqiaġvik.</p>
       <ol class="hops">
         <li><span><b>Send plans or a list.</b> We help with the take-off and the quote.</span></li>
         <li><span><b>We package it.</b> Crated and packed for the trip.</span></li>
         <li><span><b>We work out the shipping with you.</b> Typically truck, ocean freight, barge or air.</span></li>
         <li><span><b>Delivered where you build.</b> To the dock or straight to the site.</span></li>
       </ol>
-      <div class="actions"><a class="btn" href="${ctx.u('alaska/')}">How remote delivery works ${icon('arrow', { size: 18 })}</a></div>
+      <div class="actions">
+        <a class="btn" href="${ctx.u('alaska/')}">How remote delivery works ${icon('arrow', { size: 18 })}</a>
+        <a class="btn btn--line" href="${ctx.u('pacific-northwest/')}">Pacific Northwest ${icon('arrow', { size: 18 })}</a>
+      </div>
     </div>
     <div class="reach__map">
       ${deliveryMap(ctx, { compact: true })}
@@ -147,7 +154,7 @@ ${marquee(PLACES, { tone: 'k', tilt: true })}
 
 <section class="section field-p services">
   <div class="wrap">
-    ${sectionHead({ eyebrow: 'Services', title: 'We do the hard part.', lede: 'A building bound for a place with no lumber yard cannot be one box of hangers short. So a knowledgeable sales staff works through take-offs, design help, crating and shipping coordination with you.', action: html`<a class="link" href="${ctx.u('services/')}">All services ${icon('arrow', { size: 16 })}</a>` })}
+    ${sectionHead({ eyebrow: 'Services', title: 'Plans in. <br><em>Load out.</em>', lede: 'A building bound for a place with no lumber yard cannot be one box of hangers short. Our sales staff can help with the take-off, design, crating and shipping coordination.', action: html`<a class="link" href="${ctx.u('services/')}">All services ${icon('arrow', { size: 16 })}</a>` })}
     <ul class="svcs">
       ${SERVICES.map((s, i) => html`<li style="--i:${i % 3}" data-reveal><a class="svc" href="${ctx.u('services/')}#${s.id}">
         <span class="svc__icon">${icon(s.icon, { size: 30 })}</span>
@@ -163,12 +170,12 @@ ${marquee(['Lumber', 'Timbers', 'Plywood', 'OSB', 'I-joists', 'Glulam', 'LVL', '
 
 <section class="section field-k sectors clip">
   <div class="wrap">
-    ${sectionHead({ eyebrow: 'Who we build for', title: 'Schools. Homes.<br><em>Village housing.</em>', lede: 'Institutional, commercial and residential builders, on the road system and off it.', action: html`<a class="link" href="${ctx.u('projects/')}">See project types ${icon('arrow', { size: 16 })}</a>` })}
+    ${sectionHead({ eyebrow: 'Who we supply', title: 'Schools. Homes. <br><em>Village housing.</em>', lede: 'Institutional, commercial and residential builders, on the road system and off it.', action: html`<a class="link" href="${ctx.u('projects/')}">See project types ${icon('arrow', { size: 16 })}</a>` })}
     <ul class="arcade">
       ${SECTORS.map((s, i) => { const p = PROJECTS[s.project]; return html`<li style="--i:${i}" data-reveal>
         <a class="arc" href="${ctx.u('projects/')}#${s.id}">
           ${win(ctx, p.photo, { tag: 'span', shape: 'arch', duo: true, cls: 'arc__win', sizes: '(min-width: 1000px) 22vw, (min-width: 600px) 44vw, 29vw', alt: '' })}
-          <span class="arc__tag">${s.tag}</span>
+          <span class="arc__tag">${p.sector}</span>
           <b class="arc__title">${p.title}</b>
           <span class="arc__text">${p.scope}</span>
         </a></li>`; })}
@@ -177,11 +184,11 @@ ${marquee(['Lumber', 'Timbers', 'Plywood', 'OSB', 'I-joists', 'Glulam', 'LVL', '
   </div>
 </section>
 
-${quoteBand(ctx)}
+${quoteBand(ctx, { title: 'Send plans. <br><em>Start the take-off.</em>', body: 'Upload drawings or a list and we’ll help with the take-off and the estimate.' })}
 
 <section class="section field-p yardsec" id="yards">
   <div class="wrap">
-    ${sectionHead({ eyebrow: 'Locations', title: '<span class="yardsec__n">3</span> yards. One team.', lede: 'Call the yard nearest your project, or any of them. They work as one.', action: html`<a class="link" href="${ctx.u('locations/')}">All location details ${icon('arrow', { size: 16 })}</a>` })}
+    ${sectionHead({ eyebrow: 'Locations', title: '<span class="yardsec__n">3</span> yards. <br>One team.', lede: 'Call the yard nearest your project, or any of them. They work as one.', action: html`<a class="link" href="${ctx.u('locations/')}">All location details ${icon('arrow', { size: 16 })}</a>` })}
     <div class="yards">${LOCATIONS.map((l) => yardCard(ctx, { ...l, region: WHICH[l.id] }, { compact: true }))}</div>
   </div>
 </section>

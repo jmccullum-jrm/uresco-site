@@ -44,7 +44,7 @@ const soundMap = (ctx) => html`
     <div class="map__pins">
       ${SOUND.labels.map(([t, x, y]) => html`<span class="map__grat" aria-hidden="true" style="${at([x, y])}">${t}</span>`)}
       ${SOUND.towns.map(([name, x, y, side]) => html`<a class="map__dot pn-town" data-town="${name}" href="${raw(townQuote(ctx, name))}" tabindex="-1" aria-hidden="true" style="${at([x, y])}"><span class="map__name" data-side="${side}">${name}</span></a>`)}
-      <a class="map__yard" data-side="e" href="#kent" style="${at(SOUND.kent)}"><i class="map__beacon"></i><span class="map__tag"><b>Kent</b>${openStatus(kent)}<span class="sr-only"> yard details</span></span></a>
+      <a class="map__yard" data-side="e" href="#kent" style="${at(SOUND.kent)}"><i class="map__beacon"></i><span class="map__tag"><b>Kent</b> ${openStatus(kent)}<span class="sr-only">, yard details</span></span></a>
       <a class="pn-exit" href="#north" style="${at(SOUND.exit)}" aria-label="The lane north to Alaska"><span>${icon('arrow-up-right', { size: 14 })}To Alaska</span></a>
     </div>
   </div>`;
@@ -59,17 +59,16 @@ const pnw = {
   path: 'pacific-northwest/',
   render: (ctx) => layout(ctx, {
     title: 'Pacific Northwest — Kent, WA',
-    description: 'Uresco’s Kent, Washington headquarters and Pacific Northwest distribution center: lumber, engineered wood, siding and building packages with job-site delivery by boom truck and Moffett forklift around the Puget Sound region.',
+    description: 'Uresco’s Kent, Washington headquarters and Pacific Northwest distribution center, with job-site delivery by boom truck and truck-mounted Moffett forklift around the Puget Sound region.',
     body: html`
 <section class="pn-open" id="sound" aria-labelledby="pn-title">
   <div class="stage stage--embed pn-sound" data-sound>
     <div class="stage__sky" aria-hidden="true"></div>
-    <div class="stage__map">${soundMap(ctx)}</div>
     <div class="stage__ui">
       <div class="stage__copy">
         <p class="eyebrow">Pacific Northwest <i>·</i> Kent, WA</p>
         <h1 class="display" id="pn-title">Down the road <em>from Kent.</em></h1>
-        <p class="hero__lede">Our headquarters yard carries the full range and delivers to job sites around the Puget Sound region by boom truck and truck-mounted Moffett forklift.</p>
+        <p class="hero__lede">Job-site delivery around the Puget Sound region by boom truck and truck-mounted Moffett forklift.</p>
       </div>
       <div class="finder pn-panel">
         <div class="route__yard">
@@ -88,13 +87,14 @@ const pnw = {
         <p class="route__note">Towns are examples, not the limit. Building somewhere else in the region? Ask Kent.</p>
       </div>
     </div>
+    <div class="stage__map">${soundMap(ctx)}</div>
     ${legend({ items: [['yard', 'Uresco yard'], ['arc', 'Yard to call'], ['sea', 'Lane north']], note: 'Lines are illustrative' })}
   </div>
 </section>
 
 <section class="section" aria-labelledby="pn-gear-title">
   <div class="wrap">
-    ${sectionHead({ eyebrow: 'Job-site delivery', title: 'Off the truck <em>and onto the site.</em>', lede: 'Kent delivers to job sites with Moffett fork unload and boom trucks. The site decides which one you want.', id: 'pn-gear-title' })}
+    ${sectionHead({ eyebrow: 'Job-site delivery', title: 'Off the truck <em>and onto the site.</em>', lede: 'Kent delivers to job sites with boom trucks and truck-mounted Moffett forklifts. The site decides which one you want.', id: 'pn-gear-title' })}
     <div class="pn-gear">
       ${GEAR.map((g, i) => html`<article class="pn-unit reveal" style="--i:${i}">
         <div class="pn-unit__media">${raw(asFig(g.fig, 'pn-fig'))}</div>
@@ -115,10 +115,10 @@ const pnw = {
 <section class="section section--ice" aria-labelledby="pn-load-title">
   <div class="wrap pn-load">
     <div class="pn-load__head">
-      <p class="eyebrow">In the yard</p>
-      <h2 class="h2" id="pn-load-title">The full range, <em>on one load sheet.</em></h2>
-      <p class="lede">The Kent distribution center offers a full range of building products and services for the commercial and residential builder.</p>
-      <p class="pn-load__more"><b>Not on the sheet?</b> We also carry tarps, polyurethane rolls, caulking, adhesives, house wraps and more. Ask your yard.</p>
+      <p class="eyebrow">Products</p>
+      <h2 class="h2" id="pn-load-title">What we carry, <em>line by line.</em></h2>
+      <p class="lede">Nine product lines for institutional, commercial and residential builders. For sizes, grades and availability, ask your yard.</p>
+      <p class="pn-load__more"><b>Not on the list?</b> We also carry a large variety of other building materials. Ask your yard.</p>
       <figure class="pn-load__proof">
         ${picture(ctx, 'uresco-truck', { sizes: '72px' })}
         <figcaption><span>From Uresco</span>The tag on a Uresco load.</figcaption>
@@ -126,9 +126,7 @@ const pnw = {
     </div>
     <div class="pn-bill reveal">
       <div class="pn-bill__top">
-        <p><span>From</span><b>Kent, WA</b></p>
-        ${icon('arrow', { size: 18, cls: 'pn-bill__arrow' })}
-        <p><span>To</span><b>Your job site</b></p>
+        <p class="pn-bill__lab">Product lines</p>
         <a class="link" href="${ctx.u('products/')}">All products ${icon('arrow', { size: 16 })}</a>
       </div>
       <ol class="pn-bill__rows">
@@ -148,12 +146,11 @@ const pnw = {
 <section class="pn-north" id="north" aria-labelledby="pn-north-title">
   <div class="stage stage--embed pn-north__stage">
     <div class="stage__sky" aria-hidden="true"></div>
-    <div class="stage__map">${mapPlate(ctx, { dots: false })}</div>
     <div class="stage__ui">
       <div class="stage__copy">
         <p class="eyebrow">Across an ocean</p>
-        <h2 class="h2" id="pn-north-title">Kent to Alaska, <em>anywhere in the state.</em></h2>
-        <p class="pn-north__lede">Kent is the south end of the Uresco map. We are fully equipped to handle remote-location and export building packages, and we work with you on shipping coordination, dock delivery and rural Alaska delivery.</p>
+        <h2 class="h2" id="pn-north-title">Building in Alaska? <em>Anywhere in the state.</em></h2>
+        <p class="pn-north__lede">Delivery is available from Sitka to Utqiaġvik. We are fully equipped to handle remote-location and export building packages, and we work with you on shipping coordination, dock delivery and rural Alaska delivery.</p>
         <ul class="pn-north__points">
           <li><a href="${ctx.u('services/#remote')}">${icon('ship', { size: 18 })}Remote &amp; export packages ${icon('arrow', { size: 16 })}</a></li>
           <li><a href="${ctx.u('services/#crating')}">${icon('crate', { size: 18 })}Crating &amp; packaging ${icon('arrow', { size: 16 })}</a></li>
@@ -162,6 +159,7 @@ const pnw = {
         <div class="actions"><a class="btn btn--lg" href="${ctx.u('alaska/')}">Alaska delivery ${icon('arrow', { size: 18 })}</a></div>
       </div>
     </div>
+    <div class="stage__map">${mapPlate(ctx, { dots: false })}</div>
     ${legend()}
   </div>
 </section>
@@ -204,7 +202,6 @@ const locations = {
 <section class="lc-open" aria-labelledby="lc-title">
   <div class="stage stage--embed lc-sw">
     <div class="stage__sky" aria-hidden="true"></div>
-    <div class="stage__map">${mapPlate(ctx, { dots: false, eager: true })}</div>
     <div class="stage__ui">
       <div class="stage__copy">
         <p class="eyebrow">Locations</p>
@@ -222,6 +219,7 @@ const locations = {
         <p class="lc-board__foot">Not sure? Call any of us. We work as one team.</p>
       </div>
     </div>
+    <div class="stage__map">${mapPlate(ctx, { dots: false, eager: true })}</div>
     ${legend()}
   </div>
 </section>
@@ -239,7 +237,7 @@ const locations = {
   </div>
 </section>
 
-${quoteBand(ctx, { eyebrow: 'Would rather write?', title: 'Send the plans. <br><em>We will find the yard.</em>', body: 'Send drawings or a materials list and tell us where the job is. The yard nearest your project will help with the take-off and the estimate.' })}
+${quoteBand(ctx, { eyebrow: 'Rather write?', title: 'Send the plans. <br><em>Pick the nearest yard.</em>', body: 'Send drawings or a materials list and tell us where the job is. We help with the take-off and the estimate.' })}
 `,
   }),
 };

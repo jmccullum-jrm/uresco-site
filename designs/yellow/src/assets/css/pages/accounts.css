@@ -1,49 +1,33 @@
 /* ---------- Contractor accounts ---------- */
+/* The headline is sized from its own column, so it holds two or three lines. */
+.ac-hero .phero__copy { container-type: inline-size; }
+.ac-hero .phero__title { font-size: min(12.5cqi, clamp(3.2rem, .4rem + 6.6vw, 6.6rem)); }
+@media (max-width: 899px) { .ac-hero .phero__title { font-size: min(18cqi, clamp(2.5rem, 12.4vw, 6.6rem)); } }
+/* Printing needs the script. */
+html:not(.js) [data-print] { display: none; }
+
 /* In the U: the paper application, drawn. Round end cuts it off, as it would a photograph. */
 .ac-sheet { position: relative; z-index: 1; display: grid; grid-template-columns: 1fr 1fr; align-content: start; gap: .85rem .85rem; aspect-ratio: 4 / 5; padding: clamp(1.25rem, 2.2vw, 2rem) clamp(1.25rem, 2.2vw, 2rem) 3rem; background: var(--white); border: var(--line) solid var(--black); border-top: 0; border-radius: 0 0 var(--r-pill) var(--r-pill); overflow: hidden; }
 .ac-sheet__top { grid-column: 1 / -1; display: flex; align-items: center; gap: .6rem; padding-bottom: .7rem; border-bottom: var(--line) solid var(--black); }
 .ac-sheet__top svg { width: 34px; height: 34px; flex: none; }
 .ac-sheet__top b { font-size: clamp(.95rem, .7rem + .8vw, 1.3rem); font-weight: 900; font-stretch: 125%; letter-spacing: -.015em; line-height: .95; text-transform: uppercase; }
 .ac-sheet__l { display: block; padding-bottom: 1.65rem; border-bottom: 1.5px solid var(--black); font-size: .75rem; font-weight: 650; line-height: 1.1; }
-.ac-sheet__s { grid-column: 1 / -1; position: relative; display: block; margin: .9rem auto 0; width: 76%; padding: 0 0 1.5rem 0; border-bottom: var(--line) solid var(--black); font-size: .72rem; font-weight: 650; text-align: center; }
-.ac-hero__sticker { position: absolute; z-index: 2; left: -8%; bottom: 13%; }
+.ac-sheet__s { grid-column: 1 / -1; position: relative; display: block; margin: .9rem auto 0; width: 76%; padding: 0 0 1.5rem 0; border-bottom: var(--line) solid var(--black); font-size: .75rem; font-weight: 650; text-align: center; }
 @media (max-width: 899px) {
   .ac-sheet { aspect-ratio: auto; padding: clamp(3.5rem, 15vw, 4.75rem) clamp(1.5rem, 8vw, 2.5rem) 1.25rem; border-top: var(--line) solid var(--black); border-bottom: 0; border-radius: var(--r-pill) var(--r-pill) 0 0; }
   .ac-sheet__s { display: none; }
-  .ac-hero__sticker { left: auto; right: 1%; bottom: 8%; }
 }
 
-/* What an account does, read off a yard ticket */
-.ac-perks__grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); gap: clamp(2rem, 1rem + 5vw, 6rem); align-items: start; }
-.ac-path { display: grid; gap: 1rem; margin-top: clamp(1.5rem, 1rem + 2vw, 2.75rem); }
-.ac-path li { display: grid; grid-template-columns: 46px minmax(0, 1fr); gap: 1rem; align-items: start; }
-.ac-path__no { display: grid; place-items: center; width: 46px; height: 58px; padding-bottom: 6px; background: var(--yellow); color: var(--black); border-radius: 0 0 var(--r-pill) var(--r-pill); font-size: 1rem; font-weight: 900; font-stretch: 112%; }
-.ac-path b { display: block; color: var(--yellow); font-size: 1.15rem; font-weight: 900; font-stretch: 118%; letter-spacing: -.01em; line-height: 1.15; text-transform: uppercase; }
-.ac-path span:not(.ac-path__no) { display: block; margin-top: .25rem; color: var(--ash); line-height: 1.4; }
-
-.ac-ticket { position: relative; background: var(--white); color: var(--black); border-radius: var(--r-l) var(--r-l) 0 0; overflow: hidden; }
-.ac-ticket__head { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: clamp(1.1rem, 2vw, 1.6rem) clamp(1.25rem, 2.5vw, 2.25rem); background: var(--yellow); }
-.ac-ticket__head span { font-size: clamp(1.4rem, 1rem + 1.6vw, 2.4rem); font-weight: 900; font-stretch: var(--wide); letter-spacing: -.025em; line-height: 1; text-transform: uppercase; }
-.ac-ticket__head i { display: block; width: clamp(38px, 3.6vw, 52px); }
-.ac-ticket__rows { margin: 0; }
-.ac-ticket__rows > div { display: grid; grid-template-columns: minmax(6.5rem, 9rem) minmax(0, 1fr); gap: 1.25rem; padding: clamp(1.05rem, 1.8vw, 1.5rem) clamp(1.25rem, 2.5vw, 2.25rem); border-top: var(--line) solid var(--black); }
-.ac-ticket__rows dt { padding-top: .3rem; font-size: .75rem; font-weight: 800; font-stretch: var(--wide); letter-spacing: .07em; text-transform: uppercase; line-height: 1.2; }
-.ac-ticket__rows dd { margin: 0; }
-.ac-ticket__rows b { display: block; font-size: clamp(1.15rem, 1rem + .6vw, 1.6rem); font-weight: 900; font-stretch: 118%; letter-spacing: -.015em; line-height: 1.05; text-transform: uppercase; text-wrap: balance; }
-.ac-ticket__rows span { display: block; margin-top: .4rem; color: var(--stone); line-height: 1.42; }
-/* The ticket tears off along the bottom edge: small black holes along a white strip. */
-.ac-ticket::after { content: ''; display: block; height: 22px; border-top: var(--line) solid var(--black); background: radial-gradient(circle at 12px 22px, var(--black) 8px, transparent 8.6px) 0 0 / 24px 22px repeat-x; }
-.ac-perks { padding-bottom: clamp(3rem, 2rem + 4vw, 6rem); }
-@media (max-width: 999px) { .ac-perks__grid { grid-template-columns: minmax(0, 1fr); } }
-@media (max-width: 559px) {
-  .ac-ticket__rows > div { grid-template-columns: minmax(0, 1fr); gap: .35rem; }
-  .ac-ticket__rows dt { padding-top: 0; }
-}
+/* The black band: one question, one line, one tap to a yard. */
+.ac-perks { padding-block: clamp(3rem, 2rem + 4vw, 6rem); }
+.ac-perks .shead { margin-bottom: 0; }
+.ac-perks .shead__aside .lede { color: var(--paper); }
 
 /* The credit application */
 .ac-apply__head { margin-bottom: clamp(1.5rem, 1rem + 2vw, 2.5rem); }
 .ac-apply { padding-top: var(--section); }
 .ac-apply__head .shead { margin-bottom: clamp(1.25rem, 1rem + 1.2vw, 2rem); }
+.ac-apply__head .lede { color: var(--stone); }
 .ac-ready { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem .9rem; padding: 1rem 0; border-block: var(--line) solid var(--black); }
 .ac-ready__k { margin: 0; font-size: .75rem; font-weight: 800; font-stretch: var(--wide); letter-spacing: .07em; text-transform: uppercase; line-height: 1.2; }
 .ac-ready__list { display: flex; flex-wrap: wrap; gap: .35rem 1rem; }

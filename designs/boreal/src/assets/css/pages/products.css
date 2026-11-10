@@ -12,15 +12,15 @@
 .pidx-find__count i { font-style: normal; opacity: .55; margin-inline: .2em; }
 .pidx-find__field { position: relative; display: flex; align-items: center; }
 .pidx-find__field > .i { position: absolute; left: .95rem; color: var(--slate); pointer-events: none; }
-.pidx-find__input { width: 100%; height: 54px; padding: 0 2.9rem; border: 1.5px solid var(--mist); border-radius: var(--r-md); background: var(--snow); font: inherit; font-size: 1.0625rem; color: var(--ink); -webkit-appearance: none; appearance: none; }
+.pidx-find__input { width: 100%; height: 54px; padding: 0 2.9rem; border: 1.5px solid var(--field-line, #7E8F96); border-radius: var(--r-md); background: var(--snow); font: inherit; font-size: 1.0625rem; color: var(--ink); -webkit-appearance: none; appearance: none; }
 .pidx-find__input::-webkit-search-cancel-button, .pidx-find__input::-webkit-search-decoration { -webkit-appearance: none; appearance: none; }
 .pidx-find__input::placeholder { color: var(--slate); opacity: 1; }
-.pidx-find__input:hover { border-color: var(--fog); }
+.pidx-find__input:hover { border-color: var(--slate); }
 .pidx-find__input:focus { outline: none; border-color: var(--ink); background: var(--white); box-shadow: 0 0 0 4px rgba(245, 184, 0, .45); }
 .pidx-find__clear { position: absolute; right: .25rem; display: grid; place-items: center; width: 44px; height: 44px; border: 0; border-radius: 10px; background: none; color: var(--slate); }
 .pidx-find__clear:hover { background: var(--ice); color: var(--ink); }
 .pidx-find__chips { display: flex; align-items: center; gap: .4rem; }
-@media (max-width: 999px), (pointer: coarse) { .pidx-find__chips .chip { height: 40px; padding: 0 .85rem; font-size: .875rem; } }
+@media (max-width: 62.4375em), (pointer: coarse) { .pidx-find__chips .chip { height: 40px; padding: 0 .85rem; font-size: .875rem; } }
 .pidx-find__try { margin-right: .15rem; font-family: var(--mono); font-size: .75rem; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; color: var(--slate); }
 
 /* ---------- Index: the nine lines as a ledger ----------
@@ -64,7 +64,7 @@ html:not(.js) .pidx-cols { margin-top: 0; }
 .pidx-none .actions { margin-top: 1.25rem; }
 .pidx-more { margin-top: clamp(1.5rem, 3vw, 2.5rem); }
 
-@media (max-width: 999px) {
+@media (max-width: 62.4375em) {
   /* Stacked, the photograph is a band: the field and the list stay close to the top. */
   .pidx-top .phero__media { aspect-ratio: 2 / 1; }
   .pidx-find { grid-template-columns: minmax(0, 1fr); }
@@ -82,7 +82,7 @@ html:not(.js) .pidx-cols { margin-top: 0; }
   .pidx-row__quote { grid-column: 2 / -1; grid-row: 3; }
   .pidx-row__go { grid-column: 3; grid-row: 1; }
 }
-@media (max-width: 699px) {
+@media (max-width: 43.6875em) {
   /* The action bar already offers Call and Quote: the first screen goes to the field and the list. */
   .pidx-top .actions { display: none; }
   .pidx-top .phero { padding-bottom: 1.25rem; }
@@ -112,7 +112,7 @@ html:not(.js) .pidx-cols { margin-top: 0; }
    The FAQ layout (.faq-wrap): the head stays put on the left, white rows on the right. */
 .pidx-brands__head { position: sticky; top: calc(var(--mast) + 2rem); }
 .pidx-brands__head .shead { position: static; margin-bottom: 1.25rem; }
-@media (max-width: 900px) { .pidx-brands__head { position: static; } }
+@media (max-width: 56.25em) { .pidx-brands__head { position: static; } }
 .pidx-brandlist { display: grid; gap: .5rem; list-style: none; }
 .pidx-brand { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: .35rem 1.5rem; align-items: baseline; padding: 1.15rem 1.5rem 1.2rem; border-radius: var(--r-lg); background: var(--white); box-shadow: var(--sh-1); }
 .pidx-brand:nth-child(2) { --i: 1; } .pidx-brand:nth-child(3) { --i: 2; } .pidx-brand:nth-child(4) { --i: 3; } .pidx-brand:nth-child(5) { --i: 4; }
@@ -122,12 +122,12 @@ html:not(.js) .pidx-cols { margin-top: 0; }
 .pidx-brand__line { grid-column: 2; grid-row: 1; justify-self: end; font-size: .9375rem; white-space: nowrap; }
 .pidx-brand__lit { grid-column: 2; grid-row: 2; justify-self: end; display: inline-flex; align-items: center; gap: .3rem; font-size: .875rem; color: var(--slate); text-decoration: none; white-space: nowrap; }
 .pidx-brand__lit:hover { color: var(--ink); text-decoration: underline; }
-@media (max-width: 699px) {
+@media (max-width: 43.6875em) {
   .pidx-brand { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: .3rem 1.25rem; padding: 1.1rem 1.15rem 1.15rem; }
   .pidx-brand__name, .pidx-brand__what { flex: 0 0 100%; }
   .pidx-brand__line, .pidx-brand__lit { margin-top: .6rem; }
-  .pidx-brand__lit { min-height: 40px; }
 }
+@media (max-width: 43.6875em), (pointer: coarse) { .pidx-brand__lit { min-height: 40px; } }
 
 /* ---------- Index: A–Z ----------
    Set like the index at the back of a book: a hanging letter, the entry, a dotted leader, the line it is in. */
@@ -144,14 +144,14 @@ html:not(.js) .pidx-cols { margin-top: 0; }
 .pidx-az small { flex: none; font-size: .8125rem; color: var(--slate); white-space: nowrap; }
 .pidx-az a:hover .pidx-az__name { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .22em; }
 .pidx-az a:hover small { color: var(--ink); }
-@media (max-width: 1359px) { .pidx-az { columns: 2; column-gap: clamp(1.5rem, 5vw, 4rem); } }
+@media (max-width: 84.9375em) { .pidx-az { columns: 2; column-gap: clamp(1.5rem, 5vw, 4rem); } }
 /* Too narrow for entry, leader and line on one row: the line sits under the entry. */
-@media (min-width: 700px) and (max-width: 919px) {
+@media (min-width: 43.75em) and (max-width: 57.4375em) {
   .pidx-az a { display: grid; gap: .05rem; padding: .4rem 0; }
   .pidx-az__dots { display: none; }
   .pidx-az small { white-space: normal; }
 }
-@media (max-width: 699px) {
+@media (max-width: 43.6875em) {
   /* On a phone the field above does this job: the A–Z is kept short, names only, without the second names. */
   .pidx-az { column-gap: 1rem; }
   .pidx-az li { padding-left: 1.4rem; }
@@ -173,12 +173,12 @@ html:not(.js) .pidx-cols { margin-top: 0; }
 .pline-hero__panel li { min-height: 26px; padding: 0 .55rem; font-size: .8125rem; }
 .pline-hero__has { display: none; }
 /* The eyebrow says where this line sits among the nine; the arrows beside it step through them. */
-@media (max-width: 359px) { .pline-hero__w { display: none; } }
+@media (max-width: 22.4375em) { .pline-hero__w { display: none; } }
 .pline-step { display: flex; gap: .35rem; flex: none; }
 @media (pointer: coarse) { .pline-step .go { width: 44px; height: 44px; } }
 /* Line names run long: the action may wrap rather than push the page wide. */
 .pline-qbtn { white-space: normal; text-align: center; text-wrap: balance; padding-block: .55rem; line-height: 1.25; }
-@media (max-width: 699px) {
+@media (max-width: 43.6875em) {
   /* On a phone the photograph is small: what is in the line moves into the words above it,
      and the action bar already has Call. */
   .pline-hero__panel, .pline-hero__call { display: none; }
@@ -208,6 +208,16 @@ html:not(.js) .pidx-cols { margin-top: 0; }
 .pline-item__pick:not([data-on]) :is(.pline-item__check, .pline-item__on), .pline-item__pick[data-on] :is(.pline-item__plus, .pline-item__add) { display: none; }
 .pline-item__pick[data-on] { background: var(--ink); border-color: var(--ink); color: #fff; }
 .pline-item__pick[data-on]:hover { background: var(--ink-hi); }
+.pline-item__narrow { display: none; }
+/* What is on the quote, right under the list. */
+.pline-tray { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .6rem 1.25rem; min-height: 72px; padding: .9rem 1.5rem; border-bottom: 1px solid var(--mist); }
+.pline-tray__text { margin: 0; flex: 1 1 18rem; font-size: .9375rem; line-height: 1.45; color: var(--slate); }
+.pline-tray__text.is-on { color: var(--ink); font-weight: 500; }
+.pline-tray__acts { display: flex; align-items: center; gap: .5rem .9rem; }
+.pline-tray__acts[hidden] { display: none; }
+.pline-tray__clear { min-height: 40px; border: 0; padding: 0 .25rem; background: none; font-size: .875rem; color: var(--slate); text-decoration: underline; text-underline-offset: .22em; }
+.pline-tray__clear:hover { color: var(--ink); }
+.pline-tray__go { min-height: 40px; }
 /* The last row is the one thing the list cannot say. */
 .pline-list__foot { display: grid; grid-template-columns: 1.75rem minmax(0, 1fr) auto; column-gap: 1rem; align-items: center; padding: 1.1rem 1.5rem 1.2rem; border-radius: 0 0 var(--r-xl) var(--r-xl); background: var(--snow); box-shadow: inset 0 0 0 1px var(--white); }
 .pline-list__q { display: grid; place-items: center; margin-left: -.1rem; color: var(--slate); }
@@ -217,9 +227,6 @@ html:not(.js) .pidx-cols { margin-top: 0; }
 
 .pline-brands { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr); gap: 1.25rem 2rem; align-items: start; margin-top: 1.25rem; padding: 1.25rem 1.5rem 1.1rem; border-radius: var(--r-xl); background: var(--white); box-shadow: var(--sh-1); }
 .pline-brands__h { margin-bottom: .8rem; font-family: var(--mono); font-size: var(--t-micro); font-weight: 500; letter-spacing: .06em; line-height: 1.5; text-transform: uppercase; color: var(--slate); }
-.pline-brands--none { grid-template-columns: minmax(0, 1fr); gap: 0; padding-bottom: 1.25rem; }
-.pline-brands--none .pline-brands__h { margin-bottom: .5rem; }
-.pline-brands--none p { margin: 0; max-width: 36em; font-size: .9375rem; line-height: 1.5; color: var(--slate); }
 .pline-brands__lit { display: grid; margin-top: -.5rem; list-style: none; }
 .pline-brands__lit a { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: .7rem; min-height: 44px; padding: .5rem 0; font-size: .9375rem; font-weight: 500; line-height: 1.35; text-decoration: none; color: var(--ink); }
 .pline-brands__lit li + li a { border-top: 1px solid var(--mist); }
@@ -245,28 +252,30 @@ html:not(.js) .pidx-cols { margin-top: 0; }
 .pline-ask__picked.is-on { color: var(--frost); }
 
 /* Name over status wherever the card is narrow, so the three rows always match. */
-@media (max-width: 1199px) { .pline-ask__who { display: grid; gap: .1rem; } .pline-ask__yards li { min-height: 64px; } }
-@media (max-width: 899px) {
+@media (max-width: 74.9375em) { .pline-ask__who { display: grid; gap: .1rem; } .pline-ask__yards li { min-height: 64px; } }
+@media (max-width: 56.1875em) {
   .pline-grid { grid-template-columns: minmax(0, 1fr); }
   .pline-ask { position: static; }
 }
-@media (min-width: 700px) and (max-width: 899px) { .pline-ask__who { display: flex; gap: 0 .6rem; } .pline-ask__yards li { min-height: 56px; } }
-@media (max-width: 699px) {
+@media (min-width: 43.75em) and (max-width: 56.1875em) { .pline-ask__who { display: flex; gap: 0 .6rem; } .pline-ask__yards li { min-height: 56px; } }
+/* A short window: stuck, the card's foot would never come into view. */
+@media (max-height: 44em) { .pline-ask { position: static; } }
+@media (max-width: 43.6875em) {
   .pline-list__bar { padding-inline: 1.1rem; }
   .pline-list__foot { grid-template-columns: minmax(0, 1fr); row-gap: .85rem; padding: 1.1rem; }
   .pline-list__q { display: none; }
   .pline-list__foot .btn { justify-self: start; }
   .pline-item { grid-template-columns: minmax(0, 1fr) auto; column-gap: .75rem; padding: 1.1rem 1.1rem 1.15rem; }
   .pline-item__no { display: none; }
-  /* The button shrinks to its sign; its name stays for screen readers. */
-  .pline-item__pick { justify-content: center; width: 44px; height: 44px; padding: 0; border-radius: 12px; }
-  .pline-item__label { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  /* The button keeps a word: "Add" or "Added". */
+  .pline-item__pick { height: 44px; padding: 0 .7rem 0 .55rem; border-radius: 12px; }
+  .pline-item__wide { display: none; }
+  .pline-item__narrow { display: inline; }
+  .pline-tray { padding: .85rem 1.1rem; }
   .pline-brands { grid-template-columns: minmax(0, 1fr); padding: 1.1rem 1.1rem .6rem; }
-  /* The card that follows already says to ask the yard. */
-  .pline-brands--none { display: none; }
   .pline-ask { padding: 1.25rem 1.1rem 1.1rem; }
 }
-@media (max-width: 359px) { .pline-ask__num .i { display: none; } .pline-ask__yards li { padding-left: .8rem; } }
+@media (max-width: 22.4375em) { .pline-ask__num .i { display: none; } .pline-ask__yards li { padding-left: .8rem; } }
 
 /* ---------- Line: the services that go with it (shared .modes cards, each one a link) ---------- */
 .pline-svc { position: relative; }
@@ -280,7 +289,7 @@ html:not(.js) .pidx-cols { margin-top: 0; }
 .pline-svc > p:not(.mode__where) { margin: 0; color: var(--slate); }
 .pline-svc__go { position: absolute; top: 1.5rem; right: 1.5rem; }
 .pline-svc:nth-child(2) { --i: 1; } .pline-svc:nth-child(3) { --i: 2; }
-@media (max-width: 860px) { .pline-svc__go { top: 1.1rem; right: 1rem; } }
+@media (max-width: 53.75em) { .pline-svc__go { top: 1.1rem; right: 1rem; } }
 
 /* ---------- Line: the rest of the load, then the next line ---------- */
 .pline-rel { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.25rem; list-style: none; }
@@ -302,10 +311,10 @@ html:not(.js) .pidx-cols { margin-top: 0; }
 .pline-pager__text b { font-size: var(--t-h3); font-weight: 600; letter-spacing: -.02em; line-height: 1.2; }
 .pline-pager__short { display: none; }
 .pline-more { padding-bottom: calc(var(--section) * .8); }
-@media (max-width: 999px) {
+@media (max-width: 62.4375em) {
   .pline-rel { grid-template-columns: minmax(0, 1fr); gap: .6rem; }
 }
-@media (max-width: 699px) {
+@media (max-width: 43.6875em) {
   .pline-pager__full, .pline-pager__w { display: none; }
   .pline-pager__short { display: inline; }
   .pline-pager__link { flex-direction: column; align-items: flex-start; gap: .9rem; padding: 1.25rem .75rem 1.25rem 0; }

@@ -7,7 +7,7 @@ import { SITE } from '../config.mjs';
 
 // ================= About =================
 // The page is built around Uresco's own tag: the printed tag on a load of plywood, "LUMBER BY:".
-// It shows the real one, then the same tag at poster size with the blanks filled in.
+// It shows the real one, then the same idea at poster size.
 const HERO = 'timber-weathered';
 
 // What the tag says, and what a new customer wants to know. Only facts from FACTS.md.
@@ -32,6 +32,7 @@ const about = {
     preload: [pageHeroPreload(ctx, HERO)],
     body: html`
 ${pageHero(ctx, {
+  cls: 'ab-hero',
   eyebrow: 'About Uresco',
   title: 'The name <em>on the load.</em>',
   lede: `For more than ${SITE.years} years, Uresco has been a trusted source for quality building materials throughout the Pacific Northwest and all of Alaska.`,
@@ -46,7 +47,7 @@ ${pageHero(ctx, {
     <div class="ab-tag__say">
       ${eyebrow('The short version')}
       <h2 class="d2">Read <em>the tag.</em></h2>
-      <p class="lede">This is the tag on a Uresco load. Here it is again with the blanks filled in, for anyone new to us.</p>
+      <p class="lede">This is the tag on a Uresco load. Here’s the same idea, for anyone new to us.</p>
       ${snapshot(ctx, 'uresco-truck', { caption: 'The tag on a Uresco load', sizes: '(min-width: 760px) 260px, 62vw', cls: 'ab-shot', winCls: 'snap__win--tag ab-shot__win' })}
     </div>
 
@@ -85,7 +86,7 @@ ${pageHero(ctx, {
       <div class="actions"><a class="btn" href="${ctx.u('alaska/')}">How remote delivery works ${icon('arrow', { size: 18 })}</a></div>
     </div>
     <figure class="ab-remote__fig">
-      ${win(ctx, 'floatplane', { shape: 'arch', duo: true, cls: 'ab-remote__win', sizes: '(min-width: 900px) 30vw, 66vw', after: photoCaption('floatplane', 'Port Alsworth, Alaska') })}
+      ${win(ctx, 'floatplane', { shape: 'arch', duo: true, cls: 'ab-remote__win', sizes: '(min-width: 900px) 30vw, 66vw', after: photoCaption('floatplane', 'A small plane over skiffs at Port Alsworth, Alaska') })}
       ${sticker(raw('Sitka <span aria-hidden="true">→</span><span class="sr-only">to</span> Utqiaġvik'), { tone: 'y', rot: -7, cls: 'ab-remote__sticker' })}
     </figure>
   </div>
@@ -125,13 +126,13 @@ ${marquee(['Kent', 'Anchorage', 'Fairbanks', 'Sitka', 'Utqiaġvik'], { tone: 'p'
     <a class="ticket" href="${ctx.u('accounts/')}" data-reveal>
       <span class="ticket__k">Contractor accounts</span>
       <span class="ticket__t">Buying for a crew? Open an account.</span>
-      <span class="ticket__d">Order on account from any of the three yards. Apply online.</span>
+      <span class="ticket__d">Apply online, or ask your yard about an account.</span>
       <span class="line__go">${icon('arrow', { size: 22 })}</span>
     </a>
   </div>
 </section>
 
-${quoteBand(ctx, { title: 'Now you know <em>who to call.</em>', body: 'Send drawings or a list and the yard nearest your project will help with the take-off. Quality materials, trusted service.', photoKey: 'lumber-stack', caption: 'Ends of stacked lumber', label: 'First job with us?' })}
+${quoteBand(ctx, { title: 'Now you know <em>who to call.</em>', body: 'Send drawings or a list and the yard nearest your project will help with the take-off. Quality materials, trusted service.', photoKey: 'lumber-stack', caption: 'Ends of stacked lumber', label: 'First job with us?', cls: 'ab-band' })}
 `,
   }),
 };

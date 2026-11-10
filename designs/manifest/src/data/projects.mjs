@@ -15,8 +15,8 @@
 
 // One sentence on each sector, summarising the kinds of work listed under it below.
 export const SECTOR_NOTES = {
-  'Remote Alaska': 'Building where there is no lumber yard: packages for communities off the road system, and materials for the Interior and the road north.',
-  Institutional: 'Public and institutional work: schools, clinics and public buildings, and complete building packages made up for export.',
+  'Remote Alaska': 'Building where there is no lumber yard: packages for communities off the road system, materials for the Interior and the road north, and building packages made up for export.',
+  Institutional: 'Public and institutional work: schools, clinics and public buildings.',
   Commercial: 'Commercial and multifamily framing, and the forming panels, timbers and supplies that go into concrete and site work.',
   Residential: 'Custom homes from framing through finish, and the decks, siding and exteriors that complete them.',
 };
@@ -43,7 +43,7 @@ export const PROJECTS = [
   {
     sector: 'Commercial',
     title: 'Commercial & multifamily framing',
-    scope: 'Phased framing deliveries, engineered beams and truss packages sequenced to the schedule.',
+    scope: 'Framing lumber, engineered beams and truss packages for commercial and multifamily work.',
     materials: ['Dimensional lumber', 'LVL & PSL', 'Trusses', 'Simpson connectors'],
     sketch: 'multi',
     lines: ['framing-lumber', 'engineered-wood', 'hardware-supplies'],
@@ -61,7 +61,7 @@ export const PROJECTS = [
   {
     sector: 'Residential',
     title: 'Custom homes',
-    scope: 'Framing through finish for custom builders, with take-offs from plans and delivery set by boom truck.',
+    scope: 'Framing through finish for custom builders, with take-off help and job-site delivery.',
     materials: ['Framing packages', 'Glulam', 'Cedar siding', 'Cabinets'],
     sketch: 'home',
     lines: ['framing-lumber', 'engineered-wood', 'cedar-decking', 'windows-doors-cabinets'],
@@ -79,14 +79,15 @@ export const PROJECTS = [
   {
     sector: 'Remote Alaska',
     title: 'Interior & northern projects',
-    scope: 'Materials staged out of Fairbanks for work across the Interior and up the road north.',
+    scope: 'Materials for work across the Interior and up the road north.',
     materials: ['Timbers', 'Plywood', 'Insulation', 'Tarps & poly'],
     sketch: 'north',
     lines: ['framing-lumber', 'panels-sheathing', 'insulation-drywall', 'hardware-supplies'],
     services: ['takeoffs', 'shipping'],
   },
   {
-    sector: 'Institutional',
+    // Remote and export packages are one line of work on the old site, so export is filed beside remote.
+    sector: 'Remote Alaska',
     title: 'Export building packages',
     scope: 'Complete building packages assembled and crated, with shipping coordinated for export.',
     materials: ['Full packages', 'Crating', 'Shipping coordination'],

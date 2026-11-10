@@ -67,7 +67,7 @@ export const STEPS = [
   { rail: 'Plans', title: 'Send plans or a list', body: 'Drawings, a materials list or a rough scope. For projects that need more than a list, design services are available.', link: ['Design services', 'services/#design'] },
   { rail: 'Take-off', title: 'We help with the take-off', body: 'We help with the take-off and the estimate. On a remote job, a complete list is what keeps a missing box of hangers from becoming a second freight bill.', link: ['Estimates & take-offs', 'services/#takeoffs'] },
   { rail: 'Package', title: 'We package and crate it', body: 'The complete package comes together, with crating and packaging for the trip.', link: ['Crating & packaging', 'services/#crating'] },
-  { rail: 'Freight', title: 'We coordinate the freight', body: 'Truck, ocean freight, barge or air. We work with you on all aspects of shipping coordination, and we plan around the season.', link: ['Shipping coordination', 'services/#shipping'] },
+  { rail: 'Freight', title: 'We coordinate the freight', body: 'Truck, ocean freight, barge or air. We work with you on all aspects of shipping coordination.', link: ['Shipping coordination', 'services/#shipping'] },
   { rail: 'Delivered', title: 'It lands where you build', body: 'Dock delivery for a village off the road system, or a boom truck and Moffett forklift setting the load on a Puget Sound job site.', link: ['Job-site delivery', 'services/#delivery'] },
 ];
 

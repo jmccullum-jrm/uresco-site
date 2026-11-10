@@ -95,7 +95,7 @@ export const seal = (ctx, { around, big, small, cls = '' }) => {
 // Headline on the left; supporting text and link on the right.
 export const sectionHead = ({ eyebrow: eb, title, lede, action, id }) => html`
   <div class="shead${lede || action ? '' : ' shead--solo'}">
-    <div class="shead__title">
+    <div class="shead__title fit-col">
       ${eb ? eyebrow(eb) : ''}
       <h2 class="d2"${id ? html` id="${id}"` : ''}>${raw(title)}</h2>
     </div>
@@ -146,24 +146,24 @@ export const pageHero = (ctx, { eyebrow: eb, title, srTitle, lede, photoKey, fil
 };
 export const pageHeroPreload = (ctx, key) => winPreload(ctx, key, '(min-width: 900px) 30vw, 70vw');
 
-// A take-off sheet in an arch: materials down the left, the quantity column left for Uresco to
-// fill in. Shown in the closing band unless the page asks for a photograph.
+// A take-off sheet in an arch: materials down the left, the quantity column blank, where Uresco can
+// help. Shown in the closing band unless the page asks for a photograph.
 const TAKEOFF = ['Dimensional lumber', 'Plywood', 'I-joist floor systems', 'Rigid foam', 'House wraps', 'Hangers', 'Fasteners'];
 const takeoffSheet = () => html`
-  <div class="qband__media tsheet" role="img" aria-label="A material take-off sheet: the materials listed down the left, and the quantity column blank for Uresco to fill in.">
+  <div class="qband__media tsheet" role="img" aria-label="A material take-off sheet: the materials listed down the left, and the quantity column blank, where Uresco can help with the take-off.">
     <p class="tsheet__title">Take-off</p>
     <div class="tsheet__rows">
       <p class="tsheet__row tsheet__row--head"><span>Material</span><span>Qty</span></p>
       ${TAKEOFF.map((m) => html`<p class="tsheet__row"><span>${m}</span><span></span></p>`)}
     </div>
-    ${sticker('We fill in this column', { tone: 'k', rot: -7, cls: 'tsheet__note' })}
+    ${sticker('We help with this column', { tone: 'k', rot: -7, cls: 'tsheet__note' })}
   </div>`;
 
 // Closing call to action: an arch standing on the bottom edge of a yellow field, holding the
 // take-off sheet or `photoKey`'s photograph (pass `caption` with it, as on pageHero). `href` and
 // `primary` are the main button, for a link that carries what the visitor was looking at or goes
 // somewhere other than the quote form. `call` replaces "Call a yard" (Kent's own number, say).
-export const quoteBand = (ctx, { title = 'Send plans. <em>Get a take-off.</em>', body = 'Upload drawings or a list and we’ll help with the take-off: every stick, panel and connector, ready to estimate.', photoKey = '', label = 'Estimates & take-offs', href = '', primary = 'Request a quote', call = '', caption = '', cls = '' } = {}) => html`
+export const quoteBand = (ctx, { title = 'Send plans. <em>Start the take-off.</em>', body = 'Upload drawings or a list and we’ll help with the take-off and the estimate.', photoKey = '', label = 'Estimates & take-offs', href = '', primary = 'Request a quote', call = '', caption = '', cls = '' } = {}) => html`
   <section class="qband field-y clip${cls ? ' ' + cls : ''}">
     <div class="wrap qband__grid">
       <div class="qband__art">
@@ -171,7 +171,7 @@ export const quoteBand = (ctx, { title = 'Send plans. <em>Get a take-off.</em>',
         ${photoKey ? win(ctx, photoKey, { shape: 'arch', cls: 'qband__media', sizes: '(min-width: 900px) 30vw, 60vw' }) : takeoffSheet()}
         ${photoKey && caption ? photoCaption(photoKey, caption) : ''}
       </div>
-      <div class="qband__copy">
+      <div class="qband__copy fit-col">
         ${eyebrow(label)}
         <h2 class="d2">${raw(title)}</h2>
         <p class="lede">${body}</p>
@@ -183,8 +183,9 @@ export const quoteBand = (ctx, { title = 'Send plans. <em>Get a take-off.</em>',
     </div>
   </section>`;
 
-// The "AK ◡ 61.2° N" pill on a yard's tag. Latitudes as the site states them, from data/destinations.mjs.
-const latitude = (l) => `${LATITUDES.find((p) => p.name === l.city).lat.toFixed(1)}° N`;
+// The "AK ◡ 61.2° N" pill on a yard's tag. Latitudes as the site states them, from data/destinations.mjs;
+// a yard not in that table yet falls back to its own coordinates, so a new yard never breaks the build.
+const latitude = (l) => `${(LATITUDES.find((p) => p.name === l.city)?.lat ?? l.geo.lat).toFixed(1)}° N`;
 export const latPill = (l, cls) => html`<span class="latpill ${cls} nums">${l.state} <i aria-hidden="true"></i> ${latitude(l)}</span>`;
 // A yard as a freight tag: the home page's `compact` card (number, directions, email and fax) or the
 // full one (toll-free and mail as well). The window shows the yard's city or scenery, never the
@@ -194,7 +195,7 @@ export const yardCard = (ctx, l, { compact = false, photoSizes = '(min-width: 10
     <div class="yard__head">
       ${latPill(l, 'yard__lat')}
       <h3 class="yard__city">${l.city}<span class="sr-only">, ${l.state}</span></h3>
-      <p class="yard__role">${compact ? l.region : l.role}</p>
+      <p class="yard__role">${compact ? html`<a href="${ctx.u(l.page)}">${l.region}</a>` : l.role}</p>
       <div class="yard__fig">
         ${win(ctx, l.photo, { cls: 'yard__media', sizes: photoSizes })}
         <p class="yard__cap">${l.photoCaption}</p>
@@ -271,6 +272,10 @@ export const MAP_TOWNS = MAP.towns.map((t) => ({ ...t, id: slug(t.name) }));
 
 export const deliveryMap = (ctx, { compact = false } = {}) => {
   const W = MAP.width, H = MAP.height;
+  // On the route finder's map (the full one) a town's label chooses that town. A pointer convenience
+  // laid over the label: the same places are in the combobox and the chips for keyboards and screen
+  // readers, so it stays out of the tab order and the accessibility tree.
+  const pick = (t) => (compact ? '' : html`<button type="button" class="dmap__pick" data-place-pick="${t.name}" tabindex="-1"></button>`);
   const at = ([x, y]) => `left:${((x / W) * 100).toFixed(2)}%;top:${((y / H) * 100).toFixed(2)}%`;
   const alt = `Map of how freight generally moves to Alaska, not carrier routes or schedules: Uresco yards in Kent, Washington, and Anchorage and Fairbanks, Alaska; ocean freight from Puget Sound to Southcentral Alaska and up the Inside Passage to Southeast; the road system north to Deadhorse; and barge lanes to western Alaska and up the coast to Utqiaġvik. Example destinations: ${MAP.towns.map((t) => t.name).join(', ')}.`;
   return html`
@@ -284,7 +289,7 @@ export const deliveryMap = (ctx, { compact = false } = {}) => {
           <path class="lane lane--road" d="${MAP.road}"/>
         </svg>
         <div class="dmap__labels">
-          ${MAP_TOWNS.map((t) => html`<span class="dmap__town${MINOR.has(t.id) ? ' dmap__town--minor' : ''}" aria-hidden="true" data-town="${t.id}" data-side="${t.side}" style="${at(t.xy)}"><i></i><b>${t.name}</b></span>`)}
+          ${MAP_TOWNS.map((t) => html`<span class="dmap__town${MINOR.has(t.id) ? ' dmap__town--minor' : ''}" aria-hidden="true" data-town="${t.id}" data-side="${t.side}" style="${at(t.xy)}"><i></i><b>${t.name}${pick(t)}</b></span>`)}
           ${MAP.yards.map((y) => html`<a class="dmap__yard" data-side="${YARD_SIDE[y.id] || 'e'}" style="${at(y.xy)}" href="${ctx.u('locations/')}#${y.id}" aria-label="${y.name} yard details"><i></i><b>${y.name}</b></a>`)}
         </div>
       </div>

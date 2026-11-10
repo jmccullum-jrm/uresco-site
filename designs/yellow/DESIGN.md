@@ -26,7 +26,8 @@ never more than one tap away.
 | Utility strip, masthead, Products menu, phone menu, call sheet, action bar, footer | `src/assets/css/20-chrome.css` |
 | Components (marquee, seal, yard pills, product index, tiles, arcade, yard cards, ticket, divider, map, page hero, photo caption, closing band, FAQ, snapshot, ask sticker, toggle pills) | `src/assets/css/30-components.css` |
 | Forms (fields, the ticket, the freight tag, the file tray, notices) | `src/assets/css/40-forms.css` |
-| Print (the credit application as a two-page paper form) | `src/assets/css/90-print.css` |
+| Large text on a phone (em widths, so it only applies at 150% text or more) | `src/assets/css/80-large-text.css` |
+| Print (every page in black on white; a page with a form prints only the form) | `src/assets/css/90-print.css` |
 | Page styles, one file per page group | `src/assets/css/pages/*.css` |
 | Behaviour the tests rely on: dialogs, masthead, hours, projects filter, forms, drafts | `src/assets/js/00-core.js` |
 | Motion, word swap, product index on touch, route finder, products finder, the forms' live parts | `src/assets/js/modules/*.js` |
@@ -51,12 +52,12 @@ CSS and JS are joined in filename order by `build.mjs`. Shipped: one CSS file, o
 | `--paper` | `#F7F3EA` | Reading ground |
 | `--paper-2` | `#ECE6D8` | Raised surface and hairlines on paper |
 | `--white` | `#FFFDF7` | Cards and stickers |
-| `--stone` | `#57524A` | Quiet text on paper (7.2:1) |
-| `--ash` | `#BDB7AA` | Quiet text on black (9.6:1) |
-| `--umber` | `#3A2C00` | Quiet text on yellow (8.6:1) |
+| `--stone` | `#57524A` | Quiet text on paper (7.0:1) |
+| `--ash` | `#BDB7AA` | Quiet text on black (9.7:1) |
+| `--umber` | `#3A2C00` | Quiet text on yellow (7.6:1) |
 | `--open` | `#7BE0A0` | The "open now" dot only |
 
-Black on yellow is 11.5:1; yellow on black the same. A section sets its field with one class
+Black on yellow is 10.8:1; yellow on black the same. A section sets its field with one class
 (`.field-y`, `.field-k`, `.field-p`), which also sets `--on`, `--quiet` and `--rule` for children.
 
 ### Type
@@ -75,7 +76,8 @@ weight so the swap does not move the page.
 | `.eyebrow` `--t-label` | `.75rem` | wide, 750, caps, ls .09em, led by a small U |
 
 - `--wide` is `125%`, eased to `116%` under 420px so headlines stay large on phones.
-- `<em>` inside `.d1`/`.d2` is the same word in outline (hollow sign lettering). One per headline.
+- `<em>` inside `.d1`/`.d2` is the same word in outline (hollow sign lettering). One per headline, always the second half of the thought: it starts its own line.
+- In a split column, add `.fit-col` to the column (`.shead__title` and `.qband__copy` already have it). From 900px a `.d2` inside it is sized from the column, not the window, so it holds two or three lines instead of collapsing a word at a time.
 - Card titles use width 118, buttons and nav 112: the further from a headline, the less wide.
 - Write headlines in short words. `INSTITUTIONAL.` does not fit a phone at this width; `SCHOOLS.` does.
 - Numbers that line up (phones, latitudes) take `.nums` (tabular figures).
@@ -232,6 +234,7 @@ Four across, two across, then on phones each arch stands at the left of its own 
 scrolling), as the kinds of work do on Projects.
 
 ### Yard card — `yardCard(ctx, location, { compact, photoSizes })` (`.yard`)
+The `compact` card's region line links to that region's page (`l.page`): the home page's route to Pacific Northwest and Alaska.
 A freight tag: yellow head with state and latitude (`latPill(location, cls)`, the `.latpill` also used on
 Locations and the Kent tag), the city, a U window of the *place* (`photo` and `photoCaption` in
 `data/locations.mjs`: scenery near the yard, never the yard), then address, live status, the number as a
@@ -258,6 +261,7 @@ The round bottom of a very large U in the previous field's colour (`.divider` ye
 Give the section extra top padding (see `.reach`, `.finder`).
 
 ### Delivery map — `deliveryMap(ctx, { compact })` (`.dmap`)
+On the full (route finder) map each town's label holds a `button.dmap__pick[data-place-pick]`: a 44px pointer target that asks the finder about that town. It stays out of the tab order and the accessibility tree because the field and chips reach every place from the keyboard.
 A real projection (`scripts/map.mjs`), drawn flat: yellow Alaska and Washington, seen through
 an arch. Land is a cached image; lanes are a small inline SVG (they wipe in from Kent and the sea
 lanes march); names are HTML pills; yards carry the mark. Under 700px it zooms to Alaska and a
@@ -283,7 +287,7 @@ characters get `.phero__title--long`. Pass `preload: [pageHeroPreload(ctx, key)]
 | Option | Use |
 |---|---|
 | `photoKey` + `caption` | A photograph in the U and what it shows. |
-| `fill` | Markup that stands in the U instead of a photograph: the forms' phone numbers (`callU()`), the paper application (`.ac-sheet`), the Locations mark. |
+| `fill` | Markup that stands in the U instead of a photograph: the forms' phone numbers (`callU()`), the Locations mark. |
 | `art` | Stuck on the window: a seal, a sticker. |
 | `artCls` | A class on `.phero__art` for a page's own sizing (`.lc-mark`). |
 | `before` / `after` | Above the headline (the ask sticker) / below the actions (the sectors, the Kent facts, the Locations dial). |
@@ -293,7 +297,7 @@ characters get `.phero__title--long`. Pass `preload: [pageHeroPreload(ctx, key)]
 ### Closing band — `quoteBand(ctx, { title, body, label, photoKey, caption, primary, href, call, cls })` (`.qband`)
 The end of every page: yellow field, an arch standing on the bottom edge inside arch rings, a `.d2`, two
 large buttons. Without `photoKey` the arch holds the take-off sheet (`.tsheet`): the materials down the left,
-the Qty column yellow and blank, and a "We fill in this column" sticker. Pass `caption` with a `photoKey`. `href` is where
+the Qty column yellow and blank, and a "We help with this column" sticker. Pass `caption` with a `photoKey`. `href` is where
 the first button goes, for a link that carries what the visitor was looking at (`quote/?product=…`,
 `?yard=kent`); `primary` relabels it ("Open an account"); `call` replaces "Call a yard" (Pacific Northwest puts Kent's number there).
 
@@ -310,16 +314,16 @@ Used by the project sectors; the route finder's towns are the same control.
 ### Chrome (`layout.mjs`)
 - **Utility strip** (`.utility`, 1000px and up): the three numbers with open/closed status.
 - **Masthead** (`.masthead`): a yellow bar on every page; the mark in a black tile; nav links
-  flip to black pills. Full nav from 1100px; below that a black `Menu` pill. A Call pill stays in the
+  flip to black pills. Seven links (the masthead labels are `Alaska` and `Pacific NW`; `NAV[].label` is the full name, used in the phone menu). Full nav from 1100px (written in em, like the bar's other breakpoints, so a larger default text size falls back to the `Menu` pill); below that a black `Menu` pill. A Call pill stays in the
   bar at every width (`.masthead__call`, opening the call sheet); its label and the quote button's
   shorten to "Call" and "Quote" between 1100 and 1399px, and from 1400/1520px they read in full.
 - **Products menu** (`.megamenu`): a black panel hanging from the bar with a round bottom, the
-  nine lines numbered as in the index. Opens on hover and on keyboard focus; no script.
-- **Phone menu** (`dialog.drawer`): a full-screen yellow poster, numbered links with Products as a
+  nine lines numbered as in the index, each with its sign (`lineWin`). Opens on hover and on keyboard focus with no script; `00-core.js` adds Escape to dismiss it (`.is-dismissed`) and keeps `aria-expanded` true to what is open.
+- **Phone menu** (`dialog.drawer`): a full-screen yellow poster, numbered links (Pacific Northwest among them) with Products as a
   disclosure of the nine lines, the three numbers, Request a quote and Open an account. `.masthead__menu` is a link to `#site-index` (the footer's index) when the script is missing.
 - **Call sheet** (`dialog.sheet`, titled "Call or visit a yard", opened by any `[data-open="call-sheet"]`): a card for each yard with its address and fax, Call and Directions side by side, email and a Details link. From the Alaska page the Alaska yards come first.
 - **Action bar** (`.actionbar`, under 1000px): a floating black capsule, Call · Directions · Quote. Call and Directions open the sheet, and are links to `locations/` without the script.
-- **Footer** (`.footer`): tagline, yards with live status and fax (no hours), the Explore index (`#site-index`), the product lines, and the wordmark standing on the bottom rule.
+- **Footer** (`.footer`): the tagline alone, then each yard's name, live status and number (no hours) with its address, toll-free, email and fax (`.footer__more`); the Explore index (`#site-index`), the product lines, and the wordmark standing on the bottom rule. Under 520px a yard is one row, name and number, the details being a tap away in the call sheet. The home page, which ends on three full yard cards, passes the compact version.
 
 ## Photography
 
@@ -394,7 +398,7 @@ prefix. Everything else on a page comes from the shared components above.
 `.hero` is the only hero that is not `pageHero`: `.hero__title` with the swapping word (`data-swap`), the U
 with its slides (`data-slides`, one photograph per word, the mark on the last), `.hero__cap`, the pause
 control and `yardsStrip`. Then `.about` (the sentence with `.chip-win` thumbnails, a `snapshot` of the tag, the
-`.proof` shapes and the accounts ticket), `lineIndex` under `.products`, `.askrow`, `.brands`, `.reach` (the map),
+`.proof` shapes and the accounts ticket), `lineIndex` under `.products`, `.askrow`, `.brands`, `.reach` (`.reach__head` runs across both columns, then the list and the map),
 `.svcs`, `.arcade` under `.sectors`, `quoteBand`, and `.yardsec` (three compact `yardCard`s).
 
 ### Alaska (`alaska.mjs`, `modules/finder.js`)
@@ -431,7 +435,7 @@ One sequence, in the order a job meets the six services (`step` in the data).
 | `.sv-stop`, `.sv-rail` | One section per service; the rail hangs the same six hooks from its top edge with the load one hook further along. Each keeps its id (`#takeoffs` …). |
 | `.sv-sheet` | The take-off sheet listing the nine lines as links. |
 | `.sv-pack` | A U built from the four layers of a package. |
-| `.sv-wraps` | CRATED / BANDED / WRAPPED, each drawn as what it says. |
+| `.sv-wraps` | CRATED / PACKAGED, each drawn as what it says. FACTS says only "crating and packaging": no banding or wrapping unless the owner confirms them. |
 | `.sv-legs` | Three legs on a dashed lane. |
 | `.sv-rig` | Boom truck and Moffett cards with a hanging icon. |
 
@@ -441,9 +445,8 @@ Kinds of work, not a list of jobs. The filter lives in `00-core.js`.
 
 | Piece | What it is |
 |---|---|
-| `.pj-jump` | The four sectors as links under the hero's buttons. |
 | `.pj-filter` | `.toggle` pills (`[data-filter]`) that show one sector; `/projects/#commercial` opens it. Hooks: `[data-filters]`, `[data-filter-grid]`, `[data-sector]`, `[data-kind]`, `[data-filter-status]`. |
-| `.pj-sector`, `.pj-kind` | A sector and its yellow-printed arches; rows with the arch on the left on phones. |
+| `.pj-sector`, `.pj-kind` | A sector and its yellow-printed arches; rows with the arch on the left on phones. Four across, a sector is as wide as its kinds (`--n`), so 3 + 1 and 2 + 2 fill the grid with no holes. Two across (700 to 1099px) the sectors flow down two balanced columns and never split. |
 | `.pj-yard` | Full-bleed one-tap call rows, using the site's which-yard guidance. |
 
 ### Pacific Northwest (`regions.mjs`), classes `pn-`
@@ -468,14 +471,19 @@ Built around Uresco's real tag: a `snapshot` of it beside `.ab-card` ("LUMBER BY
 | `callU()`, `.fm-u` | The black U of three numbers in the quote hero, passed to `pageHero` as `fill`. |
 | `.fm-way`, `[data-way-note]` | Under Project location: how freight generally reaches a place the form knows (`data/places.mjs`). |
 | `[data-goes]`, `[data-goes-*]`, `[data-carried]` | Live parts in `modules/forms.js`: the yard that answers, and the sticker saying what the link that brought you here was about. |
-| `.ac-sheet` | The paper application, drawn inside the accounts hero's U. |
-| `.ac-ticket`, `.ac-path` | The account's benefits as a yard ticket, and the three steps. |
+| `.ac-perks`, `.ac-apply` | The accounts page: one black band that sends questions about limits and terms to a yard, then the owner's contractor credit application in full (business, contacts, account, trade and bank references, documents, certification and signature). Nothing on the page says what an account includes, or anything about limits, terms, approvals or statements, because nobody has confirmed them. |
+| `.ac-sheet` | The paper application, drawn in the hero's U in place of a photograph. |
+| `letterhead()`, `paperBoxes()`, `.print-only`, `[data-print]` | The printed application only: the letterhead, tick boxes for what is a `<select>` on screen, and the yards at the end. `modules/forms.js` ticks the chosen box on a filled copy. `@page credit` numbers the two Letter pages. |
 | `.qt-arches` | "Then what?": three rising arches. |
-| `.print-only`, `.letterhead`, `.pbox` | Exist only on paper; the application prints as a signable two-page form (`90-print.css`). |
 
-The forms keep what `00-core.js` needs: `form[data-form]`, the ids the tests use, `?product=`, `?yard=`, `?location=` and `?delivery=` prefills, drafts in this browser only, and `[data-done]`/`[data-failed]`.
+On paper a page with a form prints the form alone, ruled for writing on; `form[data-touched]` (set once anything is entered or restored) is what lets radios and selects print their values, so a blank copy stays blank. The credit application fits two Letter pages, blank or filled, and `tests/check.mjs` holds it to that. The tax ID, bank details and signature are never written to a draft (`PRIVATE` in `00-core.js`); with no form service they do travel in the email, which the form says beside the tax ID field.
+
+The forms keep what `00-core.js` needs: `form[data-form]`, the ids the tests use, `?product=`, `?yard=`, `?location=` and `?delivery=` prefills, drafts in this browser only, and `[data-done]`/`[data-failed]`. Prefills count once: they become the draft and come off the address, so a reload keeps what the visitor corrected. With no form endpoint a request is handed to the email app; the site cannot know it was sent, so the draft moves to `sessionStorage` for that tab and `[data-mail-back]` brings the form back.
 
 ### Things a test or another page depends on
 - The product index's `[data-lines]` and `.line` classes (`modules/lines.js`) are shared by the home page, Products and About.
 - Yard anchors `#kent`, `#anchorage`, `#fairbanks` (Locations), service anchors `#takeoffs`, `#design`, `#remote`, `#crating`, `#shipping`, `#delivery`, project anchors `#remote-alaska` and the like.
 - `tests/check.mjs` is the list of promises: reveal, captions, the 12px and 40px floors on phones, the facts and rules greps, no-JavaScript links, the route finder and map, the forms, the fold.
+
+### Adding a yard
+Add it to `src/data/locations.mjs` (id, city, state, phone, fax, email, street, zip, `geo`, `hours` or `null`, `page`, `photo`). Add its latitude to `src/data/destinations.mjs` for the rounded figure on its tag; without one the tag uses `geo.lat`. Add its map pin in `scripts/map.mjs` and re-run it. The Locations headline, field, question, ring count and pin position are computed from the data (`src/pages/regions.mjs`); a yard with `hours: null` drops the Hours row.

@@ -9,11 +9,11 @@ import { PLACES, ALIASES } from '../data/places.mjs';
 const NEXT = [
   ['We go through it', 'The yard you chose reads your plans or list and helps with the take-off.'],
   ['We quote it', 'We’ll quote the package and work out the freight with you.'],
-  ['You order', 'We schedule delivery, or package and ship it.'],
+  ['You order', 'We arrange job-site delivery, or crate it and work out the shipping with you.'],
 ];
 
 // The Alaska page's places, so typing one of them says how freight generally gets there.
-const HOW = { local: 'on the road system', road: 'on the road system', coastal: 'by sea or air', seasonal: 'barge in the ice-free season, air year-round' };
+const HOW = { local: 'by truck', road: 'by truck on the road system', coastal: 'by sea or air', seasonal: 'barge in the ice-free season, air year-round' };
 const fold = (s) => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[’'.]/g, '').toLowerCase().trim();
 const placesData = () => {
   const known = Object.fromEntries(PLACES.map((p) => [fold(p.name), [p.name, HOW[p.access]]]));
@@ -25,7 +25,7 @@ export default {
   path: 'quote/',
   render: (ctx) => layout(ctx, {
     title: 'Request a Quote',
-    description: 'Send plans or a materials list to Uresco Construction Materials for a take-off and quote, with delivery to your job site or anywhere in Alaska.',
+    description: 'Send plans or a materials list to Uresco Construction Materials for help with the take-off and a quote, with delivery to your job site or anywhere in Alaska.',
     body: html`
 ${pageHero(ctx, {
   cls: 'fm-hero qt-hero',
@@ -33,7 +33,7 @@ ${pageHero(ctx, {
   before: html`<p class="qt-carried"><span class="sticker sticker--k" style="--rot:-3deg" data-carried>Plans, a list or a sketch</span></p>`,
   title: 'Quote <em>this job.</em>',
   srTitle: 'Request a quote',
-  lede: 'Send whatever you have. The yard you choose gets back to you with a take-off and pricing.',
+  lede: 'Send whatever you have. The yard you choose will help with the take-off and quote it.',
   actions: html`<a class="btn" href="#request">Start the request ${icon('arrow', { size: 18 })}</a><a class="btn btn--line" href="#plans">${icon('upload', { size: 18 })} Send plans</a>`,
   fill: callU(),
 })}
@@ -41,28 +41,28 @@ ${pageHero(ctx, {
 <section class="section field-p fm-sec" id="request" aria-label="Quote request form">
   <div class="wrap fm-layout">
     <div class="fm-main">
-      ${formOpen('quote', 'Quote request', { name: 'Job ticket' })}
+      ${formOpen('quote', 'Quote request')}
         <fieldset class="fieldset">
           <legend><span>01</span>About you</legend>
           ${field({ id: 'name', label: 'Name', required: true, msg: 'Tell us who to ask for.', attrs: html` autocomplete="name"` })}
           ${field({ id: 'company', label: 'Company', attrs: html` autocomplete="organization"` })}
           ${field({ id: 'phone', label: 'Phone', type: 'tel', required: true, msg: 'Add a number the yard can reach you on.', attrs: html` autocomplete="tel" inputmode="tel"` })}
           ${field({ id: 'email', label: 'Email', type: 'email', required: true, msg: 'Add an email for the quote to go to.', attrs: html` autocomplete="email" inputmode="email"` })}
-          ${select({ id: 'role', label: 'I am a', full: true, options: ['Contractor / builder', 'Owner-builder', 'Architect or engineer', 'Agency, tribe or institution', 'Other'] })}
+          ${select({ id: 'role', label: 'I am a', full: true, options: ['Contractor / builder', 'Architect or engineer', 'Institution', 'Other'] })}
         </fieldset>
 
         <fieldset class="fieldset">
           <legend><span>02</span>The job</legend>
           ${field({ id: 'location', label: 'Project location', required: true, hint: 'City or community, state', msg: 'Tell us where the job is, even roughly.', attrs: html` placeholder="e.g. Bethel, AK"`, note: html`<p class="fm-way" data-way-note hidden></p>` })}
           ${field({ id: 'needed', label: 'Needed by', type: 'date' })}
-          ${radios('delivery', 'Delivery', [['Job-site delivery', 'truck'], ['Remote Alaska shipping', 'ship'], ['Export', 'route'], ['Pick up at the yard', 'pin']], { cls: 'fm-delivery' })}
+          ${radios('delivery', 'Delivery', [['Job-site delivery', 'truck'], ['Remote Alaska shipping', 'ship'], ['Export', 'route']], { cls: 'fm-delivery' })}
           ${yardSelect()}
           <script type="application/json" data-places>${raw(placesData())}</script>
         </fieldset>
 
         <fieldset class="fieldset" id="plans">
           <legend><span>03</span>Plans &amp; materials</legend>
-          ${fileDrop({ id: 'plans', name: 'plans', label: 'Plans, lists or photos', hint: 'PDF, DWG, images or spreadsheets, up to 25 MB each', note: 'Drawings get the most accurate take-off.', accept: '.pdf,.dwg,.dxf,.jpg,.jpeg,.png,.heic,.xls,.xlsx,.csv,.doc,.docx' })}
+          ${fileDrop({ id: 'plans', name: 'plans', label: 'Plans, lists or photos', hint: 'PDF, DWG, images or spreadsheets, up to 25 MB each', note: 'Drawings help most with the take-off.', accept: '.pdf,.dwg,.dxf,.jpg,.jpeg,.png,.heic,.xls,.xlsx,.csv,.doc,.docx' })}
           ${textarea({ id: 'materials', label: 'Materials or scope', hint: 'a list, quantities, or a description of the build', rows: 6 })}
           ${textarea({ id: 'notes', label: 'Anything else?', rows: 3 })}
         </fieldset>
@@ -100,7 +100,7 @@ ${pageHero(ctx, {
   </div>
 </section>
 
-${quoteBand(ctx, { title: 'Buying <em>regularly?</em>', body: 'Open a contractor account and order from any of our three yards on account.', photoKey: 'framer', caption: 'A framer nailing a wall frame', label: 'Contractor accounts', primary: 'Open an account', href: ctx.u('accounts/') })}
+${quoteBand(ctx, { title: 'Buying <em>regularly?</em>', body: 'Ask your yard about a contractor account, or apply online.', photoKey: 'framer', caption: 'A framer nailing a wall frame', label: 'Contractor accounts', primary: 'Open an account', href: ctx.u('accounts/') })}
 `,
   }),
 };

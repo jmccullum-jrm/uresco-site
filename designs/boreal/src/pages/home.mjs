@@ -44,7 +44,7 @@ export default {
     copy: html`
       <p class="eyebrow">Wholesale building materials<span class="eyebrow__more"> <i>·</i> ${SITE.years}+ years</span></p>
       <h1 class="display" id="hero-title">Where are you building?</h1>
-      <p class="hero__lede">Uresco supplies lumber and complete building packages, down the road or across an ocean.<span class="hero__more"> Name the place to see which yard to call and how freight gets there.</span></p>
+      <p class="hero__lede">Uresco supplies lumber and complete building packages, down the road or across an ocean.<span class="hero__more"> Name the place to see which yard to call and how freight typically gets there.</span></p>
       ${dial(ctx)}`,
   })}
 </section>
@@ -59,7 +59,7 @@ export default {
 <section class="section about">
   <div class="wrap">
     <div class="about__lead">
-      <p class="statement reveal">For more than ${SITE.years} years, Uresco has supplied the people who build Alaska and the Pacific Northwest. <span>One of the largest independent building-material suppliers in the region, with a knowledgeable sales staff and a specialty in remote-location delivery.</span></p>
+      <p class="statement reveal">For more than ${SITE.years} years, Uresco has supplied the people who build Alaska and the Pacific Northwest. <span>A knowledgeable sales staff, and a specialty in remote-location&nbsp;delivery.</span></p>
       <div class="about__own">
         <figure class="own reveal"><div class="frame">${picture(ctx, 'uresco-yard', { sizes: '(min-width: 1000px) 208px, 44vw' })}</div><figcaption>A Uresco yard</figcaption></figure>
         <figure class="own reveal"><div class="frame">${picture(ctx, 'uresco-truck', { sizes: '(min-width: 1000px) 208px, 44vw' })}</div><figcaption>The tag on a Uresco load</figcaption></figure>
@@ -68,8 +68,8 @@ export default {
     <dl class="stats">
       <div class="reveal"><dt>${SITE.years}+</dt><dd>years supplying institutional, commercial and residential builders</dd></div>
       <div class="reveal"><dt>3</dt><dd>distribution centers: Kent, Anchorage and Fairbanks</dd></div>
-      <div class="reveal"><dt>Sitka <span>→</span> Utqiaġvik</dt><dd>remote-site delivery anywhere in Alaska</dd></div>
-      <div class="reveal"><dt>Independent</dt><dd>one of the largest independent suppliers serving the region</dd></div>
+      <div class="reveal"><dt>Sitka <span>→</span> Utqiaġvik</dt><dd>remote-location delivery anywhere in Alaska</dd></div>
+      <div class="reveal"><dt>One of the largest</dt><dd>independent building material suppliers serving Alaska and the Pacific Northwest</dd></div>
     </dl>
   </div>
 </section>
@@ -84,7 +84,7 @@ export default {
           ${glyph(c.slug, 'line__glyph')}
           <span class="line__text"><b class="line__name">${c.name}</b><small class="line__items">${itemsLine(c)}</small></span>
           <span class="line__go go">${icon('arrow', { size: 18 })}</span>
-        </a><a class="btn btn--line btn--sm line__add" href="${ctx.u('quote/')}?product=${encodeURIComponent(c.name)}">${icon('plus', { size: 15 })}<span class="line__add-long">Add to a quote</span><span class="line__add-short" aria-hidden="true">Quote</span><span class="sr-only">: ${c.name}</span></a></li>`)}
+        </a><a class="btn btn--line btn--sm line__add" href="${ctx.u('quote/')}?product=${encodeURIComponent(c.name)}">${icon('plus', { size: 15 })}<span class="line__add-long">Quote this line</span><span class="line__add-short" aria-hidden="true">Quote</span><span class="sr-only">: ${c.name}</span></a></li>`)}
       </ol>
       <div class="lines__preview" aria-hidden="true">
         ${CATEGORIES.map((c, i) => html`<figure class="lines__shot frame${i === 0 ? ' is-ready is-on' : ''}" data-shot="${i}">
@@ -94,7 +94,7 @@ export default {
       </div>
     </div>
     <div class="lines__foot">
-      <p><b>Not on the list?</b> We also carry tarps, poly sheeting, caulking, adhesives, house wraps and more. Ask your yard.</p>
+      <p><b>Not on the list?</b> We also carry a large variety of other building materials. Ask your yard.</p>
       <ul class="brands" aria-label="Brands we carry">${BRANDS.map((b) => html`<li>${b}</li>`)}</ul>
     </div>
   </div>
@@ -102,7 +102,7 @@ export default {
 
 <section class="section section--ice">
   <div class="wrap">
-    ${sectionHead({ eyebrow: 'From plans to site', title: 'How a building package <em>travels.</em>', lede: 'The same five steps whether the site is across town or across the Gulf of Alaska.' })}
+    ${sectionHead({ eyebrow: 'From plans to site', title: 'How a building package <em>travels.</em>', lede: 'Five steps, from plans to site. Use the ones your job needs.' })}
     ${journey(ctx)}
   </div>
 </section>
@@ -138,7 +138,7 @@ export default {
           ${picture(ctx, p.photo, { sizes: '(min-width: 1000px) 24vw, 300px', alt: '' })}
           <span class="chip chip--glass">${p.sector}</span>
           <div class="glass glass--over">
-            <p class="glass__lab">Typically on the load</p>
+            <p class="glass__lab">Often needed for this work</p>
             <ul>${p.materials.map((m) => html`<li>${m}</li>`)}</ul>
           </div>
         </div>
@@ -154,7 +154,7 @@ export default {
     <div class="cta__card closing__quote">
       <div class="cta__copy">
         ${eyebrow('Estimates & take-offs')}
-        <h2 class="h2">Send plans. <em>Get a take-off.</em></h2>
+        <h2 class="h2">Send plans. <em>We help with the take-off.</em></h2>
         <p>Send drawings or a materials list. We help with the take-off and the estimate, and we will quote the package and work out the freight with you.</p>
         <div class="actions">
           <a class="btn btn--lg" href="${ctx.u('quote/')}">Request a quote ${icon('arrow', { size: 18 })}</a>
@@ -166,7 +166,7 @@ export default {
     <div class="closing__account">
       ${eyebrow('Contractor accounts')}
       <h2 class="h3">Buying for a crew? Open an account.</h2>
-      <p>Apply online to buy on account at any of the three yards.</p>
+      <p>Fill in the application, or ask your yard.</p>
       <a class="btn btn--dark" href="${ctx.u('accounts/')}">Open an account ${icon('arrow', { size: 18 })}</a>
     </div>
   </div>

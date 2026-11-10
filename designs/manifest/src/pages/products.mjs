@@ -50,6 +50,16 @@ for (const [term, slug, item] of ALSO) {
   if (!c || (item && !c.items.some(([n]) => n === item))) throw new Error(`Index entry "${term}" points at something that is not in the data`);
 }
 
+// Everyday words the Find field should know, which are not product names for the printed index.
+const FIND_ALSO = [
+  ['sheetrock gypsum board wallboard', 'insulation-drywall', 'Drywall'],
+  ['2x4 2x6 2x8 2x10 2x12 studs', 'framing-lumber', 'Dimensional lumber'],
+  ['joist hangers', 'hardware-supplies', 'Simpson Strong-Tie® hardware'],
+];
+for (const [term, slug, item] of FIND_ALSO) {
+  if (!CATEGORIES.find((x) => x.slug === slug)?.items.some(([n]) => n === item)) throw new Error(`Find entry "${term}" points at something that is not in the data`);
+}
+
 // Every item, plus the entries above, in alphabetical order and grouped by first letter.
 const ENTRIES = [
   ...CATEGORIES.flatMap((c, i) => c.items.map(([name]) => ({ term: name, c, i, item: name }))),
@@ -58,7 +68,7 @@ const ENTRIES = [
 const LETTERS = [...new Set(ENTRIES.map((e) => plain(e.term)[0].toUpperCase()))];
 
 // What the Find field searches for each item: its name, its note and any index entry that points at it.
-const keysFor = (c, [name, note]) => [name, note, ...ALSO.filter(([, slug, item]) => slug === c.slug && item === name).map(([t]) => t)].map(plain).join(' ');
+const keysFor = (c, [name, note]) => [name, note, ...[...ALSO, ...FIND_ALSO].filter(([, slug, item]) => slug === c.slug && item === name).map(([t]) => t)].map(plain).join(' ');
 const lineKeys = (c) => [c.name, c.short, ...c.brands, ...ALSO.filter(([, slug, item]) => slug === c.slug && !item).map(([t]) => t)].map(plain).join(' ');
 
 // Brands, each tied to the item and the line it is on, in line order.
@@ -71,13 +81,13 @@ const BRAND_ROWS = BRANDS.map((b) => {
   return { name: b, c, i, item: c.items.find(([n]) => n.includes(key)), lit: (c.literature || []).find(([label]) => label.includes(key)) };
 }).sort((a, b) => a.i - b.i);
 
-// ---------- The key elevation (Dwg 000) ----------
+// ---------- The key elevation ----------
 // The drawing is keyElevation() in lib/drawings.mjs; the numbered tags are links set over it in percent.
 // The plate is written twice, as the hero's object from 1000 px and after the list below that (one is display:none at any width):
 // on a phone the list has to come first, and moving a block of links with CSS order would leave the keyboard going the old way.
 const keyPlate = (ctx, cls) => html`
       <figure class="dwg pidx-key ${cls}" aria-label="Key drawing: one building with each product line numbered">
-        <p class="dwg__bar label"><span>Dwg 000</span><span>Key to the nine lines</span><span class="dwg__nts">Typical · not to scale</span></p>
+        <p class="dwg__bar label"><span>Key to the nine lines</span><span class="dwg__nts">Typical · not to scale</span></p>
         <div class="dwg__canvas">
           <div class="pidx-key__sheet">
             ${keyElevation()}
@@ -105,7 +115,7 @@ ${pageHero(ctx, {
   cls: 'pidx-hero',
   crumbs: [['Products']],
   meta: 'Nine product lines',
-  title: 'Every product line, <em>on one sheet.</em>',
+  title: 'Every product line, <em>on&nbsp;one sheet.</em>',
   lede: 'Nine lines, framing lumber to fasteners. Find yours by line, by name or by brand.',
   after: html`
         <nav class="pidx-toc" aria-label="On this sheet">
@@ -148,7 +158,7 @@ ${pageHero(ctx, {
       </li>`)}
       <li class="pidx-none" data-find-none hidden>
         <span class="pidx-line__no num" aria-hidden="true">?</span>
-        <p>No line carries <q></q>.</p>
+        <p>Nothing listed under <q></q>. That does not mean we do not carry it. Ask your yard.</p>
       </li>
     </ol>
     <div class="pidx-ask">
@@ -177,7 +187,7 @@ ${pageHero(ctx, {
 
 <section class="section" id="by-brand">
   <div class="wrap">
-    ${sectionHead({ no: '03', eyebrow: 'By brand', title: 'Brands <em>we carry.</em>', lede: 'The manufacturers we name, and the line each one is on. Literature opens on the manufacturer’s own site.' })}
+    ${sectionHead({ no: '03', eyebrow: 'By brand', title: '<em>Brands</em> we carry.', lede: 'The manufacturers we name, and the line each one is on. Literature opens on the manufacturer’s own site.' })}
     <div class="pidx-brands">
       <div class="pidx-brands__cols label" aria-hidden="true"><span>Line</span><span>Brand</span><span>Carried as</span><span>Go to</span></div>
       ${BRAND_ROWS.map((b) => html`
@@ -218,7 +228,7 @@ const RELATED = {
 // `why` is general knowledge about the material, not a claim about Uresco.
 const SERVES = {
   'framing-lumber': { ids: ['takeoffs', 'remote', 'delivery'], why: 'A framing package starts with a count off the plans.' },
-  'panels-sheathing': { ids: ['takeoffs', 'crating', 'delivery'], why: 'Sheets are counted off the plans and travel best banded and wrapped.' },
+  'panels-sheathing': { ids: ['takeoffs', 'crating', 'delivery'], why: 'Sheets are counted off the plans and packaged for the trip.' },
   'engineered-wood': { ids: ['takeoffs', 'design', 'delivery'], why: 'Long members get worked out before they get ordered.' },
   'concrete-forming': { ids: ['takeoffs', 'shipping', 'delivery'], why: 'Forming panels have to be there before the pour.' },
   'cedar-decking': { ids: ['takeoffs', 'crating', 'delivery'], why: 'Finish boards show every scuff.' },
@@ -232,7 +242,9 @@ const SERVES = {
 const titleOf = (c) => {
   const at = c.name.lastIndexOf(' & ');
   const cut = at > 0 ? at + 2 : c.name.indexOf(' ');
-  return `${esc(c.name.slice(0, cut))} <em>${esc(c.name.slice(cut + 1))}</em>`;
+  // A hyphenated word stays whole, so "Job-Site" never breaks at the hyphen.
+  const whole = (t) => esc(t).replace(/\w+-\w+/g, (m) => `<span class="pln-nb">${m}</span>`);
+  return `${whole(c.name.slice(0, cut))} <em>${whole(c.name.slice(cut + 1))}</em>`;
 };
 
 const category = (c, i) => {
@@ -249,14 +261,14 @@ const category = (c, i) => {
 ${pageHero(ctx, {
   cls: 'pln-hero',
   crumbs: [['Products', 'products/'], [c.short]],
-  meta: html`Line ${no} of ${lineNo(n - 1)}`,
+  meta: 'Product lines',
   pre: html`<p class="pln-mark">${glyph(c.slug, { size: 44 })}<span class="sr-only">Line </span><span class="num">${no}</span> <span class="label">of nine lines</span></p>`,
   title: titleOf(c),
   lede: c.lede,
   actions: html`<a class="btn" href="${quoteUrl(ctx, c)}">Quote this line ${icon('arrow', { size: 18 })}</a><a class="btn btn--line pln-hero__call" href="${ctx.u('locations/')}" data-open="call-sheet">${icon('phone', { size: 18 })} Call a yard</a>`,
   media: html`
       <figure class="dwg pln-hero__dwg">
-        <p class="dwg__bar label"><span>Dwg ${no}</span><span>${c.short}</span><span class="dwg__nts">Typical · not to scale</span></p>
+        <p class="dwg__bar label"><span>${c.short}</span><span class="dwg__nts">Typical · not to scale</span></p>
         <div class="dwg__canvas">${drawing(c.slug, { id: 'pln' })}</div>
         <p class="dwg__note">Typical sizes shown. Ask your yard what is in stock.</p>
       </figure>`,
@@ -271,14 +283,14 @@ ${pageHero(ctx, {
 
 <section class="section pln-sec" id="items">
   <div class="wrap">
-    ${sectionHead({ no: '01', eyebrow: 'On this line', meta: `${two(c.items.length)} items`, title: `Line ${no}, <em>item by item.</em>`, lede: c.body })}
+    ${sectionHead({ no: '01', eyebrow: 'On this line', meta: `${two(c.items.length)} items`, title: `${esc(c.short)}, <em>item by item.</em>`, lede: c.body })}
     <div class="pln-body">
       <div class="pln-list">
         <div class="pln-cols label" aria-hidden="true"><span>Item</span><span>Product</span><span>What it is</span></div>
         <ol class="pln-items">
           ${c.items.map(([name, note], k) => html`
           <li class="pln-item" id="${anchor(name)}">
-            <span class="pln-item__no num"><span class="sr-only">Item </span>${no}.${k + 1}</span>
+            <span class="pln-item__no num"><span class="sr-only">Item </span>${k + 1}</span>
             <h3 class="pln-item__name">${raw(esc(name).replace(/Strong-Tie®?/, (m) => `<span class="pln-nb">${m}</span>`))}</h3>
             <p class="pln-item__note">${note}</p>
           </li>`)}
@@ -291,7 +303,7 @@ ${pageHero(ctx, {
         </div>` : ''}
         <div class="pln-item pln-item--quote">
           <span class="pln-item__no num" aria-hidden="true">+</span>
-          <p class="pln-item__name">Put line ${no} on a quote.</p>
+          <p class="pln-item__name">Put these on a quote.</p>
           <p class="pln-item__note"><a class="btn btn--sm btn--dark" href="${quoteUrl(ctx, c)}">Quote this line ${icon('arrow', { size: 16 })}</a></p>
         </div>
       </div>
@@ -307,14 +319,14 @@ ${pageHero(ctx, {
 
 <section class="section section--panel" id="services">
   <div class="wrap">
-    ${sectionHead({ no: '02', eyebrow: 'Services', title: 'Three services <em>that go with it.</em>', lede: `${SERVES[c.slug].why} These are the three of our six services that suit this line best. Use one or all of them.`, action: html`<a class="link" href="${ctx.u('services/')}">All six services ${icon('arrow', { size: 16 })}</a>` })}
+    ${sectionHead({ no: '02', eyebrow: 'Services', title: 'Three services <em>that&nbsp;go with it.</em>', lede: `${SERVES[c.slug].why} These are the three of our six services that suit this line best.`, action: html`<a class="link" href="${ctx.u('services/')}">All six services ${icon('arrow', { size: 16 })}</a>` })}
     ${sequence(services.map((s) => ({ no: s.no, name: s.name, body: s.short, href: ctx.u('services/') + '#' + s.id, link: 'Details' })), { cls: 'seq--four pln-seq' })}
   </div>
 </section>
 
 <section class="section" id="load">
   <div class="wrap">
-    ${sectionHead({ no: '03', eyebrow: 'Same load', title: 'The rest of <em>the load.</em>', lede: `Lines that usually land on the same job as ${c.short.toLowerCase()}. Put them on one take-off: one complete package beats a second freight bill.`, action: html`<a class="link" href="${ctx.u('products/')}">All nine lines ${icon('arrow', { size: 16 })}</a>` })}
+    ${sectionHead({ no: '03', eyebrow: 'Same load', title: 'The rest of <em>the&nbsp;load.</em>', lede: `Lines that usually land on the same job as ${c.short.toLowerCase()}. Put them on one take-off: one complete package beats a second freight bill.`, action: html`<a class="link" href="${ctx.u('products/')}">All nine lines ${icon('arrow', { size: 16 })}</a>` })}
     ${packingList(ctx, { only: related, cls: 'pln-also' })}
     <nav class="pln-pager" aria-label="Previous and next product line">
       <a class="pln-pager__cell" rel="prev" href="${lineUrl(ctx, prev)}">
@@ -330,7 +342,7 @@ ${pageHero(ctx, {
     </nav>
   </div>
 </section>
-${quoteBand(ctx, { no: '04', eyebrow: `Quote line ${no}`, product: c.name })}
+${quoteBand(ctx, { no: '04', eyebrow: 'Quote this line', product: c.name })}
 `,
     }),
   };

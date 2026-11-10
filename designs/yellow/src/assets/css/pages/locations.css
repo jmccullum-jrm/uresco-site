@@ -9,11 +9,12 @@
 .lc-dial { margin-top: clamp(1.25rem, 2.6vw, 2.25rem); display: grid; gap: .55rem; }
 .lc-dial__row { display: grid; grid-template-columns: minmax(0, 12.5rem) minmax(0, 1fr); align-items: center; gap: .3rem 1rem; }
 .lc-dial__where { margin: 0; font-size: .98rem; line-height: 1.22; font-weight: 700; }
-.lc-dial__call { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; gap: .75rem; min-height: 68px; padding: .4rem .5rem .4rem 1.4rem; background: var(--black); color: var(--paper); border-radius: var(--r-pill); text-decoration: none; transition: transform var(--t-flip) var(--spring), box-shadow var(--t-flip) var(--spring); }
-.lc-dial__city { display: flex; align-items: center; gap: .7rem; min-width: 0; }
+.lc-dial__call { display: flex; flex-wrap: wrap; align-items: center; gap: .15rem .75rem; min-height: 68px; padding: .4rem .5rem .4rem 1.4rem; background: var(--black); color: var(--paper); border-radius: var(--r-pill); text-decoration: none; transition: transform var(--t-flip) var(--spring), box-shadow var(--t-flip) var(--spring); }
+/* Basis 0 and min-content: only the name decides whether the number needs a new line, never the live status arriving. */
+.lc-dial__city { display: flex; flex-wrap: wrap; flex: 1 1 0; align-items: center; gap: .1rem .7rem; min-width: min-content; }
 .lc-dial__city b { font-size: clamp(.8rem, .55rem + .5vw, 1.08rem); font-weight: 900; font-stretch: 125%; letter-spacing: .02em; text-transform: uppercase; color: var(--yellow); }
 .lc-dial__num { font-size: clamp(1.15rem, .75rem + 1vw, 1.7rem); font-weight: 800; line-height: 1; letter-spacing: -.01em; white-space: nowrap; }
-.lc-dial__go { display: grid; place-items: center; width: 52px; height: 52px; border-radius: 50%; background: var(--yellow); color: var(--black); transition: transform var(--t-flip) var(--spring); }
+.lc-dial__go { flex: none; display: grid; place-items: center; width: 52px; height: 52px; margin-left: auto; border-radius: 50%; background: var(--yellow); color: var(--black); transition: transform var(--t-flip) var(--spring); }
 .lc-dial__call:hover { transform: translateY(-3px); box-shadow: 0 5px 0 rgba(14, 14, 12, .28); }
 .lc-dial__call:hover .lc-dial__go { transform: rotate(-18deg) scale(1.1); }
 .lc-dial__call:active { transform: scale(.98); }
@@ -33,10 +34,9 @@
 /* A bigger target than the pill shows, so it is easy to hit with a thumb. */
 .lc-mark__pin::after, .lc-rows a::after { content: ''; position: absolute; inset: -11px -4px; }
 .lc-rows a { position: relative; }
-.lc-mark__pin--kent { --y: 71.3%; } .lc-mark__pin--anchorage { --y: 83.8%; } .lc-mark__pin--fairbanks { --y: 96.2%; }
 .lc-mark__pin:hover, .lc-mark__pin:focus-visible { background: var(--black); color: var(--yellow); transform: translate(-50%, -50%) scale(1.08); }
 
-@media (max-width: 1239px) {
+@media (max-width: 77.4375em) {
   /* Too narrow for the question beside the number: it goes above, and the pill takes the column. */
   .lc-dial__row { grid-template-columns: minmax(0, 1fr); }
   .lc-dial__where { font-size: .92rem; padding-left: 1.4rem; }
@@ -53,17 +53,18 @@
   .lc-mark { width: min(70vw, 300px); margin-top: 1.5rem; }
   .lc-mark__rings { aspect-ratio: 1 / .92; }
   .lc-mark__u { transform: rotate(180deg); }
-  .lc-mark__pin--kent { --y: 41%; } .lc-mark__pin--anchorage { --y: 23.5%; } .lc-mark__pin--fairbanks { --y: 6%; }
+  .lc-mark__pin { top: var(--y-sm); }
 }
-@media (max-width: 374px) {
-  .lc-dial__call { gap: .4rem; padding-left: 1rem; }
-  .lc-dial__city b { font-size: .66rem; letter-spacing: 0; }
+/* Up to here "Anchorage" and the number do not share a row with the button at full size. */
+@media (max-width: 389px) {
+  .lc-dial__call { gap: .15rem .3rem; padding-left: .85rem; }
+  .lc-dial__city b { font-size: .75rem; font-stretch: 110%; letter-spacing: 0; }
   .lc-dial__num { font-size: 1rem; }
-  .lc-dial__go { width: 42px; height: 42px; }
+  .lc-dial__go { width: 40px; height: 40px; }
 }
 
 /* ---------- One yard, one field, the name edge to edge ---------- */
-.lc-band { padding-block: clamp(2.75rem, 5vw, 5rem) clamp(3rem, 6vw, 5.5rem); scroll-margin-top: var(--mast); --rule: var(--black); }
+.lc-band { padding-block: clamp(2.75rem, 5vw, 5rem) clamp(3rem, 6vw, 5.5rem); --rule: var(--black); }
 .field-k.lc-band { --rule: var(--black-3); }
 .yard.lc-yard { display: block; container-type: normal; overflow: visible; background: none; color: inherit; border: 0; border-radius: 0; }
 .lc-yard__meta { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1.1rem; margin-bottom: clamp(.75rem, 1.6vw, 1.4rem); }
@@ -75,7 +76,9 @@
 .field-p .lc-yard__meta .status { color: var(--black); }
 .lc-yard__city { font-size: calc((min(100vw, var(--wrap) + var(--gutter) * 2) - var(--gutter) * 2) / var(--em)); line-height: .8; font-weight: 900; font-stretch: 125%; letter-spacing: -.03em; text-transform: uppercase; margin-left: calc(var(--lsb) * -1em); white-space: nowrap; }
 .field-k .lc-yard__city { color: var(--yellow); }
-.lc-yard__grid { position: relative; display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, .82fr) minmax(0, 1.1fr) minmax(0, .82fr); grid-template-areas: "call visit write fig" "foot foot foot fig"; gap: 1.5rem clamp(1.25rem, 3vw, 3rem); margin-top: clamp(.9rem, 1.8vw, 1.6rem); padding-top: clamp(1.1rem, 2vw, 1.75rem); border-top: var(--line) solid var(--rule); }
+.lc-yard__grid { --gap: clamp(1.25rem, 3vw, 3rem); position: relative; display: grid; grid-template-columns: minmax(max-content, 1.05fr) minmax(0, .82fr) minmax(0, 1.1fr) minmax(0, .82fr); grid-template-areas: "call visit write fig" "foot foot foot fig"; gap: 1.5rem var(--gap); margin-top: clamp(.9rem, 1.8vw, 1.6rem); padding-top: clamp(1.1rem, 2vw, 1.75rem); border-top: var(--line) solid var(--rule); }
+/* The details paint above the rings, whatever the width. */
+.lc-yard__call, .lc-rows, .lc-yard__foot { position: relative; z-index: 1; }
 .lc-yard__call { grid-area: call; display: grid; align-content: start; gap: .55rem; }
 .lc-yard__call .btn { justify-content: flex-start; padding-inline: 1.3em; }
 .lc-yard__num { font-size: clamp(1.15rem, .9rem + .8vw, 1.6rem); letter-spacing: 0; }
@@ -92,34 +95,44 @@
 .field-y .lc-rows small { color: var(--umber); }
 .lc-rows a { font-weight: 650; }
 .lc-yard__foot { grid-area: foot; align-self: end; }
-@media (max-width: 899px) { .lc-rows dt, .lc-yard__toll span { font-size: .75rem; } }
+@media (max-width: 56.1875em) { .lc-rows dt, .lc-yard__toll span { font-size: .75rem; } }
 /* The window hangs from the rule under the name, as if the name were the rack it hangs on. */
-.lc-yard__fig { grid-area: fig; position: relative; align-self: start; justify-self: end; width: min(100%, 300px); margin: calc(clamp(1.1rem, 2vw, 1.75rem) * -1 - 2px) 0 0; --step: clamp(16px, 2.2vw, 30px); --w: clamp(8px, 1vw, 14px); }
+/* The rings reach --rn steps out from the window; the window gives up width so they stop inside its own column and the gap. */
+.lc-yard__fig { --step: clamp(16px, 2.2vw, 30px); --w: clamp(8px, 1vw, 14px); --rn: 2; grid-area: fig; position: relative; align-self: start; justify-self: end; width: min(100% - max(0px, var(--step) * var(--rn) - var(--gap)), 300px); margin: calc(clamp(1.1rem, 2vw, 1.75rem) * -1 - 2px) 0 0; }
+.lc-yard__fig .rings > i:nth-child(3) { display: none; }
 .field-k .lc-yard__fig .rings { color: var(--black-2); }
 .field-p .lc-yard__fig .rings { color: var(--paper-2); }
 .lc-yard__win { aspect-ratio: 4 / 4.9; }
-@media (min-width: 1900px) { .lc-yard__fig { width: min(100%, 360px); } }
-@media (max-width: 1099px) {
-  .lc-yard__grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, .72fr); grid-template-areas: "call write fig" "visit write fig" "foot foot fig"; }
+@media (min-width: 1500px) {
+  .lc-yard__fig { --rn: 3; }
+  .lc-yard__fig .rings > i:nth-child(3) { display: revert; }
 }
-@media (max-width: 759px) {
-  /* Phones: the number first and full width, the details under it, the window in the corner. */
+@media (min-width: 1900px) { .lc-yard__fig { width: min(100% - max(0px, var(--step) * var(--rn) - var(--gap)), 360px); } }
+@media (max-width: 68.6875em) {
+  .lc-yard__grid { grid-template-columns: minmax(max-content, 1fr) minmax(0, 1fr) minmax(0, .72fr); grid-template-areas: "call write fig" "visit write fig" "foot foot fig"; }
+}
+@media (max-width: 56.1875em) {
+  /* Tablets and phones: no room for a window column. It hangs small in the corner, beside the role, from the field's own top edge. */
   .lc-band { padding-block: 2.25rem 2.75rem; }
+  .yard.lc-yard { position: relative; }
   .lc-yard__meta { padding-right: 104px; min-height: 96px; align-content: flex-start; }
   .lc-yard__role { flex-basis: 100%; font-size: .95rem; }
-  .lc-yard__grid { grid-template-columns: minmax(0, 1fr); grid-template-areas: "call" "visit" "write" "foot"; gap: 1.25rem; border-top: 0; padding-top: 0; margin-top: 1rem; }
-  .lc-yard__call .btn { justify-content: center; }
-  .lc-yard__toll span { margin-left: .35em; }
-  /* The window hangs small from the field's own top edge, in the corner beside the role. */
-  .yard.lc-yard { position: relative; }
-  .lc-yard__grid { position: static; }
+  .lc-yard__grid { position: static; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-areas: "call write" "visit write" "foot foot"; }
   .lc-yard__fig { position: absolute; right: var(--gutter); top: -2.25rem; width: 92px; margin: 0; }
   .lc-yard__fig .rings, .lc-yard__fig .wcap { display: none; }
   .lc-yard__win { aspect-ratio: 3 / 3.9; }
+}
+@media (max-width: 47.4375em) {
+  /* Phones: the number first and full width, the details under it. */
+  .lc-yard__grid { grid-template-columns: minmax(0, 1fr); grid-template-areas: "call" "visit" "write" "foot"; gap: 1.25rem; border-top: 0; padding-top: 0; margin-top: 1rem; }
+  .lc-yard__call .btn { justify-content: center; }
+  .lc-yard__toll span { margin-left: .35em; }
 }
 
 /* ---------- The map ---------- */
 .lc-map { padding-top: calc(var(--section) + clamp(70px, 13vw, 210px)); }
 .lc-map__grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); gap: clamp(2rem, 5vw, 5.5rem); align-items: center; }
+.lc-map__copy { container-type: inline-size; }
+.lc-map__copy .d2 { font-size: min(var(--t-d2), 12cqi); }
 .lc-map__copy .lede { margin-top: 1.4rem; color: var(--paper); }
 @media (max-width: 999px) { .lc-map__grid { grid-template-columns: minmax(0, 1fr); } }

@@ -30,7 +30,7 @@
 .lc-sw:has(.lc-row[data-yard='fairbanks']:hover) .map__yard[data-yard='fairbanks'] .map__tag { border-color: var(--yellow); background: var(--night); }
 
 /* Up to 1099px the numbers come first and the map follows them. */
-@media (max-width: 1099px) {
+@media (max-width: 68.6875em) {
   .lc-sw { display: flex; flex-direction: column; align-items: stretch; }
   .lc-sw .stage__ui { order: 1; position: relative; display: grid; width: auto; margin: 0; padding: var(--pad) var(--pad) 0; box-sizing: border-box; }
   .lc-sw .stage__copy { position: static; width: auto; padding: 0; }
@@ -39,23 +39,25 @@
   .lc-board { margin: 0; }
 }
 /* Tablets: the three yards side by side; a narrower tablet reads them as rows with the number at the end. */
-@media (min-width: 900px) and (max-width: 1099px) {
+@media (min-width: 56.25em) and (max-width: 68.6875em) {
   .lc-rows { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.25rem; }
   .lc-row { display: flex; flex-direction: column; }
   .lc-row__q { flex: 1; }
   .lc-row__digits { font-size: clamp(1.25rem, .95rem + .75vw, 1.5rem); white-space: nowrap; }
 }
-@media (min-width: 700px) and (max-width: 899px) {
+@media (min-width: 43.75em) and (max-width: 56.1875em) {
   .lc-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 1.25rem; align-items: center; padding-block: .6rem; }
   .lc-row__q, .lc-row__yard { grid-column: 1; }
   .lc-row__yard { justify-content: flex-start; }
   .lc-row__num { grid-column: 2; grid-row: 1 / span 2; margin: 0; gap: 1rem; }
   .lc-row__digits { font-size: 1.75rem; white-space: nowrap; }
 }
-@media (max-width: 699px) {
+@media (max-width: 43.6875em), (pointer: coarse) {
+  .lc-row__yard a { display: inline-flex; align-items: center; min-height: 40px; margin-block: -.3rem; }
+}
+@media (max-width: 43.6875em) {
   .lc-sw .stage__copy { order: 0; }
   .lc-board { padding: .9rem 1rem .7rem; }
-  .lc-row__yard a { display: inline-flex; align-items: center; min-height: 40px; margin-block: -.3rem; }
   .lc-row { padding-block: .6rem .4rem; }
   .lc-row__yard { font-size: 1.125rem; }
   .lc-row__digits { font-size: clamp(1.5rem, 7.2vw, 1.875rem); }
@@ -66,16 +68,21 @@
 .lc-yards { display: grid; gap: 1.25rem; }
 .lc-yards .ycard:target { box-shadow: var(--sh-2), 0 0 0 2px var(--ink); }
 .lc-yards .ycard__phone { padding-block: .15rem; font-size: clamp(1.75rem, 1.3rem + 1.5vw, 2.5rem); white-space: nowrap; }
-@media (min-width: 1181px) {
-  .lc-yards .ycard__body { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); grid-template-rows: auto auto auto auto 1fr; column-gap: clamp(1.5rem, 3.5vw, 3rem); padding: 1.5rem 1.75rem; }
-  .lc-yards .ycard__top { grid-area: 1 / 1; }
+/* From 700px the number and what you do with it share the top of the card, and the details run underneath in
+   columns, so nothing floats in a hole beside a long list. */
+@media (min-width: 43.75em) {
+  .lc-yards .ycard__body { display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-rows: auto auto auto auto; column-gap: clamp(1.5rem, 4vw, 3rem); align-items: start; padding: 1.5rem 1.75rem; }
+  .lc-yards .ycard__top { grid-area: 1 / 1; justify-content: flex-start; }
   .lc-yards .ycard__role { grid-area: 2 / 1; }
-  .lc-yards .ycard__phone { grid-area: 3 / 1; }
-  .lc-yards .ycard__acts { grid-area: 4 / 1; margin-top: .35rem; }
-  .lc-yards .ycard__links { grid-area: 5 / 1; align-self: end; }
-  .lc-yards .ycard__facts { grid-area: 1 / 2 / 6 / 3; margin: 0; }
+  .lc-yards .ycard__phone { grid-area: 3 / 1; margin-bottom: 0; }
+  .lc-yards .ycard__acts { grid-area: 1 / 2 / 3 / 3; align-self: start; min-width: 20rem; margin-top: 0; }
+  .lc-yards .ycard__links { grid-area: 3 / 2; align-self: end; margin-top: 0; }
+  .lc-yards .ycard__facts { grid-area: 4 / 1 / 5 / -1; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: clamp(1.5rem, 4vw, 3rem); margin: 1.25rem 0 0; }
 }
-@media (max-width: 699px) {
+@media (min-width: 73.8125em) {
+  .lc-yards .ycard__facts { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 43.6875em) {
   .lc-yards { gap: .75rem; }
   .lc-yards .ycard__phone { font-size: clamp(1.75rem, 8vw, 2.125rem); }
 }

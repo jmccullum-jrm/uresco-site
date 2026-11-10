@@ -329,7 +329,7 @@ D['hardware-supplies'] = (id) => {
     + nail + screw + cap(139, fy + 24, 'NAIL') + cap(343, fy + 24, 'STRUCTURAL SCREW');
 };
 
-// 010 A package made up for freight: a banded, wrapped unit on dunnage and a crate on skids, in elevation.
+// 010 A package made up for freight: a unit on dunnage and a crate on skids, in elevation.
 D['package'] = (id) => {
   const ground = 250, ux0 = 58, ux1 = 300, top = 112, bot = 224, rows = 8, rh = (bot - top) / rows;
   // The unit: courses of lumber seen from the side.
@@ -350,7 +350,7 @@ D['package'] = (id) => {
     + path(line(cx0 + 4, ct + 5, cx0 + 6, ct + 5) + line(cx1 - 6, ct + 5, cx1 - 4, ct + 5) + line(cx0 + 4, cb - 5, cx0 + 6, cb - 5) + line(cx1 - 6, cb - 5, cx1 - 4, cb - 5), 'dw-s')
     + path(rect(cx0 + 8, cb, 16, ground - cb) + rect(cx1 - 24, cb, 16, ground - cb));
   return unit + wrap + bands + dun + crate + path(line(34, ground, 460, ground), 'dw-t')
-    + note(140, 74, 'WRAP', [112, top + 8]) + note(232, 74, 'STEEL BANDING', [bx[1] + 3, top + 20])
+    + note(140, 74, 'PACKAGED UNIT', [112, top + 8])
     + note(124, ground + 34, 'DUNNAGE', [bx[0] + 6, bot + 15])
     + cap((cx0 + cx1) / 2, ground + 38, 'CRATE');
 };
@@ -414,7 +414,7 @@ D['svc-shipping'] = () => {
     + text(site + 13, y - 66, 'AIR', 'dw-dt', 'start', CENTRAL) + text(site + 13, y, 'ROAD', 'dw-nt', 'start', CENTRAL) + text(site + 13, y + 66, 'BARGE', 'dw-dt', 'start', CENTRAL)
     + path(line(site - 22, y - 96, site + 62, y - 96) + line(site - 22, y - 96, site - 22, y - 90) + line(site + 62, y - 96, site + 62, y - 90), 'dw-d') + text(site + 20, y - 102, 'THE LAST LEG', 'dw-dt')
     + keyed(port, y + 54, 1) + keyed(dock - 4, y + 54, 2) + path(line(port, y + 44, port, y + 10) + line(dock - 4, y + 44, dock - 2, y + 10), 'dw-d')
-    + text((port + dock) / 2 - 2, y + 58, 'HAND-OFFS', 'dw-dt', 'middle', CENTRAL));
+    + text((port + dock) / 2 - 2, y + 58, 'HANDOFFS', 'dw-dt', 'middle', CENTRAL));
   return lanes + nodes;
 };
 
@@ -434,7 +434,7 @@ D['svc-remote'] = () => {
   return units + dun + house + to + path(line(30, g, 456, g), 'dw-t');
 };
 
-// S-06  A boom truck with a piggyback forklift, setting a unit on the deck instead of at the curb.
+// S-06  A boom truck with a piggyback forklift, setting a unit on the deck. How far it can reach is the yard's to say.
 D['svc-delivery'] = () => {
   const g = 262, curb = 318, lx = 348, lw = 52, ly = 128;
   const truck = path(rect(40, 233, 238, 6)) + path(rect(84, 221, 194, 10))
@@ -447,7 +447,7 @@ D['svc-delivery'] = () => {
   // The job site: a framed ground floor with its deck on, and the first wall of the next storey going up.
   const frame = [332, 362, 392, 422, 452].map((x) => path(rect(x - 3, 174, 6, g - 180))).join('') + path(rect(326, 166, 132, 8)) + path(rect(326, g - 6, 132, 6))
     + [434, 452].map((x) => path(rect(x - 3, 112, 6, 54))).join('') + path(rect(426, 106, 32, 6));
-  dimH(curb, lx + lw, 122, 42, 'PAST THE CURB');
+  dimH(curb, lx + lw, 122, 42, 'ASK YOUR YARD');
   note(214, 44, 'BOOM', [246, 77], { anchor: 'end' }); note(246, 168, 'MOFFETT', [290, 204], { anchor: 'end' });
   cap(160, g + 28, 'BOOM TRUCK'); cap(curb, g + 28, 'CURB'); cap(398, g + 28, 'JOB SITE');
   return truck + moffett + crane + frame + load + path(line(24, g, 462, g), 'dw-t') + path(line(curb, 96, curb, g + 12), 'dw-c');
@@ -460,15 +460,15 @@ const TITLES = {
   'concrete-forming': 'Section through an overlaid plywood form panel with concrete poured against its face.',
   'cedar-decking': 'Profiles of bevel cedar siding, channel siding and a five-quarter by six deck board.',
   'siding-exterior': 'Wall section and elevation showing lap siding with a seven inch exposure over house wrap, sheathing and a 2×6 stud.',
-  'insulation-drywall': 'Plan section of a 2×6 wall at sixteen inches on centre with batt insulation, sheathing, rigid foam outside and drywall inside.',
+  'insulation-drywall': 'Plan section of a 2×6 wall at sixteen inches on center with batt insulation, sheathing, rigid foam outside and drywall inside.',
   'windows-doors-cabinets': 'Elevations of a door, a single-hung window with its head at door height, and a base cabinet.',
   'hardware-supplies': 'A face-mount joist hanger carrying a joist on a header, with a nail and a structural screw below.',
-  package: 'A lumber unit wrapped across the top, held by three steel bands and set on dunnage, beside a braced plywood crate on skids.',
+  package: 'A unit of lumber packaged for freight and set on dunnage, beside a braced plywood crate on skids.',
   'svc-takeoffs': 'A floor plan with its walls, a window and a door keyed one, two and three, and beside it the take-off: framing, windows and doors, each with its quantity filled in.',
   'svc-design': 'Elevation of a roof truss: two top chords, webs, connector plates and a highlighted bottom chord spanning between two walls.',
-  'svc-shipping': 'A route diagram: from a yard by road to a port, by ocean freight to a dock, then the last leg by air, road or barge. The port and the dock are marked as hand-offs.',
+  'svc-shipping': 'A route diagram: from a yard by road to a port, by ocean freight to a dock, then the last leg by air, road or barge. The port and the dock are marked as handoffs.',
   'svc-remote': 'Four stacked units marked framing, envelope, openings and hardware, bracketed as one shipment, with an arrow to a small house raised on piles.',
-  'svc-delivery': 'A boom truck carrying a truck-mounted forklift reaches over the curb and lowers a banded unit of lumber onto the floor deck of a framed building.',
+  'svc-delivery': 'A boom truck carrying a truck-mounted forklift lowers a unit of lumber onto the floor deck of a framed building at a job site.',
 };
 
 export const drawing = (slug, { id = 'dw' } = {}) => {

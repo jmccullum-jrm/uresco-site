@@ -4,6 +4,14 @@
 // hours: tz is the yard's IANA time zone; week runs Sunday→Saturday as [open, close] in minutes
 // after midnight, or null when closed. The site shows a live open/closed status from these.
 // HOURS ARE PLACEHOLDERS (typical yard hours, not confirmed by Uresco) — confirm before launch.
+//
+// short:  the yard's one-word role, for the yard strip. lat: its latitude (one decimal, as on the fact
+// sheet). tzName: the clock its status runs on.
+//
+// CLOSED_DATES: days the yards are shut, 'YYYY-MM-DD' in the yard's own time zone; a yard adds its own
+// in hours.closed. Empty until Uresco supplies them, so on a federal holiday the live badge hides
+// itself (00-core.js) instead of saying Open or Closed without knowing.
+export const CLOSED_DATES = [];
 
 const weekdays = (open, close) => [null, [open, close], [open, close], [open, close], [open, close], [open, close], null];
 
@@ -14,6 +22,9 @@ export const LOCATIONS = [
     state: 'WA',
     region: 'Pacific Northwest',
     role: 'Headquarters & Pacific Northwest distribution center',
+    short: 'Headquarters',
+    lat: 47.4,
+    tzName: 'Pacific time',
     callFor: 'Puget Sound',
     street: '8246 S 194th St',
     zip: '98032',
@@ -34,6 +45,9 @@ export const LOCATIONS = [
     state: 'AK',
     region: 'Alaska',
     role: 'Southcentral Alaska distribution center',
+    short: 'Southcentral',
+    lat: 61.2,
+    tzName: 'Alaska time',
     callFor: 'Southcentral & remote',
     street: '12790 Old Seward Hwy',
     zip: '99515',
@@ -53,6 +67,9 @@ export const LOCATIONS = [
     state: 'AK',
     region: 'Alaska',
     role: 'Interior Alaska distribution center',
+    short: 'Interior',
+    lat: 64.8,
+    tzName: 'Alaska time',
     callFor: 'Interior & north',
     street: '1077 Aspen St',
     zip: '99709',
@@ -90,5 +107,5 @@ export const hoursLines = (l) => {
   }
   return runs.map((r) => `${DAY[r.from]}${r.to !== r.from ? '–' + DAY[r.to] : ''}: ${r.h ? `${clock(r.h[0])}–${clock(r.h[1])}` : 'Closed'}`);
 };
-export const tzLabel = (l) => (l.hours?.tz === 'America/Los_Angeles' ? 'Pacific time' : 'Alaska time');
-export const hoursAttr = (l) => (l.hours ? JSON.stringify({ tz: l.hours.tz, week: l.hours.week }) : null);
+export const tzLabel = (l) => l.tzName;
+export const hoursAttr = (l) => (l.hours ? JSON.stringify({ tz: l.hours.tz, week: l.hours.week, closed: [...CLOSED_DATES, ...(l.hours.closed || [])] }) : null);

@@ -19,13 +19,8 @@ const LAYERS = [
   ['Openings', 'Windows and doors'],
   ['Hardware', 'Connectors and fasteners'],
 ];
-// The engineered-wood line (data/products.mjs), by the names builders use for it.
-const MEMBERS = ['I-joists', 'Glulam', 'LVL', 'Parallam PSL', 'Trusses'];
-const WRAPS = [
-  ['crate', 'Crated', 'For the pieces that can’t take a knock.'],
-  ['band', 'Banded', 'So a bundle stays a bundle.'],
-  ['film', 'Wrapped', 'Against the weather on the way.'],
-];
+// FACTS: "Crating and packaging." Those two words, each wearing what it says.
+const WRAPS = [['crate', 'Crated'], ['pack', 'Packaged']];
 const LEGS = [
   ['route', 'Shipping coordination', 'We can work with you on all aspects of it, whether the load goes by truck, ocean freight, barge or air.'],
   ['ship', 'Dock delivery', 'Materials brought to the dock.'],
@@ -40,7 +35,7 @@ const RIGS = [
 const STAGE = {
   takeoffs: {
     field: 'p',
-    title: 'Every stick. <em>Counted.</em>',
+    title: 'One job. <br><em>One list.</em>',
     show: (ctx) => html`
       <div class="sv-show sv-show--sheet">
         ${win(ctx, 'framing-joists', { cls: 'sv-win sv-win--hang', sizes: '(min-width: 900px) 24vw, 110px', after: photoCaption('framing-joists', 'Roof trusses and wall framing') })}
@@ -67,24 +62,20 @@ const STAGE = {
     arch: true,
     field: 'k',
     flip: true,
-    title: 'Designed <em>to fit.</em>',
+    title: 'For your <em>unique project.</em>',
     show: (ctx) => html`
       <div class="sv-show sv-show--design">
         ${win(ctx, 'custom-home', { shape: 'arch', duo: true, cls: 'sv-win sv-win--stand', sizes: '(min-width: 900px) 34vw, 66vw', after: photoCaption('custom-home', 'New wood framing and trusses') })}
-        <ul class="sv-members" aria-label="Engineered wood and trusses we supply">
-          ${MEMBERS.map((m, i) => html`<li>${sticker(m, { tone: i % 2 ? '' : 'y', rot: [-5, 3, -2, 4, -4][i % 5] })}</li>`)}
-        </ul>
       </div>`,
     more: (ctx) => html`
-      <p class="sv-note">Engineered floor systems, beams and truss packages: the parts of a job a list alone can’t settle.</p>
       <div class="actions">
         ${callBtn(ctx)}
-        <a class="btn btn--line" href="${ctx.u('products/engineered-wood/')}">Engineered wood ${icon('arrow', { size: 18 })}</a>
+        <a class="btn btn--line" href="${ctx.u('quote/#plans')}">${icon('upload', { size: 18 })} Send plans</a>
       </div>`,
   },
   remote: {
     field: 'y',
-    title: 'The whole job. <em>One package.</em>',
+    title: 'The whole job. <br><em>One package.</em>',
     show: (ctx) => html`
       <div class="sv-show sv-show--pack">
         ${win(ctx, 'tug-barge', { shape: 'pill', cls: 'sv-pack__win', sizes: '(min-width: 900px) 38vw, 92vw', after: photoCaption('tug-barge', 'A tug and a loaded freight barge') })}
@@ -96,21 +87,20 @@ const STAGE = {
     more: (ctx) => html`
       <div class="actions">
         <a class="btn" href="${ctx.u('alaska/')}">Alaska delivery ${icon('arrow', { size: 18 })}</a>
-        <a class="btn btn--line sv-dup" href="${ctx.u('quote/?delivery=Remote%20Alaska%20shipping')}">Quote a remote job</a>
+        <a class="btn btn--line sv-dup" href="${ctx.u('quote/?yard=anchorage&delivery=Remote%20Alaska%20shipping')}">Quote a remote job</a>
       </div>`,
   },
   crating: {
     field: 'k',
     flip: true,
-    title: 'Arrives the way <em>it left.</em>',
+    title: 'Crated <em>for the trip.</em>',
     show: (ctx) => html`
       <div class="sv-show sv-show--wraps">
         <ul class="sv-wraps">
-          ${WRAPS.map(([kind, word, text], i) => html`<li class="sv-wrap sv-wrap--${kind}" style="--i:${i}" data-reveal><b>${word}</b><span>${text}</span></li>`)}
+          ${WRAPS.map(([kind, word], i) => html`<li class="sv-wrap sv-wrap--${kind}" style="--i:${i}" data-reveal><b>${word}</b></li>`)}
         </ul>
       </div>`,
     more: (ctx) => html`
-      <p class="sv-note">Every handoff between the yard and your site is a chance for damage: forklift, truck, dock, barge.</p>
       <div class="actions">
         ${callBtn(ctx, { cls: 'btn--line sv-dup' })}
       </div>`,
@@ -118,7 +108,7 @@ const STAGE = {
   shipping: {
     arch: true,
     field: 'p',
-    title: 'To the dock. <em>And past it.</em>',
+    title: 'To the dock. <br><em>And past it.</em>',
     show: (ctx) => html`
       <div class="sv-show sv-show--ship">
         ${win(ctx, 'juneau-freight', { cls: 'sv-win sv-win--hang', sizes: '(min-width: 900px) 28vw, 66vw', after: photoCaption('juneau-freight', 'A freight yard in Juneau') })}
@@ -131,7 +121,7 @@ const STAGE = {
       <a class="ticket sv-ticket" href="${ctx.u('alaska/')}#route" data-reveal>
         <span class="ticket__k">Alaska delivery</span>
         <span class="ticket__t">Where’s it going?</span>
-        <span class="ticket__d">Pick a place on the map and see the way in: how freight reaches it, and which yard to call.</span>
+        <span class="ticket__d">Name a place and see how freight typically reaches it, and which yard to call.</span>
         <span class="line__go">${icon('arrow', { size: 22 })}</span>
       </a>`,
   },
@@ -139,7 +129,7 @@ const STAGE = {
     arch: true,
     field: 'k',
     flip: true,
-    title: 'Not at <em>the curb.</em>',
+    title: 'Two ways <em>off the truck.</em>',
     show: (ctx) => html`
       <div class="sv-show sv-show--site">
         ${win(ctx, 'unloading', { shape: 'arch', duo: true, cls: 'sv-win sv-win--stand', sizes: '(min-width: 900px) 34vw, 66vw', after: photoCaption('unloading', 'Unloading lumber from a flatbed') })}
@@ -194,8 +184,8 @@ export default {
 ${pageHero(ctx, {
   cls: 'sv-hero',
   eyebrow: 'Services',
-  title: 'Plans in. <em>Load out.</em>',
-  lede: 'Six services take a job from a set of drawings to a load set down where the crew needs it. Use one, or all six.',
+  title: 'Plans in. <br><em>Load out.</em>',
+  lede: 'Six services take a job from a set of drawings to a load delivered to the job site.',
   photoKey: 'blueprints',
   caption: 'Marking up drawings',
   actions: html`<a class="btn" href="${ctx.u('quote/#plans')}">${icon('upload', { size: 18 })} Send plans</a>${callBtn(ctx, { cls: 'btn--line' })}`,
@@ -223,7 +213,7 @@ ${STOPS.map((s) => stop(ctx, s))}
 
 ${marquee(STOPS.map((s) => s.label), { tone: 'y', tilt: true, slow: true })}
 
-${quoteBand(ctx, { title: 'Start with <em>the plans.</em>', body: 'Send drawings or a list. We’ll help with the take-off and the estimate, and every stop after it follows from that.', label: 'Stop one' })}
+${quoteBand(ctx, { title: 'Start with <em>the plans.</em>', body: 'Send drawings or a list. We’ll help with the take-off and the estimate.', label: 'Estimates & take-offs' })}
 `,
   }),
 };

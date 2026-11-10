@@ -17,7 +17,9 @@
   --ice: #E8EEEF;
   --mist: #D9E1E3;
   --fog: #B4C1C5;
-  --slate: #51636A;        /* muted text: 5.9:1 on snow, 6.4:1 on white */
+  --field-line: #7E8F96;   /* the edge of a control at rest: 3.36:1 on white, 3.09:1 on snow */
+  --field-hint: #5C6D74;   /* placeholder text: 4.97:1 on snow */
+  --slate: #51636A;        /* muted text: 5.79:1 on snow, 6.28:1 on white */
   --ink: #0E0E0C;          /* the black in the mark */
   --ink-hi: #2C2C27;       /* a dark button under the pointer */
 
@@ -32,9 +34,9 @@
   /* Accents from the north. Yellow is UCM yellow: the primary action, the freight line, the yard
      numbers on black and one large surface per page (the band at the top of the footer). */
   --glacier: #7FC4D9;
-  --glacier-ink: #17657E;  /* glacier for text on light: 5.9:1 on snow */
+  --glacier-ink: #17657E;  /* glacier for text on light: 6.05:1 on snow */
   --aurora: #5FE0B0;
-  --aurora-ink: #0A7250;   /* "open" on light: 5.7:1 on white */
+  --aurora-ink: #0A7250;   /* "open" on light: 5.94:1 on white */
   --yellow: #F5B800;
   --yellow-hi: #FFC829;
 
@@ -84,5 +86,9 @@
   --ring: var(--ink);
   color-scheme: light;
 }
-@media (max-width: 999px) { :root { --util: 0px; --mast: 60px; } }
-@media (max-width: 699px) { :root { --inset: 8px; --bar: 76px; --r-xl: 22px; --r-2xl: 24px; --r-lg: 20px; } }
+/* Width and height conditions are written in em, so a larger default text size in the browser collapses the
+   layout the same way a narrower window does. 1em here is the browser's default size, 16px unless changed. */
+/* The strip of phone numbers is a finger's height on a touch laptop. */
+@media (pointer: coarse) and (min-width: 62.5em) { :root { --util: 40px; } }
+@media (max-width: 62.4375em) { :root { --util: 0px; --mast: 60px; } }
+@media (max-width: 43.6875em) { :root { --inset: 8px; --bar: 76px; --r-xl: 22px; --r-2xl: 24px; --r-lg: 20px; } }

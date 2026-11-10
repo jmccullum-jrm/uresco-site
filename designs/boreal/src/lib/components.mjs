@@ -110,7 +110,8 @@ export const takeoffSheet = (items = TAKEOFF_ROWS) => html`
 // Closing call to action: a dark screen with the words, and a take-off waiting to be filled in. `href` and `label`
 // change the primary button; `actions` replaces it outright; `call: false` drops the Call a yard button beside it (for a
 // band that already shows the numbers); `items` are the sheet's rows (five at most); `media` swaps the sheet for your own element.
-export const quoteBand = (ctx, { title = 'Send plans. <em>Get a take-off.</em>', body = 'Send drawings or a list. We help with the take-off and the estimate, and we will quote the package and work out the freight with you.', eyebrow: eb = 'Estimates & take-offs', href, label = 'Request a quote', actions = '', call = true, items, media = '' } = {}) => html`
+// A primary button with no `href` of its own is marked data-quote-link: it follows what the visitor picks on the page (see 10-chrome.js).
+export const quoteBand = (ctx, { title = 'Send plans. <em>We help with the take-off.</em>', body = 'Send drawings or a list. We help with the take-off and the estimate, and we will quote the package and work out the freight with you.', eyebrow: eb = 'Estimates & take-offs', href, label = 'Request a quote', actions = '', call = true, items, media = '' } = {}) => html`
   <section class="cta">
       <div class="cta__card">
         <div class="cta__copy">
@@ -118,7 +119,7 @@ export const quoteBand = (ctx, { title = 'Send plans. <em>Get a take-off.</em>',
           <h2 class="h2">${raw(title)}</h2>
           <p>${body}</p>
           <div class="actions">
-            ${actions || html`<a class="btn btn--lg" href="${href || ctx.u('quote/')}">${label} ${icon('arrow', { size: 18 })}</a>`}
+            ${actions || html`<a class="btn btn--lg" href="${href || ctx.u('quote/')}"${href ? '' : html` data-quote-link`}>${label} ${icon('arrow', { size: 18 })}</a>`}
             ${call ? callLink(ctx, { cls: 'btn--lg btn--glass' }) : ''}
           </div>
         </div>
@@ -144,7 +145,7 @@ export const yardCard = (ctx, l, { headingLevel = 3, compact = false, contact = 
       <p class="ycard__role">${l.role}</p>
       <a class="ycard__phone" href="${tel(l.phone)}"><span class="sr-only">Call ${l.city}: </span>${l.phone}</a>
       <dl class="ycard__facts">
-        ${l.hours ? html`<div><dt>Local time</dt><dd>${clock(l)} <span class="ycard__tz">${tzLabel(l)}</span></dd></div>` : ''}
+        ${l.hours ? html`<div class="jsonly"><dt>Local time</dt><dd>${clock(l)} <span class="ycard__tz">${tzLabel(l)}</span></dd></div>` : ''}
         <div><dt>Call for</dt><dd>${l.serves}</dd></div>
         <div><dt>Address</dt><dd><address>${l.street}<br>${l.city}, ${l.state} ${l.zip}</address></dd></div>
         ${compact ? (contact ? html`${fax}${email}` : '') : html`
@@ -221,15 +222,15 @@ export const mapPlate = (ctx, { eager = false, example = null, dots = true, mark
       <div class="map__pins">
         ${MAP.gratLabels.filter((g) => g.xy[0] > 800).map((g) => html`<span class="map__grat" aria-hidden="true" style="${at(g.xy)}">${g.t}</span>`)}
         ${dots ? PLACES.map((p) => html`<button type="button" class="map__dot${ex && p.name === ex.name ? ' is-dest' : ''}" tabindex="-1" aria-hidden="true" data-place="${p.name}" style="${at(xyOf(p.name))}">${p.label ? html`<span class="map__name" data-side="${p.label}">${p.name}</span>` : ''}</button>`) : ''}
-        ${MAP.yards.map((y) => { const l = LOCATIONS.find((x) => x.id === y.id); return html`<a class="map__yard" data-side="${ex && ex.yard === y.id ? (xyOf(ex.name)[0] >= y.xy[0] ? 'w' : 'e') : y.side}"${ex && ex.yard === y.id ? html` data-on` : ''} data-home="${y.side}" data-yard="${y.id}" style="${at(y.xy)}" href="${ctx.path === '' ? '' : ctx.u('locations/')}#${y.id}"><i class="map__beacon"></i><span class="map__tag"><b>${y.name}</b>${openStatus(l)}<span class="sr-only"> yard details</span></span></a>`; })}
+        ${MAP.yards.map((y) => { const l = LOCATIONS.find((x) => x.id === y.id); return html`<a class="map__yard" data-side="${ex && ex.yard === y.id ? (xyOf(ex.name)[0] >= y.xy[0] ? 'w' : 'e') : y.side}"${ex && ex.yard === y.id ? html` data-on` : ''} data-home="${y.side}" data-yard="${y.id}" style="${at(y.xy)}" href="${ctx.path === '' ? '' : ctx.u('locations/')}#${y.id}"><i class="map__beacon"></i><span class="map__tag"><b>${y.name}</b><span class="sr-only">, </span>${openStatus(l)}<span class="sr-only">. Yard details</span></span></a>`; })}
         <span class="map__dest" data-dest data-side="${ex && xyOf(ex.name)[0] < yardXy(ex.yard)[0] ? 'w' : 'e'}" data-vside="${ex && xyOf(ex.name)[1] > yardXy(ex.yard)[1] + 12 ? 's' : 'n'}" style="${ex ? at(xyOf(ex.name)) : marker ? `left:${marker.left}%;top:${marker.top}%` : ''}"${ex || marker ? '' : html` hidden`}><i></i><span class="map__tag map__tag--dest" data-dest-name>${ex ? ex.name : marker ? marker.name : ''}</span></span>
       </div>
     </div>
   </div>`;
 };
 
-// The key to a map. `items` are [swatch, label]: swatches are yard, sea, road, barge and arc (.lg--*).
-const LANES = [['yard', 'Uresco yard'], ['sea', 'Ocean freight'], ['road', 'Road system'], ['barge', 'Seasonal barge']];
+// The key to a map. `items` are [swatch, label]: swatches are yard, sea, inside, road, barge and arc (.lg--*).
+const LANES = [['yard', 'Uresco yard'], ['sea', 'Ocean freight'], ['inside', 'Southeast by sea'], ['road', 'Road system'], ['barge', 'Seasonal barge']];
 export const legend = ({ items = LANES, note = 'Lanes are illustrative' } = {}) => html`
   <ul class="legend" aria-label="Map legend">
     ${items.map(([swatch, label]) => html`<li><i class="lg lg--${swatch}"></i>${label}</li>`)}
@@ -303,9 +304,10 @@ export const finder = (ctx, { label = 'Where are you building?', labelledby = nu
         <ul class="route__modes">
           ${[0, 1].map((i) => html`<li>${MODE_ICONS.map((k) => html`<span class="route__ic" data-ic="${i}-${k}"${acc.modes[i]?.[0] === k ? '' : html` hidden`}>${icon(k, { size: 18 })}</span>`)}<span data-r="m${i}">${acc.modes[i] ? modeText(acc.modes[i]) : ''}</span></li>`)}
         </ul>
+        <p class="route__scale">Whole packages generally go by water; air is generally for smaller loads.</p>
       </div>
-      <p class="route__else" data-r="else" hidden>That is not on our short list, which does not mean we cannot get there. Send the details and a yard will work out the route.</p>
-      <a class="btn btn--block route__quote" data-r="quote" href="${ctx.u('quote/')}?location=${encodeURIComponent(`${ex.name}, ${ex.st}`)}&amp;yard=${ex.yard}">Request a quote for <span data-r="short">${ex.name}</span> ${icon('arrow', { size: 18 })}</a>
+      <p class="route__else" data-r="else" hidden>That is not on our short list, which does not mean we cannot get there. Send the details and we will work out the freight with you.</p>
+      <a class="btn btn--block route__quote" data-r="quote" href="${ctx.u('quote/')}"><span>Request a quote<span class="route__for"> for <span data-r="short"></span></span></span> ${icon('arrow', { size: 18 })}</a>
       <p class="route__note" data-r="note">Typical for the region, not a schedule or a price. Any yard can help.</p>
     </div>
     <p class="sr-only" data-live aria-live="polite"></p>
@@ -324,13 +326,13 @@ export const finder = (ctx, { label = 'Where are you building?', labelledby = nu
 export const routeStage = (ctx, { copy, variant = 'hero', eager = false, labelledby = null, label } = {}) => html`
   <div class="stage stage--${variant}" data-stage>
     <div class="stage__sky" aria-hidden="true"></div>
-    <div class="stage__map">
-      ${mapPlate(ctx, { eager, example: EXAMPLE })}
-      <button type="button" class="stage__reset jsonly" data-reset hidden>${icon('expand', { size: 16 })} Whole map</button>
-    </div>
     <div class="stage__ui">
       ${copy ? html`<div class="stage__copy">${copy}</div>` : ''}
       ${finder(ctx, { labelledby, label })}
+    </div>
+    <div class="stage__map">
+      ${mapPlate(ctx, { eager, example: EXAMPLE })}
+      <button type="button" class="stage__reset jsonly" data-reset hidden>${icon('expand', { size: 16 })} Whole map</button>
     </div>
     ${legend({ items: [...LANES, ['arc', 'Yard to call']] })}
   </div>`;

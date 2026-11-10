@@ -61,6 +61,7 @@ export const fileDrop = ({ id = 'files', name = 'files', label, hint, title = 'D
       <span class="drop__text">
         <b class="drop__fine">${title}</b><b class="drop__touch">${touch}</b>
         ${note ? html`<small>${note}</small>` : ''}
+        ${SITE.formEndpoint ? '' : html`<small>You will attach these to the email in the last step.</small>`}
       </span>
       <input class="sr-only" type="file" name="${name}" multiple accept="${accept}" aria-labelledby="${id}-label">
     </label>
@@ -68,9 +69,15 @@ export const fileDrop = ({ id = 'files', name = 'files', label, hint, title = 'D
     <p class="err" data-file-err hidden></p>
   </div>`;
 
-export const formOpen = (kind, subject) => html`<form class="form" data-form="${kind}" data-subject="${subject}" data-endpoint="${SITE.formEndpoint}" data-email="${SITE.email}" action="${SITE.formEndpoint || 'mailto:' + SITE.email}" method="post" enctype="multipart/form-data" novalidate>`;
+// Without a form service, a browser with no script posts plain text to the mail app, and its own
+// checks hold back an empty form. 10-forms.js sets noValidate when it takes over.
+// The first line under the opening tag says when a saved draft was restored (10-forms.js fills it in).
+export const formOpen = (kind, subject) => html`<form class="form" data-form="${kind}" data-subject="${subject}" data-endpoint="${SITE.formEndpoint}" data-email="${SITE.email}" action="${SITE.formEndpoint || 'mailto:' + SITE.email}" method="post" enctype="${SITE.formEndpoint ? 'multipart/form-data' : 'text/plain'}">
+  <p class="form__restored" data-restored hidden><span data-restored-text></span> <button type="button" data-draft-clear>Start over</button></p>
+  ${kind === 'credit' && !SITE.formEndpoint ? html`<p class="form__warn">This form opens in your email app, so your tax ID and bank details would travel by email. Rather not? Leave those fields blank and give them to your yard by phone.</p>` : ''}`;
 
 // `slip` repeats the manifest above the button on screens that have no side column.
+// The Print button is the credit application's; 10-forms.js takes it off forms with no paper copy.
 export const formFoot = (label, { slip = '', draft = 'Saved in this browser as you type.' } = {}) => html`
   <div class="form__foot">
     ${slip}
@@ -79,6 +86,7 @@ export const formFoot = (label, { slip = '', draft = 'Saved in this browser as y
       <div class="form__how">
         <p>${SITE.formEndpoint ? 'We’ll confirm by email.' : 'This opens your email app with everything filled in. Attach any files there before you send.'}</p>
         <p class="form__draft" data-draft><span data-draft-text>${draft}</span> <button type="button" data-draft-clear hidden>Start over</button></p>
+        <p class="form__print"><button type="button" data-print>Print a paper copy</button></p>
       </div>
     </div>
   </div>
@@ -93,11 +101,12 @@ export const doneNotice = ({ sent, almost }) => html`
     ${icon('check', { size: 24 })}
     <div>
       <h2>${SITE.formEndpoint ? 'Sent' : 'Almost there'}</h2>
-      <p>${SITE.formEndpoint ? sent : html`Your email app should have opened a message to <b data-mail-to>${SITE.email}</b> with ${almost} filled in. <span data-mail-note>Attach your files to that email, then send it.</span> If nothing opened, copy it below and email it yourself, or call the yard.`}</p>
-      ${SITE.formEndpoint ? '' : html`<div class="notice__acts">
-        <a class="btn btn--sm" href="mailto:${SITE.email}" data-mail-link>Open the email again</a>
-        <button type="button" class="btn btn--sm btn--line" data-copy>Copy ${almost}</button>
-      </div>`}
+      <p>${SITE.formEndpoint ? sent : html`<span data-mail-usual>Your email app should have opened a message to <b data-mail-to>${SITE.email}</b> with ${almost} filled in. <span data-mail-note>Attach your files to that email, then send it.</span> If nothing opened, copy it below and email it yourself, or call the yard.</span><span data-mail-long hidden>That is too long for an email link. Copy ${almost} below and paste it into a new email to <b data-mail-to>${SITE.email}</b>, or call the yard. Your form is still here.</span>`}</p>
+      <div class="notice__acts">
+        ${SITE.formEndpoint ? '' : html`<a class="btn btn--sm" href="mailto:${SITE.email}" data-mail-link>Open the email again</a>
+        <button type="button" class="btn btn--sm btn--line" data-copy>Copy ${almost}</button>`}
+        <button type="button" class="btn btn--sm btn--line" data-print>Print a copy</button>
+      </div>
     </div>
   </div>`;
 

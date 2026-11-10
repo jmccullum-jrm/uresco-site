@@ -3,7 +3,7 @@ import { html, raw } from '../lib/html.mjs';
 import { icon } from '../lib/icons.mjs';
 import { layout, orgJsonLd } from '../lib/layout.mjs';
 import { glyph, kit } from '../lib/drawings.mjs';
-import { PHERO_SIZES, YARD_FOR, TZ_ABBR, lineNo, two, itemName, openStatus, preloadFor, sectionHead, pageHero, plate, quoteBand, quoteHref, yardCard, deliveryMap, latRule, board } from '../lib/components.mjs';
+import { PHERO_SIZES, YARD_FOR, TZ_ABBR, lineNo, two, itemName, openStatus, preloadFor, sectionHead, pageHero, plate, quoteBand, quoteHref, yardCard, deliveryMap, latRule, board, trimLane } from '../lib/components.mjs';
 import { LOCATIONS, byId, tel, address, mapsUrl, hoursLines, tzLabel } from '../data/locations.mjs';
 import { CATEGORIES } from '../data/products.mjs';
 import { SERVICES } from '../data/services.mjs';
@@ -32,7 +32,7 @@ const detailBoom = () => {
   const site = [336, 366, 396, 426, 456].map((x) => P(rect(x - 3, 174, 6, G - 180))).join('') + P(rect(330, 166, 132, 8)) + P(rect(330, G - 6, 132, 6));
   const obj = truck() + crane + site + unit(lx, ly, lw) + sling + ground(24, 468) + P(rect(curb, G - 8, 14, 8));
   const ann = dimH(curb + 7, lx + lw, [G - 8, ly], 34, 'OVER THE CURB') + note(214, 56, 'BOOM', [240, 76], 'end') + note(428, 104, 'UNIT', [396, 128]) + label(160, G + 28, 'BOOM TRUCK', 'dw-nt') + label(curb + 7, G + 28, 'CURB', 'dw-nt') + label(404, G + 28, 'DECK', 'dw-nt');
-  return svg('A boom truck parked at the curb reaches its boom over the curb and lowers a banded unit of lumber onto the deck of a framed building.', 'pn-boom', obj, ann);
+  return svg('A boom truck parked at the curb reaches its boom over the curb and lowers a unit of lumber onto the deck of a framed building.', 'pn-boom', obj, ann);
 };
 
 // Detail B: rides in on the truck, then drives off and carries the load across the site.
@@ -46,7 +46,7 @@ const detailMoffett = () => {
   const site = P(rect(452, 170, 6, 86)) + P(rect(472, 170, 6, 86)) + P(rect(446, 164, 40, 6)) + P(rect(440, G - 6, 46, 6));
   const obj = truck(dx) + ghost + moffett + unit(x + 66, 212, 64) + site + ground(10, 480);
   const ann = dimH(258, x + 66, [221, 212], 118, 'ACROSS THE SITE') + note(188, 170, 'RIDES HERE', [244, 200], 'end') + label(120, G + 28, 'TRUCK', 'dw-nt') + label(x + 36, G + 28, 'MOFFETT', 'dw-nt') + label(476, G + 28, 'SITE', 'dw-nt', 'end');
-  return svg('A flatbed truck with the place its forklift rides marked at the rear, and the truck-mounted Moffett forklift off the truck, carrying a banded unit of lumber across the ground toward a framed wall.', 'pn-moff', obj, ann);
+  return svg('A flatbed truck with the place its forklift rides marked at the rear, and the truck-mounted Moffett forklift off the truck, carrying a unit of lumber across the ground toward a framed wall.', 'pn-moff', obj, ann);
 };
 
 // ---------- Pacific Northwest ----------
@@ -65,12 +65,11 @@ const ticket = (ctx) => html`
       </div>
     </form>
     <div class="pn-ticket__card">
-      <p class="pn-ticket__head"><b>Delivery ticket</b><span aria-hidden="true">Job <i></i></span><span aria-hidden="true">Date <i></i></span></p>
+      <p class="pn-ticket__head"><b>Job-site delivery from Kent</b></p>
       <dl class="pn-ticket__rows">
         <div><dt>From</dt><dd><b>Kent yard</b> ${address(kent)} <a class="link pn-ticket__dir" href="${mapsUrl(kent)}" target="_blank" rel="noopener">Directions ${icon('arrow-up-right', { size: 14 })}</a></dd></div>
         <div><dt>To</dt><dd><span class="hl">Your job site</span> in the Puget Sound region</dd></div>
         <div><dt>Unload</dt><dd>Boom truck or truck-mounted Moffett forklift</dd></div>
-        <div><dt>Set</dt><dd>Where the crew needs it, not at the curb</dd></div>
       </dl>
       <p class="pn-ticket__note">Tell the yard what the site is like when you order.</p>
     </div>
@@ -115,7 +114,7 @@ const schedule = (ctx) => html`
     <p class="pn-gantt__note"><span class="label label--blue">Note 2</span>How a building generally goes up. A typical order, not a schedule. Ask your yard about your job.</p>
   </div>`;
 
-// Lane A, enlarged: the delivery plate's own base drawing, cropped to the stretch from Kent to Southeast.
+// Ocean freight in general: the delivery plate's own base drawing, cropped to the stretch from Puget Sound to Southeast.
 const CROP = { x: 620, y: 470, w: 580, h: 390 };
 const NORTH_TOWNS = ['Juneau', 'Sitka', 'Ketchikan'];
 const laneDetail = (ctx) => {
@@ -123,35 +122,37 @@ const laneDetail = (ctx) => {
   const at = ([x, y]) => `left:${((x / W) * 100).toFixed(2)}%;top:${((y / H) * 100).toFixed(2)}%`;
   const towns = MAP.towns.filter((t) => NORTH_TOWNS.includes(t.name));
   const yard = MAP.yards.find((y) => y.id === 'kent');
-  const tagA = MAP.tags.find((t) => t.id === 'A');
   const ids = `pn${u}a`;
+  const lane = trimLane(MAP.sea);   // Kent is inland: the lane stops short of the yard, out in Puget Sound
+  const laneEnd = lane.match(/^M([\d.]+),([\d.]+)/).slice(1, 3);
   return html`
   <figure class="pmap pn-detail" data-reveal>
     <div class="pmap__canvas pn-detail__canvas" style="aspect-ratio:${CROP.w} / ${CROP.h}">
       <div class="pn-detail__sheet" style="left:${(-CROP.x / CROP.w * 100).toFixed(2)}%;top:${(-CROP.y / CROP.h * 100).toFixed(2)}%;width:${(W / CROP.w * 100).toFixed(2)}%">
-        <img src="${ctx.u('assets/map.svg')}?v=${ctx.version}" width="${W}" height="${H}" alt="Detail of the delivery map: Washington State with the Kent yard, and a dashed ocean freight lane running from Puget Sound north-west past Ketchikan and Sitka toward Southcentral Alaska." loading="lazy" decoding="async">
+        <img src="${ctx.u('assets/map.svg')}?v=${ctx.version}" width="${W}" height="${H}" alt="Detail of the delivery map: Washington State with the Kent yard inland, and a dashed line showing ocean freight in general, running from Puget Sound north-west past Ketchikan and Sitka toward Southcentral Alaska." loading="lazy" decoding="async">
         <svg class="pmap__lanes" viewBox="0 0 ${W} ${H}" aria-hidden="true" focusable="false">
-          ${raw(`<mask id="${ids}" maskUnits="userSpaceOnUse" x="0" y="0" width="${W}" height="${H}"><path class="pm-draw" d="${MAP.sea}" pathLength="1"/></mask><path class="pm-lane pm-lane--sea" d="${MAP.sea}" mask="url(#${ids})"/>`)}
+          ${raw(`<mask id="${ids}" maskUnits="userSpaceOnUse" x="0" y="0" width="${W}" height="${H}"><path class="pm-draw" d="${lane}" pathLength="1"/></mask><path class="pm-lane pm-lane--sea" d="${lane}" mask="url(#${ids})"/>`)}
           ${raw(towns.map((t) => `<circle class="pm-town" cx="${t.xy[0]}" cy="${t.xy[1]}" r="2.6"/>`).join(''))}
+          ${raw(`<circle class="pm-town" cx="${laneEnd[0]}" cy="${laneEnd[1]}" r="2.6"/>`)}
           ${raw(`<g class="pm-yard"><circle cx="${yard.xy[0]}" cy="${yard.xy[1]}" r="6.5"/><circle class="pm-yard__dot" cx="${yard.xy[0]}" cy="${yard.xy[1]}" r="2.2"/></g>`)}
         </svg>
         <div class="pmap__labels">
-          <span class="pmap__tag pmap__tag--A" aria-hidden="true" style="${at(tagA.xy)}">A</span>
           ${towns.map((t) => html`<span class="pmap__town" aria-hidden="true" data-side="${t.side}" style="${at(t.xy)}">${t.name}</span>`)}
-          <span class="pmap__yard pn-detail__yard" data-side="w" style="${at(yard.xy)}">Kent<small>47.4° N</small></span>
+          <span class="pmap__town pn-detail__sound" aria-hidden="true" data-side="s" style="${at(laneEnd)}">Puget Sound</span>
+          <span class="pmap__yard pn-detail__yard" data-side="e" style="${at(yard.xy)}">Kent<small>47.4° N</small></span>
         </div>
       </div>
     </div>
     <figcaption class="pmap__side">
       <div class="tblock">
-        <p class="tblock__firm"><b>Lane A, enlarged</b><span>From the delivery plate</span></p>
-        <p class="tblock__title"><span>Title</span><b>The lane north</b></p>
+        <p class="tblock__firm"><b>Ocean freight, in general</b><span>Typical for the region</span></p>
+        <p class="tblock__title"><span>Title</span><b>Puget Sound to Alaska</b></p>
       </div>
       <ul class="pn-detail__yards">
-        ${LOCATIONS.filter((l) => l.state === 'AK').map((l) => html`<li><a href="${tel(l.phone)}"><span class="label">${l.city}</span><span class="num">${l.phone}</span></a></li>`)}
+        ${LOCATIONS.map((l) => html`<li><a href="${tel(l.phone)}"><span class="label">${l.city}</span><span class="num">${l.phone}</span></a></li>`)}
       </ul>
       <p class="pmap__action"><a class="btn btn--dark btn--block" href="${ctx.u('alaska/')}">Alaska delivery ${icon('arrow', { size: 18 })}</a></p>
-      <p class="pmap__note">Lanes are drawn to show how freight generally moves. They are not carrier routes or schedules.</p>
+      <p class="pmap__note">The line shows how ocean freight generally moves. It is not a carrier route or a schedule. Any yard can help.</p>
     </figcaption>
   </figure>`;
 };
@@ -160,22 +161,22 @@ const pnw = {
   path: 'pacific-northwest/',
   render: (ctx) => layout(ctx, {
     title: 'Pacific Northwest — Kent, WA',
-    description: 'Uresco’s Kent, Washington headquarters and Pacific Northwest distribution center: building materials for commercial and residential builders, with job-site delivery around the Puget Sound region by boom truck and truck-mounted Moffett forklift.',
+    description: 'Uresco’s Kent, Washington headquarters and Pacific Northwest distribution center: building materials for institutional, commercial and residential builders, with job-site delivery around the Puget Sound region by boom truck and truck-mounted Moffett forklift.',
     preload: [preloadFor(ctx, 'rainier-tacoma')],
     body: html`
 ${pageHero(ctx, {
   cls: 'phero--ask pn-hero',
   sheet: 'Pacific Northwest',
   meta: 'Kent, Washington',
-  title: '<span class="phero__q">Can you get the load past the curb?</span> Yes. <br><em>Boom or Moffett.</em>',
-  lede: 'Our Kent headquarters supplies commercial and residential builders, with boom trucks and truck-mounted Moffett forklifts to set materials on job sites around the Puget Sound region.',
+  title: '<span class="phero__q">Do you deliver to the job site?</span> Yes. <br><em>Boom or Moffett.</em>',
+  lede: 'Our Kent headquarters supplies institutional, commercial and residential builders, with job-site delivery by boom truck and truck-mounted Moffett forklift around the Puget Sound region.',
   after: heroCalls(),
   media: pnHero(ctx),
 })}
 
 <section class="section" id="delivery">
   <div class="wrap">
-    ${sectionHead({ no: '01', eyebrow: 'Job-site delivery', title: 'Two ways <em>off the truck.</em>', lede: 'A load is only delivered when it is where the crew can use it. From Kent, that means one of these two machines.' })}
+    ${sectionHead({ no: '01', eyebrow: 'Job-site delivery', title: 'Two ways <em>off&nbsp;the&nbsp;truck.</em>', lede: 'Job-site delivery uses boom trucks and truck-mounted Moffett forklifts. This is how each one generally works.' })}
     <div class="pn-unload">
       <article class="pn-way">
         <figure class="dwg pn-dwg" data-reveal>
@@ -183,7 +184,7 @@ ${pageHero(ctx, {
           <div class="dwg__canvas">${detailBoom()}</div>
         </figure>
         <h3 class="h3">Up and over.</h3>
-        <p>A boom truck lifts the unit off the bed and reaches it over the curb and onto the deck. It suits a load that has to go up, or over something.</p>
+        <p>A boom truck lifts a unit off the bed and swings it up and over. It generally suits a load that has to go up, or over something.</p>
       </article>
       <article class="pn-way">
         <figure class="dwg pn-dwg" data-reveal>
@@ -191,7 +192,7 @@ ${pageHero(ctx, {
           <div class="dwg__canvas">${detailMoffett()}</div>
         </figure>
         <h3 class="h3">Across the site.</h3>
-        <p>The forklift rides in on the back of the truck, drives off at the job and carries the unit over the ground to where the crew is working. It suits a load that has to travel.</p>
+        <p>A truck-mounted forklift rides in on the back of the truck, drives off at the job and carries a unit over the ground. It generally suits a load that has to travel.</p>
       </article>
     </div>
     <div class="gnote pn-note">
@@ -203,14 +204,14 @@ ${pageHero(ctx, {
 
 <section class="section section--panel" id="range">
   <div class="wrap">
-    ${sectionHead({ no: '02', eyebrow: 'Product lines', title: 'Nine lines, in the order <em>a job calls for them.</em>', lede: 'The product lines set out as a build schedule, with the same line numbers as the manifest. Ask your yard what is in stock.', action: html`<a class="link" href="${ctx.u('products/')}">All products ${icon('arrow', { size: 16 })}</a>` })}
+    ${sectionHead({ no: '02', eyebrow: 'Product lines', title: 'Nine lines, in the order <em>a&nbsp;job calls for them.</em>', lede: 'The product lines, in the order a building generally needs them. Ask your yard what is in stock.', action: html`<a class="link" href="${ctx.u('products/')}">All products ${icon('arrow', { size: 16 })}</a>` })}
     ${schedule(ctx)}
   </div>
 </section>
 
 <section class="section" id="yard">
   <div class="wrap">
-    ${sectionHead({ no: '03', eyebrow: 'Kent, Washington', title: 'The headquarters yard, <em>and what else we do.</em>', lede: 'Our friendly, knowledgeable sales staff is here to help. Give us a call, email or stop by.' })}
+    ${sectionHead({ no: '03', eyebrow: 'Kent, Washington', title: 'The headquarters yard, <em>and&nbsp;what else we do.</em>', lede: 'Our friendly, knowledgeable sales staff is here to help. Give us a call, email or stop by.' })}
     <div class="pn-yard">
       ${yardCard(ctx, kent, { headingLevel: 3 })}
       <div class="pn-also">
@@ -225,13 +226,13 @@ ${pageHero(ctx, {
 
 <section class="section section--panel" id="north">
   <div class="wrap">
-    ${sectionHead({ no: '04', eyebrow: 'North from Kent', title: 'Kent is the start of <em>the lane north.</em>', lede: 'Ocean freight generally runs from Puget Sound to Southeast and Southcentral Alaska. Building up there? Start here or with an Alaska yard. All three work as one team.' })}
+    ${sectionHead({ no: '04', eyebrow: 'Alaska work', title: 'Building in Alaska? <em>Start with any yard.</em>', lede: 'Ocean freight generally runs from Puget Sound to Southeast and Southcentral Alaska. Call this yard or an Alaska yard. All three work as one team.' })}
     ${latRule({ highlight: [47.4, 71.3], note: 'The reach of the three yards: Kent to Utqiaġvik' })}
     ${laneDetail(ctx)}
   </div>
 </section>
 
-${quoteBand(ctx, { no: '05', eyebrow: 'Start with Kent', yard: 'kent', title: 'Send the plans <em>to Kent.</em>', body: 'Upload drawings or a list and tell us where the job is. We build the take-off and quote it, and work out the delivery with you.' })}
+${quoteBand(ctx, { no: '05', eyebrow: 'Start with Kent', yard: 'kent', title: 'Send the plans <em>to&nbsp;Kent.</em>', body: 'Send drawings or a list and tell us where the job is. We will help with the take-off and quote the package, and work out the delivery with you.' })}
 `,
   }),
 };
@@ -241,6 +242,7 @@ ${quoteBand(ctx, { no: '05', eyebrow: 'Start with Kent', yard: 'kent', title: 'S
 const KEY = { w: 460, h: 330 };
 const keyPlan = (ctx, l) => {
   const y = MAP.yards.find((m) => m.id === l.id);
+  if (!y) return '';
   const [cx, cy] = y.xy, W = MAP.width, H = MAP.height;
   const x0 = Math.max(0, Math.min(W - KEY.w, cx - KEY.w / 2)), y0 = Math.max(0, Math.min(H - KEY.h, cy - KEY.h / 2));
   return html`<div class="lo-key" aria-hidden="true">
@@ -248,7 +250,7 @@ const keyPlan = (ctx, l) => {
       <div class="lo-key__sheet" style="left:${(-x0 / KEY.w * 100).toFixed(2)}%;top:${(-y0 / KEY.h * 100).toFixed(2)}%;width:${(W / KEY.w * 100).toFixed(2)}%"><img src="${ctx.u('assets/map.svg')}?v=${ctx.version}" width="${W}" height="${H}" alt="" loading="lazy" decoding="async"></div>
       <i style="left:${((cx - x0) / KEY.w * 100).toFixed(2)}%;top:${((cy - y0) / KEY.h * 100).toFixed(2)}%"></i>
     </div>
-    <span class="lo-key__cap"><span class="lo-key__word">Key plan</span><span class="num">${LAT[l.id].toFixed(1)}° N</span></span>
+    <span class="lo-key__cap"><span class="lo-key__word">Key plan</span>${LAT[l.id] ? html`<span class="num">${LAT[l.id].toFixed(1)}° N</span>` : ''}</span>
   </div>`;
 };
 
@@ -261,7 +263,7 @@ const yardRow = (ctx, l, i) => html`
       <div class="lo-yard__meta">
         <div class="lo-yard__text">
           <p class="lo-yard__role">${l.role}</p>
-          <p class="lo-yard__now"><span class="num"><span data-clock="${l.hours.tz}">--:--</span> <abbr title="${tzLabel(l)}">${TZ_ABBR[l.hours.tz]}</abbr></span>${openStatus(l)}</p>
+          ${l.hours ? html`<p class="lo-yard__now"><span class="num"><span data-clock="${l.hours.tz}">--:--</span> <abbr title="${tzLabel(l)}">${TZ_ABBR[l.hours.tz]}</abbr></span>${openStatus(l)}</p>` : ''}
         </div>
         ${keyPlan(ctx, l)}
       </div>
@@ -284,7 +286,7 @@ const yardRow = (ctx, l, i) => html`
           <a class="btn btn--sm btn--line lo-way__btn" href="${mapsUrl(l)}" target="_blank" rel="noopener">${icon('directions', { size: 16 })} Directions</a>
           <dl class="lo-more">
             ${l.mailing ? html`<div><dt>Mail</dt><dd>${l.mailing}</dd></div>` : ''}
-            <div class="lo-hours"><dt>Hours</dt><dd>${hoursLines(l).map((h) => html`<span>${h}</span>`)}<small>${tzLabel(l)}</small></dd></div>
+            ${l.hours ? html`<div class="lo-hours"><dt>Hours</dt><dd>${hoursLines(l).map((h) => html`<span>${h}</span>`)}<small>${tzLabel(l)}</small></dd></div>` : ''}
           </dl>
         </dd>
       </div>
@@ -351,7 +353,7 @@ ${pageHero(ctx, {
 
 <section class="section" id="directory">
   <div class="wrap">
-    ${sectionHead({ no: '01', eyebrow: 'Yard directory', title: 'Call, visit, fax <em>or email.</em>', lede: 'Our friendly, knowledgeable sales staff is here to help. Give us a call, email or stop by.' })}
+    ${sectionHead({ no: '01', eyebrow: 'Yard directory', title: '<em>Call,</em> visit, fax or email.', lede: 'Our friendly, knowledgeable sales staff is here to help. Give us a call, email or stop by.' })}
     <div class="lo-dir">${LOCATIONS.map((l, i) => yardRow(ctx, l, i))}</div>
   </div>
 </section>
@@ -364,7 +366,7 @@ ${pageHero(ctx, {
   </div>
 </section>
 
-${quoteBand(ctx, { no: '03', eyebrow: 'Found your yard?', title: 'Send it <em>the plans.</em>', body: 'Upload drawings or a list and choose a yard. We build the take-off and quote it.' })}
+${quoteBand(ctx, { no: '03', eyebrow: 'Found your yard?', title: 'Send it <em>the&nbsp;plans.</em>', body: 'Send drawings or a list and choose a yard. We will help with the take-off and quote the package.' })}
 `,
   }),
 };

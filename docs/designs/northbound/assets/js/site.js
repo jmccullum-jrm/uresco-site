@@ -31,18 +31,31 @@ document.addEventListener('focusout', (e) => { if (e.target.matches?.(TYPING)) d
 says only "Open" or "Closed" and never prints a time.
 data-hours = {"tz":"America/Anchorage","week":[null,[420,990],…]}  (Sunday first, minutes after midnight) */
 const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-const isOpen = ({ tz, week }) => {
-const parts = Object.fromEntries(new Intl.DateTimeFormat('en-US', { timeZone: tz, weekday: 'short', hour: 'numeric', minute: 'numeric', hourCycle: 'h23' })
+const FIXED = ['1-1', '6-19', '7-4', '11-11', '12-25'];
+const utc = (y, m, d) => new Date(Date.UTC(y, m - 1, d));
+const isFixed = (t) => FIXED.includes(`${t.getUTCMonth() + 1}-${t.getUTCDate()}`);
+const isHoliday = (y, m, d) => {
+const wd = utc(y, m, d).getUTCDay(), nth = Math.ceil(d / 7);
+return isFixed(utc(y, m, d)) || (wd === 5 && isFixed(utc(y, m, d + 1))) || (wd === 1 && isFixed(utc(y, m, d - 1)))
+|| (wd === 1 && ((m === 1 && nth === 3) || (m === 2 && nth === 3) || (m === 5 && d > 24) || (m === 9 && nth === 1) || (m === 10 && nth === 2)))
+|| (wd === 4 && m === 11 && nth === 4);
+};
+const isOpen = ({ tz, week, closed = [] }) => {
+const parts = Object.fromEntries(new Intl.DateTimeFormat('en-US', { timeZone: tz, year: 'numeric', month: 'numeric', day: 'numeric', weekday: 'short', hour: 'numeric', minute: 'numeric', hourCycle: 'h23' })
 .formatToParts(new Date()).map((p) => [p.type, p.value]));
+const iso = `${parts.year}-${parts.month.padStart(2, '0')}-${parts.day.padStart(2, '0')}`;
+if (closed.includes(iso)) return false;
+if (isHoliday(+parts.year, +parts.month, +parts.day)) return null;
 const today = week[DAYS.indexOf(parts.weekday)], now = +parts.hour * 60 + +parts.minute;
 return !!today && now >= today[0] && now < today[1];
 };
 const paintHours = () => $$('[data-hours]').forEach((el) => {
 try {
 const open = isOpen(JSON.parse(el.dataset.hours));
+el.hidden = open === null;
+if (open === null) return;
 el.textContent = open ? 'Open' : 'Closed';
 el.classList.toggle('is-open', open);
-el.hidden = false;
 } catch { /* leave hidden */ }
 });
 paintHours();
@@ -58,6 +71,8 @@ const failed = $('[data-failed]', host);
 const DRAFT = 'uresco.draft.' + kind;
 const MAX = 25 * 1024 * 1024;
 let bag = new DataTransfer();
+form.noValidate = true;
+if (kind !== 'credit') [...$$('.form__print', form), ...(done ? $$('[data-print]', done) : [])].forEach((el) => el.remove());
 const fields = () => $$('input, select, textarea', form).filter((el) => el.name && el.type !== 'file' && el.type !== 'hidden');
 const PRIVATE = /^(ein|bank|bank_contact|signature|signed|agree)$/;
 const save = () => {
@@ -78,15 +93,30 @@ if (el.type === 'radio') el.checked = d[el.name] === el.value; else if (el.type 
 form.addEventListener('input', save);
 form.addEventListener('change', save);
 const query = new URLSearchParams(location.search);
+const told = [];
+let linked = false;
 const product = query.get('product');
 const materials = $('textarea[name=materials]', form);
-if (product && materials && !materials.value) materials.value = product + ':\n';
+if (product && materials && !materials.value.split('\n').some((l) => l.trim() === product + ':')) {
+const had = materials.value.trim();
+materials.value = product + ':\n' + (had ? '\n' + materials.value : '');
+linked = true;
+if (had) told.push(`${product} is added to your materials list.`);
+}
 const yardParam = query.get('yard');
 const yardSel = $('select[name=yard]', form);
 if (yardParam && yardSel) $$('option', yardSel).forEach((o) => { if (o.value.toLowerCase() === yardParam.toLowerCase()) yardSel.value = o.value; });
 const place = query.get('location');
 const job = $('input[name=location]', form);
-if (place && job && !job.value) job.value = place;
+if (place && job && job.value.trim().toLowerCase() !== place.toLowerCase()) {
+if (job.value.trim()) told.push(`Project location is now ${place} (it was ${job.value.trim()}).`);
+job.value = place;
+linked = true;
+}
+const howParam = query.get('delivery');
+const howPick = howParam && $$('input[name=delivery]', form).find((r) => r.value.toLowerCase().includes(howParam.toLowerCase()));
+if (howPick && !howPick.checked) { howPick.checked = true; linked = true; }
+if (linked) save();
 const named = (n) => form.elements.namedItem(n);
 const val = (n) => (named(n)?.value || '').trim();
 const needName = (el) => el.dataset.need || el.dataset.label || form.querySelector(`label[for="${el.id}"]`)?.childNodes[0]?.textContent.trim() || el.name;
@@ -131,10 +161,16 @@ painted = true;
 form.addEventListener('input', paint);
 form.addEventListener('change', paint);
 const draftText = $('[data-draft-text]', form);
-const draftClear = $('[data-draft-clear]', form);
+const footClear = $('[data-draft] [data-draft-clear]', form);
+const restoredNote = $('[data-restored]', form);
 if (draftText) draftText.dataset.text = draftText.textContent;
-if (draftText && restored) { draftText.textContent = 'Your draft from last time is filled in.'; draftClear.hidden = false; }
-form.addEventListener('input', () => { if (draftClear) draftClear.hidden = false; });
+if (draftText && restored) { draftText.textContent = 'Your draft from last time is filled in.'; footClear.hidden = false; }
+if (restoredNote && (restored || told.length)) {
+const files = $('input[type=file]', form) ? ' Files need adding again.' : '';
+$('[data-restored-text]', restoredNote).textContent = `${restored ? `Your draft from last time is filled in.${files} ` : ''}${told.join(' ')}`.trim();
+restoredNote.hidden = false;
+}
+form.addEventListener('input', () => { if (footClear) footClear.hidden = false; });
 const input = $('input[type=file]', form);
 const drop = $('[data-drop]', form);
 const list = $('[data-files]', form);
@@ -151,6 +187,8 @@ rm.addEventListener('click', () => {
 const next = new DataTransfer();
 Array.from(bag.files).forEach((g, j) => { if (j !== i) next.items.add(g); });
 bag = next; input.files = bag.files; render();
+const left = $$('button', list);
+(left[i] || left[i - 1] || input).focus();
 });
 li.append(name, meta, rm);
 list.append(li);
@@ -172,23 +210,30 @@ input.addEventListener('change', () => { const f = Array.from(input.files); bag 
 ['dragleave', 'drop'].forEach((t) => drop.addEventListener(t, (e) => { e.preventDefault(); drop.classList.remove('is-over'); }));
 drop.addEventListener('drop', (e) => add(e.dataTransfer.files));
 }
-draftClear?.addEventListener('click', () => {
+const phones = $$('input[type=tel][required]', form);
+const checkPhones = () => phones.forEach((el) => el.setCustomValidity(el.value.trim() && el.value.replace(/\D/g, '').length < 7 ? 'phone' : ''));
+phones.forEach((el) => el.addEventListener('input', checkPhones));
+checkPhones();
+$$('[data-draft-clear]', form).forEach((btn) => btn.addEventListener('click', () => {
 try { localStorage.removeItem(DRAFT); } catch { /* ignore */ }
 form.reset();
+checkPhones();
 bag = new DataTransfer();
 if (input) input.files = bag.files;
 render();
 $$('[aria-invalid]', form).forEach((el) => el.removeAttribute('aria-invalid'));
 $$('.err', form).forEach((el) => { el.hidden = true; });
-draftClear.hidden = true;
+if (footClear) footClear.hidden = true;
+if (restoredNote) restoredNote.hidden = true;
 if (draftText) draftText.textContent = draftText.dataset.text;
 paint();
 form.querySelector('input:not([type=file]), select, textarea')?.focus();
-});
+}));
 paint();
 window.addEventListener('beforeprint', () => {
-$$('.seg label', form).forEach((l) => { const r = $('input', l); l.classList.toggle('is-marked', r.checked && !r.defaultChecked); });
-$$('[data-paper-for]', form).forEach((o) => { const s = named(o.dataset.paperFor); o.classList.toggle('is-marked', !!s && s.selectedIndex > 0 && s.value === o.dataset.value); });
+const filled = fields().some((el) => (el.type === 'radio' || el.type === 'checkbox' ? el.checked !== el.defaultChecked : el.tagName === 'SELECT' ? el.selectedIndex > 0 : el.value.trim()));
+$$('.seg label', form).forEach((l) => { const r = $('input', l); l.classList.toggle('is-marked', r.checked && (filled || !r.defaultChecked)); });
+$$('[data-paper-for]', form).forEach((o) => { const s = named(o.dataset.paperFor); o.classList.toggle('is-marked', !!s && (filled || s.selectedIndex > 0) && s.value === o.dataset.value); });
 $$('[data-paper-copy]', form).forEach((o) => { o.textContent = val(o.dataset.paperCopy); });
 });
 const check = (el) => {
@@ -197,7 +242,7 @@ const bad = !el.checkValidity();
 el.setAttribute('aria-invalid', String(bad));
 if (err) {
 err.hidden = !bad;
-err.textContent = !bad ? '' : el.type === 'checkbox' ? el.dataset.msg || 'Please confirm to continue.' : el.validity.valueMissing ? el.dataset.msg || 'Required.' : el.type === 'email' ? 'Enter an email address like name@company.com.' : 'Check this field.';
+err.textContent = !bad ? '' : el.type === 'checkbox' ? el.dataset.msg || 'Please confirm to continue.' : el.validity.valueMissing ? el.dataset.msg || 'Required.' : el.validity.customError ? 'Enter a phone number with at least seven digits.' : el.type === 'email' ? 'Enter an email address like name@company.com.' : 'Check this field.';
 }
 return !bad;
 };
@@ -240,7 +285,7 @@ const endpoint = form.dataset.endpoint;
 if (failed) failed.hidden = true;
 const finish = () => {
 try { localStorage.removeItem(DRAFT); } catch { /* ignore */ }
-form.hidden = true; done.hidden = false; done.focus();
+form.classList.add('is-sent'); done.hidden = false; done.focus();
 window.scrollTo({ top: done.getBoundingClientRect().top + window.scrollY - 120 });
 };
 if (endpoint) {
@@ -259,21 +304,26 @@ return;
 const { text, files } = summary();
 const subject = `${form.dataset.subject} — ${data.get('company') || data.get('name')}${data.get('location') ? ' — ' + data.get('location') : ''}`;
 const mail = `mailto:${to}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(text)}`;
-window.location.href = mail;
+const tooLong = mail.length > 1800;
+if (!tooLong) window.location.href = mail;
 const note = $('[data-mail-note]', done);
 if (note) note.hidden = !files.length;
-$('[data-mail-to]', done).textContent = to;
+$$('[data-mail-to]', done).forEach((el) => { el.textContent = to; });
+$('[data-mail-usual]', done).hidden = tooLong;
+$('[data-mail-long]', done).hidden = !tooLong;
 const again = $('[data-mail-link]', done);
-if (again) again.href = mail;
+if (again) { again.href = mail; again.hidden = tooLong; }
 const copy = $('[data-copy]', done);
 if (copy) {
-const label = copy.textContent;
+const label = copy.dataset.label || (copy.dataset.label = copy.textContent);
 const full = `To: ${to}\nSubject: ${subject}\n\n${text}`;
-copy.addEventListener('click', async () => {
+copy.classList.toggle('btn--line', !tooLong);
+copy.onclick = async () => {
 try { await navigator.clipboard.writeText(full); copy.textContent = 'Copied'; } catch { copy.textContent = 'Copy failed. Email us instead.'; }
 setTimeout(() => { copy.textContent = label; }, 2400);
-});
+};
 }
+if (tooLong) { done.hidden = false; done.focus(); done.scrollIntoView({ block: 'center' }); return; }
 finish();
 });
 });
@@ -362,7 +412,7 @@ const data = JSON.parse($('[data-finder-data]', finder).textContent);
 const calm = matchMedia('(prefers-reduced-motion: reduce)');
 const coarse = matchMedia('(pointer: coarse)');
 const fold = (s) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[’'.]/g, '').toLowerCase().trim();
-const places = data.places.map(([name, st, lat, xy, region, access, yard, group, label]) => ({ name, st, lat, xy, region, access, yard, group, label, key: fold(name) }));
+const places = data.places.map(([name, st, lat, xy, region, access, yard, group, label, both]) => ({ name, st, lat, xy, region, access, yard, group, label, both, key: fold(name) }));
 const byName = new Map(places.map((p) => [p.name, p]));
 const aliases = Object.entries(data.aliases).map(([alias, name]) => ({ alias, key: fold(alias), place: byName.get(name) }));
 const SUGGEST = ['Bethel', 'Nome', 'Kotzebue', 'Utqiaġvik', 'Juneau', 'Sitka', 'Anchorage', 'Fairbanks'].map((name) => ({ p: byName.get(name) }));
@@ -372,8 +422,11 @@ const section = finder.closest('[data-lat]');
 const field = (k) => $(`[data-a="${k}"]`, answer);
 let active = -1, options = [];
 /* ---- The answer ---- */
-const quoteUrl = (where, yard) => `${data.quote}?location=${encodeURIComponent(where)}${yard ? '&yard=' + yard : ''}`;
-const showYard = (id) => $$('[data-y]', answer).forEach((el) => { el.hidden = el.dataset.y !== id; });
+const quoteUrl = (where, yard, remote) => `${data.quote}?location=${encodeURIComponent(where)}${yard ? '&yard=' + yard : ''}${remote ? '&delivery=remote' : ''}`;
+const yardsFor = (p) => (p.both ? ['anchorage', 'fairbanks'] : [p.yard]);
+const showYards = (ids) => $$('[data-y]', answer).forEach((el) => { el.hidden = !ids.includes(el.dataset.y); });
+const carried = $$('.actionbar a[href*="quote/"], .masthead a[href*="quote/"], #drawer a[href*="quote/"], .closing a[href*="quote/"]');
+const carry = (url) => carried.forEach((a) => { const hash = a.getAttribute('href').split('#')[1]; a.setAttribute('href', url + (hash ? `#${hash}` : '')); });
 const swap = () => {
 if (calm.matches) return;
 answer.classList.add('is-swapping');
@@ -387,7 +440,9 @@ field('lat').hidden = false; field('latnum').textContent = p.lat.toFixed(1);
 field('region').textContent = p.region;
 field('name').textContent = `${p.name}, ${data.states[p.st]}`;
 field('tag').textContent = acc.tag; field('tag').hidden = false;
-showYard(p.yard);
+const ids = yardsFor(p), plural = ids.length > 1;
+showYards(ids);
+field('yardlabel').textContent = plural ? 'Yards to call' : 'Start with';
 [0, 1].forEach((i) => {
 const m = acc.modes[i];
 field('m' + i).textContent = m ? modes[i] : '';
@@ -396,8 +451,11 @@ $$(`[data-ic^="${i}-"]`, answer).forEach((ic) => { ic.hidden = !m || ic.dataset.
 });
 field('how').hidden = false; field('else').hidden = true; field('note').hidden = false;
 field('short').textContent = p.name;
-field('quote').href = quoteUrl(`${p.name}, ${p.st}`, p.yard);
-live.textContent = `${p.name}, ${data.states[p.st]}. ${acc.tag}. How freight typically gets there: ${modes.join('; ')}. Yard to call: ${yard.name}, ${yard.phone}. Typical for the region, not a schedule or a price. Any yard can help.`;
+const url = quoteUrl(`${p.name}, ${p.st}`, plural ? null : p.yard, p.access === 'coastal' || p.access === 'seasonal');
+field('quote').setAttribute('href', url);
+carry(url);
+const who = ids.map((id) => `${data.yards[id].name}, ${data.yards[id].phone}`).join(' or ');
+live.textContent = `${p.name}, ${data.states[p.st]}. ${acc.tag}. How freight typically gets there: ${modes.join('; ')}. ${plural ? 'Yards to call' : 'Start with'}: ${who}. Typical for the region, not a schedule or a price. Any yard can help.`;
 };
 const fillUnknown = (text) => {
 field('eg').hidden = true;
@@ -405,11 +463,14 @@ field('lat').hidden = true;
 field('region').textContent = 'Not on our short list';
 field('name').textContent = text;
 field('tag').hidden = true;
-showYard('any');
+showYards(['any']);
+field('yardlabel').textContent = 'Call';
 field('how').hidden = true; field('else').hidden = false; field('note').hidden = true;
 field('short').textContent = text;
-field('quote').href = quoteUrl(text);
-live.textContent = `${text} is not on our short list, which does not mean we cannot get there. Any yard can help. Use the quote button, or call a yard.`;
+const url = quoteUrl(text);
+field('quote').setAttribute('href', url);
+carry(url);
+live.textContent = `${text} is not on our short list. Any yard can help. Use the quote button, or call a yard.`;
 };
 /* ---- The route plate ---- */
 const plate = $('[data-plate]', finder);
@@ -547,6 +608,8 @@ const o = options[active] || (input.value.trim() ? options[0] : null);
 if (o) pick(o);
 } else if (e.key === 'Escape') {
 if (!list.hidden) { e.preventDefault(); close(); } else if (input.value) { e.preventDefault(); input.value = ''; clear.hidden = true; }
+} else if (e.key === 'Tab') {
+close();
 }
 });
 list.addEventListener('mousedown', (e) => e.preventDefault());
@@ -557,7 +620,7 @@ if (o) pick(o);
 });
 clear.addEventListener('click', () => { input.value = ''; clear.hidden = true; input.focus(); });
 finder.addEventListener('click', (e) => {
-const eg = e.target.closest('[data-place]');
+const eg = e.target.closest('button[data-place]');
 if (eg && byName.has(eg.dataset.place)) choose(byName.get(eg.dataset.place));
 });
 })();
@@ -568,6 +631,7 @@ const rows = $$('.prod-row', root);
 const imgs = $$('.stock__frame img', root);
 const cap = $('[data-prod-cap]', root);
 const wide = matchMedia('(min-width: 1000px)');
+const coarse = matchMedia('(pointer: coarse)');
 const show = (i) => {
 if (!wide.matches || !imgs[i]) return;
 const img = imgs[i];
@@ -600,7 +664,7 @@ r.hidden = !words.every((w) => r.dataset.terms.includes(w));
 $$('.prod-row__items li', r).forEach((li) => li.classList.toggle('is-hit', words.length > 0 && words.some((w) => li.dataset.t.includes(w))));
 });
 const n = left().length;
-count.textContent = !words.length ? `${rows.length} lines` : n === 1 ? '1 line · Enter opens it' : n ? `${n} of ${rows.length} lines` : 'No match';
+count.textContent = !words.length ? `${rows.length} lines` : n === 1 ? (coarse.matches ? '1 line' : '1 line · Enter opens it') : n ? `${n} of ${rows.length} lines` : 'No match';
 none.hidden = n > 0;
 clear.hidden = !input.value;
 if (n && !left().some((r) => r.classList.contains('is-on'))) show(rows.indexOf(left()[0]));
@@ -611,6 +675,12 @@ if (e.key === 'Enter' && input.value && left().length === 1) { e.preventDefault(
 if (e.key === 'Escape' && input.value) { e.preventDefault(); input.value = ''; apply(); }
 });
 clear.addEventListener('click', () => { input.value = ''; apply(); input.focus(); });
+const jump = $('[data-prod-jump]');
+if (jump) jump.addEventListener('click', (e) => {
+e.preventDefault();
+input.scrollIntoView({ block: 'start' });
+input.focus({ preventScroll: true });
+});
 if (input.value) apply();
 window.addEventListener('pageshow', () => { if (input.value) apply(); });
 })();

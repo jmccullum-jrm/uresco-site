@@ -3,12 +3,14 @@
    with more in them; the rules below only add to those. */
 
 /* ---------- Index: hero ---------- */
+/* The headline holds two lines beside the window instead of a ladder of single words. */
+@media (min-width: 900px) { .pl-top .phero__title { font-size: min(var(--t-d1), 6vw); } }
 .pl-down { transform: rotate(90deg); }
 .btn:hover .pl-down.i:last-child:not(:first-child) { transform: rotate(90deg) translateX(4px); }
 
 /* ---------- Index: the finder ---------- */
 .pl-index { padding-bottom: 0; --pl-win: clamp(66px, 6.6vw, 98px); --pl-gap: clamp(1rem, 2.2vw, 2.5rem); }
-.pl-find { display: grid; gap: .6rem; width: 100%; }
+.pl-find { display: grid; gap: .6rem; width: 100%; scroll-margin-top: calc(var(--mast) + 1rem); }
 .pl-find__label { font-size: var(--t-label); font-weight: 800; font-stretch: var(--wide); letter-spacing: .09em; text-transform: uppercase; line-height: 1.2; }
 .pl-find__box { position: relative; display: block; }
 .pl-find__box > .i { position: absolute; z-index: 1; left: 1.35rem; top: 50%; margin-top: -11px; pointer-events: none; transition: transform var(--t-flip) var(--spring); }
@@ -144,13 +146,12 @@ html:not(.js) .pl-find { visibility: hidden; }
 .pl-spec__grid { display: grid; grid-template-columns: minmax(0, 1fr) clamp(300px, 29vw, 410px); gap: clamp(2rem, 5.5vw, 6rem); align-items: start; }
 .pl-spec__lede { margin: 1.4rem 0 0; color: var(--paper); }
 .pl-items { margin-top: clamp(2rem, 4vw, 3.25rem); border-top: var(--line) solid var(--black-3); }
-.pl-item { position: relative; isolation: isolate; scroll-margin-top: 1rem; display: grid; grid-template-columns: 4.4rem minmax(0, 1.2fr) minmax(0, 1fr); align-items: baseline; gap: .3rem clamp(1rem, 2vw, 2rem); padding: 1.35rem 0 1.3rem; border-bottom: var(--line) solid var(--black-3); }
-.pl-item__no { font-size: .76rem; font-weight: 800; font-stretch: var(--wide); letter-spacing: .05em; color: var(--yellow); }
+.pl-item { position: relative; isolation: isolate; scroll-margin-top: 1rem; display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); align-items: baseline; gap: .3rem clamp(1rem, 2vw, 2rem); padding: 1.35rem 0 1.3rem; border-bottom: var(--line) solid var(--black-3); }
 .pl-item__name { font-size: clamp(1.15rem, .95rem + .95vw, 1.7rem); line-height: 1; font-weight: 900; font-stretch: 118%; letter-spacing: -.015em; text-transform: uppercase; text-wrap: balance; }
 .pl-item__note { margin: 0; color: var(--ash); line-height: 1.45; }
 /* Arriving from the index on one item: that row is the one flipped. */
 .pl-item:target::before { content: ''; position: absolute; z-index: -1; inset: -2px -1.1rem; background: var(--yellow); border-radius: var(--r-m); }
-.pl-item:target, .pl-item:target .pl-item__no { color: var(--black); }
+.pl-item:target { color: var(--black); }
 .pl-item:target .pl-item__note { color: var(--umber); }
 .pl-makers { display: flex; flex-wrap: wrap; align-items: center; gap: 1.1rem 1.6rem; margin-top: clamp(1.75rem, 3vw, 2.5rem); }
 .pl-makers__k { margin: 0; font-size: var(--t-label); font-weight: 800; font-stretch: var(--wide); letter-spacing: .09em; text-transform: uppercase; color: var(--yellow); }
@@ -178,8 +179,7 @@ html:not(.js) .pl-find { visibility: hidden; }
   .pl-ask { position: static; border-radius: var(--r-m); }
 }
 @media (max-width: 699px) {
-  .pl-item { grid-template-columns: 3.3rem minmax(0, 1fr); padding: 1.15rem 0 1.1rem; }
-  .pl-item__note { grid-column: 2; }
+  .pl-item { grid-template-columns: minmax(0, 1fr); padding: 1.15rem 0 1.1rem; }
   .pl-item:target::before { inset: -2px -.6rem; }
 }
 

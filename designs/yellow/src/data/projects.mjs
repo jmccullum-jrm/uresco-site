@@ -8,14 +8,14 @@
 // scope and a photo key from data/photos.mjs. Real projects sort first and show their
 // place and year; the generic entries can be deleted once there are six or more real ones.
 
-export const SECTORS = ['Institutional', 'Commercial', 'Residential', 'Remote Alaska'];
+export const SECTORS = ['Institutional', 'Commercial', 'Residential', 'Remote & export'];
 
 export const PROJECTS = [
   {
-    sector: 'Remote Alaska',
+    sector: 'Remote & export',
     title: 'Village housing packages',
-    photo: 'remote-village',
-    scope: 'Complete framing, envelope and finish packages, crated and shipped by barge for communities off the road system.',
+    photo: 'framing-joists',
+    scope: 'Complete building packages, crated for the trip, for communities off the road system.',
     materials: ['Framing lumber', 'Sheathing', 'Rigid foam', 'Windows & doors'],
   },
   {
@@ -29,7 +29,7 @@ export const PROJECTS = [
     sector: 'Commercial',
     title: 'Commercial & multifamily framing',
     photo: 'multifamily',
-    scope: 'Phased framing deliveries, engineered beams and truss packages sequenced to the schedule.',
+    scope: 'Framing lumber, engineered beams and truss packages for commercial and multifamily builders.',
     materials: ['Dimensional lumber', 'LVL & PSL', 'Trusses', 'Simpson connectors'],
   },
   {
@@ -43,8 +43,8 @@ export const PROJECTS = [
     sector: 'Residential',
     title: 'Custom homes',
     photo: 'custom-home',
-    scope: 'Framing through finish for custom builders, with take-offs from plans and delivery set by boom truck.',
-    materials: ['Framing packages', 'Glulam', 'Cedar siding', 'Cabinets'],
+    scope: 'Materials for custom builders, with take-off help and job-site delivery.',
+    materials: ['Framing lumber', 'Glulam', 'Cedar siding', 'Cabinets'],
   },
   {
     sector: 'Residential',
@@ -54,14 +54,14 @@ export const PROJECTS = [
     materials: ['Cedar', 'Composite decking', 'James Hardie', 'House wrap'],
   },
   {
-    sector: 'Remote Alaska',
+    sector: 'Remote & export',
     title: 'Interior & northern projects',
     photo: 'north-slope',
-    scope: 'Materials staged out of Fairbanks for work across the Interior and up the road north.',
+    scope: 'Materials for work across the Interior and points north.',
     materials: ['Timbers', 'Plywood', 'Insulation', 'Tarps & poly'],
   },
   {
-    sector: 'Institutional',
+    sector: 'Remote & export',
     title: 'Export building packages',
     photo: 'tacoma-port',
     scope: 'Complete building packages assembled and crated, with shipping coordinated for export.',

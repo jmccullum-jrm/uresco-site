@@ -45,13 +45,15 @@
 .abt-form__rows > div { display: grid; grid-template-columns: minmax(0, 1fr); gap: .15rem; padding: .85rem clamp(1.1rem, 3vw, 2rem) .9rem; border-bottom: 1px dashed var(--rule-2); }
 .abt-form__rows dt { font: 400 var(--t-label)/1.4 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); }
 .abt-form__rows dd { font: 480 1.25rem/1.25 var(--serif); letter-spacing: -.004em; }
+/* Fraunces at its 144-point optical size flattens the top of a 3 at this size, so a row that carries a figure is set in the text face. */
+.abt-form__rows .abt-form__plain { font: 500 1.1875rem/1.3 var(--sans); letter-spacing: 0; font-variant-numeric: tabular-nums; }
 .abt-form__yards { display: grid; justify-items: start; gap: .1rem; }
 .abt-form__yards a { display: inline-flex; align-items: center; min-height: 2.5rem; text-decoration-color: var(--rule-2); text-decoration-thickness: 1px; }
 .abt-form__yards { gap: 0; }
 .abt-form__yards a:hover { text-decoration-color: var(--ink); }
 .abt-form__foot { padding: .85rem clamp(1.1rem, 3vw, 2rem) .95rem; font: italic 460 1.0625rem/1.3 var(--serif); color: var(--ink-2); }
 .abt-form :focus-visible { outline-color: var(--ink); }
-@media (max-width: 499px) { .abt-form__no { display: none; } .abt-form { box-shadow: .35rem .35rem 0 var(--yellow); } }
+@media (max-width: 499px) { .abt-form { box-shadow: .35rem .35rem 0 var(--yellow); } }
 @media (min-width: 620px) { .abt-form__rows > div { grid-template-columns: 7.5rem minmax(0, 1fr); gap: 1rem; align-items: baseline; } }
 @media (min-width: 1000px) {
   .abt-sheet__grid { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); column-gap: clamp(2.5rem, 6vw, 6rem); align-items: start; }
@@ -138,7 +140,7 @@
 @media (min-width: 620px) and (max-width: 999px) { .lost__nav ol { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--col-gap); } }
 @media (min-width: 1000px) {
   .lost__where { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); column-gap: clamp(2.5rem, 6vw, 6rem); }
-  .lost__call .ystrip { grid-template-columns: minmax(0, 1fr); border-bottom: 0; }
+  .lost__call .ystrip { grid-auto-flow: row; grid-template-columns: minmax(0, 1fr); border-bottom: 0; }
   .lost__call .ystrip li + li { border-left: 0; }
   .lost__call .ystrip__item { padding: .9rem 0 1rem; border-bottom: 1px solid var(--rule-2); }
 }

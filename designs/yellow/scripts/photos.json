@@ -17,21 +17,6 @@
   "hero": true,
   "art": true
  },
- "pine-racking": {
-  "src": "https://images.unsplash.com/photo-1787422430123-344b233a0626?w=2400&q=85&auto=format&fit=crop",
-  "alt": "Bundles of lumber on cantilever racking in a warehouse",
-  "credit": "PJ Wallace / Unsplash",
-  "page": "https://unsplash.com/photos/EFR6ICYBMN0",
-  "focal": "60% 50%",
-  "hero": true,
-  "art": true
- },
- "timber-ends": {
-  "src": "https://images.unsplash.com/photo-1783887110442-19e7f98fc87a?w=2000&q=85&auto=format&fit=crop",
-  "alt": "Ends of pressure-treated timbers stacked in a bundle",
-  "credit": "roselino rocha / Unsplash",
-  "page": "https://unsplash.com/photos/07hBSBN9XC0"
- },
  "plywood": {
   "src": "https://images.unsplash.com/photo-1690768162582-342e1e9097a2?w=2000&q=85&auto=format&fit=crop",
   "alt": "Bundled stacks of plywood panels in a warehouse",
@@ -67,31 +52,14 @@
   "hero": true,
   "art": true
  },
- "combilift": {
-  "src": "https://images.unsplash.com/photo-1787422429934-abada474f7d9?w=2000&q=85&auto=format&fit=crop",
-  "alt": "A forklift operator moving lumber in a warehouse",
-  "credit": "PJ Wallace / Unsplash",
-  "page": "https://unsplash.com/photos/Do5rGlcZnuQ",
-  "focal": "50% 45%",
-  "hero": true,
-  "art": true
- },
- "valdez-port": {
-  "src": "https://images.unsplash.com/photo-1651682417623-e1660ce221a3?w=2400&q=85&auto=format&fit=crop",
-  "alt": "A port crane at the foot of snow-covered mountains in Valdez, Alaska",
-  "credit": "Mich / Unsplash",
-  "page": "https://unsplash.com/photos/1TilbaZ3ALA",
-  "hero": true,
-  "focal": "38% 60%",
-  "art": true
- },
  "juneau-freight": {
   "src": "https://images.unsplash.com/photo-1792444821252-bab6b8b4bd34?w=2000&q=85&auto=format&fit=crop",
   "alt": "Shipping containers in a freight yard in Juneau, Alaska",
   "credit": "Jonah Townsley / Unsplash",
   "page": "https://unsplash.com/photos/dCNcbGYssNY",
-  "focal": "50% 60%", "art": true
-  },
+  "focal": "50% 60%",
+  "art": true
+ },
  "anchorage": {
   "src": "https://images.unsplash.com/photo-1704243962389-6e57197ccf09?w=2400&q=85&auto=format&fit=crop",
   "alt": "The Anchorage skyline beneath the snow-covered Chugach Mountains",
@@ -115,8 +83,9 @@
   "credit": "fr0ggy5 / Unsplash",
   "page": "https://unsplash.com/photos/7wrKEqA2qu8",
   "focal": "55% 50%",
-  "hero": true, "art": true
-  },
+  "hero": true,
+  "art": true
+ },
  "cedar": {
   "src": "https://images.unsplash.com/photo-1781902915690-b36f0df9d478?w=2000&q=85&auto=format&fit=crop",
   "alt": "A building clad in vertical cedar siding under a deep roof overhang",
@@ -126,21 +95,13 @@
   "hero": true,
   "art": true
  },
- "cranes-dusk": {
-  "src": "https://images.unsplash.com/photo-1636714289409-e06a4dfc617c?w=2000&q=85&auto=format&fit=crop",
-  "alt": "Tower cranes over a construction site at dusk",
-  "credit": "Nicolas Beuret / Unsplash",
-  "page": "https://unsplash.com/photos/8i19Rm2EFUM",
-  "focal": "60% 50%",
-  "hero": true,
-  "art": true
- },
  "timber-weathered": {
   "src": "https://images.unsplash.com/photo-1766148891408-af4013825cb7?w=2000&q=85&auto=format&fit=crop",
   "alt": "Weathered ends of stacked timbers showing growth rings",
   "credit": "Chris / Unsplash",
-  "page": "https://unsplash.com/photos/yrqoWErSElA", "art": true
-  },
+  "page": "https://unsplash.com/photos/yrqoWErSElA",
+  "art": true
+ },
  "tug-barge": {
   "src": "https://images.unsplash.com/photo-1783322494399-3372632a78d3?w=2400&q=85&auto=format&fit=crop",
   "alt": "A tug pushing a loaded freight barge",
@@ -149,13 +110,6 @@
   "focal": "72% 60%",
   "hero": true,
   "art": true
- },
- "forklift-yard": {
-  "src": "https://images.unsplash.com/photo-1763665814842-f2526387dfb4?w=2000&q=85&auto=format&fit=crop",
-  "alt": "A forklift driving through a building-supply yard",
-  "credit": "Sergej / Unsplash",
-  "page": "https://unsplash.com/photos/V5YPZo528n4",
-  "focal": "50% 55%"
  },
  "uresco-truck": {
   "src": "originals/uresco/masthead-lumber-truck.jpg",
@@ -177,22 +131,6 @@
    1
   ],
   "alt": "Wrapped lumber bundles and a forklift in a Uresco yard",
-  "credit": "Uresco Construction Materials"
- },
- "uresco-stack": {
-  "src": "originals/uresco/masthead-wood-stack.jpg",
-  "crop": [
-   0.5,
-   0,
-   1,
-   1
-  ],
-  "alt": "Stacked lumber at a Uresco yard",
-  "credit": "Uresco Construction Materials"
- },
- "uresco-woodpile": {
-  "src": "originals/uresco/woodpile.jpg",
-  "alt": "Timber ends stacked in a Uresco yard",
   "credit": "Uresco Construction Materials"
  },
  "concrete-forms": {
@@ -236,7 +174,13 @@
   "alt": "A pile of black construction screws against a yellow background",
   "credit": "Konstantin Evdokimov / Unsplash",
   "page": "https://unsplash.com/photos/JALUvPLUde8",
-  "focal": "50% 75%",
+  "crop": [
+   0.25,
+   0.5,
+   1,
+   1
+  ],
+  "focal": "45% 100%",
   "hero": true,
   "art": true
  },
@@ -254,15 +198,7 @@
   "alt": "A sunlit wood deck beside a dark-stained house",
   "credit": "Eli Chamoun / Unsplash",
   "page": "https://unsplash.com/photos/R5ExRDtg_BM",
-  "focal": "50% 65%", "art": true
-  },
- "remote-village": {
-  "src": "https://images.unsplash.com/photo-1541752346141-78198eddd145?w=2400&q=85&auto=format&fit=crop",
-  "alt": "Snow-drifted buildings and a boat at sunset over sea ice in Utqiaġvik, Alaska",
-  "credit": "Deborah Schildt / Unsplash",
-  "page": "https://unsplash.com/photos/8O-KsnJ2Yds",
-  "focal": "45% 60%",
-  "hero": true,
+  "focal": "50% 65%",
   "art": true
  },
  "institutional": {
@@ -296,17 +232,6 @@
   "focal": "72% 60%",
   "art": true
  },
- "export": {
-  "src": "https://images.unsplash.com/photo-1691591765923-3bd6f12f4209?w=2000&q=85&auto=format&fit=crop",
-  "alt": "A container ship berthed beneath gantry cranes",
-  "credit": "Elijah Mears / Unsplash",
-  "page": "https://unsplash.com/photos/sI2eENXdoBI",
-  "focal": "40% 50%"
- },
- "yard-kent": {
-  "src": "@forklift-yard",
-  "alt": "A forklift in a building-supply yard"
- },
  "fairbanks": {
   "src": "https://images.unsplash.com/photo-1704243961977-05fb882fc0cd?w=2000&q=85&auto=format&fit=crop",
   "alt": "Green aurora over a snowbanked road and frosted birches near Fairbanks, Alaska",
@@ -329,6 +254,7 @@
   "alt": "Skiffs on a gravel beach below a mountain as a small plane passes, Port Alsworth, Alaska",
   "credit": "Brandy Willetts / Unsplash",
   "page": "https://unsplash.com/photos/TFpqCU4b2dw",
-  "focal": "50% 70%", "art": true
-  }
+  "focal": "50% 70%",
+  "art": true
+ }
 }

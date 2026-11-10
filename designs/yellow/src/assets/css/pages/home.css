@@ -14,9 +14,10 @@
 .hero__swap { display: grid; justify-content: start; overflow: hidden; overflow: clip; margin-block: -.04em; padding-block: .04em; }
 .hero__swap > span { grid-area: 1 / 1; opacity: 0; transform: translateY(105%) rotate(5deg); transform-origin: 0 100%; }
 .hero__swap > .is-on { opacity: 1; transform: none; }
+/* The old word is gone before the new one starts: a flip, never a double exposure. */
 @media (prefers-reduced-motion: no-preference) {
-  .hero__swap > span { transition: transform .5s var(--spring), opacity .12s linear; }
-  .hero__swap > .was-on { opacity: 0; transform: translateY(-105%) rotate(-4deg); transition: transform .32s cubic-bezier(.5, 0, .9, .4), opacity .2s linear .1s; }
+  .hero__swap > span { transition: transform .46s var(--spring) .22s, opacity 0s linear .22s; }
+  .hero__swap > .was-on { opacity: 0; transform: translateY(-105%) rotate(-4deg); transition: transform .22s cubic-bezier(.5, 0, .9, .4), opacity 0s linear .22s; }
 }
 
 .hero__art { grid-area: art; position: relative; z-index: 1; align-self: start; margin-top: calc(var(--F) * -.84 + .04em); }
@@ -50,7 +51,8 @@
 .hero__art:has(> .hero__media > :nth-child(2).is-on) .hero__cap > :nth-child(2),
 .hero__art:has(> .hero__media > :nth-child(3).is-on) .hero__cap > :nth-child(3) { opacity: 1; }
 .hero__art:has(> .hero__media > :nth-child(4).is-on) .hero__cap { opacity: 0; }
-@media (prefers-reduced-motion: no-preference) { .hero__cap, .hero__cap > span { transition: opacity .2s linear; } }
+/* The label fades only for the mark's slide; one caption replaces another outright, so two never read at once. */
+@media (prefers-reduced-motion: no-preference) { .hero__cap { transition: opacity .2s linear; } }
 /* Tablets: the window is too narrow to carry a caption and the seal, and there is room beneath it. */
 @media (min-width: 760px) and (max-width: 999px) {
   .hero__cap { top: calc(100% + .7rem); right: 0; bottom: auto; left: 0; max-width: none; padding: 0; background: none; color: var(--black); text-align: center; }
@@ -82,8 +84,9 @@
   .hero__art .rings { --step: 30px; --w: 14px; }
   .hero__seal { left: -19%; bottom: 3%; }
   .hero__cap { right: -13%; bottom: -1%; max-width: 92%; }
-  /* The hole beside BY: the pause control sits in it, on the first screen. */
-  .hero__pause { grid-area: title; align-self: center; width: 46px; min-height: 44px; margin-block: 0; }
+  /* The pause control keeps to the corner of the eyebrow row, as on every other hero. */
+  .hero__pause { grid-area: kicker; justify-self: end; align-self: center; width: 46px; min-height: 44px; margin-block: 0; }
+  .hero__kicker { padding-right: 58px; flex-wrap: nowrap; }
 }
 @media (max-width: 374px) {
   .hero__kicker { font-size: .75rem; letter-spacing: .01em; }
@@ -130,13 +133,21 @@
 @media (max-width: 799px) { .askrow { grid-template-columns: minmax(0, 1fr) auto; border-radius: var(--r-l); padding: 1.2rem 1.1rem 1.2rem 1.3rem; } .askrow__q { grid-column: 1; } .askrow__a { grid-column: 1; font-size: .95rem; } .askrow .line__go { grid-column: 2; grid-row: 1 / span 2; display: grid; width: 52px; height: 52px; } }
 .brands { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem 2rem; margin-top: clamp(2rem, 4vw, 3.25rem); }
 .brands__label { font-size: var(--t-label); font-weight: 800; font-stretch: 125%; letter-spacing: .09em; text-transform: uppercase; }
-.brands ul { display: flex; flex-wrap: wrap; gap: .8rem .7rem; }
-.brands .sticker { font-size: clamp(.75rem, .6rem + .3vw, .9rem); padding: .7em 1.2em .62em; }
+.brands ul { display: flex; flex-wrap: wrap; gap: .3rem .7rem; }
+.brands__go { display: inline-flex; align-items: center; min-height: 44px; color: inherit; text-decoration: none; }
+.brands .sticker { font-size: clamp(.75rem, .6rem + .3vw, .9rem); padding: .7em 1.2em .62em; transition: transform var(--t-flip) var(--spring), background var(--t-tap) linear, color var(--t-tap) linear; }
+.brands__go:hover .sticker, .brands__go:focus-visible .sticker { background: var(--black); color: var(--yellow); transform: rotate(0deg) scale(1.06); }
+.brands__go:focus-visible { border-radius: var(--r-pill); }
 
 /* ---------- Reach: the map ---------- */
+/* The headline runs over both columns, a sentence to a line, sized from the width it has: in the
+   copy column beside the map it collapsed into a ladder of one-word lines. */
 .reach { padding-top: calc(var(--section) + clamp(70px, 13vw, 210px)); }
-.reach__title { margin-bottom: 1.4rem; }
-.reach__grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); gap: clamp(2rem, 5vw, 5.5rem); align-items: center; }
+.reach__head { grid-area: head; container-type: inline-size; }
+.reach__copy { grid-area: copy; min-width: 0; }
+.reach__map { grid-area: map; min-width: 0; align-self: center; }
+.reach__grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); grid-template-areas: "head head" "copy map"; gap: clamp(1.25rem, 2.6vw, 2.5rem) clamp(2rem, 5vw, 5.5rem); }
+@media (min-width: 1000px) { .reach__title { font-size: clamp(2.05rem, calc(100cqi / 13.05), 6.5rem); } }
 .reach__copy .lede { color: var(--paper); }
 .hops { counter-reset: hop; margin-top: clamp(1.5rem, 3vw, 2.25rem); border-top: var(--line) solid var(--black-3); }
 .hops li { counter-increment: hop; display: grid; grid-template-columns: 2.6rem minmax(0, 1fr); align-items: baseline; padding: .8rem 0; border-bottom: var(--line) solid var(--black-3); color: var(--ash); line-height: 1.4; }
@@ -144,21 +155,20 @@
 .hops b { color: var(--paper); font-weight: 750; }
 .reach__map { position: relative; margin-right: calc(var(--gutter) * -.5); }
 .reach__sticker { position: absolute; right: 6%; top: 3%; font-size: clamp(.7rem, .55rem + .5vw, 1rem); }
-@media (max-width: 999px) { .reach__grid { grid-template-columns: minmax(0, 1fr); } .reach__map { margin-right: 0; } .reach__sticker { right: -.3rem; top: .9rem; } }
+@media (max-width: 999px) { .reach__grid { grid-template-columns: minmax(0, 1fr); grid-template-areas: "head" "copy" "map"; } .reach__map { margin-right: 0; } .reach__sticker { right: -.3rem; top: .9rem; } }
 @media (max-width: 699px) { .reach__sticker { display: none; } }
 @media (max-width: 359px) { .reach__copy .btn { padding-inline: 1em; font-size: .8rem; letter-spacing: 0; font-stretch: 100%; } }
 
 /* ---------- Services, sectors, yards ---------- */
 .services { padding-bottom: calc(var(--section) + 1.5vw); }
-/* The quiet section: said in the reading voice, in a sentence, with no outlined half. */
-.services .shead .d2 { font-size: clamp(2.1rem, 1.1rem + 3.6vw, 4.4rem); line-height: 1.02; font-weight: 800; font-stretch: 112%; letter-spacing: -.03em; text-transform: none; }
-
 .sectors { padding-top: calc(var(--section) + 1.5vw); }
 .sectors__note { margin: clamp(1.5rem, 3vw, 2.5rem) 0 0; font-size: .875rem; color: var(--ash); }
 /* The headline is two full lines; the aside gives up width for it. */
 @media (min-width: 861px) { .sectors .shead { grid-template-columns: minmax(0, 1fr) minmax(0, 17rem); } .sectors .d2 { font-size: clamp(2.05rem, 1.1rem + 3.5vw, 4.6rem); } }
 
 .yardsec .yards { margin-top: 0; }
+/* Email and fax are in the footer right below: these cards are for calling and finding the yard. */
+.yardsec .yard__lines--mini { display: none; }
 /* Narrow phones: the number gets the whole row, Directions (in words) the row under it. */
 @media (max-width: 440px) { .yard--compact .yard__actions { grid-template-columns: minmax(0, 1fr); } }
 /* The number hangs in a U, the mark's own shape: this headline is a count, so the count is the big thing. */

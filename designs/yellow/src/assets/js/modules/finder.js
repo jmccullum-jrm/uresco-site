@@ -12,6 +12,10 @@
   const calm = matchMedia('(prefers-reduced-motion: reduce)');
   const fold = (s) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[’'.]/g, '').toLowerCase().trim();
   const slug = (s) => s.toLowerCase().normalize('NFD').replace(/[^a-z]/g, '');
+  // "Bethel, AK", "barrow ak" and "Kotzebue, Alaska 99752" name the same place as "Bethel".
+  const bare = (s) => fold(s).split(',')[0].replace(/\s+(ak|alaska|wa|washington)(\s+\d{5}(-\d{4})?)?$/, '').trim();
+  const inWashington = (s) => /[,\s]\s*(wa|washington)\b/i.test(s);
+  const touch = matchMedia('(hover: none)');
 
   const places = data.places.map(([name, st, region, access, yard, lanes, xy]) => ({ name, st, region, access, yard, lanes, xy, key: fold(name) }));
   const byName = new Map(places.map((p) => [p.name, p]));
@@ -23,7 +27,8 @@
   const chips = $$('.town');
   const card = $('[data-way]'), live = $('[data-live]');
   const part = (name) => card.querySelector(`[data-way-${name}]`);
-  const quote = part('quote'), call = part('call'), any = part('any'), how = part('how');
+  const quote = part('quote'), call = part('call'), how = part('how');
+  const NOTE = 'Typical for the region, not a schedule or a price. Any yard can help.';
   const quoteBase = quote.getAttribute('href').split('?')[0];
 
   const map = document.querySelector('.finder [data-map]');
@@ -35,43 +40,49 @@
   /* ---- The card ---- */
   const pop = () => { card.classList.remove('is-new'); void card.offsetWidth; card.classList.add('is-new'); };
   const showQuote = (label, href) => { part('short').textContent = label; quote.href = href; };
+  const showYard = (yard) => { part('yard').textContent = yard.name; part('phone').textContent = yard.phone; call.href = yard.tel; };
 
   const fill = (p) => {
     const acc = data.access[p.access], yard = data.yards[p.yard];
     const modes = acc.modes.map(([ic, text]) => [ic, text.replace('{yard}', yard.name)]);
     part('label').textContent = acc.tag;
     part('name').textContent = p.name;
-    part('region').textContent = `${p.region}, ${STATE[p.st]}`;
+    part('region').textContent = /Alaska/.test(p.region) ? p.region : `${p.region}, ${STATE[p.st]}`;
     part('region').hidden = false;
-    part('text').hidden = true;
+    // Off the road system the question is whether a whole building can go there: say so here.
+    const offRoad = p.access === 'coastal' || p.access === 'seasonal';
+    const line = acc.note || '';
+    part('text').textContent = line;
+    part('text').hidden = !line;
     how.hidden = false;
     modes.forEach(([ic, text], i) => {
       card.querySelector(`[data-way-m="${i}"]`).textContent = text;
       card.querySelectorAll(`[data-ic^="${i}-"]`).forEach((el) => { el.hidden = el.dataset.ic !== `${i}-${ic}`; });
     });
-    part('yard').textContent = yard.name;
-    part('phone').textContent = yard.phone;
-    call.href = yard.tel; call.hidden = false; any.hidden = true;
-    const offRoad = p.access === 'coastal' || p.access === 'seasonal';
+    showYard(yard);
     showQuote(`Get a quote for ${p.name}`, `${quoteBase}?yard=${p.yard}&location=${encodeURIComponent(`${p.name}, ${p.st}`)}${offRoad ? '&delivery=Remote%20Alaska%20shipping' : ''}`);
-    part('note').hidden = false;
+    part('note').textContent = NOTE;
     card.dataset.ico = acc.icon;
-    live.textContent = `${p.name}, ${STATE[p.st]}. ${acc.tag}. How freight typically gets there: ${modes.map((m) => m[1]).join(', ')}. Yard to call: ${yard.name}, ${yard.phone}. Typical for the region, not a schedule or a price.`;
+    live.textContent = `${p.name}, ${STATE[p.st]}. ${acc.tag}. ${line ? `${line} ` : ''}How freight typically gets there: ${modes.map((m) => m[1]).join(', ')}. Yard to call: ${yard.name}, ${yard.phone}. Typical for the region, not a schedule or a price.`;
     pop();
   };
 
+  // A place the list doesn't know: remote sites go to Anchorage, and anything in Washington to Kent.
   const fillUnknown = (text) => {
-    part('label').textContent = 'Not on our short list';
+    const wa = inWashington(text);
+    const id = wa ? 'kent' : 'anchorage';
+    const say = 'We don’t have that one listed, but that doesn’t rule it out. Send the details and a yard will work out the way in.';
+    part('label').textContent = wa ? 'Not listed' : 'Delivery anywhere in Alaska';
     part('name').textContent = text;
     part('region').hidden = true;
-    part('text').textContent = 'That is not on our short list, which does not mean we cannot get there. Send the details and a yard will work out the route.';
+    part('text').textContent = say;
     part('text').hidden = false;
     how.hidden = true;
-    call.hidden = true; any.hidden = false;
-    showQuote(`Get a quote for ${text}`, `${quoteBase}?location=${encodeURIComponent(text)}`);
-    part('note').hidden = true;
+    showYard(data.yards[id]);
+    showQuote(`Get a quote for ${text}`, `${quoteBase}?yard=${id}&location=${encodeURIComponent(text)}${wa ? '' : '&delivery=Remote%20Alaska%20shipping'}`);
+    part('note').textContent = 'Any yard can help.';
     delete card.dataset.ico;
-    live.textContent = `${text} is not on our short list, which does not mean we cannot get there. Any yard can help. Use the quote button, or call a yard.`;
+    live.textContent = `${text}. ${say} Yard to call: ${data.yards[id].name}, ${data.yards[id].phone}. Any yard can help.`;
     pop();
   };
 
@@ -108,10 +119,9 @@
 
   /* ---- Choosing ---- */
   const press = (name) => chips.forEach((c) => c.setAttribute('aria-pressed', String(c.dataset.place === name)));
-  // On a phone the answer sits below the field and the chips: bring all of it clear of the masthead
-  // and the action bar. (scrollIntoView's "nearest" ignores scroll-margin once the card is in view.)
+  // The answer sits below the field and the chips: bring all of it clear of the masthead and, on a
+  // phone, the action bar. (scrollIntoView's "nearest" ignores scroll-margin once the card is in view.)
   const reveal = () => {
-    if (window.innerWidth >= 1000) return;
     setTimeout(() => {
       const bar = document.querySelector('.actionbar'), mast = document.querySelector('.masthead');
       const low = (bar && bar.getClientRects().length ? bar.getBoundingClientRect().top : window.innerHeight) - 14;
@@ -126,19 +136,19 @@
     close();
     input.value = p.name; clear.hidden = false;
     press(p.name); fill(p); draw(p);
-    if (typed) input.blur();
+    if (typed && touch.matches) input.blur();
     reveal();
   };
   const chooseUnknown = (text) => {
     close();
     clear.hidden = false; press(''); fillUnknown(text.slice(0, 60)); draw(null);
-    input.blur();
+    if (touch.matches) input.blur();
     reveal();
   };
 
   /* ---- The combobox ---- */
   const search = (q) => {
-    const k = fold(q);
+    const k = bare(q);
     if (!k) return SUGGEST;
     const out = [];
     places.forEach((p) => { const i = p.key.indexOf(k); if (i === 0) out.push({ p, rank: 0 }); else if (i > 0) out.push({ p, rank: p.key[i - 1] === ' ' ? 1 : 2 }); });
@@ -164,8 +174,8 @@
     });
     if (!options.length) {
       const li = document.createElement('li');
-      li.className = 'is-none'; li.setAttribute('role', 'option'); li.setAttribute('aria-disabled', 'true'); li.setAttribute('aria-selected', 'false');
-      li.textContent = 'Not on our short list. Press Enter and we will still point you to a yard.';
+      li.className = 'is-none'; li.id = 'finder-opt-0'; li.setAttribute('role', 'option'); li.setAttribute('aria-selected', 'false');
+      li.textContent = `Not listed, but we can still help. ${touch.matches ? 'Tap here or Search' : 'Press Enter'} and we’ll point you to a yard.`;
       list.append(li);
     }
     list.hidden = false;
@@ -201,6 +211,7 @@
   list.addEventListener('mousedown', (e) => e.preventDefault());
   list.addEventListener('click', (e) => {
     const li = e.target.closest('[role=option]');
+    if (li && li.classList.contains('is-none')) return chooseUnknown(input.value.trim());
     const o = li && options[Array.prototype.indexOf.call(list.children, li)];
     if (o) choose(o.p, { typed: true });
   });
@@ -209,5 +220,14 @@
   box.addEventListener('click', (e) => {
     const chip = e.target.closest('.town');
     if (chip && byName.has(chip.dataset.place)) choose(byName.get(chip.dataset.place));
+  });
+  // The towns on the map do what the chips do. Their labels hold a [data-place-pick] button, which
+  // 00-core.js handles; this catches the dot beside the label. A pointer convenience: the field and
+  // the chips reach every one of them from the keyboard, so these stay out of the tab order.
+  if (map) map.addEventListener('click', (e) => {
+    if (e.target.closest('[data-place-pick]')) return;
+    const town = e.target.closest('.dmap__town[data-town]');
+    const p = town && places.find((x) => slug(x.name) === town.dataset.town);
+    if (p) choose(p);
   });
 })();

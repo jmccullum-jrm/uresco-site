@@ -11,6 +11,9 @@ import { SITE } from './src/config.mjs';
 import { markSvg, ringsSvg } from './src/lib/icons.mjs';
 import { mapSvg } from './src/lib/components.mjs';
 
+// The 404 page is the one page with absolute links. A live build has to say where the site is served from.
+if (!SITE.preview && !process.env.BASE) throw new Error('A live build (PREVIEW=0) needs BASE, for example: PREVIEW=0 BASE=/ node build.mjs');
+
 const ROOT = dirname(fileURLToPath(import.meta.url));
 // OUT=<dir> builds somewhere else, so several builds can run side by side without clobbering docs/.
 const OUT = process.env.OUT ? resolve(process.env.OUT) : join(ROOT, 'docs');

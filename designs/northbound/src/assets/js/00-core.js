@@ -40,18 +40,33 @@ const $$ = (s, el = document) => Array.from(el.querySelectorAll(s));
      says only "Open" or "Closed" and never prints a time.
      data-hours = {"tz":"America/Anchorage","week":[null,[420,990],…]}  (Sunday first, minutes after midnight) */
   const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-  const isOpen = ({ tz, week }) => {
-    const parts = Object.fromEntries(new Intl.DateTimeFormat('en-US', { timeZone: tz, weekday: 'short', hour: 'numeric', minute: 'numeric', hourCycle: 'h23' })
+  const FIXED = ['1-1', '6-19', '7-4', '11-11', '12-25'];
+  const utc = (y, m, d) => new Date(Date.UTC(y, m - 1, d));
+  const isFixed = (t) => FIXED.includes(`${t.getUTCMonth() + 1}-${t.getUTCDate()}`);
+  // A federal holiday on this date, including the Friday or Monday it is observed when it falls on a weekend.
+  const isHoliday = (y, m, d) => {
+    const wd = utc(y, m, d).getUTCDay(), nth = Math.ceil(d / 7);
+    return isFixed(utc(y, m, d)) || (wd === 5 && isFixed(utc(y, m, d + 1))) || (wd === 1 && isFixed(utc(y, m, d - 1)))
+      || (wd === 1 && ((m === 1 && nth === 3) || (m === 2 && nth === 3) || (m === 5 && d > 24) || (m === 9 && nth === 1) || (m === 10 && nth === 2)))
+      || (wd === 4 && m === 11 && nth === 4);
+  };
+  // true or false, or null on a day the placeholder hours cannot speak for.
+  const isOpen = ({ tz, week, closed = [] }) => {
+    const parts = Object.fromEntries(new Intl.DateTimeFormat('en-US', { timeZone: tz, year: 'numeric', month: 'numeric', day: 'numeric', weekday: 'short', hour: 'numeric', minute: 'numeric', hourCycle: 'h23' })
       .formatToParts(new Date()).map((p) => [p.type, p.value]));
+    const iso = `${parts.year}-${parts.month.padStart(2, '0')}-${parts.day.padStart(2, '0')}`;
+    if (closed.includes(iso)) return false;
+    if (isHoliday(+parts.year, +parts.month, +parts.day)) return null;
     const today = week[DAYS.indexOf(parts.weekday)], now = +parts.hour * 60 + +parts.minute;
     return !!today && now >= today[0] && now < today[1];
   };
   const paintHours = () => $$('[data-hours]').forEach((el) => {
     try {
       const open = isOpen(JSON.parse(el.dataset.hours));
+      el.hidden = open === null;
+      if (open === null) return;
       el.textContent = open ? 'Open' : 'Closed';
       el.classList.toggle('is-open', open);
-      el.hidden = false;
     } catch { /* leave hidden */ }
   });
   paintHours();

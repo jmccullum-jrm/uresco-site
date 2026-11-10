@@ -11,8 +11,8 @@ export const SERVICES = [
     tag: 'Take-offs',
     phase: 'On paper',
     name: 'Estimates & material take-offs',
-    short: 'Send plans, get a complete, priced material list back.',
-    body: 'Send drawings and we build the take-off: the materials list for the job, priced and ready to order. On a remote job it catches the gaps before they become a second freight bill.',
+    short: 'Send plans or a list. We’ll help with the take-off and the estimate.',
+    body: 'Send drawings and we’ll help with the take-off: the materials list for the job, with an estimate. On a remote job, one complete package beats a second freight bill.',
   },
   {
     id: 'design',
@@ -29,8 +29,8 @@ export const SERVICES = [
     tag: 'Crating',
     phase: 'In the yard',
     name: 'Crating & packaging',
-    short: 'Crated, banded and wrapped to survive the trip.',
-    body: 'Long hauls and multiple handoffs are hard on materials. We crate, band and wrap loads so they arrive the way they left.',
+    short: 'Crating and packaging for long hauls and handoffs.',
+    body: 'Long hauls and multiple handoffs are hard on materials, so we crate and package loads for the trip.',
   },
   {
     id: 'shipping',
@@ -48,7 +48,7 @@ export const SERVICES = [
     phase: 'Beyond the road',
     name: 'Remote & export packages',
     short: 'Complete building packages for places without a lumber yard.',
-    body: 'We are fully equipped to handle remote-location and export building packages, so the whole job ships together and nothing gets left on the dock.',
+    body: 'We are fully equipped to handle remote-location and export building packages. One complete package beats a second freight bill.',
   },
   {
     id: 'delivery',
@@ -57,6 +57,6 @@ export const SERVICES = [
     phase: 'On site',
     name: 'Job-site delivery',
     short: 'Boom trucks and truck-mounted Moffett forklifts.',
-    body: 'Our boom trucks and truck-mounted Moffett forklifts set materials where the crew needs them, not at the curb.',
+    body: 'Job-site delivery by boom truck and truck-mounted Moffett forklift.',
   },
 ];

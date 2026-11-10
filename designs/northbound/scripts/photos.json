@@ -1,17 +1,5 @@
 {
- "_readme": "Every photo on the site. `src` is a URL (downloaded once into .cache/) or a path under originals/. `focal` is the CSS object-position used when a photo is cropped. `crop` trims the source first as [left, top, right, bottom] fractions. `hero` photos get a 2400px size. `art` adds a 3:4 crop that phones get instead of the wide photo. Every photo is graded on the way in (scripts/images.py: restrained saturation, cool shadows, a soft film curve) so the set reads as one shoot; `grade` overrides it per photo, e.g. {\"sat\": 0.6} for a loud original or false to leave a photo alone. `place` and `lat` feed the magazine-style captions. Run `npm run images` after editing.",
- "hero-truck-denali": {
-  "src": "https://images.unsplash.com/photo-1721930513258-887f010ef5a0?w=2600&q=85&auto=format&fit=crop",
-  "alt": "A freight truck on a highway through spruce forest with Denali rising behind it",
-  "credit": "Joseph Corl / Unsplash",
-  "page": "https://unsplash.com/photos/OVKRxZub9f4",
-  "focal": "60% 50%",
-  "hero": true,
-  "art": true,
-  "grade": {
-   "sat": 0.8
-  }
- },
+ "_readme": "Every photo on the site. `src` is a URL (downloaded once into .cache/) or a path under originals/. `focal` is the CSS object-position used when a photo is cropped. `crop` trims the source first as [left, top, right, bottom] fractions. `hero` photos get a 2400px size. `art` adds a 3:4 crop that phones get instead of the wide photo. Every photo is graded on the way in (scripts/images.py: restrained saturation, cool shadows, a soft film curve) so the set reads as one shoot; `grade` overrides it per photo, e.g. {\"sat\": 0.6} for a loud original or {\"wb\": [r, g, b]} gains for a colour cast, or false to leave a photo alone. `place` and `lat` feed the magazine-style captions. Run `npm run images` after editing.",
  "lumber-stack": {
   "src": "https://images.unsplash.com/photo-1681752972950-6229ca099fbc?w=2400&q=85&auto=format&fit=crop",
   "alt": "Ends of stacked dimensional lumber in a yard",
@@ -20,20 +8,15 @@
   "hero": true,
   "art": true
  },
- "pine-racking": {
-  "src": "https://images.unsplash.com/photo-1787422430123-344b233a0626?w=2400&q=85&auto=format&fit=crop",
-  "alt": "Bundles of lumber on cantilever racking in a warehouse",
-  "credit": "PJ Wallace / Unsplash",
-  "page": "https://unsplash.com/photos/EFR6ICYBMN0",
-  "focal": "60% 50%",
-  "hero": true,
-  "art": true
- },
  "timber-ends": {
   "src": "https://images.unsplash.com/photo-1783887110442-19e7f98fc87a?w=2000&q=85&auto=format&fit=crop",
   "alt": "Ends of pressure-treated timbers stacked in a bundle",
   "credit": "roselino rocha / Unsplash",
-  "page": "https://unsplash.com/photos/07hBSBN9XC0"
+  "page": "https://unsplash.com/photos/07hBSBN9XC0",
+  "hero": true,
+  "grade": {
+   "sat": 0.68
+  }
  },
  "plywood": {
   "src": "https://images.unsplash.com/photo-1690768162582-342e1e9097a2?w=2000&q=85&auto=format&fit=crop",
@@ -43,18 +26,6 @@
   "focal": "50% 40%",
   "hero": true,
   "art": true
- },
- "framer": {
-  "src": "https://images.unsplash.com/photo-1646324554833-f0b6a479fa5d?w=2000&q=85&auto=format&fit=crop",
-  "alt": "A framer in a hard hat nailing a wall frame",
-  "credit": "Josh Olalde / Unsplash",
-  "page": "https://unsplash.com/photos/EWoU3snzadU",
-  "focal": "35% 40%",
-  "hero": true,
-  "art": true,
-  "grade": {
-   "sat": 0.75
-  }
  },
  "framing-joists": {
   "src": "https://images.unsplash.com/photo-1676802037786-3697d60497ae?w=2000&q=85&auto=format&fit=crop",
@@ -139,7 +110,7 @@
   "hero": true,
   "art": true,
   "grade": {
-   "sat": 0.8
+   "sat": 0.62
   }
  },
  "cranes-dusk": {
@@ -237,7 +208,7 @@
   "hero": true,
   "art": true,
   "grade": {
-   "sat": 0.7
+   "sat": 0.5
   }
  },
  "insulation": {
@@ -261,7 +232,7 @@
   "hero": true,
   "art": true,
   "grade": {
-   "sat": 0.72
+   "sat": 0.55
   }
  },
  "hardware": {
@@ -283,16 +254,6 @@
   "page": "https://unsplash.com/photos/-FPFq_trr2Y",
   "focal": "45% 55%",
   "hero": true
- },
- "deck": {
-  "src": "https://images.unsplash.com/photo-1787491581115-1d9a0e9f11ec?w=2000&q=85&auto=format&fit=crop",
-  "alt": "A sunlit wood deck beside a dark-stained house",
-  "credit": "Eli Chamoun / Unsplash",
-  "page": "https://unsplash.com/photos/R5ExRDtg_BM",
-  "focal": "50% 65%",
-  "grade": {
-   "sat": 0.68
-  }
  },
  "remote-village": {
   "src": "https://images.unsplash.com/photo-1541752346141-78198eddd145?w=2400&q=85&auto=format&fit=crop",
@@ -320,7 +281,7 @@
   "page": "https://unsplash.com/photos/3GdHDDtHJ-4",
   "focal": "50% 60%",
   "grade": {
-   "sat": 0.6
+   "sat": 0.5
   }
  },
  "custom-home": {
@@ -329,7 +290,7 @@
   "credit": "Nate Johnston / Unsplash",
   "page": "https://unsplash.com/photos/QtF2v8BP46I",
   "grade": {
-   "sat": 0.62
+   "sat": 0.5
   }
  },
  "north-slope": {
@@ -348,10 +309,6 @@
   "grade": {
    "sat": 0.68
   }
- },
- "yard-kent": {
-  "src": "@forklift-yard",
-  "alt": "A forklift in a building-supply yard"
  },
  "fairbanks": {
   "src": "https://images.unsplash.com/photo-1704243961977-05fb882fc0cd?w=2000&q=85&auto=format&fit=crop",
@@ -372,7 +329,12 @@
   "hero": true,
   "art": true,
   "grade": {
-   "sat": 0.58
+   "sat": 0.55,
+   "wb": [
+    0.92,
+    1.0,
+    0.84
+   ]
   }
  },
  "floatplane": {

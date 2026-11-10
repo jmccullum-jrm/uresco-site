@@ -12,8 +12,8 @@
 .fp-hero .phero__title { max-width: none; }
 .fp-hero .phero__title em { display: block; }
 .fp-hero .phero__row { margin-top: clamp(1rem, 1.8vw, 1.75rem); padding-bottom: 0; }
-@media (min-width: 900px) { .fp-hero .phero__row { grid-template-columns: minmax(0, 1fr) auto; } }
-@media (max-width: 999px) {
+@media (min-width: 56.25em) { .fp-hero .phero__row { grid-template-columns: minmax(0, 1fr) auto; } }
+@media (max-width: 62.4375em) {
   .fp-hero { padding-bottom: 0; border-bottom: 0; }
   .fp-hero--quote .actions { display: none; }
 }
@@ -30,13 +30,15 @@
 .fp-dial__lat { font: 400 .75rem/1 var(--mono); letter-spacing: .06em; color: var(--ink-3); }
 .fp-dial__city { font: 480 1.25rem/1.1 var(--serif); letter-spacing: -.014em; }
 .fp-dial__num { font: 600 clamp(.75rem, .47rem + 1.28vw, .9375rem)/1.2 var(--sans); font-variant-numeric: tabular-nums; white-space: nowrap; }
-@media (min-width: 1000px) { .fp-dial { display: none; } }
+/* Very large browser text on a narrow phone: the number may break rather than push the page sideways. */
+@media (max-width: 19.5em) { .fp-dial__num { white-space: normal; } }
+@media (min-width: 62.5em) { .fp-dial { display: none; } }
 
 /* ---------- The band the sheet lies on, and the two columns ---------- */
 .fp-band { padding-block: clamp(2rem, 4vw, 3.5rem) clamp(3rem, 7vw, 6.5rem); background: var(--paper-2); }
 .fp-grid { display: grid; gap: 2rem var(--col-gap); }
 .fp-side { display: none; }
-@media (min-width: 1000px) {
+@media (min-width: 62.5em) {
   .fp-grid { grid-template-columns: minmax(0, 7.7fr) minmax(0, 4.3fr); gap: var(--col-gap) clamp(2rem, 3.6vw, 3.75rem); align-items: start; }
   /* On a short laptop the column scrolls in itself rather than losing its foot off the screen. */
   .fp-side { display: grid; gap: 1.75rem; justify-items: start; position: sticky; top: calc(var(--mast) + 1.5rem); max-height: calc(100vh - var(--mast) - 2.5rem); overflow-y: auto; scrollbar-width: none; padding: 4px; margin: -4px; }
@@ -44,17 +46,30 @@
   .fp-side > .link { justify-self: start; min-height: 2.75rem; background: none; border-width: 0 0 1px; padding-inline: 0; }
   .no-js .fp-side__print { display: none; }
 }
+/* A short screen: the column closes up so its last line is not left half under the fold. */
+@media (min-width: 62.5em) and (max-height: 56.25em) {
+  .fp-side { gap: 1rem; }
+  .fp-slip__rows > div { padding-block: .45rem .5rem; }
+  .fp-call a { padding-block: .45rem .5rem; }
+  .fp-call__city { font-size: 1.375rem; }
+}
 
 /* ---------- The sheet ---------- */
 .fp-sheet { --cell: var(--gutter); --line: var(--ink-3); margin-inline: calc(var(--gutter) * -1); background: var(--paper-3); border-block: 1px solid var(--ink); }
 .fp-sheet__head { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; padding: .8rem var(--cell); border-bottom: 1px solid var(--ink); }
 .fp-sheet__head h2 { font-weight: 400; color: var(--ink); }
-@media (max-width: 499px) { .fp-sheet__form { display: none; } }
-@media (min-width: 640px) {
+@media (max-width: 31.1875em) { .fp-sheet__form { display: none; } }
+@media (min-width: 40em) {
   .fp-sheet { --cell: clamp(1rem, .6rem + .9vw, 1.5rem); margin-inline: 0; border: 1px solid var(--ink); box-shadow: .5rem .5rem 0 var(--yellow); }
 }
 
 .form { display: grid; }
+/* Off the screen once it is sent, but not off the paper: the application can still be printed. */
+@media screen { .form.is-sent { display: none; } }
+/* What a visitor needs to know before starting: a draft came back, or how the details travel. */
+.form__restored, .form__warn { padding: .85rem var(--cell) .9rem; border-bottom: 1px solid var(--ink); font-size: .9375rem; line-height: 1.4; }
+.form__restored { background: var(--paper-2); }
+.form__restored button { min-height: 2.75rem; padding: 0 .25rem; background: none; border: 0; font-weight: 600; text-decoration: underline; text-underline-offset: .18em; }
 /* The rules are the gaps: a dark fieldset showing between bright cells. */
 .fieldset { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; min-width: 0; margin: 0; padding: 0; border: 0; border-bottom: 1px solid var(--ink); background: var(--line); }
 .fieldset legend { float: left; grid-column: 1 / -1; width: 100%; padding: clamp(1.5rem, 2.8vw, 2.25rem) var(--cell) .85rem; background: var(--paper-3); font: 400 var(--t-h3)/1.1 var(--serif); letter-spacing: -.014em; }
@@ -64,7 +79,7 @@
 /* ---------- A cell ---------- */
 /* Space-between: a long label in one cell must not push its input out of line with the next cell's. */
 .field { position: relative; display: grid; align-content: space-between; gap: .2rem; grid-column: 1 / -1; min-width: 0; padding: .8rem var(--cell) .5rem; background: var(--paper-3); transition: background-color var(--d-1); }
-@media (min-width: 640px) { .field:not(.field--full) { grid-column: span 1; } }
+@media (min-width: 40em) { .field:not(.field--full) { grid-column: span 1; } }
 .field > label, .field > .label { display: block; font: 600 .9375rem/1.3 var(--sans); letter-spacing: 0; text-transform: none; color: var(--ink); }
 .field:has(> label > .req) > label { padding-right: 5.5rem; }
 .hint { font-weight: 400; color: var(--ink-3); }
@@ -118,12 +133,12 @@
 .seg__tile { flex-wrap: wrap; align-content: flex-start; row-gap: .5rem; min-height: 5.5rem !important; padding-block: .75rem .7rem !important; }
 .seg__tile .i { margin-left: auto; }
 .seg__tile span { flex: 0 0 100%; }
-@media (max-width: 639px) {
+@media (max-width: 39.9375em) {
   .seg[style*="--n:4"] { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .seg[style*="--n:3"] label { padding-inline: .75rem .25rem; gap: .45rem; }
   .seg[style*="--n:3"] label:first-child { padding-left: var(--cell); }
 }
-@media (max-width: 359px) { .seg[style*="--n:3"] { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 22.4375em) { .seg[style*="--n:3"] { grid-template-columns: minmax(0, 1fr); } }
 
 .field--check { padding-block: 1rem .75rem; }
 .field--check .check { display: flex; gap: .85rem; align-items: flex-start; font: 400 1rem/1.45 var(--sans); cursor: pointer; }
@@ -132,7 +147,7 @@
 .check input:checked { background: var(--ink); }
 .check input:checked::after { content: ""; width: .4375rem; height: .8125rem; margin-top: -.15rem; border: solid var(--yellow); border-width: 0 2px 2px 0; rotate: 45deg; }
 .check input:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
-@media (max-width: 639px) {
+@media (max-width: 39.9375em) {
   /* On a phone the tag gets its own line above the box, or the sentence runs into it. */
   .field--check { padding-top: 2.25rem; }
   .check > span:first-of-type { padding-right: 0; }
@@ -179,8 +194,9 @@
 .form__how p { color: var(--ink-2); font-size: .9375rem; line-height: 1.4; max-width: 34em; }
 .form__how .form__draft { color: var(--ink-3); font-size: .875rem; }
 .no-js .form__draft { display: none; }
+.form__print button { min-height: 2.75rem; padding: 0; background: none; border: 0; color: var(--ink); font-weight: 600; text-decoration: underline; text-underline-offset: .18em; }
 .form__draft button { min-height: 2.75rem; padding: 0; background: none; border: 0; color: var(--ink); font-weight: 600; text-decoration: underline; text-underline-offset: .18em; }
-@media (min-width: 640px) {
+@media (min-width: 40em) {
   .form__send { grid-template-columns: auto minmax(0, 1fr); gap: 1.5rem; align-items: center; }
   .form__send .btn { width: auto; }
 }
@@ -200,7 +216,7 @@
 .fp-slip__need.is-ready::before { content: ""; display: inline-block; width: .55rem; height: .55rem; margin-right: .5rem; background: var(--yellow); }
 .fp-slip--foot { padding-bottom: .25rem; }
 .fp-slip--foot .fp-slip__rows > div:last-child { border-bottom-style: solid; }
-@media (min-width: 1000px) { .fp-slip--foot { display: none; } }
+@media (min-width: 62.5em) { .fp-slip--foot { display: none; } }
 @media (prefers-reduced-motion: no-preference) {
   .fp-slip dd.is-new { animation: fp-write .42s var(--ease); }
   .notice--done:not([hidden]) .notice__stamp { animation: fp-stamp .5s var(--ease) both; }
@@ -220,7 +236,7 @@
 .fp-call__num { grid-column: 2; grid-row: 2; display: inline-flex; align-items: center; gap: .45rem; font-weight: 600; font-size: 1.0625rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .fp-call__num .i { color: var(--ink-3); }
 .fp-call a:hover .fp-call__num { text-decoration: underline; text-decoration-color: var(--yellow); text-decoration-thickness: 2px; text-underline-offset: .25em; }
-@media (max-width: 1179px) { .fp-call__num .i { display: none; } .fp-call__mark { display: none; } }
+@media (max-width: 73.6875em) { .fp-call__num .i { display: none; } .fp-call__mark { display: none; } }
 
 /* ---------- After sending ---------- */
 .notice { display: grid; grid-template-columns: auto 1fr; gap: .9rem 1.1rem; }
@@ -245,7 +261,7 @@
 .refs { padding: 0; gap: 1px; background: var(--line); }
 .ref { display: grid; gap: 1px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .ref__title { grid-column: 1 / -1; display: flex; align-items: baseline; gap: .7rem; padding: .55rem var(--cell) .45rem; background: var(--paper-2); font: 400 var(--t-label)/1.3 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--ink); }
-@media (max-width: 639px) { .ref .field { grid-column: 1 / -1; } }
+@media (max-width: 39.9375em) { .ref .field { grid-column: 1 / -1; } }
 
 /* ---------- The end of the page: the three numbers at headline size ---------- */
 .fp-close .shead { margin-bottom: clamp(2rem, 4vw, 3.5rem); }
@@ -256,7 +272,7 @@
 .fp-yards__city { font: 350 clamp(2.25rem, 1.45rem + 3.4vw, 4.5rem)/.95 var(--serif); letter-spacing: -.03em; }
 .fp-yards__num { font: 600 clamp(1.1875rem, 1.05rem + .5vw, 1.625rem)/1.2 var(--sans); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .fp-yards a:hover .fp-yards__num { text-decoration: underline; text-decoration-color: var(--yellow); text-decoration-thickness: 2px; text-underline-offset: .25em; }
-@media (min-width: 760px) {
+@media (min-width: 47.5em) {
   .fp-yards { grid-template-columns: repeat(3, minmax(0, 1fr)); border-bottom: 1px solid var(--rule-2); }
   .fp-yards li + li { border-left: 1px solid var(--rule-2); }
   .fp-yards a { padding: 1.25rem clamp(.75rem, 1.6vw, 1.75rem) 1.5rem; border-bottom: 0; }

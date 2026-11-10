@@ -51,52 +51,6 @@
   "pheight": 1602,
   "color": "#81654b"
  },
- "pine-racking": {
-  "widths": [
-   240,
-   640,
-   960,
-   1280,
-   1920,
-   2400
-  ],
-  "width": 2400,
-  "height": 1600,
-  "alt": "Bundles of lumber on cantilever racking in a warehouse",
-  "focal": "60% 50%",
-  "credit": "PJ Wallace / Unsplash",
-  "page": "https://unsplash.com/photos/EFR6ICYBMN0",
-  "standIn": false,
-  "portrait": [
-   320,
-   640,
-   960,
-   1200
-  ],
-  "pwidth": 1200,
-  "pheight": 1600,
-  "color": "#754c27"
- },
- "timber-ends": {
-  "widths": [
-   240,
-   480,
-   800,
-   1200,
-   1600
-  ],
-  "width": 1600,
-  "height": 2214,
-  "alt": "Ends of pressure-treated timbers stacked in a bundle",
-  "focal": null,
-  "credit": "roselino rocha / Unsplash",
-  "page": "https://unsplash.com/photos/07hBSBN9XC0",
-  "standIn": false,
-  "portrait": [],
-  "pwidth": null,
-  "pheight": null,
-  "color": "#82764c"
- },
  "plywood": {
   "widths": [
    240,
@@ -196,58 +150,6 @@
   "pwidth": 2000,
   "pheight": 2667,
   "color": "#4d483c"
- },
- "combilift": {
-  "widths": [
-   240,
-   640,
-   960,
-   1280,
-   1920
-  ],
-  "width": 1920,
-  "height": 3415,
-  "alt": "A forklift operator moving lumber in a warehouse",
-  "focal": "50% 45%",
-  "credit": "PJ Wallace / Unsplash",
-  "page": "https://unsplash.com/photos/Do5rGlcZnuQ",
-  "standIn": false,
-  "portrait": [
-   320,
-   640,
-   960,
-   1280,
-   2000
-  ],
-  "pwidth": 2000,
-  "pheight": 2667,
-  "color": "#343028"
- },
- "valdez-port": {
-  "widths": [
-   240,
-   640,
-   960,
-   1280,
-   1920,
-   2400
-  ],
-  "width": 2400,
-  "height": 1500,
-  "alt": "A port crane at the foot of snow-covered mountains in Valdez, Alaska",
-  "focal": "38% 60%",
-  "credit": "Mich / Unsplash",
-  "page": "https://unsplash.com/photos/1TilbaZ3ALA",
-  "standIn": false,
-  "portrait": [
-   320,
-   640,
-   960,
-   1125
-  ],
-  "pwidth": 1125,
-  "pheight": 1500,
-  "color": "#484f5f"
  },
  "juneau-freight": {
   "widths": [
@@ -376,30 +278,6 @@
   "pheight": 1280,
   "color": "#756046"
  },
- "cranes-dusk": {
-  "widths": [
-   240,
-   640,
-   960,
-   1280,
-   1920
-  ],
-  "width": 1920,
-  "height": 1079,
-  "alt": "Tower cranes over a construction site at dusk",
-  "focal": "60% 50%",
-  "credit": "Nicolas Beuret / Unsplash",
-  "page": "https://unsplash.com/photos/8i19Rm2EFUM",
-  "standIn": false,
-  "portrait": [
-   320,
-   640,
-   843
-  ],
-  "pwidth": 843,
-  "pheight": 1124,
-  "color": "#3a4f65"
- },
  "timber-weathered": {
   "widths": [
    240,
@@ -451,26 +329,6 @@
   "pheight": 1601,
   "color": "#acb0b5"
  },
- "forklift-yard": {
-  "widths": [
-   240,
-   480,
-   800,
-   1200,
-   1600
-  ],
-  "width": 1600,
-  "height": 2400,
-  "alt": "A forklift driving through a building-supply yard",
-  "focal": "50% 55%",
-  "credit": "Sergej / Unsplash",
-  "page": "https://unsplash.com/photos/V5YPZo528n4",
-  "standIn": false,
-  "portrait": [],
-  "pwidth": null,
-  "pheight": null,
-  "color": "#918577"
- },
  "uresco-truck": {
   "widths": [
    240,
@@ -504,39 +362,6 @@
   "pwidth": null,
   "pheight": null,
   "color": "#756c67"
- },
- "uresco-stack": {
-  "widths": [
-   240,
-   357
-  ],
-  "width": 357,
-  "height": 322,
-  "alt": "Stacked lumber at a Uresco yard",
-  "focal": null,
-  "credit": "Uresco Construction Materials",
-  "page": null,
-  "standIn": false,
-  "portrait": [],
-  "pwidth": null,
-  "pheight": null,
-  "color": "#80614b"
- },
- "uresco-woodpile": {
-  "widths": [
-   214
-  ],
-  "width": 214,
-  "height": 200,
-  "alt": "Timber ends stacked in a Uresco yard",
-  "focal": null,
-  "credit": "Uresco Construction Materials",
-  "page": null,
-  "standIn": false,
-  "portrait": [],
-  "pwidth": null,
-  "pheight": null,
-  "color": "#b18c6f"
  },
  "concrete-forms": {
   "widths": [
@@ -639,24 +464,22 @@
    240,
    640,
    960,
-   1280,
-   1920
+   1280
   ],
-  "width": 1920,
-  "height": 1276,
+  "width": 1280,
+  "height": 567,
   "alt": "A pile of black construction screws against a yellow background",
-  "focal": "50% 75%",
+  "focal": "45% 100%",
   "credit": "Konstantin Evdokimov / Unsplash",
   "page": "https://unsplash.com/photos/JALUvPLUde8",
   "standIn": false,
   "portrait": [
    320,
-   640,
-   960
+   499
   ],
-  "pwidth": 960,
-  "pheight": 1280,
-  "color": "#bfa90e"
+  "pwidth": 499,
+  "pheight": 665,
+  "color": "#72661f"
  },
  "blueprints": {
   "widths": [
@@ -706,32 +529,6 @@
   "pwidth": 960,
   "pheight": 1280,
   "color": "#878469"
- },
- "remote-village": {
-  "widths": [
-   240,
-   640,
-   960,
-   1280,
-   1920,
-   2400
-  ],
-  "width": 2400,
-  "height": 1605,
-  "alt": "Snow-drifted buildings and a boat at sunset over sea ice in Utqia\u0121vik, Alaska",
-  "focal": "45% 60%",
-  "credit": "Deborah Schildt / Unsplash",
-  "page": "https://unsplash.com/photos/8O-KsnJ2Yds",
-  "standIn": false,
-  "portrait": [
-   320,
-   640,
-   960,
-   1204
-  ],
-  "pwidth": 1204,
-  "pheight": 1605,
-  "color": "#8d8b89"
  },
  "institutional": {
   "widths": [
@@ -828,46 +625,6 @@
   "pwidth": 844,
   "pheight": 1125,
   "color": "#7892b3"
- },
- "export": {
-  "widths": [
-   240,
-   480,
-   800,
-   1200,
-   1600
-  ],
-  "width": 1600,
-  "height": 900,
-  "alt": "A container ship berthed beneath gantry cranes",
-  "focal": "40% 50%",
-  "credit": "Elijah Mears / Unsplash",
-  "page": "https://unsplash.com/photos/sI2eENXdoBI",
-  "standIn": false,
-  "portrait": [],
-  "pwidth": null,
-  "pheight": null,
-  "color": "#768d9f"
- },
- "yard-kent": {
-  "widths": [
-   240,
-   480,
-   800,
-   1200,
-   1600
-  ],
-  "width": 1600,
-  "height": 2400,
-  "alt": "A forklift in a building-supply yard",
-  "focal": "50% 55%",
-  "credit": "Sergej / Unsplash",
-  "page": "https://unsplash.com/photos/V5YPZo528n4",
-  "standIn": true,
-  "portrait": [],
-  "pwidth": null,
-  "pheight": null,
-  "color": "#918577"
  },
  "fairbanks": {
   "widths": [

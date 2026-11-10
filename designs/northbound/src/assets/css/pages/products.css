@@ -23,7 +23,10 @@
 .prod-find__field:focus-within { outline: 2px solid var(--ink); outline-offset: 0; }
 .prod-find__clear { flex: none; min-height: 2.75rem; padding: 0 .25rem; background: none; border: 0; font: 400 var(--t-label)/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--ink); text-decoration: underline; text-decoration-color: var(--yellow); text-decoration-thickness: 2px; text-underline-offset: .3em; }
 .prod-find__clear:hover { text-decoration-color: var(--ink); }
-.prod-find__count { font: 400 var(--t-label)/1.3 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); white-space: nowrap; }
+/* Below 700px the count has its own row, so a long result never squeezes the field. */
+.prod-find__count { grid-column: 1 / -1; font: 400 var(--t-label)/1.3 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); white-space: nowrap; }
+.prod-find__input { scroll-margin-top: calc(var(--mast) + 2.75rem); }
+.prod-jump .prod-jump__i { transform: rotate(90deg); }
 
 /* A row: thumbnail, name, what is in the line, the way in. The name is the link; it covers the row. */
 .prod-row { position: relative; display: grid; grid-template-columns: 3.75rem minmax(0, 1fr) auto; gap: .4rem 1rem; align-items: start; padding: 1rem 0 1.1rem; border-bottom: 1px solid var(--rule-2); transition: background-color var(--d-1); }
@@ -50,7 +53,7 @@
 .prod-none a { font-weight: 600; white-space: nowrap; text-decoration-color: var(--yellow); text-decoration-thickness: 2px; text-underline-offset: .22em; }
 @media (min-width: 700px) {
   .js .prod-find { grid-template-columns: auto minmax(0, 1fr) auto; gap: 1.25rem; padding-bottom: .35rem; }
-  .prod-find__label { grid-column: auto; }
+  .prod-find__label, .prod-find__count { grid-column: auto; }
   .prod-row { grid-template-columns: 3.75rem minmax(0, 1.15fr) minmax(0, .85fr) auto; column-gap: 1.25rem; padding-block: 1.15rem 1.3rem; }
   .prod-row .stock__thumb, .prod-row .stock__go { grid-row: 1; }
   .prod-row .stock__go { grid-column: 4; align-self: start; margin-top: .35rem; }
@@ -80,7 +83,7 @@
 .prod-brands__go { color: var(--glacier); transition: transform var(--d-2) var(--ease), color var(--d-1); }
 .prod-brands__meta { grid-column: 1 / -1; display: flex; justify-content: space-between; gap: .2rem 1.5rem; font: 400 var(--t-label)/1.3 var(--mono); letter-spacing: .1em; text-transform: uppercase; }
 .prod-brands__what { color: var(--glacier); }
-.prod-brands__line { color: var(--on-dark-2); white-space: nowrap; }
+.prod-brands__line { color: var(--on-dark-2); text-align: right; }
 .prod-brands__list a:hover .prod-brands__go { transform: translateX(.35rem); color: var(--yellow); }
 .prod-brands__list a:hover .prod-brands__name { text-decoration: underline; text-decoration-color: var(--yellow); text-decoration-thickness: 2px; text-underline-offset: .16em; }
 .prod-also { display: grid; gap: 1.25rem; justify-items: start; align-content: start; }
@@ -104,9 +107,9 @@
 .prod-az__no { font: 400 var(--t-label)/1 var(--mono); letter-spacing: .08em; color: var(--ink-3); }
 .prod-az__group a:hover .prod-az__name { text-decoration: underline; text-decoration-color: var(--yellow); text-decoration-thickness: 2px; text-underline-offset: .22em; }
 .prod-az__group a:hover .prod-az__no { color: var(--ink); }
-@media (min-width: 560px) { .prod-az__cols { columns: 2; } }
-@media (min-width: 900px) { .prod-az__cols { columns: 3; } }
-@media (min-width: 1280px) { .prod-az__cols { columns: 4; } }
+@media (min-width: 35em) { .prod-az__cols { columns: 2; } }
+@media (min-width: 56.25em) { .prod-az__cols { columns: 3; } }
+@media (min-width: 80em) { .prod-az__cols { columns: 4; } }
 
 /* ---------- Line page · hero ---------- */
 /* Line names run long ("Hardware, Fasteners & Jobsite Supplies"); a size down keeps them to two lines. */

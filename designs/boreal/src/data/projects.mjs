@@ -71,7 +71,7 @@ export const PROJECTS = [
     services: ['takeoffs', 'shipping', 'delivery'],
   },
   {
-    sector: 'Institutional',
+    sector: 'Remote Alaska', // shown on the projects page as "Remote & export": the same package and crating, not public buildings
     title: 'Export building packages',
     photo: 'export',
     scope: 'Complete building packages assembled and crated, with shipping coordinated for export.',

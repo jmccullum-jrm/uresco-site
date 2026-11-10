@@ -10,6 +10,10 @@
     const DRAFT = 'uresco.draft.' + kind;
     const MAX = 25 * 1024 * 1024;
     let bag = new DataTransfer();
+    // The script does the checking from here on (the HTML leaves it to the browser for no-JS visitors).
+    form.noValidate = true;
+    // Only the credit application has a paper version.
+    if (kind !== 'credit') [...$$('.form__print', form), ...(done ? $$('[data-print]', done) : [])].forEach((el) => el.remove());
 
     // Drafts: a request half-typed on a job site survives a dropped signal or a closed tab.
     const fields = () => $$('input, select, textarea', form).filter((el) => el.name && el.type !== 'file' && el.type !== 'hidden');
@@ -33,18 +37,34 @@
     form.addEventListener('input', save);
     form.addEventListener('change', save);
 
-    // Arriving from a product page: start the materials list with that line.
+    // Arriving from a link: what it names goes on the form. A second line goes above the first rather
+    // than replacing it, and a place in the link beats one in the draft. The visitor is told either way.
     const query = new URLSearchParams(location.search);
+    const told = [];
+    let linked = false;
     const product = query.get('product');
     const materials = $('textarea[name=materials]', form);
-    if (product && materials && !materials.value) materials.value = product + ':\n';
+    if (product && materials && !materials.value.split('\n').some((l) => l.trim() === product + ':')) {
+      const had = materials.value.trim();
+      materials.value = product + ':\n' + (had ? '\n' + materials.value : '');
+      linked = true;
+      if (had) told.push(`${product} is added to your materials list.`);
+    }
     const yardParam = query.get('yard');
     const yardSel = $('select[name=yard]', form);
     if (yardParam && yardSel) $$('option', yardSel).forEach((o) => { if (o.value.toLowerCase() === yardParam.toLowerCase()) yardSel.value = o.value; });
-    // A link that names a place fills the job location. The delivery choice stays with the visitor.
     const place = query.get('location');
     const job = $('input[name=location]', form);
-    if (place && job && !job.value) job.value = place;
+    if (place && job && job.value.trim().toLowerCase() !== place.toLowerCase()) {
+      if (job.value.trim()) told.push(`Project location is now ${place} (it was ${job.value.trim()}).`);
+      job.value = place;
+      linked = true;
+    }
+    // delivery=remote (or any word of a delivery choice) preselects it, for a place off the road system.
+    const howParam = query.get('delivery');
+    const howPick = howParam && $$('input[name=delivery]', form).find((r) => r.value.toLowerCase().includes(howParam.toLowerCase()));
+    if (howPick && !howPick.checked) { howPick.checked = true; linked = true; }
+    if (linked) save();
 
     // The manifest beside the form: each row reads as an instruction until the form fills it in.
     // Also the line under the yard select that says who will answer, and the mark on that yard's number.
@@ -94,10 +114,17 @@
 
     // The draft note: what is kept, and a way to throw it away.
     const draftText = $('[data-draft-text]', form);
-    const draftClear = $('[data-draft-clear]', form);
+    const footClear = $('[data-draft] [data-draft-clear]', form);
+    const restoredNote = $('[data-restored]', form);
     if (draftText) draftText.dataset.text = draftText.textContent;
-    if (draftText && restored) { draftText.textContent = 'Your draft from last time is filled in.'; draftClear.hidden = false; }
-    form.addEventListener('input', () => { if (draftClear) draftClear.hidden = false; });
+    if (draftText && restored) { draftText.textContent = 'Your draft from last time is filled in.'; footClear.hidden = false; }
+    // Said at the top of the form too, where someone coming back to it will see it.
+    if (restoredNote && (restored || told.length)) {
+      const files = $('input[type=file]', form) ? ' Files need adding again.' : '';
+      $('[data-restored-text]', restoredNote).textContent = `${restored ? `Your draft from last time is filled in.${files} ` : ''}${told.join(' ')}`.trim();
+      restoredNote.hidden = false;
+    }
+    form.addEventListener('input', () => { if (footClear) footClear.hidden = false; });
 
     // File drop zone, if the form has one.
     const input = $('input[type=file]', form);
@@ -116,6 +143,9 @@
           const next = new DataTransfer();
           Array.from(bag.files).forEach((g, j) => { if (j !== i) next.items.add(g); });
           bag = next; input.files = bag.files; render();
+          // The list was rebuilt: put focus on the next file's Remove, or back on the drop zone.
+          const left = $$('button', list);
+          (left[i] || left[i - 1] || input).focus();
         });
         li.append(name, meta, rm);
         list.append(li);
@@ -138,25 +168,35 @@
       drop.addEventListener('drop', (e) => add(e.dataTransfer.files));
     }
 
-    draftClear?.addEventListener('click', () => {
+    // A number the yard can actually call: at least seven digits. An empty field is the required check's job.
+    const phones = $$('input[type=tel][required]', form);
+    const checkPhones = () => phones.forEach((el) => el.setCustomValidity(el.value.trim() && el.value.replace(/\D/g, '').length < 7 ? 'phone' : ''));
+    phones.forEach((el) => el.addEventListener('input', checkPhones));
+    checkPhones();
+
+    $$('[data-draft-clear]', form).forEach((btn) => btn.addEventListener('click', () => {
       try { localStorage.removeItem(DRAFT); } catch { /* ignore */ }
       form.reset();
+      checkPhones();
       bag = new DataTransfer();
       if (input) input.files = bag.files;
       render();
       $$('[aria-invalid]', form).forEach((el) => el.removeAttribute('aria-invalid'));
       $$('.err', form).forEach((el) => { el.hidden = true; });
-      draftClear.hidden = true;
+      if (footClear) footClear.hidden = true;
+      if (restoredNote) restoredNote.hidden = true;
       if (draftText) draftText.textContent = draftText.dataset.text;
       paint();
       form.querySelector('input:not([type=file]), select, textarea')?.focus();
-    });
+    }));
     paint();
 
-    // Paper: a choice left at its default prints blank, so it can be ticked by hand.
+    // Paper: on a blank form a choice left at its default prints unticked, so it can be ticked by hand.
+    // Once anything has been filled in, every current choice is an answer and prints marked.
     window.addEventListener('beforeprint', () => {
-      $$('.seg label', form).forEach((l) => { const r = $('input', l); l.classList.toggle('is-marked', r.checked && !r.defaultChecked); });
-      $$('[data-paper-for]', form).forEach((o) => { const s = named(o.dataset.paperFor); o.classList.toggle('is-marked', !!s && s.selectedIndex > 0 && s.value === o.dataset.value); });
+      const filled = fields().some((el) => (el.type === 'radio' || el.type === 'checkbox' ? el.checked !== el.defaultChecked : el.tagName === 'SELECT' ? el.selectedIndex > 0 : el.value.trim()));
+      $$('.seg label', form).forEach((l) => { const r = $('input', l); l.classList.toggle('is-marked', r.checked && (filled || !r.defaultChecked)); });
+      $$('[data-paper-for]', form).forEach((o) => { const s = named(o.dataset.paperFor); o.classList.toggle('is-marked', !!s && (filled || s.selectedIndex > 0) && s.value === o.dataset.value); });
       $$('[data-paper-copy]', form).forEach((o) => { o.textContent = val(o.dataset.paperCopy); });
     });
 
@@ -167,7 +207,7 @@
       el.setAttribute('aria-invalid', String(bad));
       if (err) {
         err.hidden = !bad;
-        err.textContent = !bad ? '' : el.type === 'checkbox' ? el.dataset.msg || 'Please confirm to continue.' : el.validity.valueMissing ? el.dataset.msg || 'Required.' : el.type === 'email' ? 'Enter an email address like name@company.com.' : 'Check this field.';
+        err.textContent = !bad ? '' : el.type === 'checkbox' ? el.dataset.msg || 'Please confirm to continue.' : el.validity.valueMissing ? el.dataset.msg || 'Required.' : el.validity.customError ? 'Enter a phone number with at least seven digits.' : el.type === 'email' ? 'Enter an email address like name@company.com.' : 'Check this field.';
       }
       return !bad;
     };
@@ -216,7 +256,8 @@
 
       const finish = () => {
         try { localStorage.removeItem(DRAFT); } catch { /* ignore */ }
-        form.hidden = true; done.hidden = false; done.focus();
+        // Off the screen only (40-forms.css): the application can still be printed after it is sent.
+        form.classList.add('is-sent'); done.hidden = false; done.focus();
         window.scrollTo({ top: done.getBoundingClientRect().top + window.scrollY - 120 });
       };
 
@@ -238,21 +279,28 @@
       const { text, files } = summary();
       const subject = `${form.dataset.subject} — ${data.get('company') || data.get('name')}${data.get('location') ? ' — ' + data.get('location') : ''}`;
       const mail = `mailto:${to}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(text)}`;
-      window.location.href = mail;
+      // Mail apps and browsers drop very long links. Past this length the visitor copies it instead,
+      // and the form and draft stay put until they have.
+      const tooLong = mail.length > 1800;
+      if (!tooLong) window.location.href = mail;
       const note = $('[data-mail-note]', done);
       if (note) note.hidden = !files.length;
-      $('[data-mail-to]', done).textContent = to;
+      $$('[data-mail-to]', done).forEach((el) => { el.textContent = to; });
+      $('[data-mail-usual]', done).hidden = tooLong;
+      $('[data-mail-long]', done).hidden = !tooLong;
       const again = $('[data-mail-link]', done);
-      if (again) again.href = mail;
+      if (again) { again.href = mail; again.hidden = tooLong; }
       const copy = $('[data-copy]', done);
       if (copy) {
-        const label = copy.textContent;
+        const label = copy.dataset.label || (copy.dataset.label = copy.textContent);
         const full = `To: ${to}\nSubject: ${subject}\n\n${text}`;
-        copy.addEventListener('click', async () => {
+        copy.classList.toggle('btn--line', !tooLong);
+        copy.onclick = async () => {
           try { await navigator.clipboard.writeText(full); copy.textContent = 'Copied'; } catch { copy.textContent = 'Copy failed. Email us instead.'; }
           setTimeout(() => { copy.textContent = label; }, 2400);
-        });
+        };
       }
+      if (tooLong) { done.hidden = false; done.focus(); done.scrollIntoView({ block: 'center' }); return; }
       finish();
     });
   });

@@ -2,13 +2,14 @@ import { html, raw } from './html.mjs';
 import { icon, mark } from './icons.mjs';
 import { SITE } from '../config.mjs';
 import { LOCATIONS, tel, mapsUrl } from '../data/locations.mjs';
-import { openStatus, callBtn } from './components.mjs';
+import { openStatus, lineWin } from './components.mjs';
 import { CATEGORIES } from '../data/products.mjs';
 
 export const NAV = [
   { href: 'products/', label: 'Products', menu: true },
   { href: 'services/', label: 'Services' },
-  { href: 'alaska/', label: 'Alaska delivery' },
+  { href: 'alaska/', label: 'Alaska delivery', bar: 'Alaska' },
+  { href: 'pacific-northwest/', label: 'Pacific Northwest', bar: 'Pacific NW' },
   { href: 'projects/', label: 'Projects' },
   { href: 'locations/', label: 'Locations' },
   { href: 'about/', label: 'About' },
@@ -27,7 +28,7 @@ const isCurrent = (ctx, href) => (href === '' ? ctx.path === '' : ctx.path.start
 const productMenu = (ctx) => html`
   <div class="megamenu" role="group" aria-label="Product lines">
     <div class="megamenu__grid">
-      ${CATEGORIES.map((c) => html`<a href="${ctx.u('products/' + c.slug + '/')}"><span class="win win--u win--duo"><img src="${ctx.u(`assets/img/${c.photo}-240.webp`)}" width="46" height="56" alt="" loading="lazy" decoding="async"></span><span>${c.short}</span></a>`)}
+      ${CATEGORIES.map((c) => html`<a href="${ctx.u('products/' + c.slug + '/')}">${lineWin(c, { cls: 'megamenu__sign' })}<span>${c.short}</span></a>`)}
     </div>
     <div class="megamenu__foot">
       <p>Tarps, poly, caulking, adhesives, house wraps and more. If it’s not listed, ask your yard.</p>
@@ -54,7 +55,7 @@ const header = (ctx) => html`
       <nav class="nav" aria-label="Main">
         <ul class="nav__list">
           ${NAV.map((n) => html`<li class="${n.menu ? 'nav__item nav__item--menu' : 'nav__item'}">
-            <a class="nav__link" href="${ctx.u(n.href)}"${raw(isCurrent(ctx, n.href) ? ' aria-current="page"' : '')}>${n.label}${n.menu ? icon('chevron-down', { size: 14, cls: 'nav__caret' }) : ''}</a>
+            <a class="nav__link" href="${ctx.u(n.href)}"${raw(isCurrent(ctx, n.href) ? ' aria-current="page"' : '')}>${n.bar || n.label}${n.menu ? icon('chevron-down', { size: 14, cls: 'nav__caret' }) : ''}</a>
             ${n.menu ? productMenu(ctx) : ''}
           </li>`)}
         </ul>
@@ -93,7 +94,6 @@ const header = (ctx) => html`
       <a class="btn btn--paper" href="${ctx.u('quote/')}">Request a quote ${icon('arrow', { size: 18 })}</a>
       <a class="btn btn--line" href="${ctx.u('accounts/')}">Open an account</a>
     </div>
-    <a class="drawer__minor" href="${ctx.u('pacific-northwest/')}">Pacific Northwest ${icon('arrow', { size: 16 })}</a>
   </dialog>`;
 
 // Call or visit: every yard with its number and a map link side by side. From the Alaska page the
@@ -131,27 +131,29 @@ const actionBar = (ctx) => html`
     <a class="actionbar__btn actionbar__btn--primary" href="${ctx.u('quote/')}">${icon('file', { size: 19 })}Quote</a>
   </div>`;
 
+// One yard in the footer: name, status, number. The details are off on phones (they are one tap away
+// in the call sheet) and on the home page, which has just shown all three yards in full.
+const footerYard = (l, compact) => html`
+  <div class="footer__yard${compact ? ' footer__yard--compact' : ''}">
+    <div class="footer__yardhead"><h2 class="footer__h">${l.city}, ${l.state}</h2>${openStatus(l)}</div>
+    <a class="footer__num" href="${tel(l.phone)}">${l.phone}</a>
+    ${compact ? '' : html`<div class="footer__more">
+      <address>${l.street}<br>${l.city}, ${l.state} ${l.zip}</address>
+      ${l.tollFree ? html`<a href="${tel(l.tollFree)}">${l.tollFree} <small>toll-free</small></a>` : ''}
+      <a href="mailto:${l.email}">${l.email}</a>
+      <span class="footer__fax">Fax <span class="nums">${l.fax}</span></span>
+    </div>`}
+  </div>`;
+
 const footer = (ctx) => html`
   <footer class="footer">
     <div class="rings" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
     <div class="wrap">
       <div class="footer__lead">
         <p class="footer__tag d2">Quality materials, trusted service.</p>
-        <div class="footer__acts">
-          <a class="btn btn--yellow" href="${ctx.u('quote/')}">Request a quote ${icon('arrow', { size: 18 })}</a>
-          ${callBtn(ctx, { cls: 'btn--line' })}
-        </div>
       </div>
       <div class="footer__cols">
-        ${LOCATIONS.map((l) => html`
-          <div class="footer__yard">
-            <div class="footer__yardhead"><h2 class="footer__h">${l.city}, ${l.state}</h2>${openStatus(l)}</div>
-            <address>${l.street}<br>${l.city}, ${l.state} ${l.zip}</address>
-            <a class="footer__num" href="${tel(l.phone)}">${l.phone}</a>
-            ${l.tollFree ? html`<a href="${tel(l.tollFree)}">${l.tollFree} <small>toll-free</small></a>` : ''}
-            <a href="mailto:${l.email}">${l.email}</a>
-            <span class="footer__fax">Fax <span class="nums">${l.fax}</span></span>
-          </div>`)}
+        ${LOCATIONS.map((l) => footerYard(l, ctx.path === ''))}
         <nav class="footer__nav" id="site-index" aria-label="Footer">
           <h2 class="footer__h">Explore</h2>
           <a href="${ctx.u('products/')}">Products</a>

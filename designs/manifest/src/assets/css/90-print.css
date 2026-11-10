@@ -6,6 +6,20 @@
   body { padding: 0; font-size: 9.5pt; line-height: 1.3; }
   .utility, .masthead, .actionbar, .footer, dialog, .skip, .drawer, .sheet { display: none !important; }
   a { text-decoration: none; color: inherit; }
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+  /* Ink objects lose their ground on paper, so their lettering prints black. */
+  .board, .board *, .takeoff, .takeoff *, .btn--dark, .pmap__yard, .pmap__yard small { color: #000 !important; }
+  .pmap__yard { background: #fff; border: 1px solid #000; }
+  .board { padding: 0; }
+  /* With background graphics off, Chromium paints the highlighter stroke solid white over the line above it. */
+  .display em, .h2 em, .hl { background: none !important; }
+  /* A stock hero photograph is no use on paper and printed as an empty box. */
+  .plate.phero__media, .hero__media { display: none; }
+  .fl { background: none; }
+  /* Anything drawn in a frame stays whole on one page, and a heading stays with what it introduces. Split across a page, a framed
+     grid printed as an empty box and overlapped the lines at the top of the next page. */
+  .shipto__card, .pn-ticket__card, .pmap, .dwg, .gnote, .yard, .tsheet, .board, .pn-gantt__row { break-inside: avoid; }
+  .shead { break-after: avoid; }
 }
 
 @media print {

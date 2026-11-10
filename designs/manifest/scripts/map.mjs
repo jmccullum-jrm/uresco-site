@@ -16,8 +16,6 @@ const states = topo.feature(us, us.objects.states);
 const land = topo.feature(world, world.objects.land);
 const ak = states.features.find((f) => f.properties.name === 'Alaska');
 const wa = states.features.find((f) => f.properties.name === 'Washington');
-const canada = countries.features.find((f) => f.properties.name === 'Canada');
-const russia = countries.features.find((f) => f.properties.name === 'Russia');
 
 const projection = d3.geoConicConformal()
   .parallels([52, 68])

@@ -1,6 +1,7 @@
 /* ---------- Base ---------- */
 *, *::before, *::after { box-sizing: border-box; }
-html { -webkit-text-size-adjust: 100%; scroll-padding-top: calc(var(--mast) + 1.25rem); }
+/* Focus and anchors stop clear of the sticky masthead above and the floating action bar below. */
+html { -webkit-text-size-adjust: 100%; scroll-padding-top: calc(var(--mast) + 1.25rem); scroll-padding-bottom: calc(var(--bar) + 1rem + env(safe-area-inset-bottom)); }
 @media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
 body {
   margin: 0; background: var(--snow); color: var(--ink);
@@ -112,7 +113,7 @@ main:has(> :is(.section--ice, .interlude, .cta, .remote):last-child) + .footer {
 .shead { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 1.5rem clamp(2rem, 6vw, 6rem); align-items: end; margin-bottom: clamp(2.25rem, 1.5rem + 3vw, 4rem); }
 .shead--solo { grid-template-columns: minmax(0, 1fr); }
 .shead__aside { display: grid; gap: 1.25rem; justify-items: start; }
-@media (max-width: 860px) { .shead { grid-template-columns: minmax(0, 1fr); align-items: start; } }
+@media (max-width: 53.75em) { .shead { grid-template-columns: minmax(0, 1fr); align-items: start; } }
 
 /* ---------- Photographs ----------
    Always in a large rounded frame, graded a little cool so pictures from many cameras sit together. */
@@ -133,8 +134,10 @@ main:has(> :is(.section--ice, .interlude, .cta, .remote):last-child) + .footer {
 }
 
 /* ---------- Scroll reveal ----------
-   Only with JavaScript and only when motion is welcome. The script adds .is-in as things arrive. */
+   Hidden only once the reveal script is really running and only when motion is welcome: it sets
+   html.reveal-on just before it starts watching, so a script that never arrives hides nothing.
+   The script adds .is-in as things arrive. */
 @media (prefers-reduced-motion: no-preference) {
-  .js .reveal { opacity: 0; transform: translateY(18px); transition: opacity var(--slow) var(--ease), transform var(--slow) var(--ease); transition-delay: calc(var(--i, 0) * 70ms); }
-  .js .reveal.is-in { opacity: 1; transform: none; }
+  .reveal-on .reveal { opacity: 0; transform: translateY(18px); }
+  .reveal-on .reveal.is-in { opacity: 1; transform: none; transition: opacity var(--slow) var(--ease), transform var(--slow) var(--ease); transition-delay: calc(var(--i, 0) * 70ms); }
 }

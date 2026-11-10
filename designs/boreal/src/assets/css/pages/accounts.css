@@ -1,6 +1,6 @@
 /* ---------- Contractor accounts ----------
-   An account is one card that works at three yards, so the hero's picture is that card:
-   the yards on the freight line, and what the account does underneath. */
+   The panel beside the heading is the three yards on the freight line, each number one tap away.
+   How an account works is not published here: the page sends those questions to the yard. */
 
 .ac-hero { padding-block: clamp(1rem, .5rem + 2vw, 2.75rem) clamp(1.25rem, .75rem + 2vw, 3rem); }
 .ac-hero .phero__lede { max-width: 26em; }
@@ -20,17 +20,22 @@
 .ac-line__num { font-size: 1rem; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--yellow); }
 .ac-line a:hover .ac-line__num { text-decoration: underline; text-decoration-color: var(--yellow); text-decoration-thickness: 2px; text-underline-offset: .22em; }
 .ac-line__lat { font-family: var(--mono); font-size: var(--t-micro); letter-spacing: .04em; color: var(--haze); }
-
-.ac-perks { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--night-line); list-style: none; }
-.ac-perks li { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: .75rem; }
-.ac-perks__ic { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 10px; background: var(--night-3); color: var(--yellow); }
-.ac-perks__t { font-size: 1.0625rem; font-weight: 600; letter-spacing: -.015em; line-height: 1.25; color: #fff; }
-.ac-perks p { margin: .25rem 0 0; font-size: .9375rem; line-height: 1.45; color: var(--haze); }
+/* Three columns: the live status has its own line in each, so the numbers stay level whichever one would have wrapped. */
+@media (min-width: 35em) {
+  .ac-line__city { display: grid; grid-template-rows: auto 1.35rem; justify-items: start; gap: 0; }
+}
+.ac-card__note { margin: 0; padding-top: 1.25rem; border-top: 1px solid var(--night-line); color: var(--frost); line-height: 1.5; }
 
 .ac-how .shead { align-items: start; }
-.ac-ready { display: grid; gap: .6rem; }
-.ac-ready ul { display: flex; flex-wrap: wrap; gap: .35rem; list-style: none; }
-.ac-ready li { display: inline-flex; align-items: center; min-height: 32px; padding: .2rem .75rem; border-radius: 999px; background: var(--white); box-shadow: var(--sh-1); font-size: .8125rem; font-weight: 500; line-height: 1.25; }
+
+/* Trade references: the title on its line and what the card needs on the next, the same in all three cards. */
+@media screen {
+  .ref__title { display: grid; justify-content: start; gap: .05rem; }
+  .ref__title .req { margin-left: 0; }
+}
+@media (min-width: 62.5em) and (max-width: 68.6875em) { .ref { padding-inline: .8rem; } }
+.ref__need { font-family: var(--mono); font-size: var(--t-micro); font-weight: 500; letter-spacing: .05em; text-transform: uppercase; color: var(--slate); }
+@media print { .ref__need { display: none; } }
 
 .ac-index { padding: 1.1rem 1.25rem .9rem; }
 .ac-index ol { display: grid; margin-top: .35rem; list-style: none; }
@@ -41,14 +46,15 @@
 .ac-index a:hover b { text-decoration: underline; text-underline-offset: .2em; text-decoration-color: var(--yellow); }
 .ac-index small { font-family: var(--mono); font-size: var(--t-micro); letter-spacing: .02em; color: var(--haze); white-space: nowrap; }
 .ac-index small.is-done { color: var(--aurora); }
+@media (pointer: coarse) { .ac-index a { align-items: center; min-height: 40px; padding-block: .35rem; } }
 .ac-rail__print { margin-top: .85rem; }
-@media (min-width: 1000px) and (max-height: 740px) { .ac-rail__print { display: none; } }
+@media (min-width: 62.5em) and (max-height: 46.25em) { .ac-rail__print { display: none; } }
 
-@media (max-width: 999px) {
+@media (max-width: 62.4375em) {
   .ac-card { margin-top: .25rem; }
 }
 /* Phones: the yards go vertical, numbers on the right where a thumb can find them. */
-@media (max-width: 559px) {
+@media (max-width: 34.9375em) {
   .ac-hero .actions .btn { flex: 1 1 100%; }
   .ac-card { padding: 1.25rem 1.15rem 1.35rem; gap: 1.25rem; }
   .ac-line { grid-template-columns: minmax(0, 1fr); gap: 0; }
@@ -57,5 +63,4 @@
   .ac-line a { grid-template-columns: minmax(0, 1fr) auto; align-items: baseline; gap: 0 .75rem; min-height: 54px; padding-block: 0 .85rem; }
   .ac-line__lat { display: none; }
   .ac-line__num { font-size: 1.0625rem; }
-  .ac-perks { grid-template-columns: minmax(0, 1fr); gap: 1rem; padding-top: 1.25rem; }
 }

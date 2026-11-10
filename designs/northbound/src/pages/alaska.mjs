@@ -1,7 +1,7 @@
 import { html, raw } from '../lib/html.mjs';
 import { icon } from '../lib/icons.mjs';
 import { layout } from '../lib/layout.mjs';
-import { sectionHead, closing, callLink, steps, faq, figure, yardSpread, routePlate, interlude, pageHero, openStatus, LAT, deg, MAP } from '../lib/components.mjs';
+import { sectionHead, closing, callLink, steps, faq, figure, yardSpread, routePlate, pageHero, openStatus, LAT, MAP } from '../lib/components.mjs';
 import { LOCATIONS, byId, tel } from '../data/locations.mjs';
 import { PLACES, ALIASES, ACCESS, EXAMPLE, groupOf } from '../data/places.mjs';
 
@@ -17,12 +17,12 @@ const STOPS = [
 
 // How freight generally reaches each part of the state. General geography, not Uresco schedules.
 const REGIONS = [
-  { name: 'Southeast', places: 'Ketchikan · Sitka · Juneau', how: 'No road in. Freight typically arrives by sea.', modes: ['ship'], yard: 'anchorage' },
-  { name: 'Southcentral & the Kenai', places: 'Anchorage · Mat-Su · Kenai Peninsula · Valdez', how: 'On the road system: typically by truck from the Anchorage yard.', modes: ['truck'], yard: 'anchorage' },
-  { name: 'The Interior', places: 'Fairbanks · Tok · Galena', how: 'Highway communities typically by truck from the Fairbanks yard. River villages by barge and air.', modes: ['truck', 'ship', 'plane'], yard: 'fairbanks' },
-  { name: 'Western Alaska', places: 'Bethel · Dillingham · Nome · Kotzebue', how: 'Off the road system. Typically barge in the ice-free season, air year-round.', modes: ['ship', 'plane'], yard: 'anchorage' },
-  { name: 'The Arctic Slope', places: 'Deadhorse · Utqiaġvik', how: 'Deadhorse by the Dalton Highway. Utqiaġvik typically by barge in the ice-free season, and by air year-round.', modes: ['truck', 'ship', 'plane'], yard: 'fairbanks' },
-  { name: 'Kodiak, Cordova & the Aleutians', places: 'Kodiak · Cordova · Unalaska', how: 'Island and coastal communities with no road in, typically reached by sea and air.', modes: ['ship', 'plane'], yard: 'anchorage' },
+  { name: 'Southeast', places: 'Ketchikan · Sitka · Juneau', how: 'Most of Southeast has no road in. Freight typically arrives by sea.', modes: ['ship'], yards: ['anchorage'], remote: true },
+  { name: 'Southcentral & the Kenai', places: 'Anchorage · Mat-Su · Kenai Peninsula · Valdez', how: 'On the road system: typically by truck from the Anchorage yard.', modes: ['truck'], yards: ['anchorage'] },
+  { name: 'The Interior', places: 'Fairbanks · Tok · Galena', how: 'Highway communities typically by truck from the Fairbanks yard. River villages by barge and air.', modes: ['truck', 'ship', 'plane'], yards: ['fairbanks'] },
+  { name: 'Western Alaska', places: 'Bethel · Dillingham · Nome', how: 'Off the road system. Typically barge in the ice-free season, air year-round.', modes: ['ship', 'plane'], yards: ['anchorage'], remote: true },
+  { name: 'The North Slope', places: 'Deadhorse · Utqiaġvik · Wainwright', how: 'Deadhorse by the Dalton Highway. Utqiaġvik and the coast typically by barge in the ice-free season, and by air year-round.', modes: ['truck', 'ship', 'plane'], yards: ['anchorage', 'fairbanks'], remote: true },
+  { name: 'Kodiak, Cordova & the Aleutians', places: 'Kodiak · Cordova · Unalaska', how: 'Island and coastal communities with no road in, typically reached by sea and air.', modes: ['ship', 'plane'], yards: ['anchorage'], remote: true },
 ];
 
 // How freight moves in Alaska, in general terms. Uresco coordinates it; it does not run the carriers.
@@ -34,10 +34,10 @@ const MODES = [
 
 const FAQ = [
   ['Can you deliver to my community?', 'Delivery is available anywhere in Alaska, from Sitka to Utqiaġvik (Barrow). Tell us where the job is and we will work out the route with you, by road, ocean freight, barge or air, and quote the package.'],
-  ['When should I order for barge season?', 'Early. Off the road system, barges run in the ice-free season, so call early in the year and we will plan back from the sailing you need.'],
+  ['When should I order for barge season?', 'Early. Where freight moves by barge in the ice-free season, the window is short. Call your yard and we will work out the freight with you.'],
   ['Which yard should I call?', 'Southcentral Alaska or a remote site: Anchorage. The Interior and points north: Fairbanks. Puget Sound: Kent. Any yard can help. They work as one team.'],
   ['Do you ship complete building packages?', 'Yes. We are fully equipped to handle remote-location and export building packages, crated for the trip. One complete package beats a second freight bill.'],
-  ['Can you work from my plans?', 'Send drawings or a materials list. We will build the take-off, check it for gaps and quote it. Design services are available for your unique project needs.'],
+  ['Can you work from my plans?', 'Send drawings or a materials list. We help with the take-off and give you an estimate. Design services are available for your unique project needs.'],
   ['Who coordinates the shipping?', 'We work with you on all aspects of shipping coordination, dock delivery and rural Alaska delivery.'],
 ];
 
@@ -50,7 +50,12 @@ const ex = PLACES.find((p) => p.name === EXAMPLE);
 const exAccess = ACCESS[ex.access];
 const exYard = byId(ex.yard);
 const modeText = ([, text], yard) => text.replace('{yard}', yard.city);
-const quoteHref = (ctx, where, yard) => html`${ctx.u('quote/')}?location=${encodeURIComponent(where)}&amp;yard=${yard}`;
+const quoteHref = (ctx, where, yard, remote) => html`${ctx.u('quote/')}?location=${encodeURIComponent(where)}${yard ? html`&amp;yard=${yard}` : ''}${remote ? raw('&amp;delivery=remote') : ''}`;
+// A region is not a job site, so its quote link leaves the location for the visitor to write in.
+const regionQuote = (ctx, r) => `${ctx.u('quote/')}?${[r.yards.length === 1 ? `yard=${r.yards[0]}` : '', r.remote ? 'delivery=remote' : ''].filter(Boolean).join('&')}`;
+// The yards' guidance sends a remote site to Anchorage and the Interior and points north to Fairbanks.
+// For a remote place in the Interior or north of it, both are true: the answer gives both numbers.
+const bothYards = (p) => p.access === 'seasonal' && (p.region === 'Interior Alaska' || p.lat > LAT.fairbanks);
 
 // What the script needs, and nothing it does not. Written into the page as JSON.
 const finderData = (ctx) => JSON.stringify({
@@ -61,7 +66,7 @@ const finderData = (ctx) => JSON.stringify({
   states: STATES,
   access: ACCESS,
   yards: Object.fromEntries(LOCATIONS.map((l) => [l.id, { name: l.city, phone: l.phone }])),
-  places: PLACES.map((p) => [p.name, p.st, Number(p.lat.toFixed(1)), MAP.places[p.name], p.region, p.access, p.yard, groupOf(p), p.label || '']),
+  places: PLACES.map((p) => [p.name, p.st, Number(p.lat.toFixed(1)), MAP.places[p.name], p.region, p.access, p.yard, groupOf(p), p.label || '', bothYards(p)]),
   aliases: ALIASES,
 });
 
@@ -77,7 +82,7 @@ const finder = (ctx) => html`
         ${icon('pin', { size: 20 })}
         <input class="finder__input" id="place-input" type="text" role="combobox" aria-expanded="false" aria-controls="place-list" aria-autocomplete="list" autocomplete="off" autocapitalize="words" spellcheck="false" enterkeyhint="search" placeholder="Town, village or city">
         <button type="button" class="finder__clear" data-clear hidden>${icon('close', { size: 18 })}<span class="sr-only">Clear the search</span></button>
-        <ul class="finder__list" id="place-list" role="listbox" aria-label="Places" hidden></ul>
+        <ul class="finder__list" id="place-list" role="listbox" aria-label="Places" tabindex="-1" hidden></ul>
       </div>
       <p class="finder__try">Try ${raw(TRY.map((c, i) => `<button type="button" class="finder__eg" data-place="${c}">${c}</button>${i === TRY.length - 2 ? ' or ' : i < TRY.length - 2 ? ', ' : '.'}`).join(''))}</p>
 
@@ -90,7 +95,7 @@ const finder = (ctx) => html`
             <p class="answer__tag" data-a="tag">${exAccess.tag}</p>
           </div>
         </div>
-        <p class="answer__else" data-a="else" hidden>That is not on our short list, which does not mean we cannot get there. Send the details and a yard will work out the route with you.</p>
+        <p class="answer__else" data-a="else" hidden>That is not on our short list. Send the details or call, and a yard will tell you what can be done.</p>
         <dl class="answer__rows">
           <div data-a="how">
             <dt>How freight typically gets there</dt>
@@ -99,8 +104,8 @@ const finder = (ctx) => html`
             </ul></dd>
           </div>
           <div>
-            <dt>Yard to call</dt>
-            <dd>
+            <dt data-a="yardlabel">Start with</dt>
+            <dd class="answer__yards">
               ${LOCATIONS.map((l) => html`<div class="answer__yard" data-y="${l.id}"${l.id === ex.yard ? '' : html` hidden`}>
                 <p class="answer__city">${l.city} ${openStatus(l, { short: true })}</p>
                 <a class="btn btn--dark answer__call" href="${tel(l.phone)}">${icon('phone', { size: 16 })}<span class="sr-only">Call ${l.city}: </span>${l.phone}</a>
@@ -112,7 +117,7 @@ const finder = (ctx) => html`
             </dd>
           </div>
         </dl>
-        <a class="btn btn--block answer__quote" data-a="quote" href="${quoteHref(ctx, `${ex.name}, ${ex.st}`, ex.yard)}"><span>Get a quote for <span data-a="short">${ex.name}</span></span> ${icon('arrow', { size: 18 })}</a>
+        <a class="btn btn--block answer__quote" data-a="quote" href="${quoteHref(ctx, `${ex.name}, ${ex.st}`, ex.yard, ex.access === 'coastal' || ex.access === 'seasonal')}"><span>Get a quote for <span data-a="short">${ex.name}</span></span> ${icon('arrow', { size: 18 })}</a>
         <p class="answer__note" data-a="note">Typical for the region, not a schedule or a price. Any yard can help.</p>
       </div>
       <p class="sr-only" role="status" aria-live="polite" data-live></p>
@@ -137,19 +142,16 @@ const regionLedger = (ctx) => html`
       <p>Typical for the region, not a schedule or a price. Any yard can help.</p>
     </div>
     <ul class="regions__list">
-      ${REGIONS.map((r) => {
-        const y = byId(r.yard);
-        return html`<li class="region">
+      ${REGIONS.map((r) => html`<li class="region">
           <h4 class="region__name">${r.name}</h4>
           <span class="region__modes" aria-hidden="true">${r.modes.map((m) => icon(m, { size: 18 }))}</span>
           <p class="region__places">${r.places}</p>
           <p class="region__how">${r.how}</p>
           <p class="region__acts">
-            <a class="region__call" href="${tel(y.phone)}">${icon('phone', { size: 16 })}<span>Call ${y.city}</span> <b>${y.phone}</b></a>
-            <a class="region__quote" href="${quoteHref(ctx, r.name, r.yard)}">Quote <span class="sr-only">for ${r.name} </span>${icon('arrow', { size: 16 })}</a>
+            <span class="region__calls">${r.yards.map((id) => { const y = byId(id); return html`<a class="region__call" href="${tel(y.phone)}">${icon('phone', { size: 16 })}<span>${r.yards.length > 1 ? y.city : `Start with ${y.city}`}</span> <b>${y.phone}</b></a>`; })}</span>
+            <a class="region__quote" href="${regionQuote(ctx, r)}">Quote <span class="sr-only">for ${r.name} </span>${icon('arrow', { size: 16 })}</a>
           </p>
-        </li>`;
-      })}
+        </li>`)}
     </ul>
     <p class="regions__note">Somewhere else? Any yard can help. Call <a href="${tel(byId('anchorage').phone)}">Anchorage ${byId('anchorage').phone}</a> or <a href="${tel(byId('fairbanks').phone)}">Fairbanks ${byId('fairbanks').phone}</a>.</p>
   </div>`;
@@ -167,7 +169,7 @@ export default {
     body: html`
 ${pageHero(ctx, {
   crumbs: [['Alaska delivery']],
-  eyebrow: `Alaska delivery · ${deg(LAT.sitka)} to ${deg(LAT.utqiagvik)}`,
+  eyebrow: 'Alaska delivery · Sitka to Utqiaġvik',
   title: '<span class="ask__q">Can you get a building package to my community?</span> <span class="ask__a">Yes. <em>Anywhere in Alaska.</em></span>',
   after: html`<p class="lede phero__lede ask__lede">Complete building packages, crated and shipped by road, sea, barge or air, from Sitka to Utqiaġvik. Name your community and see how freight typically gets there.</p>`,
   cls: 'phero--ask',
@@ -184,13 +186,13 @@ ${pageHero(ctx, {
   </div>
 </section>
 
-${figure(ctx, 'floatplane-lake', { ratio: 'cine', cls: 'fig--bleed ask__photo', parallax: true, caption: 'A floatplane skims across a lake. Off the road system, air runs year-round.', pos: '45% 62%' })}
+${figure(ctx, 'floatplane-lake', { ratio: 'cine', cls: 'fig--bleed ask__photo', parallax: true, caption: 'A floatplane skims across a lake.', pos: '45% 62%' })}
 
 <section class="section section--paper2 legs" data-lat="${ex.lat.toFixed(1)}" data-lat-to="${LAT.anchorage}" data-place="En route" data-place-end="Anchorage" aria-labelledby="legs-title">
   <div class="wrap">
     ${sectionHead({ no: '02', eyebrow: 'How a remote package moves', id: 'legs-title', title: 'From the take-off <em>to the dock.</em>', lede: 'Remote jobs go wrong on the details: a missing box of hangers, a load that misses the barge. One complete package beats a second freight bill.' })}
     ${steps([
-      ['Plans in, take-off out', 'Send drawings or a list. We build the take-off, check it for gaps and quote it.'],
+      ['Plans in, take-off out', 'Send drawings or a list. We help with the take-off and give you an estimate.'],
       ['Package and crate', 'We assemble the complete package and crate it for the trip.'],
       ['Work out the freight', 'We work with you on shipping coordination, whether truck, ocean freight, barge or air, around your schedule and the season.'],
       ['Dock or site delivery', 'Delivered to the dock or straight to the site.'],
@@ -204,7 +206,7 @@ ${figure(ctx, 'floatplane-lake', { ratio: 'cine', cls: 'fig--bleed ask__photo', 
     <ul class="modes__list">
       ${MODES.map((m, i) => html`<li class="rv" style="--i:${i}">${icon(m.icon, { size: 28 })}<h3 class="h3">${m.name}</h3><p>${m.body}</p></li>`)}
     </ul>
-    <div class="callout season rv">${icon('snow', { size: 24 })}<p><strong>Plan around the season.</strong> Barge service to western and northern Alaska runs only in the ice-free months. Call early and we will plan back from the sailing you need.</p></div>
+    <div class="callout season rv">${icon('snow', { size: 24 })}<p><strong>Plan around the season.</strong> Barge service to western and northern Alaska generally runs only in the ice-free months. Call early and we will work out the freight with you.</p></div>
   </div>
   ${figure(ctx, 'valdez-port', { ratio: 'cine', cls: 'fig--bleed modes__photo', parallax: true, caption: 'A working port below snow-covered mountains.', place: 'Valdez, Alaska', lat: LAT.valdez, pos: '50% 84%' })}
 </section>
@@ -217,7 +219,7 @@ ${figure(ctx, 'floatplane-lake', { ratio: 'cine', cls: 'fig--bleed ask__photo', 
   </div>
 </section>
 
-<section class="section section--ice asked" id="north" data-lat="${LAT.fairbanks}" data-lat-to="${LAT.utqiagvik}" data-place="The Bush" data-place-end="Utqiaġvik" aria-labelledby="faq-title">
+<section class="section section--ice asked" id="north" data-lat="${LAT.fairbanks}" data-lat-to="${LAT.utqiagvik}" data-place="Rural AK" data-place-end="Utqiaġvik" aria-labelledby="faq-title">
   <div class="wrap asked__grid">
     <div class="asked__head">
       <p class="shead__bar"><span class="chead__no">05</span><span>Questions</span></p>
@@ -229,13 +231,11 @@ ${figure(ctx, 'floatplane-lake', { ratio: 'cine', cls: 'fig--bleed ask__photo', 
   </div>
 </section>
 
-${interlude(ctx, 'remote-village', { line: 'Utqiaġvik, 71.3° north. <em>Still on the route.</em>', note: 'Snow-drifted buildings and a beached boat on the Arctic coast.', place: 'Utqiaġvik', lat: LAT.utqiagvik, pos: '45% 58%' })}
-
 ${closing(ctx, {
   title: 'Building off <em>the road system?</em>',
   body: 'Send plans or a list and tell us where the job is. We will quote the package and work out the freight with you.',
-  query: `?location=${encodeURIComponent('Alaska')}&yard=anchorage`,
-  rows: [['Send', 'Plans or a list, and where the job is'], ['To', 'The Anchorage or Fairbanks yard'], ['Returns', 'A quote for the package and a plan for the freight'], ['Lands', 'At the dock, or on your site']],
+  query: '?yard=anchorage&delivery=remote',
+  rows: [['Send', 'Plans or a list, and where the job is'], ['To', 'The Anchorage or Fairbanks yard'], ['Returns', 'A quote for the package. We work out the freight with you.'], ['Lands', 'At the dock, or on your site']],
 })}
 `,
   }),

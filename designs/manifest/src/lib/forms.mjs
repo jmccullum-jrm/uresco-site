@@ -14,18 +14,21 @@ import { openStatus, YARD_FOR } from './components.mjs';
 const span = ({ full, w, m2 }) => (full || w === 'full' ? ' fm-cell--full' : ` fm-cell--${w || 'half'}`) + (m2 ? ' fm-cell--m2' : '');
 const REQ = html`<span class="fm-req" aria-hidden="true"><span>Required</span></span>`;
 
-export const field = ({ id, label, type = 'text', required = false, full = false, w, m2 = false, hint, screenHint = false, msg, attrs = '' }) => html`
+// `held`: a tax ID or bank detail. With no form service the markup gives it no name, so a browser with the script off cannot
+// write it into the email; the script names it again and leaves it out of the email itself.
+export const field = ({ id, label, type = 'text', required = false, full = false, w, m2 = false, hint, screenHint = false, msg, attrs = '', held = false }) => html`
   <div class="fm-cell${span({ full, w, m2 })}${required ? ' fm-cell--req' : ''}">
     <label class="fm-label" for="${id}">${label}${required ? REQ : ''}${hint ? html` <span class="fm-hint${screenHint ? ' fm-screen' : ''}">${hint}</span>` : ''}</label>
-    <input class="fm-input" id="${id}" name="${id}" type="${type}"${required ? html` required aria-describedby="${id}-err"` : ''}${msg ? html` data-msg="${msg}"` : ''}${attrs}>
+    <input class="fm-input" id="${id}"${held && !SITE.formEndpoint ? html` data-held` : html` name="${id}"`} type="${type}"${required ? html` required aria-describedby="${id}-err"` : ''}${msg ? html` data-msg="${msg}"` : ''}${attrs}>
     ${required ? html`<span class="fm-err" id="${id}-err" hidden></span>` : ''}
   </div>`;
 
 // `paper: true` also prints the options as tick boxes, because a drop-down means nothing on paper.
-export const select = ({ id, label, options, full = false, w, m2 = false, hint, paper = false }) => html`
+// `placeholder` starts the list on an empty choice, so an untouched default is never sent as an answer.
+export const select = ({ id, label, options, full = false, w, m2 = false, hint, paper = false, placeholder }) => html`
   <div class="fm-cell${span({ full, w, m2 })}">
     <label class="fm-label" for="${id}">${label}${hint ? html` <span class="fm-hint">${hint}</span>` : ''}</label>
-    <select class="fm-select" id="${id}" name="${id}">${options.map((o) => html`<option>${o}</option>`)}</select>
+    <select class="fm-select" id="${id}" name="${id}">${placeholder ? html`<option value="">${placeholder}</option>` : ''}${options.map((o) => html`<option>${o}</option>`)}</select>
     ${paper ? html`<div class="fm-paper fm-paperopts" data-paper-for="${id}">${options.map((o) => html`<label><input type="checkbox" value="${o}" tabindex="-1"><span class="fm-opt__box"></span>${o}</label>`)}</div>` : ''}
   </div>`;
 
@@ -76,6 +79,7 @@ export const fileDrop = ({ id = 'files', name = 'files', label, hint, title = 'D
       <span class="fm-drop__text">
         <b><span class="fm-drop__mouse">${title}</span><span class="fm-drop__touch">${tapTitle}</span></b>
         ${note ? html`<small>${note}</small>` : ''}
+        ${SITE.formEndpoint ? '' : html`<small>Files do not send from this page. You add them to the email on the next step.</small>`}
       </span>
       <input class="sr-only" type="file" name="${name}" multiple accept="${accept}" aria-labelledby="${id}-label">
     </label>
@@ -92,9 +96,11 @@ export const group = ({ id, letter, title, cls = '' }, body) => html`
     <div class="fm-grid">${body}</div>
   </fieldset>`;
 
-const formOpen = (kind, subject) => html`<form class="fm-sheet" data-form="${kind}" data-subject="${subject}" data-endpoint="${SITE.formEndpoint}" data-email="${SITE.email}" action="${SITE.formEndpoint || 'mailto:' + SITE.email}" method="post" enctype="multipart/form-data" novalidate>`;
+// Without the script the browser checks the required fields and writes the email; plain text keeps that email readable.
+// The script adds novalidate and does both better.
+const formOpen = (kind, subject) => html`<form class="fm-sheet" data-form="${kind}" data-subject="${subject}" data-endpoint="${SITE.formEndpoint}" data-email="${SITE.email}" action="${SITE.formEndpoint || 'mailto:' + SITE.email}" method="post" enctype="${SITE.formEndpoint ? 'multipart/form-data' : 'text/plain'}">`;
 
-const formFoot = (label, { lead = 'Answered by' } = {}) => html`
+const formFoot = (label, { lead = 'Answered by', held = false } = {}) => html`
   <div class="fm-foot">
     <div class="fm-foot__info">
       ${yardRoute({ lead, cls: 'fm-route--foot' })}
@@ -102,7 +108,8 @@ const formFoot = (label, { lead = 'Answered by' } = {}) => html`
     </div>
     <div class="fm-foot__act">
       <button class="btn fm-send" type="submit">${label} ${icon('arrow', { size: 18 })}</button>
-      <p class="fm-foot__note">${SITE.formEndpoint ? 'We’ll confirm by email.' : 'This opens your email app with everything filled in. Attach any files there before you send.'}</p>
+      <p class="fm-foot__note js-only">${SITE.formEndpoint ? 'We’ll confirm by email.' : html`This opens your email app with your answers filled in. Attach any files there before you send.${held ? ' Tax ID and bank details are left out of the email.' : ''}`}</p>
+      ${SITE.formEndpoint ? '' : html`<noscript><p class="fm-foot__note">This opens an email to ${SITE.email}, whichever yard you chose above.${held ? ' Tax ID and bank details are left out of it: give those to your yard by phone or fax, or use the paper copy.' : ''} Rather call? ${LOCATIONS.map((l, i) => html`${i ? ' · ' : ''}${l.city} <a href="${tel(l.phone)}">${l.phone}</a>`)}</p></noscript>`}
     </div>
   </div>
   <div class="fm-notice fm-notice--bad" data-failed hidden tabindex="-1" role="alert">
@@ -110,19 +117,23 @@ const formFoot = (label, { lead = 'Answered by' } = {}) => html`
     <div class="fm-notice__body"><h2 class="fm-notice__t">That didn’t go through</h2><p>Please try again, or email <a href="mailto:${SITE.email}">${SITE.email}</a> or call the yard directly.</p></div>
   </div>`;
 
-// Success, and the hand-off to the visitor's email app. Webmail users often get no email app at all, so the
+// Success, and the handoff to the visitor's email app. Webmail users often get no email app at all, so the
 // finished request is kept on the page to open again or copy.
-const doneNotice = ({ sent, almost }) => html`
-  <div class="fm-notice fm-notice--done" data-done hidden tabindex="-1" role="status">
-    <span class="fm-notice__mark" aria-hidden="true">${icon('check', { size: 22 })}</span>
+// A tick only when something has really been sent: handing over to an email app proves nothing.
+const doneNotice = ({ sent, almost }, { printable = false, held = false } = {}) => html`
+  <div class="fm-notice fm-notice--done${SITE.formEndpoint ? ' fm-notice--sent' : ''}" data-done hidden tabindex="-1" role="status">
+    <span class="fm-notice__mark" aria-hidden="true">${icon(SITE.formEndpoint ? 'check' : 'file', { size: 22 })}</span>
     <div class="fm-notice__body">
       <h2 class="fm-notice__t">${SITE.formEndpoint ? 'Sent' : 'Almost there'}</h2>
       <p>${SITE.formEndpoint ? sent : html`Your email app should have opened a message to <b data-mail-to>${SITE.email}</b> with ${almost} filled in. <span data-mail-note>Attach your files to that email, then send it.</span> If nothing opened, email us directly or call the yard.`}</p>
-      ${SITE.formEndpoint ? '' : html`
+      ${held && !SITE.formEndpoint ? html`<p class="fm-notice__held" data-held-note hidden>Tax ID and bank details are not in that email. Give these to your yard by phone or fax, or use the paper copy.</p>` : ''}
       <div class="fm-notice__acts">
-        <a class="btn" href="#" data-mail-again>Open the email again ${icon('arrow', { size: 18 })}</a>
-        <button type="button" class="btn btn--line" data-copy>Copy the text</button>
+        ${SITE.formEndpoint ? '' : html`<a class="btn" href="#" data-mail-again>Open the email again ${icon('arrow', { size: 18 })}</a>
+        <button type="button" class="btn btn--line" data-copy>Copy the text</button>`}
+        ${printable ? html`<button type="button" class="btn btn--line" data-print>Print this application</button>` : ''}
+        <button type="button" class="btn btn--line" data-back>Back to the form</button>
       </div>
+      ${SITE.formEndpoint ? '' : html`
       <details class="fm-notice__text"><summary>See what you are sending</summary><pre data-mail-text></pre></details>`}
     </div>
   </div>`;
@@ -153,11 +164,12 @@ export const sheetLayout = ({ kind, subject, name, lead, steps, paper = '', head
           <p class="fm-sheet__title">${head}</p>
           <p class="fm-sheet__save js-only"><span data-draft-state>Saves on this device as you type</span> <button type="button" class="fm-clear" data-clear hidden>Clear form</button></p>
           ${privacy ? html`<p class="fm-sheet__private js-only">${privacy}</p>` : ''}
+          <p class="fm-sheet__replaced js-only" data-link-note role="status" hidden></p>
         </div>
         ${body}
-        ${formFoot(send, { lead })}
+        ${formFoot(send, { lead, held: kind === 'credit' })}
       </form>
-      ${doneNotice(done)}
+      ${doneNotice(done, { printable: !!paper, held: kind === 'credit' })}
     </div>
     <div class="fm-side">
       <div class="tblock fm-side__block">

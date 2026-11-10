@@ -7,8 +7,8 @@ import { SITE } from '../config.mjs';
 
 const { rng, P, rect, poly, seg, label, dimH, note } = kit;
 
-// ---------- Dwg 035: end grain ----------
-// One ring a year, more than 35 of them, and this year's ring in yellow: the company's age, drawn the way the logo is drawn.
+// ---------- End grain ----------
+// Growth rings with the outer one in yellow, drawn the way the logo is drawn. The rings are not a count: only "more than 35 years" is stated.
 const CX = 186, CY = 176;
 const point = (r, t, ph) => {
   const k = 1 + 0.034 * Math.sin(2 * t + ph[0] + r * 0.012) + 0.02 * Math.sin(3 * t + ph[1] - r * 0.018) + 0.012 * Math.sin(5 * t + ph[2] + r * 0.03);
@@ -43,9 +43,8 @@ const endGrain = () => {
   const ann = P(seg(CX, CY + 4, CX, base + 18), 'dw-c')
     + dimH(CX, CX + reach, base + 2, base + 16, '').replace(/<text[^>]*><\/text>/, '')
     + label(CX + reach / 2, base + 33, 'MORE THAN 35 YEARS', 'dw-dt')
-    + note(362, 92, 'ONE RING,', [CX + 74, CY - 62]) + label(362, 112, 'ONE YEAR', 'dw-nt', 'start', ' dominant-baseline="central"')
-    + note(362, 262, 'THIS YEAR', [CX + 118, CY + 96]);
-  return raw(`<svg class="dw" viewBox="0 0 480 384" role="img" aria-labelledby="ab-rings-t"><title id="ab-rings-t">The end grain of a log: thirty-five growth rings around the pith, one ring for one year, and this year’s ring highlighted at the outside. The dimension from the pith to the outer ring reads more than thirty-five years.</title><g class="dw-obj">${raw(obj)}</g><g class="dw-ann">${raw(ann)}</g></svg>`);
+    + note(362, 262, 'TODAY', [CX + 118, CY + 96]);
+  return raw(`<svg class="dw" viewBox="0 0 480 384" role="img" aria-labelledby="ab-rings-t"><title id="ab-rings-t">The end grain of a log: growth rings around the pith, with the outermost ring highlighted. The dimension from the pith to the outer ring reads more than thirty-five years.</title><g class="dw-obj">${raw(obj)}</g><g class="dw-ann">${raw(ann)}</g></svg>`);
 };
 
 // ---------- About ----------
@@ -63,22 +62,22 @@ const NOTES = [
   { head: 'We are independent.', body: 'One of the largest independent building material suppliers serving Alaska and the Pacific Northwest.' },
   { head: 'We have been at it for more than 35 years.', body: 'A trusted source for quality building materials throughout the Pacific Northwest and all of Alaska.' },
   { head: 'Three yards work as one team.', body: 'Kent is the headquarters. Anchorage serves Southcentral Alaska and Fairbanks serves the Interior. Whichever one you call can help.', link: ['locations/', 'The three yards'] },
-  { head: 'Remote delivery is our specialty.', body: 'We are fully equipped to handle remote location and export building packages, and delivery is available anywhere in Alaska, from Sitka to Utqiaġvik (Barrow).', link: ['alaska/', 'Alaska delivery'] },
-  { head: 'We carry the whole building.', body: 'Nine product lines, from framing lumber to the last box of fasteners, with James Hardie, CertainTeed, Simpson Strong-Tie, Georgia-Pacific DensGlass and Parallam among them.', link: ['products/', 'See the manifest'] },
+  { head: 'Remote delivery is our specialty.', body: 'We are fully equipped to handle remote-location and export building packages, and delivery is available anywhere in Alaska, from Sitka to Utqiaġvik (Barrow).', link: ['alaska/', 'Alaska delivery'] },
+  { head: 'We carry framing to finish.', body: 'Nine product lines, from framing lumber to fasteners, with James Hardie, CertainTeed, Simpson Strong-Tie, Georgia-Pacific DensGlass and Parallam among them.', link: ['products/', 'See the product lines'] },
 ];
 
-// The mission, clause by clause, each with what stands behind it.
+// The mission, clause by clause, each with the services that go with it. It is an aim, and the page says so.
 const CLAUSES = [
-  { claim: 'A trusted and dependable source of quality construction materials.', proof: 'Nine product lines, with every item listed on this site.', link: ['products/', 'What we carry'] },
-  { claim: 'A knowledgeable and resourceful sales staff.', proof: 'Ask them for a material take-off, an estimate or design help for your project.', link: ['services/#takeoffs', 'Take-offs and estimates'] },
-  { claim: 'Professional and prompt service.', proof: 'Job-site delivery by boom truck and truck-mounted Moffett forklift, crating and shipping coordination.', link: ['services/#delivery', 'Delivery and shipping'] },
+  { claim: 'A trusted and dependable source of quality construction materials.', proof: 'Nine product lines, listed on this site.', link: ['products/', 'What we carry'] },
+  { claim: 'A knowledgeable and resourceful sales staff.', proof: 'Ask them about help with a material take-off, an estimate or design for your project.', link: ['services/#takeoffs', 'Take-offs and estimates'] },
+  { claim: 'Professional and prompt service.', proof: 'Services include job-site delivery by boom truck and truck-mounted Moffett forklift, crating and shipping coordination.', link: ['services/#delivery', 'Delivery and shipping'] },
 ];
 
 const about = {
   path: 'about/',
   render: (ctx) => layout(ctx, {
     title: 'About Uresco',
-    description: `For more than ${SITE.years} years, Uresco Construction Materials has been a trusted source for quality building materials throughout the Pacific Northwest and all of Alaska. Three yards, wholesale, and the hard deliveries are our specialty.`,
+    description: `For more than ${SITE.years} years, Uresco Construction Materials has been a trusted source for quality building materials throughout the Pacific Northwest and all of Alaska. Three yards, wholesale, and remote-location delivery is our specialty.`,
     body: html`
 ${pageHero(ctx, {
   cls: 'ab-hero',
@@ -88,7 +87,7 @@ ${pageHero(ctx, {
   lede: `For more than ${SITE.years} years, Uresco has been a trusted source for quality building materials throughout the Pacific Northwest and all of Alaska.`,
   actions: html`<a class="btn" href="${ctx.u('locations/')}" data-open="call-sheet" aria-haspopup="dialog">${icon('phone', { size: 18 })} Call a yard</a><a class="btn btn--line" href="${ctx.u('products/')}">See what we carry ${icon('arrow', { size: 18 })}</a>`,
   media: html`<figure class="dwg ab-rings phero__media" data-reveal>
-    <p class="dwg__bar label"><span>Dwg 035</span><span>End grain</span><span class="dwg__nts">Not to scale</span></p>
+    <p class="dwg__bar label"><span>End grain</span><span class="dwg__nts">Not to scale</span></p>
     <div class="dwg__canvas">${endGrain()}</div>
   </figure>`,
   below: html`<div class="ab-data">
@@ -101,7 +100,7 @@ ${pageHero(ctx, {
 
 <section class="section" id="notes">
   <div class="wrap">
-    ${sectionHead({ no: '01', eyebrow: 'General notes', title: 'Who you are <em>buying from.</em>', lede: 'Six things that are true of this company, in plain words.' })}
+    ${sectionHead({ no: '01', eyebrow: 'General notes', title: 'Who you are <em>buying from.</em>', lede: 'The short version.' })}
     <ol class="ab-notes">
       ${NOTES.map((t, i) => html`<li class="ab-note">
         <span class="ab-note__no num" aria-hidden="true">${String(i + 1).padStart(2, '0')}</span>
@@ -117,21 +116,21 @@ ${pageHero(ctx, {
 
 <section class="section section--panel" id="reach">
   <div class="wrap">
-    ${sectionHead({ no: '02', eyebrow: 'Delivery', title: 'Close to the yard, <em>and a long way from one.</em>', lede: 'Dependable site delivery to job sites down the road or across an ocean. Both are drawn here, because both are the job.' })}
+    ${sectionHead({ no: '02', eyebrow: 'Delivery', title: 'Close to the yard, <em>and&nbsp;a&nbsp;long way from one.</em>', lede: 'Dependable site delivery to job sites down the road or across an ocean.' })}
     ${latRule({ highlight: [47.4, 71.3], note: 'The reach of the three yards: Kent to Utqiaġvik' })}
     <div class="ab-reach">
       <article class="ab-way">
         <figure class="dwg ab-dwg" data-reveal>
-          <p class="dwg__bar label"><span>Dwg S-06</span><span>Past the curb</span><span class="dwg__nts">Typical</span></p>
+          <p class="dwg__bar label"><span>Job-site delivery</span><span class="dwg__nts">Typical</span></p>
           <div class="dwg__canvas">${drawing('svc-delivery', { id: 'ab' })}</div>
         </figure>
         <h3 class="h3">Down the road.</h3>
-        <p>Boom trucks and truck-mounted Moffett forklifts set materials where the crew needs them, not at the curb.</p>
+        <p>Job-site delivery by boom truck and truck-mounted Moffett forklift.</p>
         <a class="link" href="${ctx.u('pacific-northwest/')}">The Kent yard ${icon('arrow', { size: 14 })}</a>
       </article>
       <article class="ab-way">
         <figure class="dwg ab-dwg" data-reveal>
-          <p class="dwg__bar label"><span>Dwg S-04</span><span>Every hand-off</span><span class="dwg__nts">Typical</span></p>
+          <p class="dwg__bar label"><span>Every handoff</span><span class="dwg__nts">Typical</span></p>
           <div class="dwg__canvas">${drawing('svc-shipping', { id: 'ab' })}</div>
         </figure>
         <h3 class="h3">Across an ocean.</h3>
@@ -144,26 +143,26 @@ ${pageHero(ctx, {
 
 <section class="section" id="mission">
   <div class="wrap">
-    ${sectionHead({ no: '03', eyebrow: 'Our mission', title: 'What we promise, <em>and what backs it up.</em>' })}
+    ${sectionHead({ no: '03', eyebrow: 'Our mission', title: 'What we <em>set&nbsp;out to do.</em>' })}
     <div class="ab-spec">
       ${CLAUSES.map((c, i) => html`<div class="ab-spec__row">
         <p class="ab-spec__no num" aria-hidden="true">1.${i + 1}</p>
         <p class="ab-spec__claim">${c.claim}</p>
         <p class="ab-spec__proof">${c.proof} <a class="link" href="${ctx.u(c.link[0])}">${c.link[1]} ${icon('arrow', { size: 14 })}</a></p>
       </div>`)}
-      <p class="ab-spec__result">So you can buy with confidence that you are getting the best products at the best prices.</p>
+      <p class="ab-spec__result">The aim: that you buy with confidence, knowing you are getting the best products at the best prices.</p>
     </div>
   </div>
 </section>
 
 <section class="section section--panel" id="yards">
   <div class="wrap">
-    ${sectionHead({ no: '04', eyebrow: 'Talk to us', title: 'Give us a call, email <em>or stop by.</em>', lede: 'Our friendly, knowledgeable sales staff is here to help. Call the yard nearest the job.', action: html`<a class="link" href="${ctx.u('locations/')}">Addresses, fax &amp; directions ${icon('arrow', { size: 16 })}</a>` })}
+    ${sectionHead({ no: '04', eyebrow: 'Talk to us', title: '<em>Give us a call,</em> email or stop by.', lede: 'Our friendly, knowledgeable sales staff is here to help. Call the yard nearest the job.', action: html`<a class="link" href="${ctx.u('locations/')}">Addresses, fax &amp; directions ${icon('arrow', { size: 16 })}</a>` })}
     ${yardStrip(ctx)}
   </div>
 </section>
 
-${quoteBand(ctx, { no: '05', eyebrow: 'Start here', title: 'Try us on <em>the next job.</em>', body: 'Send plans or a materials list and we will build the take-off and quote it. Not ready to send anything? Call the yard nearest the job.' })}
+${quoteBand(ctx, { no: '05', eyebrow: 'Start here', title: 'Try us on <em>the&nbsp;next job.</em>', body: 'Send plans or a materials list and we will help with the take-off and quote the package. Not ready to send anything? Call the yard nearest the job.' })}
 `,
   }),
 };
@@ -171,7 +170,7 @@ ${quoteBand(ctx, { no: '05', eyebrow: 'Start here', title: 'Try us on <em>the ne
 // ---------- Not found ----------
 // GitHub Pages serves 404.html from any depth, so every link is written from the site root it was built for.
 const INDEX = [
-  ['', 'Home', 'Start here: the dispatch board and the manifest'],
+  ['', 'Home', 'Start here: the three yards and the product lines'],
   ['products/', 'Products', 'Nine lines, from framing lumber to fasteners'],
   ['services/', 'Services', 'Take-offs, design, crating, shipping and delivery'],
   ['alaska/', 'Alaska delivery', 'Road, water or air, anywhere in Alaska'],
@@ -193,7 +192,7 @@ const leftOnTheDock = () => {
   const water = P([seg(16, waterY, 468, waterY), seg(36, waterY + 10, 120, waterY + 10), seg(186, waterY + 10, 300, waterY + 10), seg(340, waterY + 10, 452, waterY + 10), seg(84, waterY + 20, 200, waterY + 20), seg(260, waterY + 20, 400, waterY + 20)].join(''), 'dw-t');
   const obj = dock + unit + tug(290) + barge(342) + water;
   const ann = dimH(204, 290, 164, 118, 'MISSED IT BY THIS MUCH') + note(108, 90, 'THIS PAGE', [118, 124], 'end') + label(409, 192, 'BARGE', 'dw-nt') + label(110, 284, 'DOCK', 'dw-nt');
-  return raw(`<svg class="dw" viewBox="0 44 480 256" role="img" aria-labelledby="nf-dock-t"><title id="nf-dock-t">One banded unit labelled this page, left behind on a dock while a tug and a loaded barge pull away. The gap between them is dimensioned: missed it by this much.</title><g class="dw-obj">${raw(obj)}</g><g class="dw-ann">${raw(ann)}</g></svg>`);
+  return raw(`<svg class="dw" viewBox="0 44 480 256" role="img" aria-labelledby="nf-dock-t"><title id="nf-dock-t">One unit labelled this page, left behind on a dock while a tug and a loaded barge pull away. The gap between them is dimensioned: missed it by this much.</title><g class="dw-obj">${raw(obj)}</g><g class="dw-ann">${raw(ann)}</g></svg>`);
 };
 
 const notFound = {
@@ -210,16 +209,16 @@ ${pageHero(abs, {
   sheet: 'Page not found',
   meta: 'Error 404',
   title: 'This page <em>missed the barge.</em>',
-  lede: 'The page you were after isn’t here. It may have moved when we rebuilt the site. Everything else is still on the sheet below.',
+  lede: 'The page you were after isn’t here. It may have moved when we rebuilt the site. Try one of the pages below.',
   actions: html`<a class="btn" href="${abs.u('')}">Go to the home page ${icon('arrow', { size: 18 })}</a><a class="btn btn--line" href="${abs.u('products/')}">Browse products</a>`,
   media: html`<figure class="dwg phero__media nf-dwg">
-    <p class="dwg__bar label"><span>Dwg 404</span><span>Left on the dock</span><span class="dwg__nts">Not to scale</span></p>
+    <p class="dwg__bar label"><span>Left on the dock</span><span class="dwg__nts">Not to scale</span></p>
     <div class="dwg__canvas">${leftOnTheDock()}</div>
   </figure>`,
 })}
 <section class="section" id="sheets">
   <div class="wrap">
-    ${sectionHead({ no: '01', eyebrow: 'Sheet index', title: 'The sheets that <em>are in this set.</em>' })}
+    ${sectionHead({ no: '01', eyebrow: 'Pages', title: 'Try one of <em>these pages.</em>' })}
     <ol class="nf-index">
       ${INDEX.map(([href, name, what], i) => html`<li><a href="${abs.u(href)}"><span class="num">${String(i + 1).padStart(2, '0')}</span><b>${name}</b><small>${what}</small>${icon('arrow', { size: 16 })}</a></li>`)}
     </ol>
@@ -227,7 +226,7 @@ ${pageHero(abs, {
 </section>
 <section class="section section--panel" id="yards">
   <div class="wrap">
-    ${sectionHead({ no: '02', eyebrow: 'Who to call', title: 'Or skip the website. <em>Call a yard.</em>', lede: 'Our friendly, knowledgeable sales staff is here to help.', action: html`<a class="btn" href="${abs.u('quote/')}">Request a quote ${icon('arrow', { size: 18 })}</a>` })}
+    ${sectionHead({ no: '02', eyebrow: 'Who to call', title: 'Or skip the website. <em>Call&nbsp;a yard.</em>', lede: 'Our friendly, knowledgeable sales staff is here to help.', action: html`<a class="btn" href="${abs.u('quote/')}">Request a quote ${icon('arrow', { size: 18 })}</a>` })}
     ${yardStrip(abs)}
   </div>
 </section>`,

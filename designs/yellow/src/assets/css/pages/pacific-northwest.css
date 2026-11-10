@@ -48,18 +48,9 @@
   .js .pn-arch[data-reveal] .pn-fork { transform: translateY(46px); transition: transform 1s var(--spring) .3s; }
   .js .pn-arch[data-reveal].is-in .pn-boom, .js .pn-arch[data-reveal].is-in .pn-fork { transform: none; }
 }
-/* The road runs off both sides of the page; the truck drives along it as the page scrolls. */
+/* The road runs off both sides of the page. */
 .pn-road { grid-area: road; position: relative; height: clamp(46px, 5vw, 72px); width: 100vw; margin-left: calc(50% - 50vw); background: var(--black-2); border-block: var(--line) solid var(--black-3); }
 .pn-road::after { content: ''; position: absolute; left: 0; right: 0; top: 50%; height: 4px; margin-top: -2px; background: repeating-linear-gradient(90deg, var(--yellow) 0 clamp(26px, 3vw, 44px), transparent 0 clamp(52px, 6vw, 88px)); }
-.pn-road__truck { position: absolute; z-index: 2; left: 12%; bottom: 62%; width: clamp(64px, 8vw, 118px); color: var(--paper); }
-.pn-road__truck svg { width: 100%; height: auto; fill: currentColor; }
-@supports (animation-timeline: view()) {
-  @media (prefers-reduced-motion: no-preference) {
-    .pn-road__truck { left: 0; animation: pn-drive linear both; animation-timeline: view(); animation-range: cover 10% cover 90%; }
-    html[data-motion="off"] .pn-road__truck { left: 12%; animation: none; }
-  }
-}
-@keyframes pn-drive { from { transform: translateX(-14vw); } to { transform: translateX(102vw); } }
 .pn-rig { padding-top: clamp(1.4rem, 2.6vw, 2.25rem); }
 .pn-rig__name { margin-bottom: .55rem; font-size: clamp(1.5rem, 1.1rem + 1.9vw, 3rem); line-height: .94; font-weight: 900; font-stretch: var(--wide); letter-spacing: -.024em; text-transform: uppercase; color: var(--yellow); }
 .pn-rig p { margin: 0; max-width: 42ch; color: var(--paper); font-size: clamp(1rem, .95rem + .3vw, 1.2rem); line-height: 1.42; }
@@ -134,7 +125,7 @@
 .pn-note { margin: 1.2rem 0 0; font-size: .92rem; font-weight: 600; color: var(--umber); }
 .pn-north__fig { position: relative; margin: 0; justify-self: center; width: min(100%, 300px); align-self: end; --step: clamp(16px, 2.2vw, 30px); --w: clamp(8px, 1vw, 14px); }
 .pn-north__win { aspect-ratio: 4 / 5.4; }
-.pn-tape { position: relative; align-self: stretch; min-height: clamp(460px, 44vw, 660px); --track: clamp(52px, 4.6vw, 68px); }
+.pn-tape { position: relative; container-type: inline-size; align-self: stretch; min-height: clamp(460px, 44vw, 660px); --track: clamp(52px, 4.6vw, 68px); }
 .pn-tape__track { position: absolute; left: 0; top: calc(var(--section) * -1); bottom: 0; width: var(--track); background: repeating-linear-gradient(0deg, var(--black) 0 2px, transparent 2px calc(100% / 26)) 0 100% / 30% 100% no-repeat, var(--white); border-inline: var(--line) solid var(--black); }
 .pn-tape__fill { position: absolute; left: 30%; right: 0; bottom: 0; top: 0; background: var(--black); transform-origin: 50% 100%; }
 @supports (animation-timeline: view()) {
@@ -151,6 +142,12 @@
 .pn-stop i { font-style: normal; font-size: clamp(.75rem, .58rem + .2vw, .8rem); font-weight: 700; }
 .pn-stop--yard b { background: var(--black); color: var(--yellow); }
 .pn-stop--start b { font-size: clamp(.8rem, .62rem + .5vw, 1.1rem); }
+/* A narrow column, or a small phone: the figure goes under its pill, so the row is only as wide as the pill. */
+@container (max-width: 17.25rem) {
+  .pn-stop { flex-direction: column; align-items: flex-start; gap: .15rem; }
+  .pn-stop::before { top: .85rem; }
+  .pn-stop i { padding-left: .85em; line-height: 1.1; }
+}
 @media (max-width: 899px) {
   .pn-north__grid { grid-template-columns: minmax(0, .82fr) minmax(0, 1.18fr); grid-template-areas: "copy copy" "fig tape"; gap: 1.5rem .85rem; }
   .pn-north__copy { grid-area: copy; padding-bottom: 2.25rem; }
@@ -159,6 +156,12 @@
   .pn-stop { gap: .35rem; padding-left: 10px; } .pn-stop::before { width: 10px; }
   .pn-stop b { font-size: .75rem; padding: .4em .7em .36em; } .pn-stop i { font-size: .75rem; }
   .pn-tape__track { top: 0; }
+}
+/* Under 120px wide the window cannot hold its label. */
+@media (max-width: 359px) { .pn-north__win .wcap { display: none; } }
+/* The longest name still has to clear the edge of the narrowest phone. */
+@container (max-width: 11.5rem) {
+  .pn-stop b { padding-inline: .5em; letter-spacing: 0; font-stretch: 112%; }
 }
 
 /* ---------- The Kent yard: one wide freight tag ---------- */

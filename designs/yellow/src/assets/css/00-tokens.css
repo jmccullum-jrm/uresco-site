@@ -44,15 +44,15 @@
   --paper: #F7F3EA;         /* off-white reading ground */
   --paper-2: #ECE6D8;       /* raised surface and rules on paper */
   --white: #FFFDF7;
-  --stone: #57524A;         /* quiet text on paper (7.2:1) */
-  --ash: #BDB7AA;           /* quiet text on black (9.6:1) */
-  --umber: #3A2C00;         /* quiet text on yellow (8.6:1) */
+  --stone: #57524A;         /* quiet text on paper (7.0:1) */
+  --ash: #BDB7AA;           /* quiet text on black (9.7:1) */
+  --umber: #3A2C00;         /* quiet text on yellow (7.6:1) */
   --open: #7BE0A0;          /* "open now" dot */
   --error: #B3261E;
 
   /* Type */
   --font: 'Archivo', 'Archivo Fallback', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --wide: 125%;             /* display width axis; eased to 112% on small phones */
+  --wide: 125%;             /* display width axis; eased to 116% on small phones */
   --t-d1: clamp(2.7rem, 1.1rem + 6.6vw, 7.25rem);   /* page headline */
   --t-d2: clamp(2.05rem, 1.1rem + 4.1vw, 5rem);     /* section headline */
   --t-d3: clamp(1.3rem, 1rem + 1.3vw, 2.1rem);      /* the failure notice on a form */
@@ -88,7 +88,7 @@
   --util: 0px; --mast: 64px; --bar: 60px;
   color-scheme: light;
 }
-@media (min-width: 1000px) { :root { --util: 38px; --mast: 76px; --bar: 0px; } }
-@media (max-width: 420px) { :root { --wide: 116%; } }
+@media (min-width: 62.5em) { :root { --util: 38px; --mast: 76px; --bar: 0px; } }
+@media (max-width: 26.25em) { :root { --wide: 116%; } }
 /* Very large screens get a wider column, so the poster grows with them. */
-@media (min-width: 1900px) { :root { --wrap: 1640px; } }
+@media (min-width: 118.75em) { :root { --wrap: 1640px; } }

@@ -29,15 +29,15 @@ export default {
     return layout(ctx, {
       title: 'Projects',
       description: 'The kinds of work Uresco supplies, sector by sector: village housing packages, schools and clinics, commercial and multifamily framing, concrete work, custom homes and export packages.',
-      preload: [preloadFor(ctx, 'institutional')],
+      preload: [preloadFor(ctx, 'custom-home')],
       body: html`
 ${pageHero(ctx, {
   sheet: 'Projects',
   meta: 'Kinds of work, not a job list',
-  title: 'What the materials <em>become.</em>',
-  lede: 'For more than 35 years we have supplied institutional, commercial and residential builders across the Pacific Northwest and all of Alaska. This sheet schedules the kinds of work, and what typically ships for each.',
-  photoKey: 'institutional',
-  caption: 'Roof trusses and wall sheathing going up on a single-story frame. A stock photograph, not a Uresco job.',
+  title: 'The kinds of work <em>we&nbsp;supply.</em>',
+  lede: 'For more than 35 years we have supplied institutional, commercial and residential builders across the Pacific Northwest and all of Alaska. These are the kinds of work, and what typically ships for each.',
+  photoKey: 'custom-home',
+  caption: 'Looking up through new wood framing and trusses. A stock photograph, not a Uresco job.',
   actions: html`<a class="btn" href="${ctx.u('quote/')}">Quote a job like these ${icon('arrow', { size: 18 })}</a><a class="btn btn--line" href="${ctx.u('locations/')}" data-open="call-sheet">${icon('phone', { size: 18 })} Call a yard</a>`,
   below: html`
   <nav class="pj-index" aria-label="Sectors on this page">
@@ -65,7 +65,7 @@ ${pageHero(ctx, {
             ${groups.map((g) => html`<button type="button" class="pj-filter__btn" data-filter="${g.sector}" aria-pressed="false"><span class="bub bub--sm num" aria-hidden="true">${g.letter}</span><span>${g.sector}</span><span class="num">${two(g.items.length)}</span></button>`)}
           </div>
           <p class="pj-status" data-pj-status role="status"><span class="label">Showing</span> <span data-pj-count>All ${all.length} kinds of work</span></p>
-          <p class="pj-side__note">These are kinds of work, not a list of jobs. Every package is taken off from your own plans.</p>
+          <p class="pj-side__note">These are kinds of work, not a list of jobs. Yours will follow your plans.</p>
         </div>
       </aside>
       <div class="pj-sched">
@@ -107,7 +107,7 @@ ${pageHero(ctx, {
 
 <section class="section section--panel" id="lines">
   <div class="wrap">
-    ${sectionHead({ no: '02', eyebrow: 'Load-outs', title: 'The same nine lines, <em>loaded differently.</em>', lede: 'Every kind of work draws on the same manifest. This is which product lines are named in each typical package; yours will follow your plans.', action: html`<a class="link" href="${ctx.u('products/')}">All products ${icon('arrow', { size: 16 })}</a>` })}
+    ${sectionHead({ no: '02', eyebrow: 'Load-outs', title: 'The same nine lines, <em>loaded differently.</em>', lede: 'This is which product lines are named in each typical package. Yours will follow your plans.', action: html`<a class="link" href="${ctx.u('products/')}">All products ${icon('arrow', { size: 16 })}</a>` })}
     <div class="pj-mx" data-reveal>
       <div class="pj-mx__head">
         <span class="label" aria-hidden="true">Mark · Work</span>
@@ -131,7 +131,7 @@ ${pageHero(ctx, {
   </div>
 </section>
 
-${quoteBand(ctx, { no: '03', eyebrow: 'Start a job', title: 'Have a job <em>like one of these?</em>', body: 'Send plans or a list. We will build the take-off, quote the package and work out the freight with you.' })}
+${quoteBand(ctx, { no: '03', eyebrow: 'Start a job', title: 'Have a job <em>like one of these?</em>', body: 'Send plans or a list. We will help with the take-off, quote the package and work out the freight with you.' })}
 `,
     });
   },

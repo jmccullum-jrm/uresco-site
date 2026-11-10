@@ -15,11 +15,9 @@ export const photo = (key) => {
 };
 
 // "Which yard should I call?" — the guidance from the old site, used on the board, the call sheet and the yard cards.
-export const YARD_FOR = {
-  kent: 'Puget Sound & the Pacific Northwest',
-  anchorage: 'Southcentral Alaska & remote sites',
-  fairbanks: 'The Interior & points north',
-};
+export const YARD_FOR = Object.fromEntries(LOCATIONS.map((l) => [l.id, l.callFor]));
+// The highlighter must not strand a short word at a line end, so a leading "the", "a", "and"… is bound to the word after it.
+export const tieEm = (t) => String(t).replace(/<em>((?:(?:a|an|and|the|of|or|to|in|on|at|by|for|our)\s+)+)/gi, (m, words) => `<em>${words.trim().split(/\s+/).join('&nbsp;')}&nbsp;`);
 export const lineNo = (i) => String(i + 1).padStart(3, '0');
 export const two = (i) => String(i + 1).padStart(2, '0');
 // A product's name without the trademark sign. The sign is kept on the product pages, which are the full list, and nowhere else.
@@ -27,8 +25,8 @@ const plain = (s) => s.replace(/[®™]/g, '');
 export const itemName = (s) => plain(s).replace(/\s*\(.*?\)/, '');
 
 // Quote links carry what the visitor was looking at: the form starts from product, yard and location.
-export const quoteHref = (ctx, { product, yard, location, hash = '' } = {}) => {
-  const q = Object.entries({ product, yard, location }).filter(([, v]) => v).map(([k, v]) => `${k}=${encodeURIComponent(v)}`).join('&');
+export const quoteHref = (ctx, { product, yard, location, delivery, hash = '' } = {}) => {
+  const q = Object.entries({ product, yard, location, delivery }).filter(([, v]) => v).map(([k, v]) => `${k}=${encodeURIComponent(v)}`).join('&');
   return `${ctx.u('quote/')}${q ? '?' + q : ''}${hash}`;
 };
 
@@ -61,7 +59,7 @@ export const sectionHead = ({ no, eyebrow, title, lede, action, meta, level = 2 
       ${meta ? html`<p class="label shead__meta">${meta}</p>` : ''}
     </div>
     <div class="shead__grid">
-      ${raw(`<h${level} class="h2">`)}${raw(title)}${raw(`</h${level}>`)}
+      ${raw(`<h${level} class="h2">`)}${raw(tieEm(title))}${raw(`</h${level}>`)}
       ${lede || action ? html`<div class="shead__aside">
         ${lede ? html`<p class="lede">${lede}</p>` : ''}
         ${action || ''}
@@ -76,7 +74,7 @@ export const plate = (ctx, key, { fig = '1', caption, more = '', cls = '', sizes
   const p = photo(key);
   return html`
   <figure class="plate ${cls}">
-    <div class="plate__img">${picture(ctx, key, { sizes, eager, alt })}</div>
+    <div class="plate__frame"><div class="plate__img">${picture(ctx, key, { sizes, eager, alt })}</div></div>
     <figcaption class="plate__cap"><span class="label label--blue">Fig. ${fig}</span><span>${caption || p.alt}${more ? html` <span class="plate__more">${more}</span>` : ''}</span>${p.credit && !/Uresco/.test(p.credit) ? html`<span class="plate__credit">Photo: ${p.credit}</span>` : ''}</figcaption>
   </figure>`;
 };
@@ -102,7 +100,7 @@ export const latRule = ({ highlight, note = '' } = {}) => html`
   </div>
   ${note ? html`<p class="latrule__note">${note}</p>` : ''}`;
 
-// ---------- Dispatch board ----------
+// ---------- The board ----------
 // Three yards on a departures board: local time (hours and minutes), open or closed, and the number. Every row is a tel: link.
 // Characters are set in fixed cells so the script can write them; without the script they are simply the text.
 const cells = (s) => raw([...s].map((ch) => `<span class="fl${ch === ' ' ? ' fl--sp' : ''}">${ch === ' ' ? '&nbsp;' : ch}</span>`).join(''));
@@ -110,7 +108,7 @@ export const TZ_ABBR = { 'America/Los_Angeles': 'PT', 'America/Anchorage': 'AKT'
 export const board = (ctx, { id = 'board' } = {}) => html`
   <section class="board" aria-labelledby="${id}-t">
     <div class="board__head">
-      <h2 class="board__title" id="${id}-t">Dispatch <span>Three yards, one team</span></h2>
+      <h2 class="board__title" id="${id}-t">Call a yard <span>Three yards, one team</span></h2>
       <p class="board__live js-only" aria-hidden="true"><i></i>Live · local time at each yard</p>
     </div>
     <div class="board__cols" aria-hidden="true"><span>No.</span><span>Yard</span><span>Call this yard for</span><span>Local time</span><span>Status</span><span>Call</span></div>
@@ -120,7 +118,7 @@ export const board = (ctx, { id = 'board' } = {}) => html`
           <span class="board__no num" aria-hidden="true">${two(i)}</span>
           <span class="board__yard">${l.city}<small>, ${l.state}</small></span>
           <span class="board__for">${YARD_FOR[l.id]}</span>
-          <span class="board__clock js-only"><span class="board__time" data-clock="${l.hours.tz}" aria-hidden="true">${cells('--:--')}</span><abbr class="board__tz" title="${tzLabel(l)}">${TZ_ABBR[l.hours.tz]}</abbr></span>
+          <span class="board__clock js-only">${l.hours ? html`<span class="board__time" data-clock="${l.hours.tz}" aria-hidden="true">${cells('--:--')}</span><abbr class="board__tz" title="${tzLabel(l)}">${TZ_ABBR[l.hours.tz]}</abbr>` : ''}</span>
           <span class="board__status">${openStatus(l)}</span>
           <span class="board__num"><span class="sr-only">${l.phone}</span><span class="board__digits" data-flap aria-hidden="true">${cells(l.phone)}</span></span>
           <span class="board__go" aria-hidden="true">${icon('phone', { size: 18 })}</span>
@@ -141,13 +139,13 @@ export const manifest = (ctx, { id = 'mf' } = {}) => html`
         <span class="mline__no num">${lineNo(i)}</span>
         <span class="mline__glyph">${glyph(c.slug, { size: 36 })}</span>
         <h3 class="mline__name">${c.name}</h3>
-        <span class="mline__sum">${c.items.map(([name]) => itemName(name)).join(' · ')}</span>
+        <span class="mline__sum">${c.items.map(([name]) => plain(name)).join(' · ')}</span>
         <span class="mline__qty num">${String(c.items.length).padStart(2, '0')}<span class="sr-only"> items</span></span>
         <span class="mline__mark" aria-hidden="true"></span>
       </summary>
       <div class="mline__panel">
         <div class="dwg">
-          <p class="dwg__bar label"><span>Dwg ${lineNo(i)}</span><span>${c.short}</span><span class="dwg__nts">Typical · not to scale</span></p>
+          <p class="dwg__bar label"><span>${c.short}</span><span class="dwg__nts">Typical · not to scale</span></p>
           <div class="dwg__canvas">${drawing(c.slug, { id })}</div>
           <p class="dwg__note">Typical sizes shown. Ask your yard what is in stock.</p>
         </div>
@@ -163,7 +161,7 @@ export const manifest = (ctx, { id = 'mf' } = {}) => html`
     </details>`)}
     <a class="mline__ask" href="${ctx.u('quote/')}">
       <span class="mline__no num">+</span>
-      <span><b>Not on the list?</b> Tarps, poly, caulking, adhesives, house wraps and more. Ask your yard.</span>
+      <span><b>Not on the list?</b> We also carry a large variety of other building materials. Ask your yard.</span>
       ${icon('arrow', { size: 18 })}
     </a>
     <p class="brandline"><span class="label">Brands we carry</span>${BRANDS.map((b) => html`<span>${b}</span>`)}</p>
@@ -177,7 +175,7 @@ export const packingList = (ctx, { only, cls = '' } = {}) => html`
       <span class="plist__no num">${lineNo(CATEGORIES.indexOf(c))}</span>
       <span class="plist__glyph">${glyph(c.slug, { size: 40 })}</span>
       <span class="plist__name">${c.short}</span>
-      <span class="plist__items">${c.items.map(([n]) => itemName(n)).join(' · ')}</span>
+      <span class="plist__items">${c.items.map(([n]) => plain(n)).join(' · ')}</span>
       ${icon('arrow', { size: 16 })}
     </a></li>`)}
   </ol>`;
@@ -211,7 +209,7 @@ export const pageHero = (ctx, { sheet, meta, title, lede, photoKey, media = '', 
       <div class="phero__grid${photoKey || media ? '' : ' phero__grid--plain'}">
         <div class="phero__inner">
           ${pre}
-          <h1 class="display">${raw(title)}</h1>
+          <h1 class="display">${raw(tieEm(title))}</h1>
           ${lede ? html`<p class="lede phero__lede">${lede}</p>` : ''}
           ${actions ? html`<div class="actions">${actions}</div>` : ''}
           ${after}
@@ -223,15 +221,22 @@ export const pageHero = (ctx, { sheet, meta, title, lede, photoKey, media = '', 
   </section>`;
 
 // ---------- Take-off band (the quote call to action) ----------
-// A blank take-off sheet with the quantity column highlighted: the part Uresco fills in.
+// A blank take-off sheet with the quantity column highlighted: the column Uresco helps fill in. On a product line's page its rows are that line's items.
 // `product`, `yard` and `location` go on both buttons, so the form starts with what the visitor was looking at.
 const TAKEOFF = [['Dimensional lumber, studs & plates', 'EA'], ['I-joists, rim & beams', 'LF'], ['Wall & roof sheathing', 'SHT'], ['Hangers, ties & fasteners', 'BOX'], ['Windows & exterior doors', 'EA']];
-export const quoteBand = (ctx, { title = 'Send the plans. <em>We’ll fill in the quantities.</em>', body = 'Upload drawings or a list and we build the take-off: every stick, panel and connector, ready to quote.', eyebrow = 'Estimates & take-offs', no, product, yard, location } = {}) => html`
+const sheetRows = (product) => {
+  const c = product && CATEGORIES.find((x) => x.name === product);
+  if (!c) return TAKEOFF;
+  const rows = c.items.slice(0, TAKEOFF.length).map(([n]) => [itemName(n), '']);
+  while (rows.length < TAKEOFF.length) rows.push(['', '']);
+  return rows;
+};
+export const quoteBand = (ctx, { title = 'Send the plans. <em>We’ll help with the take-off.</em>', body = 'Send drawings or a list. We will help with the take-off and the estimate.', eyebrow = 'Estimates & take-offs', no, product, yard, location } = {}) => html`
   <section class="takeoff">
     <div class="wrap takeoff__grid">
       <div class="takeoff__copy">
         <div class="shead__bar">${no ? html`<span class="bub num" aria-hidden="true">${no}</span>` : ''}<p class="label shead__label">${eyebrow}</p></div>
-        <h2 class="h2">${raw(title)}</h2>
+        <h2 class="h2">${raw(tieEm(title))}</h2>
         <p class="lede">${body}</p>
         <div class="actions">
           <a class="btn" href="${quoteHref(ctx, { product, yard, location })}">Request a quote ${icon('arrow', { size: 18 })}</a>
@@ -241,9 +246,9 @@ export const quoteBand = (ctx, { title = 'Send the plans. <em>We’ll fill in th
       <div class="tsheet" aria-hidden="true" data-reveal>
         <div class="tsheet__head"><b>Material take-off</b><span>Job <i></i></span><span>Ship to <i></i></span></div>
         <div class="tsheet__cols"><span>Ln</span><span>Description</span><span>Unit</span><span>Qty</span></div>
-        ${TAKEOFF.map(([d, u], i) => html`<div class="tsheet__row"><span>${two(i)}</span><span>${d}</span><span>${u}</span><span class="tsheet__qty"></span></div>`)}
+        ${sheetRows(product).map(([d, u], i) => html`<div class="tsheet__row"><span>${two(i)}</span><span>${d || raw('&nbsp;')}</span><span>${u}</span><span class="tsheet__qty"></span></div>`)}
         <div class="tsheet__row tsheet__row--more"><span>+</span><span>and every line after it</span><span></span><span class="tsheet__qty"></span></div>
-        <p class="tsheet__note"><span>We fill in this column</span></p>
+        <p class="tsheet__note"><span>We help fill in this column</span></p>
       </div>
     </div>
   </section>`;
@@ -316,6 +321,12 @@ const LANES = [
   { id: 'C', cls: 'barge', name: 'Barge', note: 'Western and Arctic coast, in the ice-free season' },
   { id: 'D', cls: 'air', name: 'Air freight', note: 'Communities off the road system, year-round' },
 ];
+// Kent is inland, so the ocean lane stops short of its marker, out in Puget Sound: the first curve of the lane is cut at `t`.
+export const trimLane = (d, t = 0.38) => d.replace(/^M([\d.]+),([\d.]+)Q([\d.]+),([\d.]+) ([\d.]+),([\d.]+)/, (_, ...v) => {
+  const [x0, y0, cx, cy, x1, y1] = v.slice(0, 6).map(Number);
+  const at = (a, b, c) => (1 - t) ** 2 * a + 2 * t * (1 - t) * b + t ** 2 * c;
+  return `M${at(x0, cx, x1).toFixed(1)},${at(y0, cy, y1).toFixed(1)}Q${((1 - t) * cx + t * x1).toFixed(1)},${((1 - t) * cy + t * y1).toFixed(1)} ${x1},${y1}`;
+});
 const KEY_TOWNS = ['Utqiaġvik', 'Nome', 'Bethel', 'Unalaska', 'Sitka', 'Deadhorse'];
 export const townKey = (name) => name.normalize('NFD').replace(/[^a-zA-Z]/g, '').toLowerCase();
 
@@ -332,7 +343,7 @@ export const deliveryMap = (ctx, { compact = false, action = '' } = {}) => {
       <svg class="pmap__lanes" viewBox="0 0 ${W} ${H}" aria-hidden="true" focusable="false">
         ${raw(masked(MAP.air, 'air', `pm${u}d`))}
         ${raw(masked(MAP.barge + MAP.barge2, 'barge', `pm${u}c`))}
-        ${raw(masked(MAP.sea, 'sea', `pm${u}a`))}
+        ${raw(masked(trimLane(MAP.sea), 'sea', `pm${u}a`))}
         <path class="pm-lane pm-lane--road" d="${MAP.road}" pathLength="1"/>
         ${raw(towns.map((t) => `<circle class="pm-town pm-town--${townKey(t.name)}" cx="${t.xy[0]}" cy="${t.xy[1]}" r="4.5"/>`).join(''))}
         ${raw(MAP.yards.map((y) => `<g class="pm-yard"><circle cx="${y.xy[0]}" cy="${y.xy[1]}" r="13"/><circle class="pm-yard__dot" cx="${y.xy[0]}" cy="${y.xy[1]}" r="4.5"/></g>`).join(''))}

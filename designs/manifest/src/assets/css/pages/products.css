@@ -22,15 +22,15 @@
   .pidx-toc a:hover .label { color: var(--ink); }
   .pidx-toc a:hover .pidx-toc__go { transform: rotate(90deg) translateX(3px); }
 }
-@media (max-width: 1199px) {
+@media (max-width: 74.9375em) {
   .pidx-toc .bub { display: none; }
   .pidx-toc a { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "n go" "name name"; row-gap: .3rem; padding: .7rem .8rem .75rem; }
   .pidx-toc__n { letter-spacing: .04em; }
   .pidx-toc__go { width: 14px; height: 14px; }
 }
-@media (min-width: 1000px) and (max-width: 1199px) { .pidx-hero .phero__grid { grid-template-columns: minmax(0, 6fr) minmax(0, 6fr); column-gap: var(--gap); } }
-@media (max-width: 1199px) { .pidx-key .dwg__bar span:nth-child(2) { display: none; } }
-@media (max-width: 999px) {
+@media (min-width: 62.5em) and (max-width: 74.9375em) { .pidx-hero .phero__grid { grid-template-columns: minmax(0, 6fr) minmax(0, 6fr); column-gap: var(--gap); } }
+@media (max-width: 74.9375em) { .pidx-key .dwg__bar span:nth-child(2) { display: none; } }
+@media (max-width: 62.4375em) {
   /* Under 1000 px the list comes straight after this block, so the first way in would be a jump of a few pixels. */
   .pidx-hero .phero__grid { row-gap: 0; padding-bottom: 0; }
   .pidx-hero { padding-bottom: clamp(1.75rem, 5vw, 2.5rem); }
@@ -39,7 +39,7 @@
   .pidx-toc li:nth-child(2) { border-left: 0; }
   .pidx-toc ol { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
-@media (max-width: 374px) {
+@media (max-width: 23.375em) {
   .pidx-toc a { padding-inline: .55rem; }
   .pidx-toc__name { font-size: .9375rem; }
   .pidx-toc__go { display: none; }
@@ -50,8 +50,8 @@
 .pidx-key { margin: 0; min-width: 0; }
 .pidx-key__cap { padding: .6rem .9rem .65rem; border-top: 1px solid var(--ink); color: var(--ink-3); }
 .pidx-key--hero .pidx-key__cap { display: none; }
-@media (max-width: 999px) { .pidx-key--hero { display: none; } .pidx-key--after { margin-top: clamp(2rem, 7vw, 3.5rem); } }
-@media (min-width: 1000px) { .pidx-key--after { display: none; } }
+@media (max-width: 62.4375em) { .pidx-key--hero { display: none; } .pidx-key--after { margin-top: clamp(2rem, 7vw, 3.5rem); } }
+@media (min-width: 62.5em) { .pidx-key--after { display: none; } }
 .pidx-key__sheet { position: relative; }
 .pidx-key__tag { position: absolute; display: grid; place-items: center; width: 26px; height: 26px; transform: translate(-50%, -50%); border: var(--line) solid var(--blue); border-radius: 50%; background: var(--sheet); color: var(--blue); font-size: .75rem; font-weight: 600; line-height: 1; text-decoration: none; }
 .pidx-key__tag::after { content: ''; position: absolute; inset: -9px; border-radius: 50%; }  /* a 44px target */
@@ -74,8 +74,8 @@
   main:has(.pidx-line[data-line="4"]:hover) .kx-p4, main:has(.pidx-line[data-line="5"]:hover) .kx-p5, main:has(.pidx-line[data-line="6"]:hover) .kx-p6,
   main:has(.pidx-line[data-line="7"]:hover) .kx-p7, main:has(.pidx-line[data-line="8"]:hover) .kx-p8, main:has(.pidx-line[data-line="9"]:hover) .kx-p9 { fill: var(--yellow); }
 }
-@media (max-width: 399px) { .pidx-key__tag { width: 24px; height: 24px; } .pidx-key__tag::after { inset: -8px; } }
-@media (max-width: 599px) {
+@media (max-width: 24.9375em) { .pidx-key__tag { width: 24px; height: 24px; } .pidx-key__tag::after { inset: -8px; } }
+@media (max-width: 37.4375em) {
   .pidx-key { margin-inline: calc(var(--margin) * -1); border-inline: 0; }
   .pidx-key .dwg__bar, .pidx-key__cap { padding-inline: var(--margin); }
 }
@@ -149,7 +149,7 @@ html:not(.js) .pidx-find { display: none; }
   .pidx-tels a:hover::before, .pln-tels a:hover::before { transform: scaleX(1); }
   .pidx-tels a:hover small, .pidx-tels a:hover .status, .pln-tels a:hover small, .pln-tels a:hover .status { color: var(--ink); }
 }
-@media (max-width: 1099px) {
+@media (max-width: 68.6875em) {
   /* Brands move under the name (the pair stays centred in the row); the list keeps its column. */
   .pidx-sec { --pidx-grid: 3.25rem 44px minmax(0, 5fr) minmax(0, 6fr) 1.75rem; }
   .pidx-cols span:last-child { display: none; }
@@ -161,7 +161,7 @@ html:not(.js) .pidx-find { display: none; }
   .pidx-ask .pidx-tels { grid-column: 2; }
   .pidx-tels li:first-child a { border-left: 0; padding-left: 0; }
 }
-@media (max-width: 859px) {
+@media (max-width: 53.6875em) {
   /* Tablet and phone: the glyph in the margin; number and brand, then the name, then what is on the line in one run of text. */
   .pidx-cols { display: none; }
   .pidx-line { grid-template-columns: 44px auto minmax(0, 1fr) 1.1rem; grid-template-areas: "glyph no brands go" "glyph name name go" "glyph items items items"; grid-template-rows: auto auto auto; column-gap: .9rem; row-gap: .2rem; align-items: start; min-height: 0; padding-block: 1rem 1.1rem; }
@@ -182,7 +182,7 @@ html:not(.js) .pidx-find { display: none; }
   .pidx-ask > .pidx-line__no { display: none; }
   .pidx-ask .pidx-tels { grid-column: 1; }
 }
-@media (max-width: 699px) {
+@media (max-width: 43.6875em) {
   .pidx-bar .pidx-find { order: 3; flex-basis: 100%; margin-left: 0; height: 48px; }
   .pidx-ask { padding-block: 1.1rem 0; border-bottom: 0; }
   .pidx-ask .pidx-tels { grid-template-columns: minmax(0, 1fr); border-bottom: var(--line) solid var(--ink); }
@@ -190,7 +190,7 @@ html:not(.js) .pidx-find { display: none; }
   .pidx-tels li:first-child a { border-top: var(--hair) solid var(--ink); }
   .pidx-tels .num { font-size: 1.1875rem; }
 }
-@media (max-width: 419px) { .pidx-tels-city .status { flex-basis: 100%; } }
+@media (max-width: 26.1875em) { .pidx-tels-city .status { flex-basis: 100%; } }
 
 /* ---------- Index 02: by name ---------- */
 /* A book index: the letter in the margin, a dotted leader, the line number as the page reference. */
@@ -202,9 +202,10 @@ html:not(.js) .pidx-find { display: none; }
 .pidx-az__lead { flex: 1 1 1rem; min-width: 1rem; border-bottom: 1px dotted var(--ink-3); transform: translateY(-.25em); }
 .pidx-az__ref { font-size: .8125rem; font-weight: 600; letter-spacing: .02em; color: var(--blue); }
 @media (hover: hover) { .pidx-az a:hover::before { transform: scaleX(1); } .pidx-az a:hover .pidx-az__lead { border-bottom-color: var(--ink); } }
-@media (max-width: 1199px) { .pidx-az { columns: 3; } }
-@media (max-width: 859px) { .pidx-az { columns: 2; } }
-@media (max-width: 559px) {
+@media (max-width: 62.4375em), (pointer: coarse) { .pidx-az a { padding-block: .65rem; } }
+@media (max-width: 74.9375em) { .pidx-az { columns: 3; } }
+@media (max-width: 53.6875em) { .pidx-az { columns: 2; } }
+@media (max-width: 34.9375em) {
   .pidx-az { columns: 1; }
   .pidx-az__grp { grid-template-columns: 2.4rem minmax(0, 1fr); padding: .3rem 0 .45rem; }
   .pidx-az__ltr { padding-top: .6rem; }
@@ -223,8 +224,8 @@ html:not(.js) .pidx-find { display: none; }
 .pidx-brand__what b { display: block; color: var(--ink); font-weight: 600; }
 .pidx-brand__links { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: .5rem 1.5rem; margin: 0; }
 .pidx-brand__links .link { font-size: .8125rem; }
-@media (max-width: 999px), (pointer: coarse) { .pidx-brand__links .link { min-height: 40px; } }
-@media (max-width: 899px) {
+@media (max-width: 62.4375em), (pointer: coarse) { .pidx-brand__links .link { min-height: 40px; } }
+@media (max-width: 56.1875em) {
   .pidx-brands__cols { display: none; }
   .pidx-brand { grid-template-columns: minmax(0, 1fr); grid-template-areas: "name" "what" "links"; row-gap: .5rem; align-items: baseline; padding-block: 1.1rem 1.25rem; }
   .pidx-brand .pidx-line__no { display: none; }
@@ -241,13 +242,13 @@ html:not(.js) .pidx-find { display: none; }
 .pln-mark .num { font-size: clamp(1.75rem, 1.35rem + 1.3vw, 2.5rem); font-weight: 500; letter-spacing: -.05em; line-height: 1; }
 .pln-mark .label { padding-left: .85rem; border-left: 1px solid var(--rule-2); line-height: 2.2; }
 .pln-hero__dwg { margin: 0; min-width: 0; }
-@media (min-width: 1000px) {
+@media (min-width: 62.5em) {
   .pln-hero .phero__grid { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); column-gap: clamp(1.5rem, 3.2vw, 3.5rem); }
 }
-@media (min-width: 1000px) and (max-width: 1199px) {
+@media (min-width: 62.5em) and (max-width: 74.9375em) {
   .pln-hero .phero__grid { grid-template-columns: minmax(0, 6fr) minmax(0, 6fr); align-items: center; }
 }
-@media (max-width: 599px) {
+@media (max-width: 37.4375em) {
   .pln-hero__dwg { margin-inline: calc(var(--margin) * -1); border-inline: 0; }
   .pln-hero__dwg .dwg__bar { padding-inline: var(--margin); }
   .pln-hero__call { display: none; }
@@ -272,13 +273,13 @@ html:not(.js) .pidx-find { display: none; }
 .pln-rule__name { font-size: .8125rem; font-weight: 500; line-height: 1.25; letter-spacing: -.005em; color: var(--ink-2); }
 .pln-rule a[aria-current] .num, .pln-rule a[aria-current] .pln-rule__name { color: var(--ink); font-weight: 600; }
 @media (hover: hover) { .pln-rule a:hover::before { transform: none; } .pln-rule a:hover .num, .pln-rule a:hover .pln-rule__name { color: var(--ink); } }
-@media (max-width: 759px) {
+@media (max-width: 47.4375em) {
   .pln-rule__name { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
   .pln-rule a { padding: 1.55rem 0 .9rem; justify-items: start; }
   .pln-rule .num { letter-spacing: 0; }
 }
 /* A phone is too narrow for nine fingers on one rule: two rows of five, the last cell going back to the index. */
-@media (max-width: 599px) {
+@media (max-width: 37.4375em) {
   .pln-rule ol { grid-template-columns: repeat(5, minmax(0, 1fr)); }
   .pln-rule ol::before, .pln-rule ol::after { display: none; }
   .pln-rule__all { display: block; }
@@ -326,11 +327,11 @@ html:not(.js) .pidx-find { display: none; }
 .pln-tels-city .status { flex-basis: 100%; }
 @container (min-width: 27rem) { .pln-tels-city .status { flex-basis: auto; } }
 .pln-tels .num { font-size: 1.125rem; font-weight: 500; letter-spacing: -.01em; white-space: nowrap; }
-@media (max-width: 999px) {
+@media (max-width: 62.4375em) {
   .pln-body { grid-template-columns: minmax(0, 1fr); row-gap: var(--gap); }
   .pln-ask { position: static; }
 }
-@media (max-width: 699px) {
+@media (max-width: 43.6875em) {
   .pln-cols { display: none; }
   .pln-item { grid-template-columns: minmax(0, 1fr); row-gap: .3rem; }
   .pln-item__no { padding-left: 0; }
@@ -346,7 +347,7 @@ html:not(.js) .pidx-find { display: none; }
 .pln-seq .seq__step { padding-right: clamp(0rem, 3vw, 3rem); }
 
 /* ---------- Line 03: the rest of the load, then the lines either side ---------- */
-@media (max-width: 999px) {
+@media (max-width: 62.4375em) {
   .pln-also { grid-template-columns: minmax(0, 1fr); border-left: 0; }
   .pln-also a { border-right: 0; padding-inline: 0; }
   .pln-also a:hover, .pln-also a:focus-visible { background: none; }
@@ -366,7 +367,7 @@ html:not(.js) .pidx-find { display: none; }
   .pln-pager__cell:hover .pln-pager__back { transform: rotate(180deg) translateX(3px); }
   .pln-pager__cell--next:hover .i { transform: translateX(3px); }
 }
-@media (max-width: 599px) {
+@media (max-width: 37.4375em) {
   .pln-pager__cell { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto 1fr auto; grid-template-areas: "label" "name" "go"; row-gap: .35rem; padding: 1rem .75rem 1rem 0; }
   .pln-pager__cell--next { grid-template-columns: minmax(0, 1fr); grid-template-areas: "label" "name" "go"; padding: 1rem 0 1rem .75rem; }
   .pln-pager__cell .i { margin-top: .35rem; }
@@ -374,10 +375,16 @@ html:not(.js) .pidx-find { display: none; }
   .pln-pager__cell b { font-size: 1.0625rem; }
 }
 
-@media (max-width: 399px) { .pln-hero .crumbs li:first-child { display: none; } .pln-hero .crumbs li:nth-child(2)::before { content: none; } }
+@media (max-width: 24.9375em) { .pln-hero .crumbs li:first-child { display: none; } .pln-hero .crumbs li:nth-child(2)::before { content: none; } }
 
 /* ---------- Motion ---------- */
 @media (prefers-reduced-motion: no-preference) {
   html.js .pln-rule[data-reveal]:not(.is-in) ol::before { transform: scaleX(0); }
   .pln-rule ol::before { transition: transform var(--t-draw) linear; }
+}
+
+/* A phone has room for one thing in a drawing's bar, and "typical, not to scale" is the one it must keep. */
+@media (max-width: 34.9375em) {
+  .pln-hero__dwg .dwg__bar span:first-child, .pidx-key .dwg__bar span:first-child { display: none; }
+  .pln-hero__dwg .dwg__bar .dwg__nts, .pidx-key .dwg__bar .dwg__nts { display: inline; margin-left: 0; }
 }

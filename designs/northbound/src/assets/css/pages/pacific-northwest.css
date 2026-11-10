@@ -1,6 +1,6 @@
 /* ==========================================================================
-   Pacific Northwest: the Kent yard, the two machines, the full line,
-   and the start of the lane north.
+   Pacific Northwest: the Kent yard, the two machines, the product lines,
+   and the chart north.
    ========================================================================== */
 
 /* The italic phrase takes its own line on phones, so the headline breaks where it reads. */
@@ -13,6 +13,7 @@
 .pnw-record { display: grid; justify-items: start; align-content: start; }
 .pnw-record__tel { font-size: clamp(2.125rem, 1.6rem + 2.3vw, 3.5rem); font-weight: 600; line-height: 1.1; letter-spacing: -.016em; font-variant-numeric: tabular-nums; white-space: nowrap; padding-block: .25rem; text-decoration: underline; text-decoration-color: var(--yellow); text-decoration-thickness: 3px; text-underline-offset: .18em; }
 .pnw-record__tel:hover { text-decoration-color: var(--ink); }
+@media (max-width: 19.5em) { .pnw-record__tel { white-space: normal; } }
 .pnw-record__status { min-height: 1.4rem; margin-top: .55rem; }
 .pnw-record .yard__lines { margin-top: 1.5rem; }
 @media (max-width: 379px) { .pnw-record .yard__lines > div { grid-template-columns: 5.25rem minmax(0, 1fr); } }
@@ -21,6 +22,8 @@
 .pnw-prints { position: relative; width: min(100%, 34rem); padding: 0 0 2.5rem 0; }
 .pnw-print { width: min(62%, 21.25rem); padding: .55rem .55rem .75rem; rotate: -1.8deg; }
 .pnw-print img { aspect-ratio: 357 / 322; }
+/* The second print hangs over this one's lower right corner: the photograph, never the caption. */
+.pnw-print:not(.pnw-print--2) figcaption { padding-right: 12%; }
 .pnw-print--2 { position: absolute; right: 0; bottom: 0; width: min(42%, 14.5rem); rotate: 2.6deg; }
 .pnw-print--2 img { aspect-ratio: 1; }
 .pnw-does ul { list-style: none; margin: .9rem 0 0; padding: 0; border-top: 1px solid var(--ink); }
@@ -72,7 +75,7 @@
 .pnw-drop__photo { margin-top: var(--section); }
 .pnw-drop__photo .fig__cap { padding-bottom: 1.25rem; }
 
-/* ---------- 04 The lane north: the chart, cut close to Kent ---------- */
+/* ---------- 04 Remote and export: the chart, cut close to Kent ---------- */
 .pnw-north__grid { display: grid; gap: 2.5rem var(--col-gap); }
 .pnw-north__map { min-width: 0; }
 .pnw-chart__wrap { margin: 0; }
@@ -94,10 +97,13 @@
 .pnw-chart__title span { font-family: var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--ink-3); }
 .pnw-chart__title b { font: 400 1.75em/1 var(--serif); letter-spacing: -.02em; }
 .pnw-chart__title i { font: italic 400 1.15em/1.1 var(--serif); color: var(--ink-2); }
-.pnw-chart__to { position: absolute; display: inline-flex; align-items: center; gap: .45em; padding: .4em .55em; background: var(--sea); color: var(--paper); font: 400 .75rem/1 var(--mono); letter-spacing: .04em; white-space: nowrap; }
+/* Sits in the open water under the lane, clear of it at every crop. */
+.pnw-chart__to { position: absolute; left: 56%; top: 84.7%; display: inline-flex; align-items: center; gap: .45em; padding: .4em .55em; background: var(--sea); color: var(--paper); font: 400 .75rem/1 var(--mono); letter-spacing: .04em; white-space: nowrap; }
 .pnw-chart__to i { font-style: normal; color: var(--glacier); }
 .pnw-chart__to .i { rotate: -147deg; }
 .pnw-north .fig__cap { padding-left: 4px; }
+@media (max-width: 619px) { .pnw-chart__to i { display: none; } }
+@media (max-width: 379px) { .pnw-chart__to { display: none; } }
 @media (min-width: 620px) and (max-width: 999px) { .pnw-chart { --x: 604; --y: 434; --w: 540; --h: 396; aspect-ratio: 540 / 396; } }
 @media (min-width: 1000px) { .pnw-chart { --x: 628; --y: 408; --w: 520; --h: 420; aspect-ratio: 520 / 420; } }
 @media (prefers-reduced-motion: no-preference) {
@@ -115,7 +121,7 @@
 .pnw-legs__how { grid-column: 2; font-size: .9375rem; color: var(--ink-2); line-height: 1.4; }
 .pnw-north__note { font: 400 var(--t-caption)/1.45 var(--mono); color: var(--ink-3); }
 @media (max-width: 599px) { .pnw-north .actions, .pnw-north .actions .btn { width: 100%; } }
-@media (min-width: 1000px) {
+@media (min-width: 62.5em) {
   .pnw-north__grid { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); grid-template-rows: auto 1fr; column-gap: clamp(2.5rem, 5vw, 5rem); grid-template-areas: "map head" "map body"; }
   .pnw-north__head { grid-area: head; }
   .pnw-north__body { grid-area: body; }

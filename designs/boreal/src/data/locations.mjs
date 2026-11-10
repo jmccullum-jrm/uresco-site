@@ -5,8 +5,13 @@
 // after midnight, or null when closed. The site shows a live open/closed status from these.
 // HOURS ARE PLACEHOLDERS (typical yard hours, not confirmed by Uresco): the Locations page is the one
 // place they are printed, and they never go in structured data. Confirm before launch.
+//
+// closedDates: yard-local ISO dates on which the live status says Closed whatever the weekly table says. These are
+// the major US holidays on weekdays, also placeholders: without them the status told people a yard was open on
+// Thanksgiving, and Closed on a day it turns out to be open costs a phone call, where the reverse costs a drive.
 
 const weekdays = (open, close) => [null, [open, close], [open, close], [open, close], [open, close], [open, close], null];
+const HOLIDAYS = ['2026-11-26', '2026-12-25', '2027-01-01', '2027-05-31', '2027-09-06', '2027-11-25'];
 
 export const LOCATIONS = [
   {
@@ -23,7 +28,7 @@ export const LOCATIONS = [
     // The old Pacific Northwest page listed (253) 872-3693; the footer and Locations page list 872-8432.
     fax: '(253) 872-8432',
     email: 'sales@uresco.com',
-    hours: { tz: 'America/Los_Angeles', week: weekdays(7 * 60, 16 * 60 + 30) },
+    hours: { tz: 'America/Los_Angeles', week: weekdays(7 * 60, 16 * 60 + 30), closedDates: HOLIDAYS },
     page: 'pacific-northwest/',
     serves: 'Puget Sound and the Pacific Northwest',
     latShort: '47.4° N',
@@ -42,7 +47,7 @@ export const LOCATIONS = [
     phone: '(907) 563-2500',
     fax: '(907) 561-2076',
     email: 'anchorage@uresco.com',
-    hours: { tz: 'America/Anchorage', week: weekdays(7 * 60, 16 * 60 + 30) },
+    hours: { tz: 'America/Anchorage', week: weekdays(7 * 60, 16 * 60 + 30), closedDates: HOLIDAYS },
     page: 'alaska/',
     serves: 'Southcentral and remote Alaska',
     latShort: '61.2° N',
@@ -60,7 +65,7 @@ export const LOCATIONS = [
     phone: '(907) 456-1550',
     fax: '(907) 456-5519',
     email: 'fairbanks@uresco.com',
-    hours: { tz: 'America/Anchorage', week: weekdays(7 * 60, 16 * 60 + 30) },
+    hours: { tz: 'America/Anchorage', week: weekdays(7 * 60, 16 * 60 + 30), closedDates: HOLIDAYS },
     page: 'alaska/',
     serves: 'The Interior and points north',
     latShort: '64.8° N',
@@ -91,5 +96,6 @@ export const hoursLines = (l) => {
   }
   return runs.map((r) => `${DAY[r.from]}${r.to !== r.from ? '–' + DAY[r.to] : ''}: ${r.h ? `${clock(r.h[0])}–${clock(r.h[1])}` : 'Closed'}`);
 };
-export const tzLabel = (l) => (l.hours?.tz === 'America/Los_Angeles' ? 'Pacific time' : 'Alaska time');
-export const hoursAttr = (l) => (l.hours ? JSON.stringify({ tz: l.hours.tz, week: l.hours.week }) : null);
+const TZ_NAMES = { 'America/Los_Angeles': 'Pacific time', 'America/Anchorage': 'Alaska time' };
+export const tzLabel = (l) => TZ_NAMES[l.hours?.tz] || '';
+export const hoursAttr = (l) => (l.hours ? JSON.stringify({ tz: l.hours.tz, week: l.hours.week, closedDates: l.hours.closedDates }) : null);

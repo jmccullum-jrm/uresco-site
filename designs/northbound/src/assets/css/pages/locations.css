@@ -6,6 +6,7 @@
 [data-page="locations"] .phero__title { max-width: none; }
 [data-page="locations"] .phero__row { grid-template-columns: minmax(0, 1fr); gap: clamp(1.25rem, 2.6vw, 2.25rem); padding-bottom: clamp(2rem, 4vw, 3.5rem); }
 [data-page="locations"] .phero__row .actions { display: block; }
+[data-page="locations"] .phero__lede { text-wrap: balance; }
 .lcx-board__q { display: flex; align-items: center; gap: .6rem; padding-bottom: .85rem; border-bottom: 1px solid var(--ink); font: 400 var(--t-label)/1.3 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--ink); }
 .lcx-board__q::before { content: ""; width: .55rem; height: .55rem; background: var(--yellow); }
 .lcx-board__rows { list-style: none; margin: 0; padding: 0; isolation: isolate; }
@@ -23,8 +24,8 @@
 .lcx-board__foot { display: grid; gap: .5rem 2rem; padding-top: .9rem; font-size: .9375rem; line-height: 1.4; color: var(--ink-2); }
 .lcx-board__jump { display: flex; flex-wrap: wrap; align-items: baseline; gap: .1rem 1rem; }
 .lcx-board__jump span { color: var(--ink-3); }
-.lcx-board__jump a { display: inline-flex; align-items: center; min-height: 2.75rem; font-weight: 600; text-decoration-color: var(--rule-2); }
-@media (min-width: 1000px) and (pointer: fine) { .lcx-board__jump a { min-height: 0; padding-block: .35rem; } }
+.lcx-board__jump a { display: inline-flex; align-items: center; justify-content: center; min-height: 2.75rem; min-width: 2.75rem; font-weight: 600; text-decoration-color: var(--rule-2); }
+@media (min-width: 1000px) and (pointer: fine) { .lcx-board__jump a { min-height: 0; min-width: 0; padding-block: .35rem; } }
 @media (max-width: 359px) { .lcx-row__num .i { display: none; } }
 @media (min-width: 760px) {
   .lcx-row { grid-template-columns: minmax(0, 4.4fr) minmax(0, 3fr) minmax(4.5rem, .9fr) auto; align-items: center; padding: .85rem .25rem .95rem 0; }
@@ -40,8 +41,8 @@
 .lcx-yard .chead__kicker { color: var(--ink); }
 .lcx-yard__grid { display: grid; gap: 1.5rem var(--col-gap); }
 .lcx-yard__head { display: grid; gap: .75rem; justify-items: start; align-content: start; }
-.lcx-yard__city { font: 350 clamp(3.25rem, 2rem + 6vw, 7rem)/.92 var(--serif); letter-spacing: -.035em; white-space: nowrap; }
-.lcx-yard__city span { color: var(--ink-3); font-size: .4em; letter-spacing: -.01em; margin-left: .1em; }
+.lcx-yard__city { font: 350 clamp(3.25rem, 2rem + 6vw, 7rem)/.92 var(--serif); letter-spacing: -.035em; overflow-wrap: anywhere; }
+.lcx-yard__city span { color: var(--ink-3); font-size: .4em; letter-spacing: -.01em; margin-left: .1em; white-space: nowrap; }
 .lcx-yard__blurb { color: var(--ink-2); font-size: var(--t-lede); line-height: 1.45; max-width: 26em; }
 .lcx-yard__head .link { margin-top: .25rem; }
 /* The book: on phones it comes straight after the name, ahead of the photograph. */
@@ -75,7 +76,8 @@
 @media (min-width: 1000px) {
   .lcx-yard__grid { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(2rem, 3.2vw, 3rem) clamp(2rem, 5vw, 5rem); align-items: end; }
   .lcx-yard__photo { order: 0; }
-  .lcx-book { order: 1; grid-column: 1 / -1; grid-template-columns: minmax(0, 4.6fr) minmax(0, 3.4fr) minmax(0, 4fr); }
+  /* The first column is never narrower than the number in it: the number does not wrap, so a fixed share would let it run into the address. */
+  .lcx-book { order: 1; grid-column: 1 / -1; grid-template-columns: minmax(min-content, 4.6fr) minmax(0, 3.4fr) minmax(0, 4fr); }
   .lcx-book__col { padding: 1.1rem 1.25rem 0 0; border-bottom: 0; }
   .lcx-book__col + .lcx-book__col { padding-left: clamp(1.25rem, 2.2vw, 2rem); border-left: 1px solid var(--rule-2); }
   .lcx-yard--flip .lcx-yard__grid { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); }
@@ -88,7 +90,8 @@
   .lcx-yard__grid { grid-template-columns: minmax(0, 5.6fr) minmax(0, 6.4fr); column-gap: 2rem; }
   .lcx-yard--flip .lcx-yard__grid { grid-template-columns: minmax(0, 6.4fr) minmax(0, 5.6fr); }
   .lcx-yard__city { font-size: 4.25rem; }
-  .lcx-book { grid-template-columns: minmax(0, 3.7fr) minmax(0, 3.5fr) minmax(0, 4.8fr); }
+  .lcx-book { grid-template-columns: minmax(min-content, 3.7fr) minmax(0, 3.5fr) minmax(0, 4.8fr); }
+  .lcx-tel { font-size: clamp(1.75rem, .25rem + 2.4vw, 2.375rem); }
   .lcx-write > div { grid-template-columns: 2.75rem minmax(0, 1fr); gap: .75rem; }
 }
 .section--ice .lcx-book__col { border-color: var(--rule-2); }

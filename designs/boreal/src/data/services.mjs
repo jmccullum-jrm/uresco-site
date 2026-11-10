@@ -16,7 +16,7 @@ export const SERVICES = [
     seq: 2, leg: 'On paper', step: 'Design',
     icon: 'pencil',
     name: 'Design services',
-    short: 'Design help for your unique project needs.',
+    short: 'Design help for projects that need more than a list.',
     body: 'For projects that need more than a list, we offer design services for your unique project needs, along with take-off assistance.',
   },
   {
@@ -25,7 +25,7 @@ export const SERVICES = [
     icon: 'truck',
     name: 'Job-site delivery',
     short: 'Boom trucks and truck-mounted Moffett forklifts.',
-    body: 'Dependable site delivery to job sites down the road, utilizing Moffett fork unload and boom trucks.',
+    body: 'Dependable delivery to job sites down the road, by boom truck and truck-mounted Moffett forklift.',
   },
   {
     id: 'remote',
@@ -33,7 +33,7 @@ export const SERVICES = [
     icon: 'ship',
     name: 'Remote & export packages',
     short: 'Complete building packages for places without a lumber yard.',
-    body: 'We are fully equipped to handle remote-location and export building packages, and we specialize in remote location delivery, from Sitka to Utqiaġvik.',
+    body: 'We are fully equipped to handle remote-location and export building packages, and we specialize in remote-location delivery, from Sitka to Utqiaġvik.',
   },
   {
     id: 'shipping',

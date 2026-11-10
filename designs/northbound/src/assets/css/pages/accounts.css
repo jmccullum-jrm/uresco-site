@@ -14,7 +14,7 @@
   .ac-ladder li::before { content: ""; position: absolute; left: -.3125rem; top: .97rem; width: .5625rem; height: .5625rem; background: var(--yellow); outline: 1px solid var(--ink); }
   .ac-ladder a { display: grid; grid-template-columns: 4.5rem minmax(0, 1fr) auto; align-items: baseline; align-content: center; column-gap: .75rem; min-height: 2.5rem; padding-left: 1.25rem; text-decoration: none; }
   .ac-ladder__lat { font: 400 var(--t-label)/1 var(--mono); letter-spacing: .08em; color: var(--ink-3); }
-  .ac-ladder__city { font: 480 clamp(1.375rem, 1.1rem + .6vw, 1.75rem)/1.1 var(--serif); letter-spacing: -.018em; }
+  .ac-ladder__city { font: 480 clamp(1.375rem, 1.1rem + .6vw, 1.75rem)/1.1 var(--serif); letter-spacing: -.018em; overflow-wrap: anywhere; }
   .ac-ladder__num { font-weight: 600; font-size: 1.0625rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
   .ac-ladder a:hover .ac-ladder__num { text-decoration: underline; text-decoration-color: var(--yellow); text-decoration-thickness: 2px; text-underline-offset: .25em; }
 }
@@ -25,20 +25,16 @@
   .ac-ladder__num { font-size: .9375rem; }
 }
 
-/* ---------- What an account does: a photograph, and a ledger of four lines ---------- */
+/* ---------- Accounts: a photograph, and who to ask ---------- */
 .ac-what__grid { display: grid; gap: 2.5rem var(--col-gap); }
 .ac-what__media { position: relative; min-width: 0; padding-bottom: 3.5rem; }
 .ac-what__text { min-width: 0; }
-.ac-what .shead { margin-bottom: clamp(1.5rem, 3vw, 2.5rem); }
+.ac-what .shead { margin-bottom: clamp(1rem, 2vw, 1.5rem); }
 .ac-print { width: min(46%, 12rem); }
 .ac-what__media .fig__cap { justify-content: flex-end; text-align: right; }
 .ac-what__media .fig__cap span { max-width: 52%; }
 
-.ac-ledger { border-top: 1px solid var(--ink); }
-.ac-ledger li { display: grid; grid-template-columns: 2.5rem minmax(0, 1fr); gap: .3rem 0; padding: 1.1rem 0 1.25rem; border-bottom: 1px solid var(--rule-2); }
-.ac-ledger__no { grid-row: span 2; font: 400 var(--t-label)/1.9 var(--mono); letter-spacing: .08em; color: var(--ink-3); }
-.ac-ledger__name { font: 480 clamp(1.3125rem, 1.15rem + .7vw, 1.75rem)/1.12 var(--serif); letter-spacing: -.012em; }
-.ac-ledger p { grid-column: 2; color: var(--ink-2); max-width: 32em; }
+.ac-what__lede { max-width: 30em; }
 .ac-what__go { margin-top: 1.5rem; }
 
 @media (max-width: 999px) {
@@ -46,13 +42,11 @@
   .ac-what__media { order: 2; width: min(86%, 26rem); justify-self: end; }
 }
 @media (min-width: 1000px) {
-  .ac-what__grid { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: var(--col-gap) clamp(2.5rem, 5.5vw, 6rem); align-items: start; }
+  .ac-what__grid { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: var(--col-gap) clamp(2.5rem, 5.5vw, 6rem); align-items: center; }
   .ac-what .shead__body { grid-template-columns: 1fr; }
-  .ac-ledger li { grid-template-columns: 3rem minmax(0, 1.05fr) minmax(0, 1.3fr); column-gap: 1.25rem; align-items: baseline; }
-  .ac-ledger__no { grid-row: auto; }
-  .ac-ledger p { grid-column: 3; }
 }
 
 /* ---------- The application ---------- */
+/* The paper copy is not sent by email, so the warning about that stays off it. */
 .ac-applyhead .shead { margin-bottom: clamp(1.75rem, 3.5vw, 3rem); }
 .fp-band--apply { padding-top: var(--section); }

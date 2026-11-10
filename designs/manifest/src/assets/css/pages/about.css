@@ -12,11 +12,11 @@
 .ab-data__grid div:not(:nth-child(3n+1)) { padding-left: 1rem; border-left: 1px solid var(--rule-2); }
 .ab-data__grid dt { font-family: var(--mono); font-size: var(--fs-label); letter-spacing: .07em; text-transform: uppercase; color: var(--ink-3); }
 .ab-data__grid dd { margin: .3rem 0 0; font-size: 1.0625rem; font-weight: 500; line-height: 1.3; letter-spacing: -.015em; }
-@media (max-width: 1099px) { .ab-data__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .ab-data__grid div:not(:nth-child(3n+1)) { padding-left: 0; border-left: 0; } .ab-data__grid div:nth-child(even) { padding-left: 1rem; border-left: 1px solid var(--rule-2); } }
-@media (max-width: 767px) {
+@media (max-width: 68.6875em) { .ab-data__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .ab-data__grid div:not(:nth-child(3n+1)) { padding-left: 0; border-left: 0; } .ab-data__grid div:nth-child(even) { padding-left: 1rem; border-left: 1px solid var(--rule-2); } }
+@media (max-width: 47.9375em) {
   .ab-data { grid-template-columns: minmax(0, 1fr); row-gap: 1.25rem; }
 }
-@media (min-width: 380px) and (max-width: 767px) {
+@media (min-width: 23.75em) and (max-width: 47.9375em) {
   /* The caption sits beside the photograph, which stays at its natural size. */
   .ab-photo { display: grid; grid-template-columns: 214px minmax(0, 1fr); column-gap: .9rem; align-items: end; width: 100%; }
   .ab-photo .plate__cap { padding-top: 0; }
@@ -29,7 +29,7 @@
 .ab-note .h3 { margin: 0 0 .4rem; }
 .ab-note p { margin: 0; color: var(--ink-2); max-width: 34em; }
 .ab-note__link { margin-top: .6rem; font-size: .8125rem; }
-@media (max-width: 859px) { .ab-notes { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 53.6875em) { .ab-notes { grid-template-columns: minmax(0, 1fr); } }
 
 /* ---------- About: down the road, across an ocean ---------- */
 .ab-reach { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--gap); margin-top: clamp(1.5rem, 3vw, 2.5rem); }
@@ -38,7 +38,7 @@
 .ab-way > p { margin: 0; color: var(--ink-2); max-width: 34em; }
 .ab-way .h3 { font-size: clamp(1.5rem, 1.2rem + 1.2vw, 2.125rem); letter-spacing: -.04em; }
 .ab-way .link { font-size: .8125rem; }
-@media (max-width: 859px) { .ab-reach { grid-template-columns: minmax(0, 1fr); row-gap: 2.75rem; } }
+@media (max-width: 53.6875em) { .ab-reach { grid-template-columns: minmax(0, 1fr); row-gap: 2.75rem; } }
 
 /* ---------- About: the mission as a specification ---------- */
 .ab-spec { border-top: var(--line) solid var(--ink); }
@@ -48,7 +48,7 @@
 .ab-spec__proof { margin: 0; color: var(--ink-2); }
 .ab-spec__proof .link { font-size: .8125rem; margin-left: .25rem; }
 .ab-spec__result { margin: 0; padding: clamp(1.1rem, 2vw, 1.6rem) clamp(1rem, 2vw, 1.5rem); background: var(--yellow); font-size: clamp(1.25rem, 1rem + 1.1vw, 1.875rem); font-weight: 600; letter-spacing: -.03em; line-height: 1.15; }
-@media (max-width: 899px) {
+@media (max-width: 56.1875em) {
   .ab-spec__row { grid-template-columns: 2.75rem minmax(0, 1fr); row-gap: .6rem; }
   .ab-spec__proof { grid-column: 2; }
 }
@@ -74,4 +74,4 @@
 .nf-index small { grid-area: what; font-size: .9375rem; color: var(--ink-2); }
 .nf-index a:hover small, .nf-index a:focus-visible small { color: var(--ink); }
 .nf-index .i { grid-area: go; align-self: center; }
-@media (max-width: 767px) { .nf-index { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 47.9375em) { .nf-index { grid-template-columns: minmax(0, 1fr); } }

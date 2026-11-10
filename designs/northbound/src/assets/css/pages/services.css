@@ -77,7 +77,7 @@
 .svx-io dd { font: 480 1.1875rem/1.25 var(--serif); letter-spacing: -.002em; }
 
 /* ---------- 01 The list: what a take-off can cover ---------- */
-.svx-sheet { position: relative; margin-top: 1.5rem; background: var(--paper-3); border: 1px solid var(--ink); }
+.svx-sheet { position: relative; background: var(--paper-3); border: 1px solid var(--ink); }
 .svx-sheet__head { display: flex; justify-content: space-between; gap: 1rem; padding: .7rem 1rem; border-bottom: 1px solid var(--ink); }
 .svx-sheet__rows { list-style: none; margin: 0; padding: 0; }
 .svx-sheet__rows a { display: grid; grid-template-columns: 2.6rem minmax(0, 1fr) auto; column-gap: .4rem; align-items: baseline; padding: .7rem 1rem .75rem; border-bottom: 1px dashed var(--rule-2); text-decoration: none; transition: background-color var(--d-1); }
@@ -91,13 +91,6 @@
 .svx-sheet__rows a:focus-visible { outline-offset: -3px; }
 .svx-sheet__foot { padding: .7rem 1rem .75rem; font: 400 var(--t-caption)/1.4 var(--mono); color: var(--ink-3); }
 @media (max-width: 499px) { .svx-sheet__head .label + .label { display: none; } }
-@media (min-width: 1200px) {
-  /* The form sits over the corner of the photograph; the caption keeps to the left of it. */
-  .svx-stage--list .svx-stage__media { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); }
-  .svx-stage--list .fig { grid-column: 1 / -1; grid-row: 1; }
-  .svx-stage--list .fig__cap { max-width: calc(200% / 7 - 1rem); }
-  .svx-sheet { grid-column: 3 / -1; grid-row: 2; margin-top: -5.5rem; box-shadow: var(--shadow-2); }
-}
 
 /* ---------- 02 The design ---------- */
 .svx-members { display: grid; gap: .75rem; justify-items: start; margin-top: .75rem; }

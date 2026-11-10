@@ -37,20 +37,38 @@ const onScroll = () => mast.toggleAttribute('data-scrolled', window.scrollY > 8)
 onScroll();
 window.addEventListener('scroll', onScroll, { passive: true });
 }
-/* Products menu. Hover and focus open it in CSS; the button makes it work by touch and keyboard,
-and Escape closes it wherever the pointer happens to be. */
+/* Products menu. Hover opens it in CSS; the button makes it work by touch and keyboard, and is the only
+way in from the keyboard. aria-expanded always says what is on screen, and Escape closes the menu
+wherever the pointer or the focus happens to be. data-shut holds it closed under a resting pointer. */
 $$('[data-menu]').forEach((item) => {
 const btn = $('.nav__toggle', item);
-const set = (open) => { item.toggleAttribute('data-open', open); btn.setAttribute('aria-expanded', String(open)); };
-btn.addEventListener('click', () => { item.removeAttribute('data-shut'); set(!item.hasAttribute('data-open')); });
-item.addEventListener('keydown', (e) => {
-if (e.key !== 'Escape') return;
-set(false); item.setAttribute('data-shut', ''); btn.focus();
+const showing = () => item.hasAttribute('data-open') || (item.matches(':hover') && !item.hasAttribute('data-shut'));
+const paint = () => btn.setAttribute('aria-expanded', String(showing()));
+const shut = () => { item.removeAttribute('data-open'); item.toggleAttribute('data-shut', item.matches(':hover')); paint(); };
+btn.addEventListener('click', () => {
+if (showing()) return shut();
+item.removeAttribute('data-shut'); item.setAttribute('data-open', ''); paint();
 });
-item.addEventListener('mouseleave', () => item.removeAttribute('data-shut'));
-item.addEventListener('focusout', (e) => { if (!item.contains(e.relatedTarget)) { set(false); item.removeAttribute('data-shut'); } });
-document.addEventListener('click', (e) => { if (!item.contains(e.target)) set(false); });
+document.addEventListener('keydown', (e) => {
+if (e.key !== 'Escape' || !showing()) return;
+const inside = item.contains(document.activeElement);
+shut();
+if (inside) btn.focus();
 });
+item.addEventListener('mouseenter', paint);
+item.addEventListener('mouseleave', () => { item.removeAttribute('data-shut'); paint(); });
+item.addEventListener('focusout', (e) => { if (!item.contains(e.relatedTarget)) { item.removeAttribute('data-open'); paint(); } });
+document.addEventListener('click', (e) => { if (!item.contains(e.target)) { item.removeAttribute('data-open'); paint(); } });
+});
+/* The generic quote buttons (action bar, masthead, closing band) follow the page's own quote link, so the
+yellow button in view always carries what was just chosen on the map or ticked on a product line. */
+const carried = $$('[data-quote-link]');
+const source = $('[data-r="quote"], [data-pline-quote]');
+if (carried.length && source) {
+const copy = () => carried.forEach((a) => a.setAttribute('href', source.href));
+copy();
+new MutationObserver(copy).observe(source, { attributes: true, attributeFilter: ['href'] });
+}
 /* Motion that runs on its own can be paused. One setting for the whole site, remembered between pages.
 html.is-still pauses only the endless animations (see 30-components.css), so a line that is still
 drawing itself finishes, and a loop that starts later obeys the same setting. */
@@ -82,12 +100,14 @@ document.addEventListener('focusout', (e) => { if (e.target.matches?.(TYPING)) d
 const { $$ } = UCM;
 /* Open / closed, computed in each yard's own time zone. The word and nothing more: the hours in the
 data are placeholders, so no opening or closing time is ever written out.
-data-hours = {"tz":"America/Anchorage","week":[null,[420,990],…]}  (Sunday first, minutes after midnight) */
+data-hours = {"tz":"America/Anchorage","week":[null,[420,990],…],"closedDates":["2026-11-26",…]}
+(week is Sunday first, in minutes after midnight; closedDates are in the yard's own calendar) */
 const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-const partsIn = (tz) => Object.fromEntries(new Intl.DateTimeFormat('en-US', { timeZone: tz, weekday: 'short', hour: 'numeric', minute: 'numeric', hourCycle: 'h23' })
+const partsIn = (tz) => Object.fromEntries(new Intl.DateTimeFormat('en-US', { timeZone: tz, weekday: 'short', year: 'numeric', month: '2-digit', day: '2-digit', hour: 'numeric', minute: 'numeric', hourCycle: 'h23' })
 .formatToParts(new Date()).map((p) => [p.type, p.value]));
-const isOpen = ({ tz, week }) => {
+const isOpen = ({ tz, week, closedDates = [] }) => {
 const parts = partsIn(tz);
+if (closedDates.includes(`${parts.year}-${parts.month}-${parts.day}`)) return false;
 const today = week[DAYS.indexOf(parts.weekday)], now = +parts.hour * 60 + +parts.minute;
 return !!today && now >= today[0] && now < today[1];
 };
@@ -139,16 +159,22 @@ const DRAFT = 'uresco.draft.' + kind;
 const MAX = 25 * 1024 * 1024;
 let bag = new DataTransfer();
 const yardSel = $('select[name=yard]', form);
+const yardId = () => yardSel?.selectedOptions[0]?.dataset.id || '';
+const yardOf = (id) => (yardSel ? $$('option', yardSel).find((o) => o.dataset.id === id) : null);
+const yardName = (id) => yardOf(id)?.value || '';
 const placeField = $('input[name=location]', form);
 const materials = $('textarea[name=materials]', form);
 let yardPicked = false, deliveryPicked = false;
 const carried = $('[data-carried]');
 const draftText = $('[data-draft-text]', form);
 const draftClear = $('[data-draft-clear]', form);
-const draftSays = (t) => { if (draftText) draftText.textContent = t; if (draftClear) draftClear.hidden = false; };
+const draftUndo = $('[data-draft-undo]', form);
+const draftSays = (t) => { if (draftText) draftText.textContent = t + (lost.length ? ' Your files need attaching again.' : ''); if (draftClear) draftClear.hidden = false; };
+let lost = [];
 const fields = () => $$('input, select, textarea', form).filter((el) => el.name && el.type !== 'file' && el.type !== 'hidden');
 const typed = () => fields().some((el) => el.matches('input:not([type=radio],[type=checkbox]), textarea') && el.value.trim());
 const PRIVATE = /^(ein|bank|bank_contact|signature|signed|agree)$/;
+const HELD = /^(ein|bank|bank_contact)$/;
 const save = () => {
 const d = {};
 fields().filter((el) => !PRIVATE.test(el.name)).forEach((el) => {
@@ -156,10 +182,14 @@ if (el.type === 'radio') { if (el.checked) d[el.name] = el.value; } else if (el.
 });
 if (yardPicked) d._yard = true;
 if (deliveryPicked) d._delivery = true;
+if (location.search) d._q = location.search;
+const names = [...Array.from(bag.files).map((f) => f.name), ...lost];
+if (names.length) d._files = names;
 try { localStorage.setItem(DRAFT, JSON.stringify(d)); if (typed()) draftSays('Draft saved on this device.'); } catch { /* private mode */ }
 };
+let linkApplied = false;
 try {
-const d = JSON.parse(localStorage.getItem(DRAFT) || 'null');
+const d = JSON.parse(localStorage.getItem(DRAFT) || sessionStorage.getItem(DRAFT) || 'null');
 if (d) {
 fields().forEach((el) => {
 if (!(el.name in d)) return;
@@ -167,6 +197,8 @@ if (el.type === 'radio') el.checked = d[el.name] === el.value; else if (el.type 
 });
 yardPicked = !!d._yard;
 deliveryPicked = !!d._delivery;
+lost = Array.isArray(d._files) ? d._files : [];
+linkApplied = !!location.search && d._q === location.search;
 if (typed()) draftSays('Draft picked up from this device.');
 }
 } catch { /* ignore */ }
@@ -174,13 +206,17 @@ form.addEventListener('input', save);
 form.addEventListener('change', save);
 const prefill = () => {
 const product = query.get('product');
-if (product && materials && !materials.value) materials.value = product + ':\n';
+if (product && materials) {
+const have = materials.value;
+const fresh = product.split('\n').map((l) => l.trim()).filter((l) => l && !have.includes(l)).map((l) => l + ':');
+if (fresh.length) materials.value = (have.trim() ? have.trimEnd() + '\n' : '') + fresh.join('\n') + '\n';
+}
 const yardParam = (query.get('yard') || '').toLowerCase();
-if (yardParam && yardSel) $$('option', yardSel).forEach((o) => { if (o.value.toLowerCase() === yardParam) { yardSel.value = o.value; yardPicked = true; } });
+if (yardOf(yardParam)) { yardSel.value = yardOf(yardParam).value; yardPicked = true; }
 const placeParam = query.get('location');
 if (placeParam && placeField) placeField.value = placeParam.slice(0, 80);
 };
-prefill();
+if (!linkApplied) prefill();
 /* ---- The side panel: answers the place, names the yard, keeps count ---- */
 const yardHint = $('#yard-hint', form);
 const yardHintDefault = yardHint ? yardHint.textContent : '';
@@ -192,7 +228,6 @@ places.forEach((p) => index.set(fold(p.name), p));
 Object.entries(geo.aliases).forEach(([alias, name]) => index.set(fold(alias), places.find((p) => p.name === name)));
 }
 const lookup = (v) => index.get(fold(v.split(',')[0]).replace(/\s+(ak|alaska|wa|washington)$/, '')) || null;
-const cityOf = (id) => id && id[0].toUpperCase() + id.slice(1);
 const slipMap = $('[data-slip-map]');
 const arc = slipMap && $('[data-arc]', slipMap);
 const dest = slipMap && $('[data-map-dest]', slipMap);
@@ -212,13 +247,13 @@ el.style.transform = `translate(${Math.round(x)}px, ${Math.round(y)}px) translat
 });
 };
 if (slipMap && 'ResizeObserver' in window) new ResizeObserver(placeLabels).observe(slipMap);
-const paintMap = (p, yardId) => {
+const paintMap = (p, yard) => {
 if (!slipMap) return;
-$$('[data-map-yard]', slipMap).forEach((g) => g.classList.toggle('is-on', g.dataset.mapYard === yardId));
-const home = $(`[data-map-yard="${yardId}"]`, slipMap);
-labels.yard = home && { text: cityOf(yardId), xy: geo.yards[yardId], west: home.dataset.side === 'w' };
-const d = p && geo.yards[yardId] ? arcPath(geo.yards[yardId], p.xy) : '';
-labels.dest = d ? { text: p.name, xy: p.xy, west: p.xy[0] < geo.yards[yardId][0] } : null;
+$$('[data-map-yard]', slipMap).forEach((g) => g.classList.toggle('is-on', g.dataset.mapYard === yard));
+const home = $(`[data-map-yard="${yard}"]`, slipMap);
+labels.yard = home && { text: yardName(yard), xy: geo.yards[yard], west: home.dataset.side === 'w' };
+const d = p && geo.yards[yard] ? arcPath(geo.yards[yard], p.xy) : '';
+labels.dest = d ? { text: p.name, xy: p.xy, west: p.xy[0] < geo.yards[yard][0] } : null;
 placeLabels();
 if (!d) {
 dest.setAttribute('visibility', 'hidden'); arc.setAttribute('visibility', 'hidden');
@@ -236,27 +271,32 @@ const paintPlace = () => {
 if (!geo || !placeField) return;
 const text = placeField.value.trim();
 const p = text ? lookup(text) : null;
-if (p && !yardPicked && yardSel.value !== cityOf(p.yard)) yardSel.value = cityOf(p.yard);
+if (p && !yardPicked && yardId() !== p.yard && yardOf(p.yard)) yardSel.value = yardOf(p.yard).value;
 if (p && !deliveryPicked) {
 const want = p.access === 'coastal' || p.access === 'seasonal' ? 'Remote Alaska shipping' : 'Job-site delivery';
 $$('input[name=delivery]', form).forEach((r) => { r.checked = r.value === want; });
 }
 if (yardHint) yardHint.textContent = p && !yardPicked ? `Picked for ${p.name}. Change it if you work with another yard.` : yardHintDefault;
-const yardId = yardSel.value.toLowerCase();
+const yard = yardId();
 const acc = p && geo.access[p.access];
-if (carried && query.get('location')) { carried.hidden = !text; carried.textContent = `Quote for ${text} · ${cityOf(yardId)} yard`; }
+if (carried) {
+const what = [query.get('product')?.replace(/\n+/g, '; '), query.get('location') && text].filter(Boolean).join(' · ');
+const from = (query.get('yard') || (query.get('location') && text)) && yardName(yard) ? `${yardName(yard)} yard` : '';
+carried.hidden = !(what || from);
+carried.textContent = what ? `Quote for ${what}${from ? ' · ' + from : ''}` : `Quote for the ${from}`;
+}
 put('place', p ? `${p.name}, ${geo.states[p.st]}` : text || 'Where is the job?');
-put('meta', p ? `${p.region} · ${acc.tag}` : text ? 'Not on our short list, which does not mean we cannot get there. A yard will work out the route.' : 'Add the project location and this fills in.');
+put('meta', p ? `${p.region} · ${acc.tag}` : text ? 'Not on our short list, which does not mean we cannot get there. We will work out the freight with you.' : 'Add the project location and this fills in.');
 $$('[data-s-modes]').forEach((el) => el.classList.toggle('is-empty', !acc));
 $$('[data-ic]').forEach((el) => { const [i, k] = el.dataset.ic.split('-'); el.hidden = !(acc && acc.modes[i]?.[0] === k); });
-[0, 1].forEach((i) => put('m' + i, acc && acc.modes[i] ? acc.modes[i][1].replace('{yard}', cityOf(yardId)) : ''));
-paintMap(p, yardId);
+[0, 1].forEach((i) => put('m' + i, acc && acc.modes[i] ? acc.modes[i][1].replace('{yard}', yardName(yard)) : ''));
+paintMap(p, yard);
 };
 const live = $('[data-live]', form);
 let lastYard = '';
 const paintYard = () => {
 if (!yardSel) return;
-const id = yardSel.value.toLowerCase();
+const id = yardId();
 $$('[data-y]').forEach((el) => { el.hidden = el.dataset.y !== id; });
 if (live && lastYard && lastYard !== id) live.textContent = `${yardSel.value} will answer this.`;
 lastYard = id;
@@ -287,8 +327,8 @@ put('needed', when ? new Date(when + 'T12:00').toLocaleDateString('en-US', { mon
 const delivery = $('input[name=delivery]:checked', form);
 if (delivery) put('delivery', delivery.value);
 const files = Array.from(bag.files);
-const product = query.get('product');
-put('attached', files.length ? (files.length === 1 ? files[0].name : `${files.length} files attached`) : product || (materials && materials.value.trim() ? 'Listed in the request' : 'Nothing attached yet'));
+const listed = materials ? materials.value.split('\n').map((l) => l.trim()).filter(Boolean) : [];
+put('attached', files.length ? (files.length === 1 ? files[0].name : `${files.length} files attached`) : listed.length ? listed[0].replace(/:$/, '') + (listed.length > 1 ? ' and more' : '') : 'Nothing attached yet');
 };
 const paint = () => { paintPlace(); paintYard(); paintProgress(); paintDetails(); };
 if (yardSel) yardSel.addEventListener('input', () => { yardPicked = true; });
@@ -311,16 +351,30 @@ const rm = document.createElement('button'); rm.type = 'button'; rm.textContent 
 rm.addEventListener('click', () => {
 const next = new DataTransfer();
 Array.from(bag.files).forEach((g, j) => { if (j !== i) next.items.add(g); });
-bag = next; input.files = bag.files; render(); paint();
+bag = next; input.files = bag.files; render(); paint(); save();
+const left = $$('button', list);
+(left[i] || left[left.length - 1] || input).focus();
 });
 li.append(name, meta, rm);
 list.append(li);
 });
 };
+const lostNote = $('[data-files-lost]', form);
+const paintLost = () => {
+if (!lostNote) return;
+lostNote.hidden = !lost.length;
+lostNote.textContent = lost.length ? `You had attached ${lost.join(', ')}. Choose ${lost.length > 1 ? 'them' : 'it'} again: files cannot be kept in a draft.` : '';
+};
 const add = (files) => {
 const tooBig = [];
-Array.from(files).forEach((f) => (f.size > MAX ? tooBig.push(f.name) : bag.items.add(f)));
+const held = Array.from(bag.files);
+Array.from(files).forEach((f) => {
+if (f.size > MAX) tooBig.push(f.name);
+else if (!held.some((g) => g.name === f.name && g.size === f.size)) { bag.items.add(f); held.push(f); }
+});
 input.files = bag.files;
+lost = lost.filter((n) => !held.some((g) => g.name === n));
+paintLost();
 render();
 const note = $('[data-file-err]', form);
 note.hidden = !tooBig.length;
@@ -328,7 +382,7 @@ if (tooBig.length) note.textContent = `${tooBig.join(', ')} ${tooBig.length > 1 
 paint();
 };
 if (input && drop) {
-input.addEventListener('change', () => { const f = Array.from(input.files); bag = new DataTransfer(); add(f); });
+input.addEventListener('change', () => add(Array.from(input.files)));
 ['dragenter', 'dragover'].forEach((t) => drop.addEventListener(t, (e) => { e.preventDefault(); drop.classList.add('is-over'); }));
 ['dragleave', 'drop'].forEach((t) => drop.addEventListener(t, (e) => { e.preventDefault(); drop.classList.remove('is-over'); }));
 drop.addEventListener('drop', (e) => add(e.dataTransfer.files));
@@ -359,26 +413,46 @@ check(el);
 if (leftLine && leftLine.dataset.hold) { leftLine.dataset.hold = ''; paintProgress(); }
 }
 })));
-if (draftClear) draftClear.addEventListener('click', () => {
-try { localStorage.removeItem(DRAFT); } catch { /* ignore */ }
-form.reset();
-bag = new DataTransfer(); if (input) { input.files = bag.files; render(); }
-yardPicked = false; deliveryPicked = false;
-prefill();
+let undo = null;
+const offerUndo = (on) => { if (draftUndo) draftUndo.hidden = !on; };
+const clearMarks = () => {
 $$('[aria-invalid]', form).forEach((el) => { el.removeAttribute('aria-invalid'); });
 $$('.err', form).forEach((el) => { el.hidden = true; el.textContent = ''; });
 if (leftLine) leftLine.dataset.hold = '';
-draftText.textContent = 'Saved on this device as you type.';
+};
+if (draftClear) draftClear.addEventListener('click', () => {
+undo = { values: fields().map((el) => [el, el.type === 'radio' || el.type === 'checkbox' ? el.checked : el.value]), bag, lost, yardPicked, deliveryPicked };
+try { localStorage.removeItem(DRAFT); sessionStorage.removeItem(DRAFT); } catch { /* ignore */ }
+form.reset();
+lost = [];
+bag = new DataTransfer(); if (input) { input.files = bag.files; render(); paintLost(); }
+yardPicked = false; deliveryPicked = false;
+prefill();
+clearMarks();
+draftText.textContent = 'Form cleared.';
 draftClear.hidden = true;
 paint();
-$('input, select, textarea', form).focus();
+offerUndo(true);
+(draftUndo || $('input, select, textarea', form)).focus();
 });
+if (draftUndo) draftUndo.addEventListener('click', () => {
+undo.values.forEach(([el, v]) => { if (el.type === 'radio' || el.type === 'checkbox') el.checked = v; else el.value = v; });
+bag = undo.bag; lost = undo.lost; yardPicked = undo.yardPicked; deliveryPicked = undo.deliveryPicked; undo = null;
+if (input) { input.files = bag.files; render(); paintLost(); }
+offerUndo(false);
+save();
+if (typed()) draftSays('Draft saved on this device.');
+draftClear.hidden = false;
+paint();
+draftClear.focus();
+});
+form.addEventListener('input', () => { if (undo) { undo = null; offerUndo(false); } });
 const summary = () => {
 const out = [];
 $$('fieldset', form).forEach((fs) => {
 const legend = fs.querySelector('legend')?.textContent.replace(/^\d+/, '').trim();
 const rows = [];
-fields().filter((el) => fs.contains(el)).forEach((el) => {
+fields().filter((el) => fs.contains(el) && !HELD.test(el.name)).forEach((el) => {
 if (el.type === 'radio' && !el.checked) return;
 if (el.type === 'checkbox' && el.closest('.seg')) { if (el.checked) rows.push(['', '• ' + el.value]); return; }
 const label = el.dataset.label || (el.type === 'radio' ? $('#' + el.name + '-label', form) : form.querySelector(`label[for="${el.id}"]`))?.childNodes[0]?.textContent.trim() || el.name;
@@ -387,9 +461,11 @@ if (v) rows.push([label, v]);
 });
 if (rows.length) out.push('', `— ${legend.toUpperCase()} —`, ...rows.map(([k, v]) => (k ? `${k}: ${v}` : v)));
 });
-const names = Array.from(bag.files).map((f) => f.name);
+const held = fields().some((el) => HELD.test(el.name) && el.value.trim());
+if (held) out.push('', 'TAX ID AND BANK DETAILS: left out of this email. I will give them to the yard by phone or on a printed copy.');
+const names = [...Array.from(bag.files).map((f) => f.name), ...lost];
 if (names.length) out.push('', 'FILES TO ATTACH: ' + names.join(', '));
-return { text: out.join('\n').trim(), files: names };
+return { text: out.join('\n').trim(), files: names, held };
 };
 form.addEventListener('submit', async (e) => {
 e.preventDefault();
@@ -402,8 +478,12 @@ data.set('_subject', form.dataset.subject + ' — ' + (data.get('company') || da
 const btn = $('button[type=submit]', form);
 const endpoint = form.dataset.endpoint;
 if (failed) failed.hidden = true;
-const finish = () => {
-try { localStorage.removeItem(DRAFT); } catch { /* ignore */ }
+const finish = (handedOff) => {
+try {
+if (handedOff) { save(); sessionStorage.setItem(DRAFT, localStorage.getItem(DRAFT)); } else sessionStorage.removeItem(DRAFT);
+localStorage.removeItem(DRAFT);
+if (kind === 'quote') sessionStorage.removeItem('uresco.picks');
+} catch { /* ignore */ }
 form.hidden = true; done.hidden = false; done.focus();
 window.scrollTo({ top: done.getBoundingClientRect().top + window.scrollY - 120 });
 };
@@ -420,21 +500,43 @@ btn.disabled = false; if (btn.dataset.label) btn.innerHTML = btn.dataset.label;
 }
 return;
 }
-const { text, files } = summary();
+const { text, files, held } = summary();
 const subject = `${form.dataset.subject} — ${data.get('company') || data.get('name')}${data.get('location') ? ' — ' + data.get('location') : ''}`;
-const mail = `mailto:${to}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(text)}`;
-window.location.href = mail;
-const note = $('[data-mail-note]', done);
-if (note) note.hidden = !files.length;
-$('[data-mail-to]', done).textContent = to;
+const link = (body) => `mailto:${to}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+const long = link(text).length > 1800;
+const mail = long ? link('The details are too long for an email link, so they are pasted below.\n\n') : link(text);
+if (!long) window.location.href = mail;
+$$('[data-mail-note]', done).forEach((n) => { n.hidden = !files.length; });
+$$('[data-mail-held]', done).forEach((n) => { n.hidden = !held; });
+$$('[data-mail-to]', done).forEach((n) => { n.textContent = to; });
+$$('[data-mail-short]', done).forEach((n) => { n.hidden = long; });
+$$('[data-mail-long]', done).forEach((n) => { n.hidden = !long; });
 const again = $('[data-mail-again]', done);
-if (again) again.href = mail;
 const copy = $('[data-copy]', done);
-if (copy) copy.onclick = async () => {
+if (again) {
+again.href = mail;
+again.classList.toggle('btn--line', long);
+$('[data-again-label]', again).textContent = long ? 'Open the email' : 'Open the email again';
+}
+if (copy) {
+copy.classList.toggle('btn--line', !long);
+if (long && again) copy.after(again);
 const label = $('[data-copy-label]', copy);
+label.textContent = long ? 'Copy the details' : 'Copy it instead';
+copy.onclick = async () => {
 try { await navigator.clipboard.writeText(`To: ${to}\nSubject: ${subject}\n\n${text}`); label.textContent = 'Copied'; } catch { label.textContent = 'Could not copy. Please call the yard.'; }
 };
-finish();
+}
+finish(true);
+});
+const back = $('[data-back]', host);
+if (back) back.addEventListener('click', () => {
+done.hidden = true; form.hidden = false;
+save();
+try { sessionStorage.removeItem(DRAFT); } catch { /* ignore */ }
+form.tabIndex = -1;
+form.focus({ preventScroll: true });
+window.scrollTo({ top: form.getBoundingClientRect().top + window.scrollY - 120 });
 });
 window.addEventListener('beforeprint', () => {
 const filled = typed();
@@ -443,6 +545,7 @@ $$('input[type=date]', form).forEach((el) => el.classList.toggle('has-date', !!e
 $$('[data-print-for]', form).forEach((box) => { box.checked = filled && form.elements[box.dataset.printFor]?.value === box.value; });
 });
 window.addEventListener('afterprint', () => form.classList.remove('is-filled'));
+paintLost();
 paint();
 });
 })();
@@ -461,7 +564,7 @@ const data = JSON.parse($('[data-finder-data]', finder).textContent);
 const places = data.places.map(([name, st, xy, lat, lon, region, access, yard]) => ({ name, st, xy, lat, lon, region, access, yard, key: fold(name) }));
 const byName = new Map(places.map((p) => [p.name, p]));
 const aliases = Object.entries(data.aliases).map(([alias, name]) => ({ alias, key: fold(alias), place: byName.get(name) }));
-const SUGGEST = ['Anchorage', 'Fairbanks', 'Bethel', 'Nome', 'Kotzebue', 'Utqiaġvik', 'Juneau', 'Seattle'].map((s) => ({ p: byName.get(s) }));
+const SUGGEST = ['Anchorage', 'Fairbanks', 'Bethel', 'Nome', 'Kotzebue', 'Utqiaġvik', 'Juneau', 'Seattle'].map((s) => byName.get(s)).filter(Boolean).map((p) => ({ p }));
 const input = $('.finder__input', finder), list = $('.finder__list', finder), clear = $('[data-clear]', finder), go = $('[data-go]', finder);
 const route = $('[data-route]', finder), live = $('[data-live]', finder);
 const cam = $('[data-cam]', map), arc = $('[data-arc]', map), dest = $('[data-dest]', map), destName = $('[data-dest-name]', map);
@@ -469,7 +572,10 @@ const reset = $('[data-reset]', stage);
 const field = (k) => $(`[data-r="${k}"]`, route);
 let active = -1, options = [], current = byName.get(data.example), zoomed = false;
 /* ---- The card ---- */
-const quoteUrl = (where, yard) => `${data.quote}?location=${encodeURIComponent(where)}${yard ? '&yard=' + yard : ''}`;
+const quoteQuery = (where, yard) => `?location=${encodeURIComponent(where)}${yard ? '&yard=' + yard : ''}`;
+const quoteUrl = (where, yard) => data.quote + quoteQuery(where, yard);
+const generic = $$('a[href]:not([data-quote-link])').filter((a) => a !== field('quote') && a.host === location.host && /\/quote\/$/.test(a.pathname) && !a.search);
+const carry = (where, yard) => generic.forEach((a) => a.setAttribute('href', data.quote + quoteQuery(where, yard) + a.hash));
 const showYard = (id) => $$('[data-y]', route).forEach((el) => { el.hidden = el.dataset.y !== id; });
 const swap = () => {
 if (calm.matches) return;
@@ -507,6 +613,7 @@ $$(`[data-ic^="${i}-"]`, route).forEach((ic) => { ic.hidden = !m || ic.dataset.i
 field('how').hidden = false; field('else').hidden = true; field('note').hidden = false;
 field('short').textContent = p.name;
 field('quote').href = quoteUrl(`${p.name}, ${p.st}`, p.yard);
+carry(`${p.name}, ${p.st}`, p.yard);
 live.textContent = `${p.name}, ${data.states[p.st]}. ${acc.tag}. Yard to call: ${yard.name}, ${yard.phone}. ${acc.modes.map((m) => m[1].replace('{yard}', yard.name)).join('; ')}.`;
 };
 const fillUnknown = (text) => {
@@ -519,6 +626,7 @@ showYard('any');
 field('how').hidden = true; field('else').hidden = false; field('note').hidden = true;
 field('short').textContent = text;
 field('quote').href = quoteUrl(text);
+carry(text);
 live.textContent = `${text} is not on our short list. Any yard can help: Kent for Puget Sound and the Pacific Northwest, Anchorage for Southcentral and remote Alaska, Fairbanks for the Interior and points north.`;
 };
 /* ---- The map ---- */
@@ -538,7 +646,7 @@ if (reset) reset.hidden = !zoomed;
 };
 const fly = (yard, place, name = '') => {
 if (!yard) return setCam(0, 0, 1);
-const W = map.offsetWidth, H = map.offsetHeight, k = W / data.w, phone = window.innerWidth < 700;
+const W = map.offsetWidth, H = map.offsetHeight, k = W / data.w, phone = matchMedia('(max-width: 43.6875em)').matches;
 const mr = map.getBoundingClientRect(), cr = map.parentElement.getBoundingClientRect(), sr = stage.getBoundingClientRect(), fr = finder.getBoundingClientRect();
 let left = Math.max(0, cr.left - mr.left, sr.left - mr.left), right = Math.min(W, cr.right - mr.left, sr.right - mr.left);
 let top = Math.max(0, cr.top - mr.top, sr.top - mr.top), bottom = Math.min(H, cr.bottom - mr.top, sr.bottom - mr.top);
@@ -586,18 +694,27 @@ if (move) fly(yard.xy, p.xy, p.name);
 const press = (name) => $$('.chip[data-place]', finder).forEach((c) => c.setAttribute('aria-pressed', String(c.dataset.place === name)));
 let answered = '';
 const syncButtons = () => { clear.hidden = !input.value; go.hidden = !input.value.trim() || input.value === answered; };
+const dismissKeyboard = () => { if (matchMedia('(pointer: coarse)').matches) input.blur(); };
 const choose = (p, { typed = false } = {}) => {
 current = p;
 close();
 input.value = p.name; answered = p.name; syncButtons();
 press(p.name); swap(); fill(p); draw(p);
-if (typed) input.blur();
+if (typed) dismissKeyboard();
+};
+const showCard = () => {
+if (!matchMedia('(max-width: 43.6875em)').matches) return;
+const bar = $('.actionbar'), mast = $('[data-masthead]');
+const floor = (bar ? bar.getBoundingClientRect().top : window.innerHeight) - 12;
+const ceiling = (mast ? mast.offsetHeight : 0) + 12;
+const box = route.getBoundingClientRect(), by = Math.min(box.bottom - floor, box.top - ceiling);
+if (by > 0) window.scrollBy({ top: by, behavior: calm.matches ? 'auto' : 'smooth' });
 };
 const chooseUnknown = (text) => {
 current = null;
 answered = input.value; syncButtons();
 close(); press(''); swap(); fillUnknown(text.slice(0, 60)); draw(null);
-input.blur();
+dismissKeyboard();
 };
 const submit = () => {
 const text = input.value.trim();
@@ -607,7 +724,7 @@ else if (text) chooseUnknown(text);
 };
 /* ---- The combobox ---- */
 const search = (q) => {
-const k = fold(q);
+const k = fold(q).split(',')[0].replace(/\s+(ak|alaska|wa|washington)$/, '').trim();
 if (!k) return SUGGEST;
 const out = [];
 places.forEach((p) => { const i = p.key.indexOf(k); if (i === 0) out.push({ p, rank: 0 }); else if (i > 0) out.push({ p, rank: p.key[i - 1] === ' ' ? 1 : 2 }); });
@@ -627,7 +744,7 @@ options.forEach((o, i) => {
 const li = document.createElement('li');
 li.setAttribute('role', 'option'); li.id = `${list.id}-${i}`; li.setAttribute('aria-selected', 'false');
 const name = document.createElement('span'); name.textContent = o.alias ? `${o.p.name} (${o.alias})` : o.p.name;
-const meta = document.createElement('small'); meta.textContent = `${o.p.region}, ${o.p.st}`;
+const meta = document.createElement('small'); meta.textContent = /Alaska|Washington/.test(o.p.region) ? o.p.region : `${o.p.region}, ${o.p.st}`;
 li.append(name, meta);
 list.append(li);
 });
@@ -649,7 +766,7 @@ function close() { list.hidden = true; input.setAttribute('aria-expanded', 'fals
 input.addEventListener('input', () => { syncButtons(); open(); });
 input.addEventListener('focus', () => {
 input.select(); open();
-if (window.innerWidth < 700) input.scrollIntoView({ block: 'start', behavior: calm.matches ? 'auto' : 'smooth' });
+if (matchMedia('(max-width: 43.6875em)').matches) input.scrollIntoView({ block: 'start', behavior: calm.matches ? 'auto' : 'smooth' });
 });
 input.addEventListener('blur', () => setTimeout(close, 120));
 input.addEventListener('keydown', (e) => {
@@ -675,11 +792,11 @@ go.addEventListener('mousedown', (e) => e.preventDefault());
 go.addEventListener('click', submit);
 finder.addEventListener('click', (e) => {
 const chip = e.target.closest('.chip[data-place]');
-if (chip && byName.has(chip.dataset.place)) choose(byName.get(chip.dataset.place));
+if (chip && byName.has(chip.dataset.place)) { choose(byName.get(chip.dataset.place)); showCard(); }
 });
 map.addEventListener('click', (e) => {
 const dot = e.target.closest('.map__dot');
-if (dot && byName.has(dot.dataset.place)) choose(byName.get(dot.dataset.place));
+if (dot && byName.has(dot.dataset.place)) { choose(byName.get(dot.dataset.place)); showCard(); }
 });
 if (reset) reset.addEventListener('click', () => fly());
 if (!calm.matches) setTimeout(() => arc.classList.add('is-drawing'), 350);
@@ -769,13 +886,29 @@ new IntersectionObserver(([en]) => map.classList.toggle('is-paused', !en.isInter
 /* Products.
 1. The index (/products/): a field that narrows the nine lines as you type. It searches product
 names, what each is for, brands and trade abbreviations; matching products show their note.
-2. A line page: "Add to quote" on any product, and every quote button on the page carries the
-line and the products chosen to the quote form. The button says which state it is in
-("Add to quote" / "On the quote"), so it carries no pressed state of its own.
+2. A line page: "Add to quote" on any product. The list is kept for the visit (sessionStorage),
+so products from several lines can reach one request, and every quote link on the page carries
+it to the quote form. The button says which state it is in ("Add to quote" / "On the quote"),
+so it carries no pressed state of its own.
 Both are extras: without this script the index is the full list and the buttons carry the line. */
 (() => {
 const { $, $$ } = UCM;
 const norm = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+/* ---- The list of picks, shared by the line pages and the index ---- */
+const KEY = 'uresco.picks';
+const readPicks = () => { try { return JSON.parse(sessionStorage.getItem(KEY)) || []; } catch { return []; } };
+const writePicks = (list) => { try { if (list.length) sessionStorage.setItem(KEY, JSON.stringify(list)); else sessionStorage.removeItem(KEY); } catch { /* storage blocked: the list still works on this page */ } };
+const productText = (list, own) => {
+const byLine = new Map();
+list.forEach(({ line, item }) => byLine.set(line, [...(byLine.get(line) || []), item]));
+if (own && !byLine.has(own)) byLine.set(own, []);
+return [...byLine].map(([line, items]) => line + (items.length ? ' — ' + items.join(', ') : '')).join('\n');
+};
+const carrier = (lineLinks) => {
+const bare = $$('a[href]').filter((a) => a.host === location.host && /\/quote\/$/.test(a.pathname) && !a.search && !a.hash).map((a) => [a, null]);
+const links = [...lineLinks, ...bare].map(([a, own]) => ({ a, own, was: a.getAttribute('href') }));
+return (list) => links.forEach(({ a, own, was }) => a.setAttribute('href', list.length ? was.split('?')[0] + '?product=' + encodeURIComponent(productText(list, own)) : was));
+};
 const root = $('[data-pidx]');
 if (root) {
 const input = $('[data-pidx-q]', root), clear = $('[data-pidx-clear]', root), count = $('[data-pidx-count]', root), none = $('[data-pidx-none]', root), more = $('[data-pidx-more]', root);
@@ -785,20 +918,24 @@ el, text: norm(el.dataset.s),
 items: $$('[data-pidx-item]', el).map((li) => ({ li, note: $('small', li), text: norm(li.dataset.s) })),
 }));
 const all = count.innerHTML;
+const STOP = new Set(['a', 'an', 'and', 'for', 'in', 'of', 'on', 'the', 'to', 'with']);
 const has = (text, words) => words.every((w) => (' ' + text).includes(' ' + w));
 const apply = () => {
-const words = norm(input.value).split(' ').filter(Boolean);
+const words = norm(input.value).replace(/(\d) (?:x|by) (\d)/g, '$1x$2').split(' ').filter(Boolean);
 const on = words.length > 0;
+const exact = !on || rows.some((r) => has(r.text, words) || r.items.some((it) => has(it.text, words)));
+const wide = words.filter((w) => w.length > 1 && !STOP.has(w));
+const test = exact ? (t) => has(t, words) : (t) => wide.some((w) => (' ' + t).includes(' ' + w));
 let lines = 0, products = 0;
 rows.forEach((r) => {
 let hits = 0;
 r.items.forEach((it) => {
-const hit = on && has(it.text, words);
+const hit = on && test(it.text);
 it.li.classList.toggle('is-hit', hit);
 it.note.hidden = !hit;
 if (hit) hits++;
 });
-const show = !on || hits > 0 || has(r.text, words);
+const show = !on || hits > 0 || test(r.text);
 r.el.hidden = !show;
 r.el.classList.toggle('is-narrowed', on && hits > 0);
 if (on) r.el.classList.add('is-in');
@@ -811,8 +948,8 @@ if (more) more.hidden = on && !lines;
 tries.forEach((b) => b.setAttribute('aria-pressed', String(on && norm(b.dataset.pidxTry) === words.join(' '))));
 if (!on) count.innerHTML = all;
 else if (!lines) count.textContent = 'No match on the list';
-else if (products) count.textContent = `${products} product${products === 1 ? '' : 's'} in ${lines} line${lines === 1 ? '' : 's'}`;
-else count.textContent = lines === 1 ? '1 line matches' : `${lines} lines match`;
+else if (products) count.textContent = `${exact ? '' : 'Closest: '}${products} product${products === 1 ? '' : 's'} in ${lines} line${lines === 1 ? '' : 's'}`;
+else count.textContent = `${exact ? '' : 'Closest: '}${lines === 1 ? '1 line matches' : `${lines} lines match`}`;
 };
 const lift = () => {
 const bar = input.closest('.pidx-find'), top = bar.getBoundingClientRect().top;
@@ -832,24 +969,40 @@ input.value = b.getAttribute('aria-pressed') === 'true' ? '' : b.dataset.pidxTry
 apply();
 lift();
 }));
-window.addEventListener('pageshow', () => { if (input.value) apply(); });
+const carry = carrier($$('.pidx-row__quote', root).map((a) => [a, new URL(a.href).searchParams.get('product')]));
+carry(readPicks());
+window.addEventListener('pageshow', () => { if (input.value) apply(); carry(readPicks()); });
 }
 const line = $('[data-pline]');
 if (line) {
-const picks = $$('[data-pline-pick]', line), links = $$('[data-pline-quote]'), status = $('[data-pline-status]', line);
-const idle = status ? status.textContent : '';
-const isOn = (b) => b.hasAttribute('data-on');
+const here = line.dataset.line;
+const picks = $$('[data-pline-pick]', line), statuses = $$('[data-pline-status]', line).map((el) => ({ el, idle: el.textContent }));
+const acts = $('[data-pline-acts]', line), clear = $('[data-pline-clear]', line);
+const carry = carrier($$('[data-pline-quote]').map((a) => [a, here]));
+let list = readPicks();
 const sync = () => {
-const chosen = picks.filter(isOn).map((b) => b.dataset.plinePick);
-const product = line.dataset.line + (chosen.length ? ' — ' + chosen.join(', ') : '');
-links.forEach((a) => { a.href = line.dataset.quote + '?product=' + encodeURIComponent(product); });
-picks.forEach((b) => b.closest('li').classList.toggle('is-picked', isOn(b)));
-if (status) {
-status.textContent = chosen.length ? `On the quote: ${chosen.join(', ')}.` : idle;
-status.classList.toggle('is-on', chosen.length > 0);
-}
+picks.forEach((b) => {
+const on = list.some((p) => p.line === here && p.item === b.dataset.plinePick);
+b.toggleAttribute('data-on', on);
+b.closest('li').classList.toggle('is-picked', on);
+});
+const names = list.map((p) => p.item);
+statuses.forEach(({ el, idle }) => {
+el.textContent = names.length ? `${names.length} on the quote: ${names.join(', ')}.` : idle;
+el.classList.toggle('is-on', names.length > 0);
+});
+if (acts) acts.hidden = !names.length;
+carry(list);
 };
-picks.forEach((b) => b.addEventListener('click', () => { b.toggleAttribute('data-on'); sync(); }));
+picks.forEach((b) => b.addEventListener('click', () => {
+const item = b.dataset.plinePick, on = list.some((p) => p.line === here && p.item === item);
+list = on ? list.filter((p) => !(p.line === here && p.item === item)) : [...list, { line: here, item }];
+writePicks(list);
+sync();
+}));
+if (clear) clear.addEventListener('click', () => { list = []; writePicks(list); sync(); if (picks[0]) picks[0].focus(); });
+window.addEventListener('pageshow', () => { list = readPicks(); sync(); });
+sync();
 }
 })();
 /* Kinds of work (projects page): the chips show one sector at a time and say how much is showing.
@@ -860,6 +1013,7 @@ const bar = $('[data-pj-filter]');
 if (!bar) return;
 const chips = $$('button[data-pj]', bar), sectors = $$('[data-pj-sector]'), count = $('[data-pj-count]');
 const all = count ? count.textContent : '';
+const mast = $('[data-masthead]');
 bar.addEventListener('click', (e) => {
 const chip = e.target.closest('button[data-pj]');
 if (!chip) return;
@@ -872,15 +1026,23 @@ s.hidden = !on;
 if (on) n += $$('.pj-kind', s).length;
 });
 if (count) count.textContent = f === 'all' ? all : `${n} ${n === 1 ? 'kind' : 'kinds'} of work in ${chip.textContent}`;
+if (matchMedia('(max-width: 43.6875em)').matches) {
+const first = sectors.find((s) => !s.hidden);
+if (first) window.scrollBy({ top: first.getBoundingClientRect().top - (mast ? mast.offsetHeight : 0) - 8, behavior: UCM.calm.matches ? 'auto' : 'smooth' });
+}
 });
 })();
-/* Scroll reveal: .reveal elements ease in once as they arrive. CSS hides them only when this script
-is present and motion is welcome, so nothing depends on it. */
+/* Scroll reveal: .reveal elements ease in once as they arrive. CSS hides them only under html.reveal-on,
+which this script sets just before it starts watching: a script that never arrives hides nothing.
+Whatever is already on screen when the script runs stays as it is, so nothing blinks out and back. */
 (() => {
 const { $$, calm } = UCM;
 const els = $$('.reveal');
 if (!els.length) return;
 if (calm.matches || !('IntersectionObserver' in window)) { els.forEach((el) => el.classList.add('is-in')); return; }
+const height = window.innerHeight;
+els.forEach((el) => { const r = el.getBoundingClientRect(); if (r.top < height && r.bottom > 0) el.classList.add('is-in'); });
+document.documentElement.classList.add('reveal-on');
 const io = new IntersectionObserver((entries) => {
 entries.forEach((en) => { if (en.isIntersecting) { en.target.classList.add('is-in'); io.unobserve(en.target); } });
 }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });

@@ -34,11 +34,7 @@ const BOOM_TRUCK = `
     ${LOAD(30, 256, 116, 50)}
   </g>
   <circle cx="198" cy="72" r="21"/><circle class="pn-hub" cx="198" cy="72" r="8"/>`;
-const MOFFETT = `
-  <rect x="426" y="226" width="110" height="22"/>
-  <rect x="436" y="246" width="100" height="22"/>
-  <rect x="424" y="226" width="16" height="74"/>
-  ${WHEEL(488, 302, 38)}
+const MOFFETT = `<g transform="translate(44 0)">
   <rect x="158" y="66" width="20" height="270" rx="3"/>
   <g class="pn-fork">
     <rect x="144" y="196" width="16" height="90" rx="3"/>
@@ -49,9 +45,8 @@ const MOFFETT = `
   <path class="pn-arm" stroke-width="13" d="M222 264V152q0-12 12-12h106q11 0 14 11l24 112"/>
   <rect x="292" y="212" width="40" height="50" rx="10"/>
   <path class="pn-arm" stroke-width="8" d="M256 264 266 218M250 216h34"/>
-  ${WHEEL(226, 306, 34)}${WHEEL(352, 312, 28)}`;
+  ${WHEEL(226, 306, 34)}${WHEEL(352, 312, 28)}</g>`;
 const drawing = (body) => raw(`<svg class="pn-draw" viewBox="0 0 520 340" aria-hidden="true" focusable="false">${body}</svg>`);
-const ROAD_TRUCK = raw(`<svg viewBox="0 0 150 64" aria-hidden="true" focusable="false"><rect x="16" y="10" width="78" height="20" rx="2"/><rect x="10" y="30" width="92" height="6"/><rect x="14" y="36" width="126" height="8"/><path d="M106 44V16q0-4 4-4h16q4 0 6 3l10 14q2 3 2 6v9z"/><circle cx="34" cy="52" r="10"/><circle cx="58" cy="52" r="10"/><circle cx="124" cy="52" r="10"/></svg>`);
 
 const RIGS = [
   { id: 'boom', name: 'Boom truck', draw: BOOM_TRUCK, text: 'A crane on the truck lifts the load off the deck and sets it down on site.' },
@@ -95,10 +90,10 @@ ${pageHero(ctx, {
 
 <section class="section field-k pn-rigs clip" id="delivery">
   <div class="wrap">
-    ${sectionHead({ eyebrow: 'Job-site delivery', title: 'Two ways <em>off the truck.</em>', lede: 'To job sites around the Puget Sound region, with materials set where the crew needs them, not at the curb.' })}
+    ${sectionHead({ eyebrow: 'Job-site delivery', title: 'Two ways <em>off the truck.</em>', lede: 'To job sites around the Puget Sound region, by boom truck and Moffett forklift.' })}
     <div class="pn-rigs__grid">
       ${RIGS.map((r) => html`<div class="pn-arch pn-arch--${r.id}" data-reveal>${rings(1, { arch: true })}<div class="pn-arch__win">${drawing(r.draw)}</div></div>`)}
-      <div class="pn-road" aria-hidden="true"><i class="pn-road__truck">${ROAD_TRUCK}</i></div>
+      <div class="pn-road" aria-hidden="true"></div>
       ${RIGS.map((r) => html`<div class="pn-rig pn-rig--${r.id}"><h3 class="pn-rig__name">${r.name}</h3><p>${r.text}</p></div>`)}
     </div>
     <div class="pn-rigs__foot">
@@ -110,7 +105,7 @@ ${pageHero(ctx, {
 
 <section class="section field-p pn-load" id="range">
   <div class="wrap">
-    ${sectionHead({ eyebrow: 'The full range', title: 'What’s on <em>the truck.</em>', lede: 'Nine product lines, from framing packages to the last box of fasteners, for the commercial and residential builder.', action: html`<a class="link" href="${ctx.u('products/')}">All products ${icon('arrow', { size: 16 })}</a>` })}
+    ${sectionHead({ eyebrow: 'The full range', title: 'What’s on <em>the truck.</em>', lede: 'Nine product lines, from dimensional lumber to fasteners, for the commercial and residential builder.', action: html`<a class="link" href="${ctx.u('products/')}">All products ${icon('arrow', { size: 16 })}</a>` })}
     <div class="pn-stack">
       <i class="pn-strap pn-strap--a" aria-hidden="true"></i>
       <i class="pn-strap pn-strap--b" aria-hidden="true"></i>
@@ -125,7 +120,7 @@ ${pageHero(ctx, {
       </ol>
     </div>
     <div class="pn-load__foot">
-      <p>We also carry a large variety of other building materials: tarps, polyurethane rolls, caulking, adhesives, house wraps and more. If it’s not listed, ask Kent.</p>
+      <p>We also carry a large variety of other building materials: tarps, poly, caulking, adhesives, house wraps and more. If it’s not listed, ask Kent.</p>
       <a class="btn" href="${ctx.u('quote/')}?yard=kent">Quote from Kent ${icon('arrow', { size: 18 })}</a>
     </div>
   </div>
@@ -134,9 +129,9 @@ ${pageHero(ctx, {
 <section class="field-y pn-north clip" id="north">
   <div class="wrap pn-north__grid">
     <div class="pn-north__copy">
-      ${eyebrow('The lane north')}
+      ${eyebrow('North from Kent')}
       <h2 class="pn-north__big"><span>47°</span> <span>north.</span></h2>
-      <p class="lede">Kent is where our map starts. The lane north runs from Puget Sound to Southcentral Alaska, then on by road, barge or air, as far as Utqiaġvik.</p>
+      <p class="lede">Freight for Alaska generally leaves Puget Sound by sea for Southcentral, then goes on by road, barge or air. Delivery is available as far as Utqiaġvik.</p>
       <div class="actions">
         <a class="btn" href="${ctx.u('alaska/')}">Alaska delivery ${icon('arrow', { size: 18 })}</a>
         <a class="btn btn--line" href="${ctx.u('services/')}#remote">Remote &amp; export packages</a>
@@ -182,7 +177,7 @@ ${pageHero(ctx, {
       ${eyebrow('Also from Kent')}
       <p class="lede">Our friendly, knowledgeable sales staff is here to help. Give us a call, email or stop by.</p>
       <ul class="pn-also__list">
-        <li><a href="${ctx.u('services/')}#takeoffs">Take-offs &amp; estimates ${icon('arrow', { size: 18 })}</a></li>
+        <li><a href="${ctx.u('services/')}#takeoffs">Estimates &amp; take-offs ${icon('arrow', { size: 18 })}</a></li>
         <li><a href="${ctx.u('services/')}#design">Design services ${icon('arrow', { size: 18 })}</a></li>
         <li><a href="${ctx.u('services/')}#remote">Remote &amp; export packages ${icon('arrow', { size: 18 })}</a></li>
         <li><a href="${ctx.u('accounts/')}">Contractor accounts ${icon('arrow', { size: 18 })}</a></li>
@@ -192,7 +187,7 @@ ${pageHero(ctx, {
 </section>
 
 ${quoteBand(ctx, {
-  title: 'Building around <em>Puget Sound?</em>',
+  title: 'Job near <em>Puget Sound?</em>',
   body: 'Send plans or a list and tell us where the job is. Kent will help with the take-off and quote it.',
   photoKey: 'framing-joists',
   caption: 'Roof trusses and wall framing',
@@ -206,22 +201,44 @@ ${quoteBand(ctx, {
 
 // ================= Locations =================
 
-// "Which yard should I call?", answered in the first screen.
+// "Which yard should I call?", answered in the first screen. A yard with no line of its own shows its role.
 const WHERE = { kent: 'Building around Puget Sound?', anchorage: 'Southcentral Alaska or a remote site?', fairbanks: 'The Interior and points north?' };
-// Each yard's name runs the full width of the page. --em is the width of the word's ink in ems at
-// the display setting (measured in the browser), --lsb how far the first letter sits in from its
-// box, so the name lands exactly on both edges of the column.
-const NAME_FIT = { kent: [3.57, .07], anchorage: [8.38, 0], fairbanks: [7.46, .07] };
-const FIELD = { kent: 'k', anchorage: 'p', fairbanks: 'y' };
+// Each yard's name runs the full width of the page, so its size comes from the width of the word:
+// [advance, left bearing, right bearing] of each capital in Archivo at width 125, weight 900, in ems
+// (measured in the browser), less the headline's -.03em tracking. Any name a yard gets fits the column.
+const CAP = {
+  A: [.954, 0, 0], B: [.93, .063, .039], C: [.939, .031, .033], D: [.933, .063, .042], E: [.86, .063, .032], F: [.807, .063, .026],
+  G: [1.012, .031, .059], H: [1.009, .063, .071], I: [.395, .063, .067], J: [.764, .016, .061], K: [.988, .063, .019], L: [.786, .063, .005],
+  M: [1.178, .063, .069], N: [1.007, .063, .069], O: [1.008, .031, .039], P: [.865, .063, .006], Q: [1.008, .031, .039], R: [.943, .063, .021],
+  S: [.882, .031, .023], T: [.877, .016, .018], U: [.989, .063, .067], V: [.938, 0, 0], W: [1.23, 0, 0], X: [.961, 0, 0], Y: [.966, .016, .013], Z: [.877, .016, .018],
+  ' ': [.29, 0, 0],
+};
+// The two kerned pairs in today's names; any other pair can only make a name a touch narrower than the sum.
+const KERN = { AG: -.04, FA: -.07 };
+const TRACK = -.03;
+const nameFit = (name) => {
+  const up = name.toUpperCase(), g = (c) => CAP[c] || [.95, 0, 0];
+  let em = TRACK * (up.length - 1) - g(up[0])[1] - g(up[up.length - 1])[2];
+  for (let i = 0; i < up.length; i++) em += g(up[i])[0] + (KERN[up.slice(i, i + 2)] || 0);
+  return { em: +em.toFixed(3), lsb: g(up[0])[1] };
+};
+// The yards take the three fields in turn.
+const FIELDS = ['k', 'p', 'y'];
 
-// The mark at poster size: the three rings, one to a yard. Drawn on a 400 × 530 sheet.
-const THREE_RINGS = raw(`<svg class="lc-mark__u" viewBox="0 0 400 530" preserveAspectRatio="xMidYMax slice" aria-hidden="true" focusable="false"><g fill="none" stroke="#0E0E0C" stroke-width="38">${[58, 124, 190].map((r, i) => `<path pathLength="1" style="--n:${i}" d="M${200 - r} -20V320A${r} ${r} 0 0 0 ${200 + r} 320V-20"/>`).join('')}</g></svg>`);
+// The mark at poster size: one ring to a yard, drawn on a 400 × 530 sheet. Each yard's pin sits on the
+// foot of its ring (--y), and where the U turns over on a phone, on the same ring seen in the arch (--y-sm).
+const RING_R = LOCATIONS.map((_, i, a) => (a.length > 1 ? 58 + (132 * i) / (a.length - 1) : 124));
+const RING_W = Math.round(114 / LOCATIONS.length);
+const pinAt = (r) => `--y:${(((320 + r) / 530) * 100).toFixed(1)}%;--y-sm:${(((210 - r) / 368) * 100).toFixed(1)}%`;
+const THREE_RINGS = raw(`<svg class="lc-mark__u" viewBox="0 0 400 530" preserveAspectRatio="xMidYMax slice" aria-hidden="true" focusable="false"><g fill="none" stroke="#0E0E0C" stroke-width="${RING_W}">${RING_R.map((r, i) => `<path pathLength="1" style="--n:${i}" d="M${200 - r} -20V320A${r} ${r} 0 0 0 ${200 + r} 320V-20"/>`).join('')}</g></svg>`);
 
-const yardBandFull = (ctx, l) => {
-  const field = FIELD[l.id];
+const yardBandFull = (ctx, l, i) => {
+  const field = FIELDS[i % FIELDS.length];
+  const fit = nameFit(l.city);
+  const hours = hoursLines(l);
   return html`
 <section class="lc-band field-${field} clip" id="${l.id}" aria-labelledby="lc-h-${l.id}">
-  <article class="yard lc-yard wrap" style="--em:${NAME_FIT[l.id][0]};--lsb:${NAME_FIT[l.id][1]}">
+  <article class="yard lc-yard wrap" style="--em:${fit.em};--lsb:${fit.lsb}">
     <div class="lc-yard__meta">
       ${latPill(l, 'lc-yard__lat')}
       <p class="lc-yard__role">${l.role}</p>
@@ -241,7 +258,7 @@ const yardBandFull = (ctx, l) => {
       <dl class="lc-rows">
         <div><dt>Fax</dt><dd class="nums">${l.fax}</dd></div>
         <div><dt>Email</dt><dd><a href="mailto:${l.email}">${l.email}</a></dd></div>
-        <div><dt>Hours</dt><dd>${hoursLines(l).map((h) => html`${h}<br>`)}<small>${tzLabel(l)}</small></dd></div>
+        ${hours.length ? html`<div><dt>Hours</dt><dd>${hours.map((h) => html`${h}<br>`)}<small>${tzLabel(l)}</small></dd></div>` : ''}
       </dl>
       <div class="lc-yard__foot">
         <a class="link" href="${ctx.u('quote/')}?yard=${l.id}">Get a quote from ${l.city} ${icon('arrow', { size: 16 })}</a>
@@ -269,7 +286,7 @@ ${pageHero(ctx, {
   title: 'Who do <em>I call?</em>',
   after: html`<ol class="lc-dial">
     ${LOCATIONS.map((l) => html`<li class="lc-dial__row">
-      <p class="lc-dial__where">${WHERE[l.id]}</p>
+      <p class="lc-dial__where">${WHERE[l.id] || l.role}</p>
       <a class="lc-dial__call" href="${tel(l.phone)}">
         <span class="lc-dial__city"><b>${l.city}</b>${openStatus(l)}</span>
         <span class="lc-dial__num nums">${l.phone}</span>
@@ -280,11 +297,11 @@ ${pageHero(ctx, {
   <p class="lc-hero__foot"><b>Not sure? Call any of us.</b> We work as one team. <a class="link" href="#kent">Fax, email &amp; directions ${icon('arrow', { size: 16 })}</a></p>`,
   fill: html`<div class="lc-mark__rings">
     ${THREE_RINGS}
-    ${LOCATIONS.map((l) => html`<a class="lc-mark__pin lc-mark__pin--${l.id}" href="#${l.id}">${l.city}<span class="sr-only"> yard details</span></a>`)}
+    ${LOCATIONS.map((l, i) => html`<a class="lc-mark__pin" style="${pinAt(RING_R[i])}" href="#${l.id}">${l.city}<span class="sr-only"> yard details</span></a>`)}
   </div>`,
 })}
 
-${LOCATIONS.map((l) => yardBandFull(ctx, l))}
+${LOCATIONS.map((l, i) => yardBandFull(ctx, l, i))}
 
 <section class="section field-k lc-map clip" id="map">
   <div class="divider" aria-hidden="true"><i class="plx"></i><i class="plx"></i><i class="plx"></i></div>
@@ -302,7 +319,7 @@ ${LOCATIONS.map((l) => yardBandFull(ctx, l))}
   </div>
 </section>
 
-${quoteBand(ctx, { title: 'Know the yard? <em>Send the plans.</em>', body: 'Send drawings or a list and the yard nearest your project will help with the take-off. Or just pick up the phone.', label: 'Estimates & take-offs' })}
+${quoteBand(ctx, { title: 'Got plans? <em>Send them.</em>', body: 'Send drawings or a list and the yard nearest your project will help with the take-off. Or just pick up the phone.', label: 'Estimates & take-offs' })}
 `,
   }),
 };

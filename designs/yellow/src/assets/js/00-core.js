@@ -34,6 +34,37 @@
     window.addEventListener('scroll', onScroll, { passive: true });
   }
 
+  /* Products menu: opens on hover and focus (CSS). Escape dismisses it where it stands, and it comes
+     back the next time the pointer or focus arrives. aria-expanded follows what is actually open. */
+  const menuItem = $('.nav__item--menu');
+  if (menuItem) {
+    const link = $('.nav__link', menuItem);
+    const menuOpen = () => !menuItem.classList.contains('is-dismissed') && (menuItem.matches(':hover') || menuItem.matches(':focus-within'));
+    const sync = () => link.setAttribute('aria-expanded', String(menuOpen()));
+    const undismiss = () => { if (!menuItem.matches(':hover') && !menuItem.matches(':focus-within')) { menuItem.classList.remove('is-dismissed'); sync(); } };
+    sync();
+    menuItem.addEventListener('mouseenter', sync);
+    menuItem.addEventListener('focusin', sync);
+    menuItem.addEventListener('mouseleave', () => { menuItem.classList.remove('is-dismissed'); setTimeout(sync, 0); });
+    menuItem.addEventListener('focusout', () => setTimeout(undismiss, 0));
+    document.addEventListener('keydown', (e) => {
+      if (e.key !== 'Escape' || !menuOpen()) return;
+      menuItem.classList.add('is-dismissed');
+      // Focus inside the panel would otherwise be stranded in something no longer shown.
+      if (menuItem.contains(document.activeElement)) link.focus();
+      sync();
+    });
+  }
+
+  /* The route finder's map: a town's label asks the finder about that town, the same way as typing it. */
+  document.addEventListener('click', (e) => {
+    const pick = e.target.closest('[data-place-pick]');
+    const input = pick && $('.finder__input');
+    if (!input) return;
+    input.value = pick.dataset.placePick;
+    input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+  });
+
   /* The phone action bar steps aside while the keyboard is up. */
   const TYPING = 'input:not([type=radio],[type=checkbox],[type=file]), textarea, select';
   document.addEventListener('focusin', (e) => { if (e.target.matches?.(TYPING)) document.body.classList.add('is-typing'); });
@@ -108,10 +139,18 @@
       fields().filter((el) => !PRIVATE.test(el.name)).forEach((el) => {
         if (el.type === 'radio') { if (el.checked) d[el.name] = el.value; } else if (el.type === 'checkbox') d[el.name] = el.checked; else d[el.name] = el.value;
       });
+      if (bag.files.length) d._files = bag.files.length;
       try { localStorage.setItem(DRAFT, JSON.stringify(d)); } catch { /* private mode */ }
     };
+    // A request handed to the email app is not known to have been sent, so its draft waits in this
+    // tab (sessionStorage) instead of being thrown away: a reload brings it back into the form.
+    const shelve = () => { try { const d = localStorage.getItem(DRAFT); if (d) sessionStorage.setItem(DRAFT, d); localStorage.removeItem(DRAFT); } catch { /* ignore */ } };
+    const forget = () => { try { localStorage.removeItem(DRAFT); sessionStorage.removeItem(DRAFT); } catch { /* ignore */ } };
+    const unshelve = () => { try { const d = sessionStorage.getItem(DRAFT); if (d && !localStorage.getItem(DRAFT)) localStorage.setItem(DRAFT, d); sessionStorage.removeItem(DRAFT); } catch { /* ignore */ } };
+    unshelve();
     try {
       const d = JSON.parse(localStorage.getItem(DRAFT) || 'null');
+      if (d) form.dataset.touched = '1';
       if (d) fields().forEach((el) => {
         if (!(el.name in d)) return;
         if (el.type === 'radio') el.checked = d[el.name] === el.value; else if (el.type === 'checkbox') el.checked = !!d[el.name]; else el.value = d[el.name];
@@ -120,11 +159,17 @@
       const kept = $('[data-restored]', form);
       if (d && kept && fields().some((el) => !el.matches('select, [type=radio], [type=checkbox]') && el.value.trim())) {
         kept.hidden = false;
-        $('[data-draft-clear]', kept).addEventListener('click', () => { try { localStorage.removeItem(DRAFT); } catch { /* ignore */ } location.reload(); });
+        const filesNote = $('[data-restored-files]', kept);
+        if (filesNote && d._files) filesNote.hidden = false;
+        $('[data-draft-clear]', kept).addEventListener('click', () => { forget(); location.reload(); });
       }
     } catch { /* ignore */ }
     form.addEventListener('input', save);
     form.addEventListener('change', save);
+    // On paper, a form that has been filled in prints its choices; a blank one stays blank (90-print.css).
+    const touched = () => { form.dataset.touched = '1'; };
+    form.addEventListener('input', touched);
+    form.addEventListener('change', touched);
 
     // Arriving from a product page: start the materials list with that line. A line added on top
     // of a saved draft goes at the end, so what was already typed is kept.
@@ -144,6 +189,13 @@
     const yardParam = (params.get('yard') || '').toLowerCase();
     const yardSel = $('select[name=yard]', form);
     if (yardParam && yardSel) $$('option', yardSel).forEach((o) => { if (o.value.toLowerCase() === yardParam) yardSel.value = o.value; });
+    // What a link carries only counts on arrival. Save it as the draft and take it off the address
+    // (after the rest of this script has read it), so a reload keeps what the visitor corrected.
+    if (product || place || delivery || yardParam) {
+      touched();
+      save();
+      setTimeout(() => history.replaceState(history.state, '', location.pathname + location.hash), 0);
+    }
 
     // File drop zone, if the form has one.
     const input = $('input[type=file]', form);
@@ -161,7 +213,10 @@
         rm.addEventListener('click', () => {
           const next = new DataTransfer();
           Array.from(bag.files).forEach((g, j) => { if (j !== i) next.items.add(g); });
-          bag = next; input.files = bag.files; render();
+          bag = next; input.files = bag.files; render(); save();
+          // The button pressed is gone: keep the keyboard's place on the row that took its spot.
+          const left = $$('[data-files] button', form);
+          (left[i] || left[i - 1] || input).focus();
         });
         li.append(name, meta, rm);
         list.append(li);
@@ -169,15 +224,21 @@
     };
     const add = (files) => {
       const tooBig = [];
-      Array.from(files).forEach((f) => (f.size > MAX ? tooBig.push(f.name) : bag.items.add(f)));
+      const same = (a, b) => a.name === b.name && a.size === b.size && a.lastModified === b.lastModified;
+      Array.from(files).forEach((f) => {
+        if (f.size > MAX) tooBig.push(f.name);
+        else if (!Array.from(bag.files).some((g) => same(f, g))) bag.items.add(f);
+      });
       input.files = bag.files;
       render();
+      save();
       const note = $('[data-file-err]', form);
       note.hidden = !tooBig.length;
       if (tooBig.length) note.textContent = `${tooBig.join(', ')} ${tooBig.length > 1 ? 'are' : 'is'} over 25 MB. Email large files to the yard directly, or send a download link in the notes.`;
     };
     if (input && drop) {
-      input.addEventListener('change', () => { const f = Array.from(input.files); bag = new DataTransfer(); add(f); });
+      // A second pick adds to the tray (phones often pick or shoot one file at a time).
+      input.addEventListener('change', () => add(Array.from(input.files)));
       ['dragenter', 'dragover'].forEach((t) => drop.addEventListener(t, (e) => { e.preventDefault(); drop.classList.add('is-over'); }));
       ['dragleave', 'drop'].forEach((t) => drop.addEventListener(t, (e) => { e.preventDefault(); drop.classList.remove('is-over'); }));
       drop.addEventListener('drop', (e) => add(e.dataTransfer.files));
@@ -262,7 +323,6 @@
       if (failed) failed.hidden = true;
 
       const finish = () => {
-        try { localStorage.removeItem(DRAFT); } catch { /* ignore */ }
         form.hidden = true; done.hidden = false; done.focus();
         window.scrollTo({ top: done.getBoundingClientRect().top + window.scrollY - 120 });
       };
@@ -272,6 +332,7 @@
         try {
           const r = await fetch(endpoint, { method: 'POST', body: data, headers: { Accept: 'application/json' } });
           if (!r.ok) throw new Error(r.status);
+          forget();
           finish();
         } catch {
           failed.hidden = false; failed.focus();
@@ -304,6 +365,10 @@
         try { await navigator.clipboard.writeText(`To: ${to}\nSubject: ${subject}\n\n${text}`); label.textContent = 'Copied'; }
         catch { label.textContent = 'Copy didn’t work'; }
       };
+      // The site cannot know the email was sent. The form stays one tap away, and the draft in this tab.
+      const back = $('[data-mail-back]', done);
+      if (back) back.onclick = () => { unshelve(); done.hidden = true; form.hidden = false; form.scrollIntoView({ block: 'start' }); $('input:not([type=hidden]), select, textarea', form)?.focus(); };
+      shelve();
       finish();
     });
   });

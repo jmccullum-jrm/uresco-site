@@ -9,7 +9,8 @@ import { glyph } from './drawings.mjs';
 export const NAV = [
   { href: 'products/', label: 'Products', menu: true },
   { href: 'services/', label: 'Services' },
-  { href: 'alaska/', label: 'Alaska delivery' },
+  { href: 'alaska/', label: 'Alaska delivery', short: 'Alaska' },
+  { href: 'pacific-northwest/', label: 'Pacific Northwest', short: 'Pacific NW' },
   { href: 'projects/', label: 'Projects' },
   { href: 'locations/', label: 'Locations' },
   { href: 'about/', label: 'About' },
@@ -37,7 +38,7 @@ const megaMenu = (ctx) => html`
       </ul>
       <div class="mega__side">
         <p class="eyebrow">Not on the list?</p>
-        <p>Tarps, poly, caulking, adhesives, house wraps and more. If a job needs it, ask your yard.</p>
+        <p>We also carry a large variety of other building materials. If a job needs it, ask your yard.</p>
         <a class="btn btn--sm" href="${ctx.u('quote/')}">Send a materials list ${icon('arrow', { size: 16 })}</a>
         <a class="link link--light" href="${ctx.u('products/')}">All product lines ${icon('arrow', { size: 16 })}</a>
       </div>
@@ -68,14 +69,14 @@ const header = (ctx) => html`
       <nav class="nav" aria-label="Main">
         <ul class="nav__list">
           ${NAV.map((n) => html`<li class="${n.menu ? 'nav__item nav__item--menu' : 'nav__item'}"${n.menu ? html` data-menu` : ''}>
-            <a class="nav__link" href="${ctx.u(n.href)}"${current(ctx, n.href)}>${n.label}</a>
+            <a class="nav__link" href="${ctx.u(n.href)}"${current(ctx, n.href)}>${n.short ? html`<span class="nav__full">${n.label}</span><span class="nav__short">${n.short}</span>` : n.label}</a>
             ${n.menu ? html`<button type="button" class="nav__toggle jsonly" aria-expanded="false" aria-controls="mega">${icon('chevron-down', { size: 14 })}<span class="sr-only">Product lines</span></button>${megaMenu(ctx)}` : ''}
           </li>`)}
         </ul>
       </nav>
       <div class="masthead__acts">
         <a class="btn btn--sm btn--dark masthead__call" href="${ctx.u('locations/')}" data-open="call-sheet" aria-haspopup="dialog">${icon('phone', { size: 16 })}<span>Call<span class="masthead__call-more"> a yard</span></span></a>
-        <a class="btn btn--sm masthead__cta" href="${ctx.u('quote/')}">Request a quote</a>
+        <a class="btn btn--sm masthead__cta" href="${ctx.u('quote/')}" data-quote-link>Request a quote</a>
         <a class="masthead__menu" href="#site-index" data-open="drawer" aria-haspopup="dialog" aria-controls="drawer">
           ${icon('menu', { size: 22 })}<span class="sr-only">Menu</span>
         </a>
@@ -97,14 +98,13 @@ const header = (ctx) => html`
         ${CATEGORIES.map((c) => html`<li><a href="${ctx.u('products/' + c.slug + '/')}">${c.short}</a></li>`)}
       </ul>
       <ul class="drawer__minor">
-        <li><a href="${ctx.u('pacific-northwest/')}">Pacific Northwest</a></li>
         <li><a href="mailto:${SITE.email}">${SITE.email}</a></li>
         <li>${motionToggle()}</li>
       </ul>
     </nav>
     <div class="drawer__foot">
       <button type="button" class="btn btn--lg btn--dark" data-open="call-sheet" aria-haspopup="dialog">${icon('phone', { size: 18 })} Call a yard</button>
-      <a class="btn btn--lg" href="${ctx.u('quote/')}">Request a quote</a>
+      <a class="btn btn--lg" href="${ctx.u('quote/')}" data-quote-link>Request a quote</a>
     </div>
   </dialog>`;
 
@@ -119,7 +119,7 @@ const callSheet = (ctx) => html`
     <ul class="sheet__list">
       ${LOCATIONS.map((l) => html`<li class="sheet__yard">
         <div class="sheet__who">
-          <p class="sheet__name"><b>${l.city}, ${l.state}</b>${openStatus(l)}</p>
+          <p class="sheet__name"><b>${l.city}, ${l.state}</b> ${openStatus(l)}</p>
           <a class="sheet__more" href="${ctx.u('locations/#' + l.id)}">Details<span class="sr-only"> for the ${l.city} yard</span></a>
           <small>${l.serves}</small>
         </div>
@@ -134,13 +134,14 @@ const callSheet = (ctx) => html`
   </dialog>`;
 
 // On the quote page itself, the third button goes to the plans step instead of reloading the page.
+// Everywhere else it is data-quote-link: it carries what the visitor has picked on the page (see 10-chrome.js).
 const actionBar = (ctx) => html`
   <div class="actionbar" role="region" aria-label="Quick actions">
     <a class="actionbar__btn" href="${ctx.u('locations/')}" data-open="call-sheet" aria-haspopup="dialog">${icon('phone', { size: 20 })}Call</a>
     <a class="actionbar__btn" href="${ctx.u('locations/')}" data-open="call-sheet" aria-haspopup="dialog">${icon('directions', { size: 20 })}Directions</a>
     ${ctx.path === 'quote/'
       ? html`<a class="actionbar__btn actionbar__btn--primary" href="#plans">${icon('upload', { size: 20 })}Send plans</a>`
-      : html`<a class="actionbar__btn actionbar__btn--primary" href="${ctx.u('quote/')}">${icon('file', { size: 20 })}Quote</a>`}
+      : html`<a class="actionbar__btn actionbar__btn--primary" href="${ctx.u('quote/')}" data-quote-link>${icon('file', { size: 20 })}Quote</a>`}
   </div>`;
 
 // The site ends on the brand: a yellow surface with the name, the tagline and the two ways to get started,

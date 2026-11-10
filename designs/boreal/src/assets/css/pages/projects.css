@@ -1,7 +1,7 @@
 /* ================= Projects: kinds of work =================
    No project list exists, so the page is a board of the four sectors and the kinds of work in each.
-   A kind of work is shown as a load: a photograph of that kind of building, what is typically on
-   the load, and which stops of the services line it uses. Everything here is prefixed pj-. */
+   A kind of work: a photograph of that kind of building, what the work often needs, and which
+   services to ask about. Everything here is prefixed pj-. */
 
 .pj-board { padding-top: clamp(.5rem, 2vw, 2rem); }
 
@@ -11,13 +11,16 @@
 .pj-filter .chip { height: 40px; padding: 0 1rem; background: var(--white); box-shadow: var(--sh-1); font-size: .875rem; text-decoration: none; }
 .pj-filter button.chip:hover, .pj-filter a.chip:hover { background: var(--white); box-shadow: var(--sh-2); }
 .pj-filter button.chip[aria-pressed='true'] { background: var(--ink); color: #fff; box-shadow: none; }
-.pj-bar__note { margin: 0; font-family: var(--mono); font-size: .75rem; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; color: var(--slate); }
-.pj-bar__note i { margin-inline: .35em; font-style: normal; opacity: .55; }
+.pj-bar__note { display: flex; flex-wrap: wrap; gap: .25rem 1rem; margin: 0; font-size: var(--t-small); color: var(--slate); }
+.pj-bar__count { font-weight: 500; color: var(--ink); }
+.pj-bar__count:empty { display: none; }
 
 /* ---------- A sector: its name and what it is on the left, its kinds of work on the right ---------- */
 .pj-sector { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); gap: 2rem clamp(2rem, 5vw, 5rem); align-items: start; padding-block: clamp(2.5rem, 1.5rem + 4vw, 5rem); border-top: 1px solid var(--mist); }
 .pj-sector:last-child { padding-bottom: 0; }
 .pj-sector__head { position: sticky; top: calc(var(--mast) + 2rem); }
+/* A short window: stuck, the foot of the head would never come into view. */
+@media (max-height: 44em) { .pj-sector__head { position: static; } }
 .pj-sector__title { font-size: clamp(1.75rem, 1.25rem + 1.8vw, 2.75rem); line-height: 1.04; letter-spacing: -.035em; }
 .pj-sector__title em { display: block; font-style: normal; color: var(--slate); }
 .pj-sector__text { margin: 1.1rem 0 1.5rem; max-width: 27em; font-size: 1.0625rem; line-height: 1.5; color: var(--slate); }
@@ -32,6 +35,9 @@
 .pj-yards a { display: inline-flex; align-items: center; min-height: 48px; font-size: 1.0625rem; font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: -.01em; white-space: nowrap; text-decoration: none; }
 .pj-yards a:hover { text-decoration: underline; text-decoration-thickness: 2px; text-decoration-color: var(--yellow); }
 .pj-sector__kinds { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2rem 1.25rem; }
+/* A card alone in its row takes the row: picture left, words right. */
+.pj-sector__kinds > .pj-kind:only-child, .pj-sector__kinds > .pj-kind:nth-child(odd):last-child { grid-column: 1 / -1; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 1.25rem; align-items: start; }
+.pj-kind:only-child .pj-kind__media, .pj-kind:nth-child(odd):last-child .pj-kind__media { grid-row: 1 / span 6; margin-bottom: 0; }
 
 /* ---------- A kind of work, as a load ---------- */
 .pj-kind { display: flex; flex-direction: column; align-items: flex-start; }
@@ -58,7 +64,7 @@
 .pj-legs .mode .link { margin-top: auto; }
 
 /* Below 1200px a sector's words sit above its work. */
-@media (max-width: 1199px) {
+@media (max-width: 74.9375em) {
   .pj-sector { grid-template-columns: minmax(0, 1fr); }
   .pj-sector__head { position: static; display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); column-gap: clamp(2rem, 6vw, 6rem); align-items: end; }
   .pj-sector__head .eyebrow, .pj-sector__title { grid-column: 1; }
@@ -66,17 +72,24 @@
   .pj-yards { grid-column: 2; margin-bottom: 1.25rem; }
   .pj-sector__head .link { grid-column: 2; justify-self: start; }
 }
-@media (max-width: 860px) {
+@media (max-width: 53.75em) {
   .pj-sector__head { display: block; }
   .pj-sector__text { margin: 1rem 0 1.25rem; }
   .pj-legs .mode { display: grid; }
   .pj-legs .mode p:not(.mode__where) { margin-bottom: 1rem; }
   .pj-legs .mode .link { grid-column: 2; justify-self: start; }
 }
-@media (max-width: 699px) {
+@media (max-width: 43.6875em) {
   .pj-bar { padding-bottom: 1.25rem; }
-  .pj-bar__note { display: grid; gap: .25rem; }
-  .pj-bar__note i { display: none; }
   .pj-sector__kinds { grid-template-columns: minmax(0, 1fr); gap: 2.5rem; }
+  .pj-sector__kinds > .pj-kind:only-child, .pj-sector__kinds > .pj-kind:nth-child(odd):last-child { display: flex; }
+  .pj-kind:only-child .pj-kind__media, .pj-kind:nth-child(odd):last-child .pj-kind__media { margin-bottom: 1rem; }
+  /* A shorter photograph lifts the chips clear of the action bar on the first screen. */
+  .pj-hero .phero__media { aspect-ratio: 16 / 9; }
+  /* One row of chips, so none sits behind the action bar. */
+  .pj-bar { min-width: 0; }
+  .pj-filter { flex-wrap: nowrap; max-width: calc(100vw - var(--gutter)); margin-right: calc(var(--gutter) * -1); padding-right: var(--gutter); overflow-x: auto; scrollbar-width: none; }
+  .pj-filter::-webkit-scrollbar { display: none; }
+  .pj-filter .chip { flex: none; }
   .pj-kind__media { aspect-ratio: 1 / .88; margin-bottom: 1rem; }
 }

@@ -16,7 +16,7 @@ It is a fast, static, mobile-first site. There is no CMS, database or plugin to 
 | Projects | `/projects/` | The kinds of work Uresco supplies, by sector (see the note below) |
 | Locations | `/locations/` | Which yard to call, then every detail for each: phone, toll-free, fax, email, address, directions and the (placeholder) hours |
 | Request a quote | `/quote/` | Form with plan upload, routed to the yard the customer picks |
-| Contractor accounts | `/accounts/` | Account benefits and an online credit application, routed to the chosen home yard and printable as a paper form |
+| Contractor accounts | `/accounts/` | A contractor credit application, routed to the chosen home yard and printable as a two-page Letter form to sign |
 | About | `/about/` | Who Uresco is, told through the tag on its loads: the remote specialty, the mission, who picks up |
 
 On phones a bar fixed to the bottom of the screen gives **Call · Directions · Quote** on every page. Each yard shows a live **open/closed** status worked out in its own time zone. Both forms save a draft in the browser as people type. Product pages pass their product line into the quote form, and each yard card has a quote link that preselects that yard.
@@ -68,7 +68,7 @@ Every pull request runs `.github/workflows/check.yml`. It rebuilds the site, fai
 - **Projects**: `src/data/projects.mjs`.
 - **Site settings** (preview mode, form endpoint, base path): `src/config.mjs`.
 - **Photos**: `scripts/photos.json` lists every photo with its alt text and credit. Run `npm run images` after editing it. Credits are in `PHOTO-CREDITS.md`.
-  - **To use Uresco's own photos:** put the originals in `originals/uresco/`. Point an entry's `src` at the file, for example `"yard-kent": { "src": "originals/uresco/kent-yard.jpg", "alt": "…" }`, then run `npm run images && npm run build`.
+  - **To use Uresco's own photos:** put the originals in `originals/uresco/`. Point an entry's `src` at the file, for example `"uresco-yard": { "src": "originals/uresco/masthead-yard.jpg", "alt": "…" }`, then run `npm run images && npm run build`.
   - Large, unedited camera files are best; the script handles resizing.
   - A photo used as a full-width hero needs `"hero": true, "art": true`, which adds the larger sizes and the phone crop. Add `"focal": [x, y]` (0 to 1) if the crop misses the subject.
   - The first ones to replace: each yard's window (`photo` and `photoCaption` in `src/data/locations.mjs`), `framer` (projects and quote), `unloading` (job-site delivery) and `tug-barge` (remote packages).
@@ -93,7 +93,9 @@ While `preview` is on, every page is `noindex` and `robots.txt` blocks crawlers,
 - **Phone and fax conflicts on the old site.** It shows Anchorage toll-free as both (800) and (888) 563-2500, and the Kent fax as both 872-8432 and 872-3693. The new site uses (800) and 872-8432.
 - **Yard hours.** Placeholder hours are in place (Mon–Fri 7:00 a.m.–4:30 p.m. local time, closed weekends). Confirm or correct them per yard; the open/closed status depends on them.
 - **Delivery area and minimums** per yard, if Uresco wants to publish them.
-- **Credit terms.** The credit application asks for references and a requested limit, and promises nothing about terms. If Uresco has a standard credit agreement or a PDF application, link it from `/accounts/`.
+- **Credit application and terms.** The application at `/accounts/` asks for company details, trade and bank references, tax details and a signature, and says nothing about what an account includes or about limits, terms or approvals. Its one-line certification ("I certify the information above is true") is a placeholder: Uresco should supply its own wording, and link its standard credit agreement if it has one. With no form service set, the application goes by ordinary email, tax ID and bank details included, and the form says so beside the tax ID.
+- **Which yard answers.** Off-road places in the northern finder (McGrath, Galena, Fort Yukon, Point Hope, Wainwright, Utqiaġvik, Kaktovik) now say Anchorage, following the site's "remote site: Anchorage" guidance. Confirm or correct them in `src/data/places.mjs`.
+- **Services not confirmed.** The site says only "crating and packaging" and offers no yard pick-up. If Uresco also bands or wraps loads, or offers pick-up, add it.
 - **Real photos.** Uresco has them, but none were found in the connected Google Drive. Upload them or share a folder (see **Photos** above for how they go in). The old site's photos of the printed "Lumber by UCM" tag and of a Uresco yard are on the About page, but they are only about 700 px wide.
 - **Real projects** for the gallery, as described above.
 - **Founding year**, if Uresco wants it shown ("35+ years" is used now).

@@ -44,14 +44,14 @@ const mega = (ctx) => html`
     <div class="mega__inner">
       <div class="mega__lead">
         <p class="label">Products</p>
-        <p class="mega__title">A wholesale dealer’s full line, from framing packages to the last box of fasteners.</p>
+        <p class="mega__title">Nine product lines, from framing lumber to fasteners.</p>
         <a class="link" href="${ctx.u('products/')}">All products ${icon('arrow', { size: 16 })}</a>
       </div>
       <ol class="mega__list">
         ${CATEGORIES.map((c, i) => html`<li><a href="${ctx.u('products/' + c.slug + '/')}">
           <img src="${ctx.u(`assets/img/${c.photo}-240.webp`)}" width="60" height="60" alt="" loading="lazy" decoding="async">
-          <span class="mega__text"><span class="mega__name"><span class="mega__no">${two(i + 1)}</span>${c.short}</span>
-          <span class="mega__items">${c.items.slice(0, 3).map(([n]) => n.replace(/[®™]/g, '')).join(' · ')}</span></span>
+          <span class="mega__text"><span class="mega__no">${two(i + 1)}</span><span class="mega__name">${c.name}</span>
+          <span class="mega__items">${c.items.slice(0, 3).map(([n]) => n.replace(/[®™]/g, '')).join(', ')}</span></span>
         </a></li>`)}
       </ol>
     </div>
@@ -59,16 +59,21 @@ const mega = (ctx) => html`
 
 // The rail: a latitude scale fixed to the left edge on wide screens. site.js moves the needle as the
 // page scrolls through sections that carry data-lat. Stops are links, so it also works as chapter
-// navigation. Below 1200px it is replaced by the reading in the masthead (.latchip).
+// navigation. Below 1000px it is replaced by the reading in the masthead (.latchip). A page that
+// does not run south to north gets the scale alone (quietRail), so the margin column reads the same
+// on every page and the mark at the top of it always has something to cap.
 const RAIL = { lo: 46, hi: 72 };
 const pos = (lat) => (((RAIL.hi - lat) / (RAIL.hi - RAIL.lo)) * 100).toFixed(2) + '%';
+const railScale = () => html`
+      <div class="rail__scale" aria-hidden="true">
+        ${Array.from({ length: RAIL.hi - RAIL.lo + 1 }, (_, i) => RAIL.lo + i).map((d) => html`<i class="${d % 5 ? '' : 'is-major'}" style="top:${pos(d)}">${d % 5 ? '' : html`<b>${d}°</b>`}</i>`)}
+      </div>`;
+const quietRail = () => html`<div class="rail rail--quiet" aria-hidden="true"><span class="rail__n">N</span><div class="rail__track">${railScale()}</div></div>`;
 const rail = (ctx, stops) => html`
   <nav class="rail" aria-label="Chapters, by latitude" data-rail data-lo="${RAIL.lo}" data-hi="${RAIL.hi}">
     <span class="rail__n" aria-hidden="true">N</span>
     <div class="rail__track">
-      <div class="rail__scale" aria-hidden="true">
-        ${Array.from({ length: RAIL.hi - RAIL.lo + 1 }, (_, i) => RAIL.lo + i).map((d) => html`<i class="${d % 5 ? '' : 'is-major'}" style="top:${pos(d)}">${d % 5 ? '' : html`<b>${d}°</b>`}</i>`)}
-      </div>
+      ${railScale()}
       <ol class="rail__stops">
         ${stops.map((s) => html`<li style="top:${pos(s.lat)}"><a href="#${s.id}" data-stop="${s.lat}"><span class="sr-only">${s.name}, ${deg(s.lat)}</span><span class="rail__tip" aria-hidden="true">${s.name} <span>${deg(s.lat)}</span></span></a></li>`)}
       </ol>
@@ -82,7 +87,7 @@ const drawerProducts = (ctx, n, i) => html`
     <summary><span class="drawer__no">${two(i + 1)}</span>${n.label}${icon('chevron-down', { size: 22, cls: 'drawer__caret' })}</summary>
     <ol class="drawer__lines">
       <li><a class="drawer__all" href="${ctx.u(n.href)}"${current(ctx, n.href, true)}>All products ${icon('arrow', { size: 16 })}</a></li>
-      ${CATEGORIES.map((c, j) => html`<li><a href="${ctx.u('products/' + c.slug + '/')}"${current(ctx, 'products/' + c.slug + '/')}><span class="drawer__no">${two(j + 1)}</span>${c.short}</a></li>`)}
+      ${CATEGORIES.map((c, j) => html`<li><a href="${ctx.u('products/' + c.slug + '/')}"${current(ctx, 'products/' + c.slug + '/')}><span class="drawer__no">${two(j + 1)}</span>${c.name}</a></li>`)}
     </ol>
   </details></li>`;
 
@@ -144,7 +149,7 @@ const header = (ctx) => html`
     </div>
   </dialog>`;
 
-// Call and Directions both open this. On the Alaska page modules/placefinder.js moves Kent to the end.
+// Call and Directions both open this. On the Alaska page the two Alaska yards come first.
 const callSheet = (ctx) => html`
   <dialog class="sheet" id="call-sheet" aria-labelledby="call-sheet-title">
     <div class="sheet__head">
@@ -152,7 +157,7 @@ const callSheet = (ctx) => html`
       <button type="button" class="iconbtn" data-close>${icon('close', { size: 22 })}<span class="sr-only">Close</span></button>
     </div>
     <ul class="sheet__list">
-      ${LOCATIONS.map((l) => html`<li class="sheet__yard">
+      ${(ctx.path === 'alaska/' ? [...LOCATIONS.filter((l) => l.id !== 'kent'), ...LOCATIONS.filter((l) => l.id === 'kent')] : LOCATIONS).map((l) => html`<li class="sheet__yard">
         <div class="sheet__who">
           <span class="sheet__lat">${deg(latOf(l))} · ${l.callFor}</span>
           ${openStatus(l, { short: true })}
@@ -182,7 +187,7 @@ const footer = (ctx) => html`
   <footer class="footer">
     <div class="wrap">
       <div class="footer__lead">
-        <p class="footer__line">Quality materials, <em>trusted service.</em></p>
+        <p class="footer__line">Quality Materials, <em>Trusted Service.</em></p>
         <div class="footer__cta">
           <a class="btn" href="${quoteHref(ctx)}">Request a quote ${icon('arrow', { size: 18 })}</a>
           <a class="btn btn--line" href="${ctx.u('accounts/')}">Open an account</a>
@@ -300,7 +305,7 @@ ${crumbsLd(ctx, title)}
 </head>
 <body class="${stops ? 'has-rail' : ''}">
 ${header(ctx)}
-${stops ? rail(ctx, stops) : ''}
+${stops ? rail(ctx, stops) : quietRail()}
 <main id="main">
 ${body}
 </main>

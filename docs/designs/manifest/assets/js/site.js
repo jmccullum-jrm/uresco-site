@@ -47,6 +47,8 @@ el.hidden = false;
 });
 paintHours();
 setInterval(paintHours, 60 * 1000);
+/* Paper has no scrolling, so whatever draws in on first sight is drawn before it prints. */
+window.addEventListener('beforeprint', () => $$('[data-reveal]').forEach((el) => el.classList.add('is-in')));
 })();
 (() => {
 const $ = (s, el = document) => el.querySelector(s);
@@ -61,9 +63,13 @@ const failed = $('[data-failed]', host);
 const DRAFT = 'uresco.draft.' + kind;
 const MAX = 25 * 1024 * 1024;
 let bag = new DataTransfer();
+let lost = [];   // files named in a saved draft: a browser cannot keep the files themselves
+form.noValidate = true;   // this script checks the form; without it the browser does
+$$('input[data-held]', form).forEach((el) => { el.name = el.id; });   // named only while this script is here to keep them out of the email
 const labelOf = (el) => el.dataset.label || (el.type === 'radio' ? $('#' + el.name + '-label', form) : form.querySelector(`label[for="${el.id}"]`))?.childNodes[0]?.textContent.trim() || el.name;
 const fields = () => $$('input, select, textarea', form).filter((el) => el.name && el.type !== 'file' && el.type !== 'hidden');
 const PRIVATE = /^(ein|bank|bank_contact|signature|signed|agree)$/;
+const NOT_EMAILED = /^(ein|bank|bank_contact)$/;
 const typed = () => fields().filter((el) => el.tagName !== 'SELECT' && el.type !== 'radio' && el.type !== 'checkbox');
 const yardSel = $('select[name=yard]', form);
 const showYard = () => {
@@ -71,6 +77,14 @@ if (!yardSel) return;
 $$('[data-route-yard]', area).forEach((el) => { el.hidden = el.dataset.routeYard !== yardSel.value; });
 };
 const leftAll = $('[data-left-all]', form);
+const ruleFor = (el) => {
+const v = el.value.trim();
+if (!v) return '';
+if (el.type === 'tel' && v.replace(/\D/g, '').length < 10) return 'Enter the phone number with its area code.';
+if (el.type === 'email' && !/^[^@\s]+@[^@\s]+\.[^@\s.]{2,}$/.test(v)) return 'Enter an email address like name@company.com.';
+return '';
+};
+const applyRule = (el) => { if (el.required && (el.type === 'tel' || el.type === 'email')) el.setCustomValidity(ruleFor(el)); };
 const progress = () => {
 const missing = [];
 $$('fieldset', form).forEach((fs) => {
@@ -99,18 +113,21 @@ $$('input', row).forEach((box) => { box.checked = filled && !!sel && box.value =
 };
 const clearBtn = $('[data-clear]', form);
 const draftState = $('[data-draft-state]', form);
+const hasFiles = !!$('input[type=file]', form);
 const showDraft = (has) => {
 if (clearBtn) clearBtn.hidden = !has;
-if (draftState) draftState.textContent = has ? 'Draft saved on this device' : 'Saves on this device as you type';
+if (draftState) draftState.textContent = !has ? 'Saves on this device as you type' : hasFiles ? 'Typing saved on this device. Files are not.' : 'Draft saved on this device';
 };
 const save = () => {
 const d = {};
 fields().filter((el) => !PRIVATE.test(el.name)).forEach((el) => {
 if (el.type === 'radio') { if (el.checked) d[el.name] = el.value; } else if (el.type === 'checkbox') d[el.name] = el.checked; else d[el.name] = el.value;
 });
+const names = [...Array.from(bag.files).map((f) => f.name), ...lost];
+if (names.length) d.__files = names;
 try { localStorage.setItem(DRAFT, JSON.stringify(d)); } catch { /* private mode */ }
 };
-const refresh = () => { showYard(); progress(); paperCopy(); };
+const refresh = () => { fields().forEach(applyRule); showYard(); progress(); paperCopy(); };
 let hadDraft = false;
 try {
 const d = JSON.parse(localStorage.getItem(DRAFT) || 'null');
@@ -119,21 +136,43 @@ hadDraft = true;
 fields().forEach((el) => {
 if (!(el.name in d)) return;
 if (el.type === 'radio') el.checked = d[el.name] === el.value; else if (el.type === 'checkbox') el.checked = !!d[el.name]; else el.value = d[el.name];
+if (el.tagName === 'SELECT' && el.selectedIndex < 0) el.selectedIndex = 0;   // a saved choice the list no longer offers
 });
+if (Array.isArray(d.__files)) lost = d.__files;
 }
 } catch { /* ignore */ }
 showDraft(hadDraft);
 form.addEventListener('input', () => { save(); refresh(); showDraft(true); });
 form.addEventListener('change', () => { save(); refresh(); showDraft(true); });
 const params = new URLSearchParams(location.search);
+const replaced = [];
 const product = params.get('product');
 const materials = $('textarea[name=materials]', form);
 if (product && materials && !materials.value.includes(product)) materials.value = (materials.value.trim() ? materials.value.trimEnd() + '\n' : '') + product + ':\n';
 const place = params.get('location');
 const jobPlace = $('input[name=location]', form);
-if (place && jobPlace && !jobPlace.value) jobPlace.value = place.slice(0, 120);
+if (place && jobPlace) {
+const next = place.slice(0, 120);
+if (jobPlace.value.trim() && jobPlace.value !== next) replaced.push(`location, ${jobPlace.value.trim()}`);
+jobPlace.value = next;
+}
 const yardParam = (params.get('yard') || '').toLowerCase();
-if (yardParam && yardSel) $$('option', yardSel).forEach((o) => { if (o.value.toLowerCase() === yardParam) yardSel.value = o.value; });
+if (yardParam && yardSel) $$('option', yardSel).forEach((o) => {
+if (o.value.toLowerCase() !== yardParam) return;
+if (hadDraft && yardSel.value !== o.value) replaced.push(`yard, ${yardSel.value}`);
+yardSel.value = o.value;
+});
+const how = (params.get('delivery') || '').toLowerCase();
+if (how) $$('input[type=radio][name=delivery]', form).forEach((r) => { if (r.value.toLowerCase() === how) r.checked = true; });
+if (replaced.length) {
+const note = $('[data-link-note]', form);
+if (note) { note.textContent = `Replaced your saved ${replaced.join(' and ')}.`; note.hidden = false; }
+}
+if (['product', 'location', 'yard', 'delivery'].some((k) => params.has(k))) {
+save();
+showDraft(true);
+history.replaceState(null, '', location.pathname + location.hash);
+}
 refresh();
 const input = $('input[type=file]', form);
 const drop = $('[data-drop]', form);
@@ -149,34 +188,44 @@ const rm = document.createElement('button'); rm.type = 'button'; rm.textContent 
 rm.addEventListener('click', () => {
 const next = new DataTransfer();
 Array.from(bag.files).forEach((g, j) => { if (j !== i) next.items.add(g); });
-bag = next; input.files = bag.files; render();
+bag = next; input.files = bag.files; render(); save();
 });
 li.append(name, meta, rm);
 list.append(li);
 });
+};
+const fileNote = $('[data-file-err]', form);
+const showLost = () => {
+if (!fileNote) return;
+fileNote.hidden = !lost.length;
+fileNote.textContent = lost.length ? `${lost.join(', ')} ${lost.length > 1 ? 'were' : 'was'} not kept. Add ${lost.length > 1 ? 'them' : 'it'} again.` : '';
 };
 const add = (files) => {
 const tooBig = [];
 Array.from(files).forEach((f) => (f.size > MAX ? tooBig.push(f.name) : bag.items.add(f)));
 input.files = bag.files;
 render();
-const note = $('[data-file-err]', form);
-note.hidden = !tooBig.length;
-if (tooBig.length) note.textContent = `${tooBig.join(', ')} ${tooBig.length > 1 ? 'are' : 'is'} over 25 MB. Email large files to the yard directly, or send a download link in the notes.`;
+const have = Array.from(bag.files).map((f) => f.name);
+lost = lost.filter((n) => !have.includes(n));
+showLost();
+if (tooBig.length) { fileNote.hidden = false; fileNote.textContent = `${tooBig.join(', ')} ${tooBig.length > 1 ? 'are' : 'is'} over 25 MB. Email large files to the yard directly, or send a download link in the notes.`; }
+save();
 };
 if (input && drop) {
 input.addEventListener('change', () => { const f = Array.from(input.files); bag = new DataTransfer(); add(f); });
 ['dragenter', 'dragover'].forEach((t) => drop.addEventListener(t, (e) => { e.preventDefault(); drop.classList.add('is-over'); }));
 ['dragleave', 'drop'].forEach((t) => drop.addEventListener(t, (e) => { e.preventDefault(); drop.classList.remove('is-over'); }));
 drop.addEventListener('drop', (e) => add(e.dataTransfer.files));
+showLost();
 }
 const check = (el) => {
+applyRule(el);
 const err = document.getElementById(el.id + '-err');
 const bad = !el.checkValidity();
 el.setAttribute('aria-invalid', String(bad));
 if (err) {
 err.hidden = !bad;
-err.textContent = !bad ? '' : el.type === 'checkbox' ? 'Please confirm to continue.' : el.validity.valueMissing ? (el.dataset.msg || 'Required.') : el.type === 'email' ? 'Enter an email address like name@company.com.' : 'Check this field.';
+err.textContent = !bad ? '' : el.type === 'checkbox' ? 'Please confirm to continue.' : el.validity.valueMissing ? (el.dataset.msg || 'Required.') : el.validity.customError ? el.validationMessage : el.type === 'email' ? 'Enter an email address like name@company.com.' : 'Check this field.';
 }
 return !bad;
 };
@@ -194,8 +243,10 @@ if (!window.confirm('Clear everything in this form?')) return;
 try { localStorage.removeItem(DRAFT); } catch { /* ignore */ }
 form.reset();
 bag = new DataTransfer();
+lost = [];
 if (input) input.files = bag.files;
 if (list) render();
+if (fileNote) { fileNote.hidden = true; fileNote.textContent = ''; }
 $$('[aria-invalid]', form).forEach((el) => el.removeAttribute('aria-invalid'));
 $$('.fm-err', form).forEach((el) => { el.hidden = true; el.textContent = ''; });
 form.classList.remove('was-checked');
@@ -207,16 +258,18 @@ const out = [];
 $$('fieldset', form).forEach((fs) => {
 const legend = fs.querySelector('legend')?.lastChild?.textContent.trim() || '';
 const rows = [];
-fields().filter((el) => fs.contains(el)).forEach((el) => {
+fields().filter((el) => fs.contains(el) && !NOT_EMAILED.test(el.name)).forEach((el) => {
 if (el.type === 'radio' && !el.checked) return;
-const v = el.type === 'checkbox' ? (el.checked ? 'Yes' : 'No') : el.tagName === 'SELECT' ? el.selectedOptions[0]?.textContent : el.value.trim();
+const v = el.type === 'checkbox' ? (el.checked ? 'Yes' : 'No') : el.tagName === 'SELECT' ? (el.value ? el.selectedOptions[0]?.textContent : '') : el.value.trim();
 if (v) rows.push([labelOf(el), v]);
 });
 if (rows.length) out.push('', `— ${legend.toUpperCase()} —`, ...rows.map(([k, v]) => `${k}: ${v}`));
 });
 const names = Array.from(bag.files).map((f) => f.name);
 if (names.length) out.push('', 'FILES TO ATTACH: ' + names.join(', '));
-return { text: out.join('\n').trim(), files: names };
+const held = fields().some((el) => NOT_EMAILED.test(el.name));
+if (held) out.push('', 'Tax ID and bank details: give these to your yard by phone or fax, or use the paper copy.');
+return { text: out.join('\n').trim(), files: names, held };
 };
 const copyBtn = $('[data-copy]', host);
 if (copyBtn) copyBtn.addEventListener('click', async () => {
@@ -230,6 +283,14 @@ window.getSelection()?.selectAllChildren(box);
 copyBtn.textContent = 'Selected: press copy';
 }
 });
+const backBtn = $('[data-back]', host);
+if (backBtn) backBtn.addEventListener('click', () => {
+form.classList.remove('is-sent');
+done.hidden = true;
+form.tabIndex = -1;
+form.focus();
+form.scrollIntoView({ block: 'start', behavior: 'instant' });
+});
 form.addEventListener('submit', async (e) => {
 e.preventDefault();
 if (!validate()) return;
@@ -241,9 +302,9 @@ data.set('_subject', form.dataset.subject + ' — ' + (data.get('company') || da
 const btn = $('button[type=submit]', form);
 const endpoint = form.dataset.endpoint;
 if (failed) failed.hidden = true;
-const finish = () => {
-try { localStorage.removeItem(DRAFT); } catch { /* ignore */ }
-form.hidden = true; done.hidden = false; done.focus();
+const finish = (sent) => {
+if (sent) try { localStorage.removeItem(DRAFT); } catch { /* ignore */ }
+form.classList.add('is-sent'); done.hidden = false; done.focus();
 window.scrollTo({ top: done.getBoundingClientRect().top + window.scrollY - 120, behavior: 'instant' });
 };
 if (endpoint) {
@@ -251,7 +312,7 @@ btn.disabled = true; btn.dataset.label = btn.innerHTML; btn.textContent = 'Sendi
 try {
 const r = await fetch(endpoint, { method: 'POST', body: data, headers: { Accept: 'application/json' } });
 if (!r.ok) throw new Error(r.status);
-finish();
+finish(true);
 } catch {
 failed.hidden = false; failed.focus();
 } finally {
@@ -259,18 +320,20 @@ btn.disabled = false; if (btn.dataset.label) btn.innerHTML = btn.dataset.label;
 }
 return;
 }
-const { text, files } = summary();
+const { text, files, held } = summary();
 const subject = `${form.dataset.subject} — ${data.get('company') || data.get('name')}${data.get('location') ? ' — ' + data.get('location') : ''}`;
 const href = `mailto:${to}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(text)}`;
 window.location.href = href;
 const note = $('[data-mail-note]', done);
 if (note) note.hidden = !files.length;
+const heldNote = $('[data-held-note]', done);
+if (heldNote) heldNote.hidden = !held;
 $('[data-mail-to]', done).textContent = to;
 const again = $('[data-mail-again]', done);
 if (again) again.href = href;
 const box = $('[data-mail-text]', done);
 if (box) box.textContent = text;
-finish();
+finish(false);
 });
 });
 })();
@@ -368,19 +431,20 @@ const calm = matchMedia('(prefers-reduced-motion: reduce)');
 const touch = matchMedia('(pointer: coarse)');
 const fold = (s) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[’'.]/g, '').toLowerCase().trim();
 const data = JSON.parse($('[data-finder-data]').textContent);
-const places = data.places.map(([name, st, region, access, yard, x, y]) => ({ name, st, region, access, yard, x, y, key: fold(name) }));
+const places = data.places.map(([name, st, region, access, yard, x, y, both]) => ({ name, st, region, access, yard, x, y, both, key: fold(name) }));
 const byName = new Map(places.map((p) => [p.name, p]));
 const aliases = Object.entries(data.aliases).map(([alias, name]) => ({ alias, key: fold(alias), place: byName.get(name) }));
 const SUGGEST = data.suggest.map((name) => ({ p: byName.get(name) }));
 const input = $('.shipto__input'), list = $('.shipto__list'), clear = $('[data-clear]');
 const route = $('[data-route]'), live = $('[data-live]'), searchEl = $('.shipto__search');
 const field = (k) => $(`[data-r="${k}"]`, route);
-let active = -1, options = [];
+let active = -1, options = [], settled = '';   // settled: the text the ticket last answered for
 /* ---- The ticket ---- */
-const quoteUrl = (where, yard) => `${data.quote}?location=${encodeURIComponent(where)}${yard ? '&yard=' + yard : ''}`;
-const quoteLinks = Array.from(document.querySelectorAll('a[href$="quote/"]'));
-const carry = (url) => { field('quote').href = url; quoteLinks.forEach((a) => { a.href = url; }); };
-const showYard = (id) => $$('[data-y]', route).forEach((el) => { el.hidden = el.dataset.y !== id; });
+const quoteUrl = (where, yard, remote) => `${data.quote}?location=${encodeURIComponent(where)}${yard ? '&yard=' + yard : ''}${remote ? '&delivery=' + encodeURIComponent(data.delivery) : ''}`;
+const quoteLinks = Array.from(document.querySelectorAll('a[href*="quote/"]')).filter((a) => !a.closest('.yard, [data-route]'));
+quoteLinks.forEach((a) => { if (!a.search) a.search = '?yard=anchorage'; });
+const carry = (url) => { field('quote').href = url; quoteLinks.forEach((a) => { a.href = url + a.hash; }); };
+const showYard = (ids) => $$('[data-y]', route).forEach((el) => { el.hidden = !ids.includes(el.dataset.y); });
 const plot = () => {
 if (calm.matches) return;
 const el = field('name');
@@ -395,32 +459,34 @@ field('name').textContent = `${p.name}, ${data.states[p.st]}`;
 field('eg').hidden = true;
 field('region').textContent = p.region;
 field('tag').textContent = acc.tag;
-field('tag').hidden = false;
-showYard(p.yard);
+field('tag').hidden = !acc.tag;
+const start = p.both ? ['anchorage', 'fairbanks'] : [p.yard];
+showYard(start);
 modes.forEach(([lane, text], i) => {
 field(`m${i}`).textContent = text;
-field(`t${i}`).textContent = lane;
-field(`t${i}`).classList.toggle('is-none', !lane);
+field(`t${i}`).textContent = lane ? `Lane ${lane}` : '';
+field(`t${i}`).hidden = !lane;
 });
-if (modes.some(([lane]) => lane)) field('modes').removeAttribute('data-lanes'); else field('modes').dataset.lanes = 'none';
+field('season').textContent = acc.note || '';
+field('season').hidden = !acc.note;
 field('how').hidden = false;
 field('else').hidden = true;
 field('note').hidden = false;
 field('short').textContent = p.name;
-carry(quoteUrl(`${p.name}, ${p.st}`, p.yard));
-live.textContent = `${p.name}, ${data.states[p.st]}. ${acc.tag}. Yard to call: ${yard.name}, ${yard.phone}. How freight typically gets there: ${modes.map((m) => m[1]).join('; ')}. Typical for the region, not a schedule or a price. Any yard can help.`;
+carry(quoteUrl(`${p.name}, ${p.st}`, p.yard, acc.remote));
+live.textContent = `${p.name}, ${data.states[p.st]}. ${acc.tag ? acc.tag + '. ' : ''}Start with ${start.map((id) => `${data.yards[id].name}, ${data.yards[id].phone}`).join(', or ')}. How freight typically gets there: ${modes.map((m) => m[1]).join('; ')}. ${acc.note ? acc.note + ' ' : ''}Typical for the region, not a schedule or a price. Any yard can help.`;
 };
 const fillUnknown = (text) => {
 field('name').textContent = text;
 field('eg').hidden = true;
 field('region').textContent = 'Not on our short list';
 field('tag').hidden = true;
-showYard('any');
+showYard(['any']);
 field('how').hidden = true;
 field('else').hidden = false;
 field('note').hidden = true;
 field('short').textContent = text.length > 22 ? 'this job' : text;
-carry(quoteUrl(text));
+carry(quoteUrl(text, 'anchorage'));
 live.textContent = `${text} is not on our short list, which does not mean we cannot get there. Any yard can help. Use the quote button, or call a yard.`;
 };
 /* ---- The pin on the delivery plate ---- */
@@ -449,22 +515,26 @@ pin.lastChild.dataset.side = p.y < 14 ? 'e' : covered ? covered.dataset.side : p
 /* ---- Choosing ---- */
 const press = (name) => $$('.shipto__chip').forEach((c) => c.setAttribute('aria-pressed', String(c.dataset.place === name)));
 const settle = () => { if (touch.matches) input.blur(); };
-const choose = (p) => {
+const show = () => route.scrollIntoView({ block: 'nearest', behavior: calm.matches ? 'auto' : 'smooth' });
+const choose = (p, quiet) => {
 close();
-input.value = p.name;
+input.value = settled = p.name;
 clear.hidden = false;
 press(p.name);
 fill(p);
 plot();
 pinOn(p);
+if (!quiet) show();
 };
-const chooseUnknown = (text) => {
+const chooseUnknown = (text, quiet) => {
 close();
+settled = text;
 clear.hidden = false;
 press('');
 fillUnknown(text.slice(0, 60));
 plot();
 pinOn(null);
+if (!quiet) show();
 };
 /* ---- The combobox ---- */
 const search = (q) => {
@@ -518,8 +588,8 @@ input.setAttribute('aria-expanded', 'false');
 input.removeAttribute('aria-activedescendant');
 active = -1;
 }
-const take = (o) => {
-if (o.unknown) chooseUnknown(o.unknown); else choose(o.p);
+const take = (o, quiet) => {
+if (o.unknown) chooseUnknown(o.unknown, quiet); else choose(o.p, quiet);
 settle();
 };
 input.addEventListener('input', () => { clear.hidden = !input.value; open(); });
@@ -529,7 +599,11 @@ open();
 if (window.innerWidth < 700) input.scrollIntoView({ block: 'start', behavior: calm.matches ? 'auto' : 'smooth' });
 });
 input.addEventListener('click', () => { if (list.hidden) open(); });
-input.addEventListener('blur', () => setTimeout(close, 120));
+input.addEventListener('blur', () => setTimeout(() => {
+close();
+const text = input.value.trim();
+if (text && text !== settled && document.activeElement !== input) take(search(text)[0], true);
+}, 120));
 input.addEventListener('keydown', (e) => {
 if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
 e.preventDefault();
@@ -561,14 +635,15 @@ if (chip && byName.has(chip.dataset.place)) choose(byName.get(chip.dataset.place
 document.querySelectorAll('[data-manifest]').forEach((root) => {
 const lines = Array.from(root.querySelectorAll('details.mline'));
 if (!lines.length) return;
-const wide = window.matchMedia('(min-width: 1000px)');
+const wide = window.matchMedia('(min-width: 62.5em)');
 const pointer = window.matchMedia('(hover: hover) and (pointer: fine)');
 const open = (d) => { if (d.open) return; lines.forEach((x) => { if (x !== d) x.open = false; }); d.open = true; };
+if (!wide.matches) lines.forEach((d) => { d.open = false; });
 let timer;
 lines.forEach((d, i) => {
 const row = d.querySelector('summary');
 row.addEventListener('click', (e) => { if (wide.matches && d.open) e.preventDefault(); });
-row.addEventListener('mouseenter', () => { if (!wide.matches || !pointer.matches) return; clearTimeout(timer); timer = setTimeout(() => open(d), 80); });
+row.addEventListener('mousemove', () => { if (!wide.matches || !pointer.matches) return; clearTimeout(timer); timer = setTimeout(() => open(d), 200); });
 row.addEventListener('mouseleave', () => clearTimeout(timer));
 row.addEventListener('focus', () => { if (wide.matches && row.matches(':focus-visible')) open(d); });
 row.addEventListener('keydown', (e) => {
@@ -590,10 +665,11 @@ wide.addEventListener('change', () => { if (wide.matches && !lines.some((d) => d
 const item = document.querySelector('.nav__item--menu');
 const menu = item && item.querySelector('.mega');
 if (!menu) return;
-item.addEventListener('keydown', (e) => {
-if (e.key !== 'Escape') return;
+document.addEventListener('keydown', (e) => {
+if (e.key !== 'Escape' || !item.matches(':hover, :focus-within')) return;
+const inside = item.matches(':focus-within');
 menu.setAttribute('data-closed', '');
-item.querySelector('.nav__link').focus();
+if (inside) item.querySelector('.nav__link').focus();
 });
 item.addEventListener('mouseleave', () => menu.removeAttribute('data-closed'));
 item.addEventListener('focusout', (e) => { if (!item.contains(e.relatedTarget)) menu.removeAttribute('data-closed'); });
@@ -623,10 +699,10 @@ if (hit) shown++;
 clear.hidden = !words.length;
 none.hidden = shown > 0;
 if (!shown) none.querySelector('q').textContent = input.value.trim();
-status.textContent = !words.length ? idle : shown ? shown + ' of ' + rows.length + ' lines' : 'No match';
+status.textContent = !words.length ? idle : shown ? shown + ' of ' + rows.length + ' lines' : 'Nothing listed';
 };
 input.addEventListener('input', run);
-const narrow = window.matchMedia('(max-width: 699px)');
+const narrow = window.matchMedia('(max-width: 43.6875em)');
 input.addEventListener('focus', () => {
 if (!narrow.matches) return;
 const mast = (document.querySelector('.masthead')?.offsetHeight || 0) + 10, top = form.getBoundingClientRect().top;

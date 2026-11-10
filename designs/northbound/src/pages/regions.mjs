@@ -35,7 +35,7 @@ const RIG_BOOM = svg([
   bundle(324, 146, 96, 40),
   ln('M372 191V199M368 195l4 4 4-4', 'ln--thin'),
   '<path class="dash" d="M324 204h96v40h-96z"/>',
-  // The work beyond the curb.
+  // The drawing's far side: the work the load is headed for.
   ln('M436 244V150M452 244V150M468 244V150M430 150H474M430 244H474', 'ln--thin'),
   mk(1, 198, 180), mk(2, 296, 120), mk(3, 372, 224),
 ].join(''));
@@ -69,10 +69,12 @@ const rigPanel = ({ no, name, drawing, body, steps, i }) => html`
     </figcaption>
   </figure>`;
 
-// The chart near Kent: the printed sheet (the same file as the route plate), cut close, with the
-// lanes leaving north. Crop and marks all use the sheet's own coordinates; pages/pacific-northwest.css
-// sets the crop for each screen size.
+// The chart near Kent: the printed sheet (the same file as the route plate), cut close, with lines
+// showing how ocean freight generally moves north. Crop and marks all use the sheet's own coordinates;
+// pages/pacific-northwest.css sets the crop for each screen size.
 const SEA_LANES = [['sea', 'sea', 0.1], ['passage', 'sea sea--minor', 0.5], ['passage2', 'sea sea--minor', 1.1]];
+// Kent is inland, so the ocean lane starts on the water: this drops its first curve, which runs ashore to the mark.
+const offshore = (d) => d.replace(/^M[\d.,-]+Q[\d.,-]+ ([\d.,-]+)/, 'M$1');
 const pct = ([x, y]) => `left:${((x / MAP.width) * 100).toFixed(2)}%;top:${((y / MAP.height) * 100).toFixed(2)}%`;
 const SHOWN_TOWNS = MAP.towns.filter((t) => t.region === 'southeast');
 const laneChart = (ctx) => {
@@ -81,17 +83,17 @@ const laneChart = (ctx) => {
   <figure class="pnw-chart__wrap">
     <div class="pnw-chart rv">
       <div class="pnw-chart__sheet">
-        <img src="${ctx.u('assets/map.svg')}?v=${ctx.version}" width="${MAP.width}" height="${MAP.height}" loading="lazy" decoding="async" alt="Chart of the coast from Puget Sound north to Southeast Alaska. A freight lane leaves Kent, Washington and runs north along the British Columbia coast toward the Gulf of Alaska, with the Inside Passage branching to Southeast Alaska.">
+        <img src="${ctx.u('assets/map.svg')}?v=${ctx.version}" width="${MAP.width}" height="${MAP.height}" loading="lazy" decoding="async" alt="Chart of the coast from Puget Sound north to Southeast Alaska, with lines showing how ocean freight generally moves along the British Columbia coast toward the Gulf of Alaska and through the Inside Passage. Kent, Washington is marked.">
         <svg viewBox="0 0 ${MAP.width} ${MAP.height}" aria-hidden="true" focusable="false">
-          ${raw(SEA_LANES.map(([k2, c, d]) => `<path class="lane ${c}" d="${MAP.lanes[k2]}" pathLength="1" style="--d:${d}s"/>`).join(''))}
+          ${raw(SEA_LANES.map(([k2, c, d]) => `<path class="lane ${c}" d="${k2 === 'sea' ? offshore(MAP.lanes[k2]) : MAP.lanes[k2]}" pathLength="1" style="--d:${d}s"/>`).join(''))}
           ${raw(SHOWN_TOWNS.map((t) => `<circle class="town" cx="${t.xy[0]}" cy="${t.xy[1]}" r="3.4"/>`).join(''))}
           <g class="yardmark"><circle class="yardmark__disc" cx="${k.xy[0]}" cy="${k.xy[1]}" r="8"/><circle class="yardmark__dot" cx="${k.xy[0]}" cy="${k.xy[1]}" r="2.6"/></g>
         </svg>
         ${SHOWN_TOWNS.map((t) => html`<span class="pnw-chart__town" aria-hidden="true" data-side="${t.side}" style="${pct(t.xy)}">${t.name}</span>`)}
         <span class="pnw-chart__yard" aria-hidden="true" style="${pct(k.xy)}"><b>Kent</b><i>${deg(LAT.kent)}</i></span>
-        <span class="pnw-chart__to" aria-hidden="true" style="${pct([690, 708])}">${icon('arrow', { size: 14 })} To Anchorage <i>${deg(LAT.anchorage)}</i></span>
+        <span class="pnw-chart__to" aria-hidden="true">${icon('arrow', { size: 14 })} Toward Anchorage <i>${deg(LAT.anchorage)}</i></span>
       </div>
-      <p class="pnw-chart__title" aria-hidden="true"><span>Plate IV</span><b>The lane north</b><i>Departing Kent</i></p>
+      <p class="pnw-chart__title" aria-hidden="true"><span>Plate III</span><b>North from Puget Sound</b><i>How freight generally moves</i></p>
     </div>
     <figcaption class="fig__cap"><span>Lanes are drawn to show how freight generally moves. They are not carrier routes or schedules.</span></figcaption>
   </figure>`;
@@ -115,26 +117,26 @@ const pnw = {
   render: (ctx) => layout(ctx, {
     title: 'Pacific Northwest — Kent, WA',
     description: 'Uresco’s Kent, Washington headquarters and Pacific Northwest distribution center: lumber, engineered wood, siding and building packages with job-site delivery by boom truck and Moffett forklift.',
-    preload: [preloadFor(ctx, 'rainier-tacoma')],
+    preload: [preloadFor(ctx, 'tacoma-port')],
     rail: STOPS_PNW,
     body: html`
 ${pageHero(ctx, {
   crumbs: [['Pacific Northwest']],
   eyebrow: `Pacific Northwest · Kent · ${deg(LAT.kent)}`,
   title: 'Down the road, <em>from Kent.</em>',
-  lede: 'Our headquarters and Pacific Northwest distribution center. A full range of building products for commercial and residential builders, set down on job sites around the Puget Sound region by boom truck and truck-mounted Moffett forklift.',
-  photoKey: 'rainier-tacoma',
-  caption: 'Mount Rainier in alpenglow above the Tacoma waterfront.',
+  lede: 'Our headquarters and Pacific Northwest distribution center. Building products for commercial and residential builders, delivered to job sites around the Puget Sound region by boom truck and truck-mounted Moffett forklift.',
+  photoKey: 'tacoma-port',
+  caption: 'Container cranes at the Port of Tacoma, across Commencement Bay.',
   place: 'Tacoma, Washington',
   lat: LAT.tacoma,
-  pos: '50% 46%',
+  pos: '58% 56%',
   actions: html`<a class="btn" href="${tel(kent.phone)}">${icon('phone', { size: 18 })} Call Kent ${kent.phone}</a><a class="btn btn--line" href="${ctx.u('quote/')}?yard=kent">Request a quote ${icon('arrow', { size: 18 })}</a>`,
   attrs: html` data-page="pnw" data-lat="${LAT.kent}" data-place="Kent"`,
 })}
 
 <section class="section pnw-yard" id="kent" data-lat="${LAT.kent}" data-place="Kent" aria-labelledby="kent-title">
   <div class="wrap">
-    ${chapterHead({ no: '01', kicker: 'The Kent yard', lat: LAT.kent, tag: 'Headquarters', id: 'kent-title', title: 'The yard <em>nearest your job.</em>', lede: 'Kent carries a full range of building products and services for the commercial and residential builder, and is fully equipped to get them to your site. Give us a call, email or stop by.' })}
+    ${chapterHead({ no: '01', kicker: 'The Kent yard', lat: LAT.kent, tag: 'Headquarters', id: 'kent-title', title: 'The yard <em>nearest your job.</em>', lede: 'Kent supplies commercial and residential builders and delivers to job sites around the Puget Sound region. Give us a call, email or stop by.' })}
     <div class="pnw-yard__grid">
       <div class="pnw-record rv">
         <a class="pnw-record__tel" href="${tel(kent.phone)}">${kent.phone}</a>
@@ -157,7 +159,7 @@ ${pageHero(ctx, {
           <figure class="print pnw-print pnw-print--2 rv" style="--i:1">${picture(ctx, 'uresco-truck', { sizes: '(min-width: 1000px) 240px, 40vw' })}<figcaption>The tag on a Uresco load.</figcaption></figure>
         </div>
         <div class="pnw-does rv">
-          <p class="label">From this yard</p>
+          <p class="label">Services</p>
           <ul>
             <li><a href="#delivery">Job-site delivery by boom truck and Moffett forklift ${icon('arrow', { size: 16 })}</a></li>
             <li><a href="${ctx.u('services/')}#takeoffs">Take-offs, estimates and design services ${icon('arrow', { size: 16 })}</a></li>
@@ -171,22 +173,22 @@ ${pageHero(ctx, {
 
 <section class="section section--deep pnw-drop" id="delivery" data-lat="${LAT.kent}" data-place="Kent" aria-labelledby="delivery-title">
   <div class="wrap">
-    ${sectionHead({ no: '02', eyebrow: 'Job-site delivery', id: 'delivery-title', title: 'Not at the curb. <em>Where the crew needs it.</em>', lede: 'Two machines, two ways to get a load off the truck and onto the site. Around the Puget Sound region, Kent’s deliveries go out with one or the other.' })}
+    ${sectionHead({ no: '02', eyebrow: 'Job-site delivery', id: 'delivery-title', title: 'Off the truck <em>and onto the site.</em>', lede: 'Kent delivers to job sites around the Puget Sound region by boom truck and truck-mounted Moffett forklift.' })}
     <div class="pnw-rigs">
-      ${rigPanel({ no: 'Plate II', i: 0, name: 'Boom truck', drawing: RIG_BOOM, body: 'A crane on the truck lifts the load off the bed and sets it down on site.', steps: ['The load rides on the bed.', 'The boom lifts it clear of the truck.', 'It comes down where the crew needs it.'] })}
-      ${rigPanel({ no: 'Plate III', i: 1, name: 'Moffett forklift', drawing: RIG_MOFFETT, body: 'A forklift that rides on the back of the truck, then carries the load across the site.', steps: ['It travels on the back of the truck.', 'At the site it drives off and takes the load.', 'It carries the load across the site.'] })}
+      ${rigPanel({ no: 'Plate I', i: 0, name: 'Boom truck', drawing: RIG_BOOM, body: 'A crane on the truck lifts the load off the bed and down onto the site.', steps: ['The load rides on the bed.', 'The boom lifts it clear of the truck.', 'It comes down on the site.'] })}
+      ${rigPanel({ no: 'Plate II', i: 1, name: 'Moffett forklift', drawing: RIG_MOFFETT, body: 'A forklift that rides on the back of the truck, then carries the load across the site.', steps: ['It travels on the back of the truck.', 'At the site it drives off and takes the load.', 'It carries the load across the site.'] })}
     </div>
     <div class="pnw-drop__foot rv">
-      <p class="lede">Tell us the address and where on the site you want the load.</p>
+      <p class="lede">Give us the job-site address and ask what Kent can bring to your site.</p>
       <a class="btn" href="${tel(kent.phone)}">${icon('phone', { size: 18 })} Call Kent ${kent.phone}</a>
     </div>
   </div>
-  ${figure(ctx, 'cranes-dusk', { ratio: 'cine', cls: 'fig--bleed pnw-drop__photo', parallax: true, caption: 'Tower cranes over a construction site at dusk.', pos: '50% 58%' })}
+  ${figure(ctx, 'institutional', { ratio: 'cine', cls: 'fig--bleed pnw-drop__photo', parallax: true, caption: 'A building framed with roof trusses and sheathing, behind site fencing.', pos: '50% 62%' })}
 </section>
 
 <section class="section pnw-line" id="stock" data-lat="${LAT.kent}" data-place="Kent" aria-labelledby="stock-title">
   <div class="wrap">
-    ${sectionHead({ no: '03', eyebrow: 'The full line', id: 'stock-title', title: 'From framing packages <em>to the last box of fasteners.</em>', lede: 'Nine product lines for the commercial and residential builder. Open a line to see what is in it, or ask Kent.', action: html`<a class="link" href="${ctx.u('products/')}">All products ${icon('arrow', { size: 16 })}</a>` })}
+    ${sectionHead({ no: '03', eyebrow: 'Product lines', id: 'stock-title', title: 'From framing packages <em>to the last box of fasteners.</em>', lede: 'Nine product lines for the commercial and residential builder. Open a line to see what is in it, or ask Kent.', action: html`<a class="link" href="${ctx.u('products/')}">All products ${icon('arrow', { size: 16 })}</a>` })}
     <div class="stock" data-stock>
       ${stockFrame(ctx)}
       ${stockList(ctx, { extra: '&yard=kent' })}
@@ -202,9 +204,9 @@ ${pageHero(ctx, {
 <section class="section section--ice pnw-north" id="north" data-lat="${LAT.kent}" data-lat-to="${LAT.anchorage}" data-place="At sea" data-place-end="Anchorage" aria-labelledby="north-title">
   <div class="wrap pnw-north__grid">
     <div class="pnw-north__head">
-      <p class="shead__bar rv-line"><span class="chead__no">04</span><span>The start of the lane</span></p>
-      <h2 class="h2 rv" id="north-title">Kent is where <em>the lane north starts.</em></h2>
-      <p class="lede rv" style="--i:1">Remote location and export building packages are our specialty. We work with you on all aspects of shipping coordination, dock delivery and rural Alaska delivery, anywhere from Sitka to Utqiaġvik.</p>
+      <p class="shead__bar rv-line"><span class="chead__no">04</span><span>Remote and export</span></p>
+      <h2 class="h2 rv" id="north-title">Building in Alaska? <em>Any yard can help.</em></h2>
+      <p class="lede rv" style="--i:1">Remote-location and export building packages are our specialty. We work with you on all aspects of shipping coordination, dock delivery and rural Alaska delivery, anywhere from Sitka to Utqiaġvik.</p>
     </div>
     <div class="pnw-north__map">${laneChart(ctx)}</div>
     <div class="pnw-north__body">
@@ -222,7 +224,7 @@ ${pageHero(ctx, {
 ${closing(ctx, {
   query: '?yard=kent',
   title: 'Building around <em>Puget Sound?</em>',
-  body: 'Send plans or a materials list and tell us where the job is. Kent will work up the take-off and the estimate.',
+  body: 'Send plans or a materials list and tell us where the job is. Kent will help with the take-off and give you an estimate.',
   rows: [['Send', 'Plans, drawings or a materials list'], ['To', 'The Kent yard'], ['Returns', 'A take-off and an estimate'], ['Ships', 'To your job site, by boom truck or Moffett forklift']],
 })}
 `,
@@ -235,7 +237,7 @@ ${closing(ctx, {
 const CALL_FOR = { kent: 'Around Puget Sound', anchorage: 'Southcentral Alaska, or any remote site', fairbanks: 'The Interior and points north' };
 // A photograph of the place, never of the yard itself.
 const PLACE = {
-  kent: { key: 'tacoma-port', caption: 'Container cranes at the Port of Tacoma, across Commencement Bay.', place: 'Tacoma, Washington', lat: LAT.tacoma, pos: '60% 55%' },
+  kent: { key: 'rainier-tacoma', caption: 'Mount Rainier in alpenglow above the Tacoma waterfront.', place: 'Tacoma, Washington', lat: LAT.tacoma, pos: '50% 46%' },
   anchorage: { key: 'anchorage', caption: 'The city under the Chugach Mountains, across the inlet ice.', place: 'Anchorage', lat: LAT.anchorage, pos: '72% 50%' },
   fairbanks: { key: 'fairbanks', caption: 'Green aurora over a snowbanked road and frosted birches.', place: 'Near Fairbanks', pos: '50% 60%' },
 };
@@ -278,13 +280,13 @@ const record = (ctx, l, i, { flip = false } = {}) => {
           <h3 class="label">Call</h3>
           <a class="lcx-tel" href="${tel(l.phone)}">${l.phone}</a>
           ${l.tollFree ? html`<a class="lcx-tel2" href="${tel(l.tollFree)}">${l.tollFree} <small>toll-free</small></a>` : ''}
-          <p class="lcx-now">${openStatus(l)}<small data-clock="${l.hours.tz}"></small></p>
+          <p class="lcx-now">${openStatus(l)}${l.hours ? html`<small data-clock="${l.hours.tz}"></small>` : ''}</p>
         </section>
         <section class="lcx-book__col rv" style="--i:1" aria-label="Visit ${l.city}">
           <h3 class="label">Visit</h3>
           <address class="lcx-addr">${l.street}<br>${l.city}, ${l.state} ${l.zip}</address>
           <a class="btn btn--sm btn--line" href="${mapsUrl(l)}" target="_blank" rel="noopener">${icon('directions', { size: 16 })} Directions</a>
-          <p class="lcx-hours"><span class="label">Hours</span>${hoursLines(l).map((h) => html`${h}<br>`)}<small>${tzLabel(l)}</small></p>
+          ${l.hours ? html`<p class="lcx-hours"><span class="label">Hours</span>${hoursLines(l).map((h) => html`${h}<br>`)}<small>${tzLabel(l)}</small></p>` : ''}
         </section>
         <section class="lcx-book__col rv" style="--i:2" aria-label="Write to ${l.city}">
           <h3 class="label">Write</h3>
@@ -304,7 +306,6 @@ const locations = {
   render: (ctx) => layout(ctx, {
     title: 'Locations',
     description: 'Uresco distribution centers in Kent, Washington, and Anchorage and Fairbanks, Alaska: addresses, phone, fax and email for each yard.',
-    preload: [preloadFor(ctx, 'winter-road')],
     jsonLd: orgJsonLd(ctx),
     rail: STOPS_YARDS,
     body: html`
@@ -312,12 +313,8 @@ ${pageHero(ctx, {
   crumbs: [['Locations']],
   eyebrow: `Locations · ${deg(LAT.kent)} to ${deg(LAT.fairbanks)}`,
   title: 'Three yards. <em>One team.</em>',
-  lede: 'Call the yard nearest the job, or visit, fax or email any of them. Every number is below.',
+  lede: 'Call the yard for your area, or visit, fax or email any of them. Every number is below.',
   actions: board(),
-  photoKey: 'winter-road',
-  caption: 'A pickup on a winter highway through the spruce.',
-  place: 'Interior Alaska',
-  pos: '52% 70%',
   attrs: html` data-page="locations" data-lat="${LAT.kent}" data-place="Kent"`,
 })}
 
@@ -327,8 +324,8 @@ ${pageHero(ctx, {
 
 <section class="section section--deep lcx-chart" data-lat="${LAT.kent}" data-lat-to="${LAT.anchorage}" data-place="At sea" data-place-end="Anchorage" aria-labelledby="chart-title">
   <div class="wrap">
-    ${sectionHead({ eyebrow: 'The chart', id: 'chart-title', title: 'Find the job. <em>Call the nearest mark.</em>', lede: 'The yellow marks are the yards. Choose one to go to its details. Any yard can help you plan the route from there.' })}
-    ${routePlate(ctx, { no: 'Plate I', title: 'Three yards, one route' })}
+    ${sectionHead({ eyebrow: 'The chart', id: 'chart-title', title: 'Three marks. <em>Any of them can help.</em>', lede: 'The yellow marks are the yards. Choose one to go to its details.' })}
+    ${routePlate(ctx, { no: 'Plate I', title: 'The three yards' })}
   </div>
 </section>
 
@@ -342,7 +339,7 @@ ${pageHero(ctx, {
 
 ${closing(ctx, {
   title: 'Have plans <em>in hand?</em>',
-  body: 'Our friendly, knowledgeable sales staff is here to help. Send drawings or a materials list and tell us where the job is, and the yard nearest it will work up the take-off.',
+  body: 'Our friendly, knowledgeable sales staff is here to help. Send drawings or a materials list and tell us where the job is. The yard nearest your project helps with the take-off and gives you an estimate.',
   rows: [['Send', 'Plans, drawings or a materials list'], ['To', 'The yard nearest your project'], ['Returns', 'A take-off and an estimate'], ['Ships', 'To the job site down the road, or to the dock for the trip north']],
 })}
 `,

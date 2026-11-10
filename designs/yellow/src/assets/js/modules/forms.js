@@ -65,6 +65,18 @@
     if (text) carried.textContent = text;
   }
 
+  /* On paper a select is a row of boxes: a copy someone has filled in ticks the one chosen, a blank one stays blank. */
+  const boxRows = $$('[data-boxes-of]', form);
+  if (boxRows.length) {
+    const tickBoxes = () => boxRows.forEach((row) => {
+      const sel = form.elements[row.dataset.boxesOf];
+      $$('.pbox', row).forEach((b) => b.classList.toggle('is-on', !!form.dataset.touched && !!sel && b.textContent.trim() === sel.value));
+    });
+    tickBoxes();
+    form.addEventListener('input', tickBoxes);
+    form.addEventListener('change', tickBoxes);
+  }
+
   /* The list of parts beside a long form: ticked when its required fields are done, marked while on screen. */
   const steps = $$('[data-step]');
   if (steps.length) {

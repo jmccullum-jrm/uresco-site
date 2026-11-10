@@ -5,15 +5,6 @@
 /* Hero: the second word of the headline keeps inside the column beside the window. */
 @media (min-width: 900px) { .pj-hero .phero__title { font-size: min(var(--t-d1), 7.7vw); } }
 
-/* The four sectors, as a line of links under the hero's buttons. */
-.pj-jump { display: flex; flex-wrap: wrap; align-items: baseline; gap: .5rem 1.1rem; margin-top: clamp(1.4rem, 2.6vw, 2.1rem); font-size: .76rem; font-weight: 750; font-stretch: 112%; letter-spacing: .05em; text-transform: uppercase; line-height: 1.3; }
-.pj-jump__k { font-weight: 800; font-stretch: 125%; letter-spacing: .09em; }
-.pj-jump ul { display: flex; flex-wrap: wrap; gap: .3rem 1.15rem; }
-.pj-jump li + li::before { content: '/'; }
-.pj-jump a { display: inline-flex; align-items: center; min-height: 40px; margin-inline: -.6em; padding: 0 .6em; border-radius: var(--r-pill); text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: .32em; transition: background var(--t-tap) linear, color var(--t-tap) linear; }
-.pj-jump a:hover { background: var(--black); color: var(--yellow); text-decoration: none; }
-.pj-jump li + li::before { margin-right: 1.15rem; }
-
 /* ---------- The work: four sectors side by side ---------- */
 .pj-work { padding-top: calc(var(--section) + clamp(70px, 13vw, 210px)); }
 .pj-work .shead { margin-bottom: clamp(1.75rem, 3vw, 2.75rem); }
@@ -26,11 +17,16 @@ html:not(.js) .pj-filter { display: none; }
 
 .pj-sectors { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(2.5rem, 4vw, 3.5rem) clamp(1rem, 2.2vw, 2.25rem); align-items: start; }
 .pj-sector { min-width: 0; scroll-margin-top: calc(var(--mast) + 1.5rem); }
-/* Four across, the columns share their rows, so the second row of arches starts on one line. */
+/* Four across, a sector is as wide as its kinds, so eight kinds fill four columns and two rows with no holes
+   (3 + 1 above, 2 + 2 below). The sectors in a row share their tracks, so their arches and links line up. */
+@media (min-width: 1100px) {
+  .pj-sectors:not(.is-filtered) .pj-sector { grid-column: span min(var(--n, 1), 4); }
+  .pj-sectors:not(.is-filtered) .pj-kinds { grid-template-columns: repeat(var(--n, 1), minmax(0, 1fr)); column-gap: clamp(1rem, 2.2vw, 2.25rem); }
+}
 @supports (grid-template-rows: subgrid) {
   @media (min-width: 1100px) {
-    .pj-sectors:not(.is-filtered) .pj-sector { display: grid; grid-template-rows: subgrid; grid-row: span 3; row-gap: 0; }
-    .pj-sectors:not(.is-filtered) .pj-kinds { grid-template-rows: subgrid; grid-row: span 2; }
+    .pj-sectors:not(.is-filtered) .pj-sector { display: grid; grid-template-rows: subgrid; grid-row: span 2; row-gap: 0; }
+    .pj-sectors:not(.is-filtered) .pj-kinds { grid-template-rows: subgrid; grid-row: span 1; }
   }
 }
 /* A sector's name hangs under a yellow keyline, numbered like everything else on the site. */
@@ -39,15 +35,17 @@ html:not(.js) .pj-filter { display: none; }
 .pj-sector__name { font-size: clamp(1.05rem, .8rem + .75vw, 1.5rem); line-height: 1; font-weight: 900; font-stretch: var(--wide); letter-spacing: -.02em; text-transform: uppercase; color: var(--yellow); }
 .pj-sector__line { grid-column: 2; margin: 0; font-size: .92rem; line-height: 1.3; color: var(--ash); }
 .pj-kinds { display: grid; gap: clamp(2rem, 3.4vw, 3.25rem); }
-.pj-kind { display: grid; align-content: start; min-width: 0; }
+/* The card fills its row, and its link sits at the foot, so a row of cards ends on one line. */
+.pj-kind { display: grid; grid-template-rows: auto minmax(0, 1fr); min-width: 0; }
 .pj-kind__win { aspect-ratio: 4 / 5; margin-bottom: 1.15rem; }
-.pj-kind__body { display: grid; grid-template-columns: minmax(0, 1fr); gap: .5rem; justify-items: start; min-width: 0; }
+.pj-kind__body { display: flex; flex-direction: column; align-items: flex-start; gap: .5rem; min-width: 0; }
 .pj-kind__title { font-size: clamp(1.1rem, .9rem + .7vw, 1.45rem); line-height: 1.02; font-weight: 900; font-stretch: 118%; letter-spacing: -.015em; text-transform: uppercase; text-wrap: balance; }
 .pj-kind__where { margin: 0; font-size: var(--t-label); font-weight: 800; font-stretch: 125%; letter-spacing: .08em; text-transform: uppercase; color: var(--yellow); }
 .pj-kind__scope { margin: 0; font-size: .95rem; line-height: 1.42; color: var(--ash); }
-.pj-kind__mats { display: flex; flex-wrap: wrap; gap: .3rem; margin-top: .2rem; }
-.pj-kind__mats li { padding: .34em .75em .3em; border: var(--line) solid var(--black-3); border-radius: var(--r-pill); font-size: .78rem; font-weight: 650; line-height: 1.2; color: var(--paper); }
-.pj-kind__go { margin-top: .55rem; }
+/* What goes into the job, as plain text: these are not filters and nothing happens if you tap one. */
+.pj-kind__mats { display: flex; flex-wrap: wrap; gap: .1rem 0; margin-top: .2rem; font-size: .84rem; font-weight: 600; line-height: 1.35; color: var(--paper); }
+.pj-kind__mats li:not(:last-child)::after { content: '\00b7'; margin-inline: .45em; color: var(--yellow); font-weight: 900; }
+.pj-kind__go { margin-top: auto; padding-top: .55rem; }
 .pj-kind__go-s { display: none; }
 @media (max-width: 479px) { .pj-kind__go-l { display: none; } .pj-kind__go-s { display: inline; } }
 .pj-note { margin: clamp(2.25rem, 4vw, 3.5rem) 0 0; font-size: .86rem; color: var(--ash); }
@@ -63,6 +61,11 @@ html:not(.js) .pj-filter { display: none; }
 @media (prefers-reduced-motion: no-preference) { .is-filtered .pj-kind { animation: pj-in .5s var(--spring) backwards; animation-delay: calc(var(--i, 0) * 70ms); } }
 @keyframes pj-in { from { opacity: 0; transform: translateY(26px); } }
 
+/* Two across, the sectors flow down two balanced columns and never split: 3 + 1 kinds beside 2 + 2, ending level. */
+@media (min-width: 700px) and (max-width: 1099px) {
+  .pj-sectors:not(.is-filtered) { display: block; columns: 2; column-gap: clamp(1rem, 2.2vw, 2.25rem); }
+  .pj-sectors:not(.is-filtered) .pj-sector { break-inside: avoid; padding-bottom: clamp(2.5rem, 4vw, 3.5rem); }
+}
 @media (max-width: 1099px) {
   .pj-sectors { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .is-filtered .pj-sector { grid-template-columns: minmax(0, 1fr); gap: 1.5rem; }
@@ -70,9 +73,6 @@ html:not(.js) .pj-filter { display: none; }
 }
 @media (max-width: 699px) {
   /* Phones: sectors stack; each kind is a row with its arch on the left. */
-  .pj-jump ul { gap: .15rem 1.7rem; } .pj-jump li + li::before { content: none; }
-  .pj-filter { flex-wrap: nowrap; margin-inline: calc(var(--gutter) * -1); padding: 4px var(--gutter); overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
-  .pj-filter::-webkit-scrollbar { display: none; }
   .pj-sectors, .pj-sectors.is-filtered { grid-template-columns: minmax(0, 1fr); gap: 2.5rem; }
   .pj-kinds, .is-filtered .pj-kinds { grid-template-columns: minmax(0, 1fr); gap: 1.75rem; }
   .pj-kind { grid-template-columns: clamp(92px, 29vw, 124px) minmax(0, 1fr); column-gap: 1.1rem; align-items: start; }

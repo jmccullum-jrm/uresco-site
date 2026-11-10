@@ -1,7 +1,7 @@
 import { html, raw } from '../lib/html.mjs';
 import { icon } from '../lib/icons.mjs';
 import { layout } from '../lib/layout.mjs';
-import { picture, preloadFor, pageHero, sectionHead, figure, closing, callLink, LAT } from '../lib/components.mjs';
+import { picture, preloadFor, pageHero, sectionHead, figure, closing, callLink } from '../lib/components.mjs';
 import { SERVICES, SEQUENCE, SEA } from '../data/services.mjs';
 import { CATEGORIES } from '../data/products.mjs';
 
@@ -16,7 +16,7 @@ const stop = Object.fromEntries(RUN.map((s) => [s.id, s]));
 // adds the next three, and the last is the truck down the road.
 const LEG = RUN.map((s, i) => {
   const sea = SEA.includes(s.id), afterSea = i > 0 && SEA.includes(RUN[i - 1].id);
-  return i === 0 ? 'Every job' : sea && !afterSea ? 'Across an ocean' : !sea && afterSea ? 'Down the road' : '';
+  return i === 0 ? 'Start here' : sea && !afterSea ? 'Across an ocean' : !sea && afterSea ? 'Down the road' : '';
 });
 // The stops a job across an ocean adds, as the run's standfirst names them: "03, 04 and 05".
 const SEA_NOS = SEA.map((id) => stop[id].no);
@@ -46,18 +46,18 @@ const line = (s, cls = '') => html`<p class="h2 svx-line ${cls} rv">${raw(s.line
 const takeoffSheet = (ctx) => html`
   <div class="svx-sheet rv" style="--i:1">
     <div class="svx-sheet__head">
-      <p class="label">Material take-off</p>
-      <p class="label" aria-hidden="true">The list</p>
+      <p class="label">What a take-off can cover</p>
+      <p class="label" aria-hidden="true">Nine lines</p>
     </div>
     <ol class="svx-sheet__rows">
       ${CATEGORIES.map((c, i) => html`<li><a href="${ctx.u('products/' + c.slug + '/')}">
-        <span class="svx-sheet__no">${String((i + 1) * 10).padStart(3, '0')}</span>
+        <span class="svx-sheet__no">${two(i + 1)}</span>
         <span class="svx-sheet__name">${c.name}</span>
         <span class="svx-sheet__items">${c.items.map(([n]) => n.replace(/[®™]/g, '')).join(' · ')}</span>
         ${icon('arrow', { size: 16, cls: 'svx-sheet__go' })}
       </a></li>`)}
     </ol>
-    <p class="svx-sheet__foot">Quantities and prices come from your plans.</p>
+    <p class="svx-sheet__foot">Quantities come from your plans. Your yard prices them.</p>
   </div>`;
 
 const ENGINEERED = CATEGORIES.find((c) => c.slug === 'engineered-wood');
@@ -67,24 +67,22 @@ export default {
   render: (ctx) => layout(ctx, {
     title: 'Services',
     description: 'Material take-offs and estimates, design services, remote and export building packages, crating, shipping coordination and job-site delivery by boom truck and Moffett forklift, from Uresco’s three yards.',
-    preload: [preloadFor(ctx, 'hero-truck-denali')],
+    preload: [preloadFor(ctx, 'blueprints')],
     body: html`
 ${pageHero(ctx, {
   crumbs: [['Services']],
   eyebrow: 'Services · Take-offs to delivery',
-  title: 'Everything between the plans <em>and the load.</em>',
-  lede: 'Take-offs, design help, packaging, crating, freight, and a truck that sets the load down where you want it. Six services, in the order a job meets them.',
-  photoKey: 'hero-truck-denali',
-  caption: 'A freight truck on the highway below Denali.',
-  place: 'Interior Alaska',
-  lat: LAT.denali,
-  pos: '60% 42%',
+  title: 'From the plans <em>to the job site.</em>',
+  lede: 'Take-offs, design help, packaging, crating, freight, and job-site delivery. Six services, in the order a job meets them.',
+  photoKey: 'blueprints',
+  caption: 'Marking up a set of drawings with a scale rule.',
+  pos: '50% 55%',
   actions: html`<a class="btn" href="${ctx.u('quote/')}">Request a quote ${icon('arrow', { size: 18 })}</a>${callLink(ctx)}`,
 })}
 
 <section class="section svx-index" aria-labelledby="run-title">
   <div class="wrap">
-    ${sectionHead({ eyebrow: 'The run', id: 'run-title', title: 'Six stops, <em>one after another.</em>', lede: `A job down the road goes from ${stop.design.no} straight to ${stop.delivery.no}. A job across an ocean adds ${SEA_LIST} on the way.` })}
+    ${sectionHead({ eyebrow: 'The run', id: 'run-title', title: 'Six stops. <em>Use the ones you need.</em>', lede: `A job down the road goes from the take-off to the truck. A job across an ocean adds ${SEA_LIST}.` })}
     <ol class="svx-run">
       ${RUN.map((s, i) => html`<li class="svx-run__stop${SEA.includes(s.id) ? ' is-sea' : ''}${LEG[i] ? ' has-leg' : ''}">
         ${LEG[i] ? html`<span class="svx-run__leg">${LEG[i]}</span>` : ''}
@@ -98,7 +96,7 @@ ${pageHero(ctx, {
   </div>
 </section>
 
-<section class="svx-yard" aria-label="Every job: the list and the design">
+<section class="svx-yard" aria-label="Start here: the list and the design">
   <div class="wrap">
     <article class="svx-stage svx-stage--list" id="takeoffs" aria-labelledby="takeoffs-title">
       ${bar(stop.takeoffs)}
@@ -113,7 +111,6 @@ ${pageHero(ctx, {
           </div>
         </div>
         <div class="svx-stage__media">
-          ${figure(ctx, 'blueprints', { ratio: 'land', sizes: '(min-width: 1000px) min(48vw, 46rem), 100vw', caption: 'Marking up a set of drawings with a scale rule.', pos: '50% 55%' })}
           ${takeoffSheet(ctx)}
         </div>
       </div>
@@ -152,11 +149,11 @@ ${pageHero(ctx, {
         </div>
       </div>
     </div>
-    ${figure(ctx, 'valdez-port', { ratio: 'cine', cls: 'fig--bleed svx-bleed', parallax: true, caption: 'A port crane at the foot of the mountains.', place: 'Valdez, Alaska', lat: LAT.valdez, pos: '55% 62%' })}
+    ${figure(ctx, 'chugach', { ratio: 'cine', cls: 'fig--bleed svx-bleed', parallax: true, caption: 'Glaciers and peaks of the Chugach Mountains.', pos: '50% 45%' })}
     <div class="wrap svx-lead__foot">
-      <p class="pull rv">Nothing gets <em>left on the dock.</em></p>
+      <p class="pull rv">Planned as <em>one package.</em></p>
       <div class="svx-lead__more rv" style="--i:1">
-        <p>Framing, envelope, openings and hardware go out as one package, planned from the far end back. Delivery is available anywhere in Alaska, from Sitka to Utqiaġvik.</p>
+        <p>Framing, envelope, openings and hardware, in one building package. Delivery is available anywhere in Alaska, from Sitka to Utqiaġvik.</p>
         <div class="actions">
           <a class="btn btn--line" href="${ctx.u('alaska/')}">How remote delivery works ${icon('arrow', { size: 18 })}</a>
           <a class="link" href="${ctx.u('quote/')}${quoteQuery(stop.remote)}">Quote a remote package ${icon('arrow', { size: 16 })}</a>
@@ -175,7 +172,7 @@ ${pageHero(ctx, {
     </article>
     <article class="svx-stage svx-stage--half svx-stage--wide" id="shipping" aria-labelledby="shipping-title">
       ${bar(stop.shipping)}
-      ${figure(ctx, 'juneau-freight', { ratio: 'land', sizes: '(min-width: 700px) min(50vw, 46rem), 100vw', caption: 'Containers in a freight yard.', place: 'Juneau, Alaska', lat: LAT.juneau, pos: '50% 52%' })}
+      ${figure(ctx, 'tug-barge', { ratio: 'land', sizes: '(min-width: 700px) min(50vw, 46rem), 100vw', caption: 'A tug and a loaded barge under way.', pos: '50% 62%' })}
       ${line(stop.shipping, 'svx-line--sm')}
       <p class="svx-stage__body rv" style="--i:1">${stop.shipping.body}</p>
       ${handoff(stop.shipping, 2)}
@@ -195,7 +192,7 @@ ${pageHero(ctx, {
       <div class="svx-stage__grid">
         <div class="svx-stage__text">
           ${line(stop.delivery, 'svx-line--xl')}
-          <p class="lede rv" style="--i:1">${stop.delivery.body} Around Puget Sound, call Kent. In Southcentral Alaska, call Anchorage. In the Interior and points north, call Fairbanks.</p>
+          <p class="lede rv" style="--i:1">${stop.delivery.body}</p>
           <dl class="svx-rig rv" style="--i:2">
             <div><dt>Boom truck</dt><dd>A crane on the truck lifts the load off the bed and sets it down on site.</dd></div>
             <div><dt>Moffett forklift</dt><dd>Rides on the back of the truck, then carries the load across the site.</dd></div>
@@ -210,7 +207,7 @@ ${pageHero(ctx, {
           ${figure(ctx, 'unloading', { ratio: 'tall', sizes: '(min-width: 1000px) min(36vw, 33rem), (min-width: 700px) 31rem, 82vw', caption: 'Unloading lumber from a flatbed in the street.', pos: '50% 48%' })}
           <figure class="print print--over rv" style="--i:2">
             ${picture(ctx, 'uresco-truck', { sizes: '(min-width: 1000px) 190px, 40vw' })}
-            <figcaption>From the Uresco archive: the tag on a Uresco load.</figcaption>
+            <figcaption>The tag on a Uresco load.</figcaption>
           </figure>
         </div>
       </div>
@@ -220,7 +217,7 @@ ${pageHero(ctx, {
 
 ${closing(ctx, {
   title: 'Start at <em>stop one.</em>',
-  body: 'Send drawings or a materials list and tell us where the job is. The yard nearest your project builds the take-off and prices it.',
+  body: 'Send drawings or a materials list and tell us where the job is. The yard nearest your project helps with the take-off and gives you an estimate.',
 })}
 `,
   }),

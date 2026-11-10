@@ -85,6 +85,34 @@ const ALSO = [
   ['Cabinets', 'Custom cabinets'],
 ];
 
+// Words people type that are not on the list. Search only: never printed, and no claim about sizes or stock.
+const TYPED = {
+  'Dimensional lumber': '2x4 2x6 2x8 2x10 2x12 stud studs joist joists rafters',
+  Timbers: '4x4 6x6 8x8 posts beams',
+  'Pressure-treated lumber': 'pt lumber treated',
+  'Fire-retardant-treated lumber': 'frt fire rated treated',
+  Plywood: 'cdx ply',
+  'Oriented strand board (OSB)': 'osb wafer board',
+  'I-joist floor systems': 'tji ijoist i joist floor joists',
+  'Glulam beams (GLB)': 'glue lam',
+  'Truss packages': 'trusses',
+  'MDO plywood': 'forms forming form ply',
+  'HDO plywood': 'forms forming form ply',
+  'Cedar decking': 'deck boards',
+  'Cedar fencing': 'fence',
+  'Composite decking': 'deck boards',
+  'James Hardie® fiber-cement siding': 'hardieplank hardie',
+  Roofing: 'shingles roof underlayment',
+  'House wraps': 'tyvek building wrap weather barrier',
+  'Rigid foam insulation (XPS & EPS)': 'foam board',
+  'Fiberglass batt insulation': 'batts',
+  Drywall: 'sheetrock gyp board',
+  'Simpson Strong-Tie® hardware': 'joist hanger hangers hurricane ties straps connectors',
+  Fasteners: 'nails screws anchor bolts anchors lag',
+  'Tarps & poly sheeting': 'plastic vapor barrier visqueen',
+  'Caulking & adhesives': 'caulk glue sealant',
+};
+
 /* ---------- Small helpers ---------- */
 const no = (i) => String(i + 1).padStart(2, '0');
 const plain = (s) => s.replace(/[®™]/g, '');
@@ -105,7 +133,7 @@ const EVERY = CATEGORIES.flatMap((c) => c.items.map(([name, note]) => ({ name, n
 const findItem = (name) => EVERY.find((e) => e.name === name);
 
 // What the filter searches for each product: its name, its note, and any second name it goes by.
-const haystack = (name, note) => [name, note, ...ALSO.filter(([, to]) => to === name).map(([a]) => a)].map(plain).join(' ').toLowerCase();
+const haystack = (name, note) => [name, note, ...ALSO.filter(([, to]) => to === name).map(([a]) => a), TYPED[name] || ''].map(plain).join(' ').toLowerCase();
 
 /* ==========================================================================================
    /products/ : the index
@@ -116,7 +144,7 @@ const TRY = ['LVL', 'Plywood', 'Hardie', 'Hangers', 'Decking', 'Insulation'];
 const finderBar = () => html`
   <div class="pidx-find jsonly" role="search" aria-label="Filter the product lines">
     <label class="pidx-find__label" for="pidx-q">What are you looking for?</label>
-    <p class="pidx-find__count" data-pidx-count role="status">${CATEGORIES.length} lines <i>·</i> ${EVERY.length} products listed</p>
+    <p class="pidx-find__count" data-pidx-count role="status">${LINES} product lines</p>
     <div class="pidx-find__field">
       ${icon('search', { size: 20 })}
       <input class="pidx-find__input" id="pidx-q" type="search" data-pidx-q autocomplete="off" autocapitalize="none" spellcheck="false" enterkeyhint="search" placeholder="Product, brand or use">
@@ -140,7 +168,7 @@ const indexRow = (ctx, c, i) => html`
     <ul class="pidx-row__items" aria-label="In this line">
       ${c.items.map(([name, note]) => html`<li data-pidx-item data-s="${haystack(name, note)}"><span>${name}</span><small hidden>${note}</small></li>`)}
     </ul>
-    <a class="pidx-row__quote link" href="${quoteUrl(ctx, c)}">${icon('plus', { size: 16 })} Add to a quote<span class="sr-only">: ${c.name}</span></a>
+    <a class="pidx-row__quote link" href="${quoteUrl(ctx, c)}">${icon('plus', { size: 16 })} Quote this line<span class="sr-only">: ${c.name}</span></a>
     <span class="pidx-row__go go" aria-hidden="true">${icon('arrow', { size: 18 })}</span>
   </li>`;
 
@@ -171,7 +199,7 @@ const index = {
   render: (ctx) => layout(ctx, {
     title: 'Products',
     description: 'Framing lumber and timbers, plywood and OSB, engineered wood and trusses, cedar, siding, insulation, forming panels, windows, doors, cabinets and hardware from Uresco Construction Materials.',
-    preload: [preloadFor(ctx, 'pine-racking')],
+    preload: [preloadFor(ctx, 'lumber-stack')],
     jsonLd: html`<script type="application/ld+json">${raw(JSON.stringify({
       '@context': 'https://schema.org', '@type': 'ItemList', name: 'Product lines',
       itemListElement: CATEGORIES.map((c, i) => ({ '@type': 'ListItem', position: i + 1, name: c.name, url: `${SITE.url}/products/${c.slug}/` })),
@@ -182,8 +210,8 @@ ${pageHero(ctx, {
   eyebrow: 'Product lines',
   title: 'What we carry, <em>line by line.</em>',
   lede: `${LINES} lines of building materials for institutional, commercial and residential builders. For sizes, grades and availability, ask your yard.`,
-  photoKey: 'pine-racking',
-  caption: 'Lumber on cantilever racking',
+  photoKey: 'lumber-stack',
+  caption: 'Ends of stacked lumber',
   actions: html`<a class="btn btn--lg" href="${ctx.u('quote/')}">Request a quote ${icon('arrow', { size: 18 })}</a>${callLink(ctx, { cls: 'btn--lg btn--line' })}`,
 })}
 </div>
@@ -203,7 +231,7 @@ ${pageHero(ctx, {
     </div>
     <div class="callout pidx-more reveal" data-pidx-more>
       <span class="callout__icon">${icon('plus', { size: 22 })}</span>
-      <p><strong>Not on the list?</strong> We also carry tarps, poly sheeting, caulking, adhesives, house wraps and more. If the job needs it, ask your yard.</p>
+      <p><strong>Not on the list?</strong> We also carry a large variety of other building materials. If the job needs it, ask your yard.</p>
       <a class="link" href="${ctx.u('quote/')}">Send a materials list ${icon('arrow', { size: 16 })}</a>
     </div>
   </div>
@@ -212,8 +240,8 @@ ${pageHero(ctx, {
 <section class="section section--ice">
   <div class="wrap faq-wrap">
     <div class="pidx-brands__head">
-      ${sectionHead({ eyebrow: 'Brands', title: 'The names <em>on the list.</em>' })}
-      <p class="lede">The brands we carry, the line each one belongs to, and a way to the manufacturer’s own specs and installation guides.</p>
+      ${sectionHead({ eyebrow: 'Brands', title: 'The brands <em>we carry.</em>' })}
+      <p class="lede">The line each one belongs to, and a way to the manufacturer’s own specs and installation guides.</p>
     </div>
     <ul class="pidx-brandlist">
       ${brandRows(ctx).map(({ name, item, lit }) => html`
@@ -282,7 +310,7 @@ const askCard = (ctx, c) => html`
       </li>`)}
     </ul>
     <a class="btn btn--block pline-qbtn" href="${quoteUrl(ctx, c)}" data-pline-quote>Request a quote on ${lower(c)} ${icon('arrow', { size: 18 })}</a>
-    <p class="pline-ask__picked jsonly" data-pline-status aria-live="polite">Add products from the list and the quote form starts with them.</p>
+    <p class="pline-ask__picked jsonly" data-pline-status>Add products from the list and the quote form starts with them.</p>
   </div>`;
 
 const category = (c, i) => {
@@ -306,7 +334,7 @@ ${lineHero(ctx, c, i, prev, next)}
     <div class="pline-grid">
       <div class="pline-main">
         <div class="pline-list">
-          <p class="pline-list__bar"><span>Line ${no(i)}</span><span>${COUNT[c.items.length] || c.items.length} product${c.items.length === 1 ? '' : 's'}</span></p>
+          <p class="pline-list__bar"><span>Line ${no(i)}</span><span class="jsonly">Pick what you need</span></p>
           <ol class="pline-list__rows">
             ${c.items.map(([name, note], j) => html`
               <li class="pline-item" id="${slug(name)}">
@@ -317,10 +345,17 @@ ${lineHero(ctx, c, i, prev, next)}
                 </div>
                 <button type="button" class="pline-item__pick jsonly" data-pline-pick="${name}">
                   <span class="pline-item__plus">${icon('plus', { size: 16 })}</span><span class="pline-item__check">${icon('check', { size: 16 })}</span>
-                  <span class="pline-item__label"><span class="pline-item__add">Add to quote</span><span class="pline-item__on">On the quote</span><span class="sr-only">: ${plain(name)}</span><span class="sr-only pline-item__on"> (remove)</span></span>
+                  <span class="pline-item__label"><span class="pline-item__add">Add<span class="pline-item__wide"> to quote</span></span><span class="pline-item__on"><span class="pline-item__wide">On the quote</span><span class="pline-item__narrow">Added</span></span><span class="sr-only">: ${plain(name)}</span><span class="sr-only pline-item__on"> (remove)</span></span>
                 </button>
               </li>`)}
           </ol>
+          <div class="pline-tray jsonly">
+            <p class="pline-tray__text" data-pline-status aria-live="polite">Add products and the quote form starts with them.</p>
+            <div class="pline-tray__acts" data-pline-acts hidden>
+              <button type="button" class="pline-tray__clear" data-pline-clear>Clear the list</button>
+              <a class="btn btn--dark pline-tray__go" href="${quoteUrl(ctx, c)}" data-pline-quote>Open the quote ${icon('arrow', { size: 16 })}</a>
+            </div>
+          </div>
           <div class="pline-list__foot">
             <span class="pline-list__q" aria-hidden="true">${icon('plus', { size: 18 })}</span>
             <p><b>Something else in this line?</b> If the job calls for it and it is not listed here, ask your yard.</p>
@@ -337,11 +372,7 @@ ${lineHero(ctx, c, i, prev, next)}
             <h3 class="pline-brands__h">From the manufacturer</h3>
             <ul class="pline-brands__lit">${c.literature.map(([label, url]) => html`<li><a href="${url}" target="_blank" rel="noopener">${icon('file', { size: 17 })}<span>${label}<span class="sr-only"> (opens the manufacturer’s site)</span></span>${icon('arrow-up-right', { size: 15 })}</a></li>`)}</ul>
           </div>` : ''}
-        </div>` : html`
-        <div class="pline-brands pline-brands--none">
-          <h3 class="pline-brands__h">Brands in this line</h3>
-          <p>We do not name brands for this line here. Ask your yard which mills and manufacturers it carries.</p>
-        </div>`}
+        </div>` : ''}
       </div>
       ${askCard(ctx, c)}
     </div>

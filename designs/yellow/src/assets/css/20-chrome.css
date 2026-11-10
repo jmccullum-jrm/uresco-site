@@ -1,8 +1,8 @@
 /* ---------- Utility strip: the three yard numbers, on every page (desktop) ---------- */
 .utility { display: none; background: var(--black); color: var(--paper); font-size: .8rem; }
-@media (min-width: 1000px) { .utility { display: block; } }
-.utility__row { display: flex; justify-content: space-between; align-items: center; height: var(--util); gap: 1rem; }
-.utility__yards { display: flex; gap: clamp(1rem, 2.2vw, 2.25rem); }
+@media (min-width: 62.5em) { .utility { display: block; } }
+.utility__row { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; min-height: var(--util); gap: 0 1rem; }
+.utility__yards { display: flex; flex-wrap: wrap; gap: 0 clamp(1rem, 2.2vw, 2.25rem); }
 .utility__yards li { display: flex; align-items: center; gap: .55rem; white-space: nowrap; }
 .utility__city { font-size: .75rem; font-weight: 800; font-stretch: var(--wide); letter-spacing: .09em; text-transform: uppercase; color: var(--yellow); }
 .utility a { color: inherit; text-decoration: none; font-weight: 600; font-variant-numeric: tabular-nums; }
@@ -10,7 +10,7 @@
 .utility__links { display: flex; gap: 1.5rem; align-items: center; flex: none; }
 .utility__links a { white-space: nowrap; }
 .utility__mail { display: inline-flex; gap: .45rem; align-items: center; }
-@media (max-width: 1240px) { .utility__mail { display: none; } }
+@media (max-width: 77.5em) { .utility__mail { display: none; } }
 .utility :focus-visible { outline-color: var(--yellow); box-shadow: none; }
 
 /* Live open / closed badge. Filled in by JS; hidden without it. */
@@ -38,12 +38,14 @@
 .brand__name { font-size: 1.5rem; font-weight: 900; font-stretch: var(--wide); text-transform: uppercase; letter-spacing: -.02em; }
 .brand__desc { font-size: .53rem; font-weight: 750; font-stretch: var(--wide); letter-spacing: .075em; text-transform: uppercase; margin-top: .28rem; }
 /* On phones (and the tightest full-nav widths) the name stands alone; screen readers keep the full name. */
-@media (max-width: 999px), (min-width: 1100px) and (max-width: 1219px) { .brand__desc { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; } }
-@media (max-width: 999px) { .brand__mark { width: 40px; height: 40px; } .brand__name { font-size: 1.32rem; } }
+@media (max-width: 62.4375em), (min-width: 68.75em) and (max-width: 76.1875em) { .brand__desc { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; } }
+@media (max-width: 62.4375em) { .brand__mark { width: 40px; height: 40px; } .brand__name { font-size: 1.32rem; } }
+/* Text at 150% or more on a phone: the word gives way and the U alone goes home, so Call and Menu stay on screen. */
+@media (max-width: 19em) { .brand__word { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; } }
 
 .nav { display: none; margin-left: auto; height: 100%; min-width: 0; }
 /* The full navigation needs 1100px; below that the bar keeps Call, Request a quote (from 1000px) and the menu. */
-@media (min-width: 1100px) { .nav { display: block; } .masthead__acts { margin-left: 0; } }
+@media (min-width: 68.75em) { .nav { display: block; } .masthead__acts { margin-left: 0; } }
 .nav__list { display: flex; height: 100%; gap: .1rem; }
 .nav__item { display: flex; align-items: center; height: 100%; }
 /* Hover language for the whole site: things flip between yellow and black. */
@@ -52,11 +54,13 @@
   font-size: .8rem; font-weight: 800; font-stretch: 112%; letter-spacing: .03em; text-transform: uppercase; text-decoration: none; white-space: nowrap;
   border: var(--line) solid transparent; transition: background var(--t-tap) linear, color var(--t-tap) linear;
 }
-.nav__link:hover, .nav__item--menu:hover > .nav__link, .nav__item--menu:focus-within > .nav__link { background: var(--black); color: var(--yellow); }
+.nav__link:hover, .nav__item--menu:not(.is-dismissed):hover > .nav__link, .nav__item--menu:not(.is-dismissed):focus-within > .nav__link { background: var(--black); color: var(--yellow); }
 .nav__link[aria-current] { border-color: var(--black); }
 .nav__caret { transition: transform var(--t-flip) var(--spring); }
-.nav__item--menu:hover .nav__caret, .nav__item--menu:focus-within .nav__caret { transform: rotate(180deg); }
-@media (max-width: 1219px) { .nav__link { padding: .6em .5em; font-size: .75rem; letter-spacing: .01em; } .masthead__row { gap: .6rem; } .masthead__cta { padding-inline: 1em; } }
+.nav__item--menu:not(.is-dismissed):hover .nav__caret, .nav__item--menu:not(.is-dismissed):focus-within .nav__caret { transform: rotate(180deg); }
+@media (max-width: 76.1875em) { .nav__list { gap: 0; } .nav__link { padding: .6em .46em; font-size: .75rem; letter-spacing: .01em; } .masthead__row { gap: .6rem; } .masthead__cta { padding-inline: 1em; } }
+/* Up to 1520 the seven links and the full button labels share the bar: the links stay a little tighter. */
+@media (min-width: 76.25em) and (max-width: 94.9375em) { .nav__link { padding: .6em .62em; font-size: .75rem; } }
 
 /* Products menu: a black panel that hangs from the bar with a round bottom, like the mark. */
 .megamenu {
@@ -66,7 +70,8 @@
   visibility: hidden; opacity: 0; transform: translateY(-10px) scaleY(.96); transform-origin: 50% 0;
   transition: opacity .16s linear, transform var(--t-flip) var(--spring), visibility 0s linear .2s;
 }
-.nav__item--menu:hover .megamenu, .nav__item--menu:focus-within .megamenu { visibility: visible; opacity: 1; transform: none; transition-delay: 0s; }
+/* .is-dismissed: Escape closed it while the pointer or focus is still here (00-core.js). */
+.nav__item--menu:not(.is-dismissed):hover .megamenu, .nav__item--menu:not(.is-dismissed):focus-within .megamenu { visibility: visible; opacity: 1; transform: none; transition-delay: 0s; }
 .megamenu__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; counter-reset: line; }
 .megamenu__grid a {
   counter-increment: line; display: grid; grid-template-columns: auto 46px 1fr; align-items: center; gap: .85rem; padding: .55rem .9rem .55rem .8rem; border-radius: var(--r-pill);
@@ -75,6 +80,10 @@
 }
 .megamenu__grid a::before { content: counter(line, decimal-leading-zero); font-size: .68rem; font-weight: 750; font-stretch: var(--wide); letter-spacing: .06em; color: var(--yellow); }
 .megamenu__grid .win { width: 46px; height: 56px; transition: transform var(--t-flip) var(--spring); }
+/* The same signs as the index: a yellow U on the black panel, flipping with its row. */
+.megamenu__sign.line__win--sign { background: var(--yellow); color: var(--black); }
+.megamenu__sign .sign { width: 70%; }
+.megamenu__grid a:hover .line__win--sign, .megamenu__grid a:focus-visible .line__win--sign { background: var(--black); color: var(--yellow); }
 .megamenu__grid a:hover, .megamenu__grid a:focus-visible { background: var(--yellow); color: var(--black); }
 .megamenu__grid a:hover::before, .megamenu__grid a:focus-visible::before { color: var(--black); }
 .megamenu__grid a:hover .win { transform: rotate(-8deg) scale(1.12); }
@@ -88,18 +97,18 @@
 .masthead__call { display: inline-flex; padding-inline: 1em; flex: none; }
 .masthead__cta { display: none; flex: none; }
 .masthead__more { display: none; }
-@media (min-width: 1000px) { .masthead__cta { display: inline-flex; } }
-@media (min-width: 1100px) { .masthead__menu { display: none; } }
+@media (min-width: 62.5em) { .masthead__cta { display: inline-flex; } }
+@media (min-width: 68.75em) { .masthead__menu { display: none; } }
 /* Between 1000 and 1100 the bar has room for full labels; from 1100 the nav takes it back. */
-@media (min-width: 1000px) and (max-width: 1099px), (min-width: 1400px) { .masthead__more--cta { display: inline; } }
-@media (min-width: 1000px) and (max-width: 1099px), (min-width: 1520px) { .masthead__more--call { display: inline; } }
-@media (max-width: 999px) { .masthead__call, .masthead__menu { font-size: .75rem; } }
+@media (min-width: 62.5em) and (max-width: 68.6875em), (min-width: 87.5em) { .masthead__more--cta { display: inline; } }
+@media (min-width: 62.5em) and (max-width: 68.6875em), (min-width: 95em) { .masthead__more--call { display: inline; } }
+@media (max-width: 62.4375em) { .masthead__call, .masthead__menu { font-size: .75rem; } }
 /* Narrow phones: the words give way, Call first keeps its word, and screen readers keep both. */
-@media (max-width: 419px) {
+@media (max-width: 26.1875em) {
   .masthead__menu { width: 46px; padding: 0; }
   .masthead__menu span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 }
-@media (max-width: 349px) {
+@media (max-width: 21.8125em) {
   .masthead__call { width: 46px; padding: 0; }
   .masthead__call-t { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 }
@@ -147,9 +156,8 @@ dialog::backdrop { background: rgba(14, 14, 12, .72); }
 .drawer__yards b { font-weight: 800; font-stretch: var(--wide); font-size: .75rem; letter-spacing: .07em; text-transform: uppercase; color: var(--yellow); }
 .drawer__cta { display: grid; gap: .5rem; flex: none; }
 .drawer .btn { flex: none; }
-@media (min-width: 460px) { .drawer__cta { grid-template-columns: 1fr 1fr; } .drawer__cta .btn { padding-inline: .9em; } }
-.drawer__minor { display: inline-flex; align-items: center; gap: .4rem; align-self: flex-start; min-height: 44px; font-weight: 700; font-size: .98rem; text-underline-offset: .25em; flex: none; }
-@media (min-width: 1000px) { .drawer { width: min(460px, 100vw); margin-left: auto; } }
+@media (min-width: 28.75em) { .drawer__cta { grid-template-columns: 1fr 1fr; } .drawer__cta .btn { padding-inline: .9em; } }
+@media (min-width: 62.5em) { .drawer { width: min(460px, 100vw); margin-left: auto; } }
 
 /* Call or visit: every yard with its number and a map link side by side. Bottom sheet on phones, a card on desktop. */
 .sheet {
@@ -159,7 +167,7 @@ dialog::backdrop { background: rgba(14, 14, 12, .72); }
 }
 .sheet[open] { animation: sheet-in .45s var(--spring); }
 @keyframes sheet-in { from { transform: translateY(60px); opacity: 0; } }
-@media (min-width: 700px) { .sheet { margin: auto; max-width: 600px; max-height: calc(100dvh - 3rem); border-radius: var(--r-l); padding: 0 1.5rem 1.5rem; } }
+@media (min-width: 43.75em) { .sheet { margin: auto; max-width: 37.5em; max-height: calc(100dvh - 3rem); border-radius: var(--r-l); padding: 0 1.5rem 1.5rem; } }
 .sheet__head { position: sticky; top: 0; z-index: 1; display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding-block: 1.1rem .85rem; background: var(--paper); }
 .sheet__title { font-size: clamp(1.4rem, 6vw, 1.9rem); font-weight: 900; font-stretch: var(--wide); text-transform: uppercase; letter-spacing: -.02em; line-height: .95; }
 .sheet__list { display: grid; gap: .5rem; }
@@ -175,14 +183,14 @@ dialog::backdrop { background: rgba(14, 14, 12, .72); }
 .sheet__dir { border: var(--line) solid var(--black); background: var(--white); color: var(--black); }
 .sheet__dir:hover { background: var(--black); color: var(--yellow); }
 .sheet__num:active, .sheet__dir:active { transform: scale(.97); }
-@media (max-width: 360px) { .sheet__num .i, .sheet__dir .i, .sheet__more a:first-child .i { display: none; } .sheet__num, .sheet__dir { font-size: .875rem; padding-inline: .3rem; } }
+@media (max-width: 22.5em) { .sheet__num .i, .sheet__dir .i, .sheet__more a:first-child .i { display: none; } .sheet__num, .sheet__dir { font-size: .875rem; padding-inline: .3rem; } }
 .sheet__more { display: flex; flex-wrap: wrap; justify-content: space-between; column-gap: 1rem; font-size: .875rem; }
 .sheet__more a { display: inline-flex; align-items: center; gap: .4rem; min-height: 40px; font-weight: 600; text-decoration: none; }
 .sheet__more a:hover { text-decoration: underline; }
 
 /* ---------- Phone action bar: a floating black capsule. Call · Directions · Quote ---------- */
 .actionbar { display: none; }
-@media (max-width: 999px) {
+@media (max-width: 62.4375em) {
   .actionbar {
     position: fixed; z-index: 40; left: 10px; right: 10px; bottom: calc(10px + env(safe-area-inset-bottom));
     display: grid; grid-template-columns: 1fr 1.15fr 1.15fr; gap: 4px; padding: 5px; height: 60px;
@@ -201,20 +209,19 @@ dialog::backdrop { background: rgba(14, 14, 12, .72); }
   .actionbar__btn--primary:active { background: var(--yellow-hi); }
   .actionbar :focus-visible { outline-color: var(--yellow); box-shadow: none; outline-offset: -5px; }
 }
-@media (max-width: 999px) and (max-height: 480px) { .actionbar { height: 46px; padding: 4px; } }
-@media (max-width: 379px) { .actionbar { grid-template-columns: 1fr 1.3fr 1fr; } .actionbar__btn { font-stretch: 100%; letter-spacing: .02em; gap: .3rem; } .actionbar__btn .i { width: 17px; height: 17px; } }
+@media (max-width: 62.4375em) and (max-height: 480px) { .actionbar { height: 46px; padding: 4px; } }
+@media (max-width: 23.6875em) { .actionbar { grid-template-columns: 1fr 1.3fr 1fr; } .actionbar__btn { font-stretch: 100%; letter-spacing: .02em; gap: .3rem; } .actionbar__btn .i { width: 17px; height: 17px; } }
 
 /* ---------- Footer ---------- */
 .footer { position: relative; background: var(--black); color: var(--paper); overflow: hidden; overflow: clip; isolation: isolate; padding-top: clamp(3.5rem, 8vw, 7rem); }
 .footer :focus-visible { outline-color: var(--yellow); box-shadow: none; }
 .footer .rings { z-index: -1; inset: 0 auto auto 62%; width: clamp(150px, 20vw, 300px); height: clamp(140px, 19vw, 280px); color: var(--black-2); }
 .footer__lead { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 2rem; padding-bottom: clamp(2.5rem, 5vw, 4.5rem); }
-.footer__tag { max-width: 12ch; color: var(--yellow); }
-.footer__acts { display: flex; flex-wrap: wrap; align-items: center; gap: .75rem; }
+.footer__tag { max-width: 20ch; color: var(--yellow); }
 .footer__cols { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 2rem clamp(1.25rem, 3vw, 3rem); padding-block: clamp(2rem, 4vw, 3rem); border-top: var(--line) solid var(--black-3); }
-@media (max-width: 1239px) { .footer__cols { grid-template-columns: repeat(3, minmax(0, 1fr)); } .footer__nav.footer__nav--lines { grid-column: span 2; display: grid; grid-template-columns: 1fr 1fr; column-gap: 1rem; align-content: start; } .footer__nav--lines .footer__h { grid-column: 1 / -1; } }
-@media (max-width: 860px) { .footer__cols { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (max-width: 520px) { .footer__cols { grid-template-columns: minmax(0, 1fr); gap: 0; padding-block: 0; } .footer__cols > * { padding-block: 1.4rem; border-bottom: var(--line) solid var(--black-3); } .footer__cols > :last-child { border-bottom: 0; } }
+@media (max-width: 77.4375em) { .footer__cols { grid-template-columns: repeat(3, minmax(0, 1fr)); } .footer__nav.footer__nav--lines { grid-column: span 2; display: grid; grid-template-columns: 1fr 1fr; column-gap: 1rem; align-content: start; } .footer__nav--lines .footer__h { grid-column: 1 / -1; } }
+@media (max-width: 53.75em) { .footer__cols { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 32.5em) { .footer__cols { grid-template-columns: minmax(0, 1fr); gap: 0; padding-block: 0; } .footer__cols > * { padding-block: 1.4rem; border-bottom: var(--line) solid var(--black-3); } .footer__cols > :last-child { border-bottom: 0; } }
 .footer__yard, .footer__nav { display: flex; flex-direction: column; align-items: flex-start; gap: .1rem; font-size: .95rem; }
 .footer__h { font-size: var(--t-label); font-weight: 800; font-stretch: var(--wide); letter-spacing: .09em; text-transform: uppercase; color: var(--yellow); margin-bottom: .7rem; }
 .footer__yardhead { display: flex; align-items: center; gap: .6rem; margin-bottom: .7rem; }
@@ -222,17 +229,24 @@ dialog::backdrop { background: rgba(14, 14, 12, .72); }
 .footer__fax { color: var(--ash); padding-block: .2rem; }
 .footer__cols a { text-decoration: none; padding-block: .2rem; }
 .footer__cols a:hover { color: var(--yellow); text-decoration: underline; }
+.footer__more { display: flex; flex-direction: column; align-items: flex-start; gap: .1rem; margin-top: .35rem; }
 .footer__yard address { color: var(--ash); margin-bottom: .45rem; }
 .footer__yard .footer__num { font-size: 1.3rem; font-weight: 800; font-variant-numeric: tabular-nums; color: var(--paper); line-height: 1.2; }
 .footer__yard small { color: var(--ash); margin-left: .35em; }
-@media (max-width: 520px) { .footer__nav { display: grid; grid-template-columns: 1fr 1fr; column-gap: 1rem; } .footer__nav .footer__h { grid-column: 1 / -1; } .footer__nav.footer__nav--lines { grid-column: auto; } }
+/* Phones: a yard is one row, its name and status beside its number. The details are in the call sheet. */
+@media (max-width: 32.5em) {
+  .footer__yard { flex-direction: row; align-items: center; justify-content: space-between; gap: .75rem; }
+  .footer__yardhead { flex-direction: column; align-items: flex-start; gap: .1rem; margin: 0; }
+  .footer__more { display: none; }
+}
+@media (max-width: 32.5em) { .footer__nav { display: grid; grid-template-columns: 1fr 1fr; column-gap: 1rem; } .footer__nav .footer__h { grid-column: 1 / -1; } .footer__nav.footer__nav--lines { grid-column: auto; } }
 /* Every link is at least 40px tall on touch screens. */
-@media (max-width: 999px), (pointer: coarse) { .footer__cols a { display: inline-flex; align-items: center; min-height: 40px; padding-block: 0; } }
+@media (max-width: 62.4375em), (pointer: coarse) { .footer__cols a { display: inline-flex; align-items: center; min-height: 40px; padding-block: 0; } }
 /* The wordmark, as wide as the page, standing on the bottom rule. */
 .footer__word { display: block; margin: clamp(1rem, 3vw, 2.5rem) 0 -.04em; font-size: calc((min(100vw, var(--wrap) + var(--gutter) * 2) - var(--gutter) * 2) / 5.56); line-height: .8; font-weight: 900; font-stretch: 125%; letter-spacing: -.035em; text-transform: uppercase; color: var(--yellow); white-space: nowrap; user-select: none; }
 .footer__legal { position: relative; background: var(--black); border-top: var(--line) solid var(--black-3); font-size: .8rem; color: var(--ash); }
 .footer__legal-row { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem 2rem; justify-content: space-between; padding-block: .9rem 1rem; }
 /* Room for the floating action bar, so the last line of the page is never under it. */
-@media (max-width: 999px) { .footer__legal-row { padding-bottom: calc(var(--bar) + 26px + env(safe-area-inset-bottom)); } }
+@media (max-width: 62.4375em) { .footer__legal-row { padding-bottom: calc(var(--bar) + 26px + env(safe-area-inset-bottom)); } }
 .footer__motion { display: inline-flex; align-items: center; min-height: 44px; background: none; border: 0; padding: 0; color: inherit; text-decoration: underline; text-underline-offset: .2em; }
 .footer__motion:hover { color: var(--yellow); }

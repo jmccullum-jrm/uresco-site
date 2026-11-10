@@ -1,13 +1,16 @@
 // Site checks: run after `node build.mjs`.  npm run check
 //  1. Static: every page has a title, description, one <h1>, alt on every <img>, unique ids; every
 //     internal link, fragment, image and asset resolves; every aria reference points at something; the
-//     copy holds to the facts sheet (claims, hours, geography, phones, addresses, photo captions).
+//     copy holds to the facts sheet (claims, hours, geography, phones, addresses, photo captions); the
+//     credit application is complete and carries no invented terms; breakpoints are written in em.
 //  2. Browser: every page loads in Chromium at five widths with no errors, no horizontal
 //     scroll and no stretched hero photo; the finder answers by keyboard and by its Go button and
 //     hands the place to the quote form; both forms validate and hand off; the product filter, the
 //     product picks, the projects filter and the services anchors work; every page keeps the 12px
 //     floor, 40px touch targets and uncut product lists on a phone; every Call, Directions and Menu
 //     control still leads somewhere with JavaScript off.
+//  3. Review findings: the serious ones from the design review, each pinned down in reviewFindings() and
+//     reviewOnPhone() below so it cannot come back (including the two-page printed application).
 import { readFileSync, readdirSync, statSync, existsSync } from 'fs';
 import { join, dirname, resolve, relative } from 'path';
 import { fileURLToPath } from 'url';
@@ -50,6 +53,22 @@ for (const file of pages) {
   for (const claim of [/one point of contact/i, /the whole way/i, /from quote to landing/i, /delivered pric/i, /price it delivered/i, /prices it, delivered/i, /quoted together/i, /priced and ready/i, /checked for gaps/i,
     /stock varies/i, /last sailings?/i, /about ten minutes/i, /estimators, designers/i, /carrier bookings/i, /when the sailing is/i, /not at the curb/i, /banded/i, /phased|sequenced to/i, /job accounts/i])
     if (claim.test(src)) fail(rel, `says something the facts do not support: ${claim}`);
+  // The same, on what a visitor reads (tags are gone, so a headline split by <em> still matches) and on the meta description.
+  const reads = (src.slice(src.indexOf('<body')).replace(/<(script|style)\b[^>]*>[\s\S]*?<\/\1>/g, ' ').replace(/<[^>]+>/g, ' ') + ' ' + (src.match(/<meta name="description" content="([^"]*)"/) || [])[1]).replace(/\s+/g, ' ');
+  for (const claim of [/one account\.? three yards/i, /set up once/i, /buy on account/i, /charge account/i, /apply online/i, /we check references/i, /confirm your limit/i, /sets up your account/i, /once it.s approved/i, /will contact you once/i, /monthly statement/i, /\bnet 30\b/i, /home yard/i, /reviewed by/i, /have these ready/i,
+    /carries the full range/i, /full range of building products/i, /load sheet/i, /kent to alaska/i, /south end of the uresco map/i, /what we promise/i, /where to check it/i,
+    /get a take-off/i, /take-off out/i, /builds the take-off/i, /gets? back to you with/i, /we will find the yard/i, /quoted by/i, /owner-builder/i, /agency, tribe/i, /pick up at the yard/i,
+    /what the materials become/i, /typically on the load/i, /photographs are illustrative/i, /will work out the route/i, /we plan around the season/i])
+    if (claim.test(reads)) fail(rel, `says something the facts do not support: ${claim}`);
+  // The credit application is the real form: every part of it is on the page, and nothing calls it a draft.
+  if (rel === 'accounts/index.html') {
+    for (const id of ['company', 'dba', 'entity', 'ein', 'license', 'years', 'address', 'name', 'phone', 'email', 'ap_contact', 'buyers', 'yard', 'limit', 'monthly', 'ref1_company', 'ref1_contact', 'ref2_company', 'ref2_contact', 'ref3_company', 'ref3_contact', 'bank', 'bank_contact', 'agree', 'signature', 'signed'])
+      if (!src.includes(` id="${id}"`)) fail(rel, `credit application is missing ${id}`);
+    if (!/name="tax"/.test(src)) fail(rel, 'credit application is missing the tax status');
+    if (/\bdraft\b/i.test(reads)) fail(rel, 'the credit application is labelled a draft');
+    if (!reads.includes('I certify the information above is true.')) fail(rel, 'the confirmation above the signature is missing');
+    if (!/letterhead__brand[\s\S]*?Uresco Construction Materials, Inc\./.test(src)) fail(rel, 'the printed head has lost the legal name');
+  }
   // The yard hours are placeholders: they appear on the Locations page and nowhere else, never as a time of day
   // or an "open until", and never in structured data.
   const visible = src.slice(src.indexOf('<body')).replace(/<(script|style)\b[^>]*>[\s\S]*?<\/\1>/g, ' ').replace(/<[^>]+>/g, ' ');
@@ -89,6 +108,8 @@ for (const file of pages) {
   for (const m of src.matchAll(/\shref="#([^"]+)"/g)) if (!ids.includes(m[1])) fail(rel, `link to missing anchor #${m[1]}`);
 }
 console.log(`static: ${pages.length} pages checked`);
+// Breakpoints in em collapse the layout when someone sets a larger default text size; px ones ignore it.
+for (const m of readFileSync(join(DOCS, 'assets/css/site.css'), 'utf8').matchAll(/@media[^{]*\((?:min|max)-(?:width|height):\s*[\d.]+px\)[^{]*/g)) fail('site.css', `breakpoint in px: ${m[0]}`);
 
 // ---- Browser pass ----
 const require = createRequire(import.meta.url);
@@ -156,7 +177,7 @@ const innerDesktop = async (page) => {
   await page.fill('[data-pidx-q]', '');
   if ((await rows()).length !== 9) fail('desktop /products/', 'clearing the filter did not bring back nine lines');
   const addLine = await page.getAttribute('#engineered-wood .pidx-row__quote', 'href');
-  if (!addLine.endsWith('quote/?product=Engineered%20Wood%20%26%20Trusses')) fail('desktop /products/', `"Add to a quote" links to ${addLine}`);
+  if (!addLine.endsWith('quote/?product=Engineered%20Wood%20%26%20Trusses')) fail('desktop /products/', `"Quote this line" links to ${addLine}`);
 
   // Products picked on a line page go to the quote form, on every quote button.
   await page.goto(base + 'products/engineered-wood/', { waitUntil: 'networkidle' });
@@ -192,6 +213,248 @@ const innerDesktop = async (page) => {
   if (printed !== 3) fail('desktop /locations/', `hours printed for ${printed} of 3 yards`);
 };
 // ---- end of inner pages ----
+
+// ---- Review findings ----
+// Each of these was found in the design review. They are here so they stay fixed.
+const reviewFindings = async (page) => {
+  const idle = { waitUntil: 'networkidle' };
+  const tidy = () => page.evaluate(() => { localStorage.clear(); sessionStorage.clear(); });
+  const file = (name, size = 16) => ({ name, mimeType: 'application/pdf', buffer: Buffer.alloc(size, 65) });
+  const quoteMinimum = async () => { await page.fill('#name', 'Pat'); await page.fill('#phone', '907-555-0100'); await page.fill('#email', 'pat@example.com'); await page.fill('#location', 'Tacoma, WA'); };
+  const send = async (form = 'quote') => { await page.click(`form[data-form=${form}] button[type=submit]`); await page.waitForTimeout(250); };
+
+  // #5 The state after a place name is how people write it.
+  for (const typed of ['Bethel, AK', 'Bethel Alaska', 'Nome AK']) {
+    await page.goto(base, idle);
+    await page.fill('.finder__input', typed);
+    await page.press('.finder__input', 'Enter');
+    await page.waitForTimeout(200);
+    if (!(await page.textContent('[data-r="name"]')).startsWith(typed.split(/[, ]/)[0]) || await page.isVisible('.route__y[data-y="any"]')) fail('review #5', `"${typed}" was not recognised`);
+    // #37 and the keyboard user stays on the field.
+    if ((await page.evaluate(() => document.activeElement.className)) !== 'finder__input') fail('review #37', 'focus left the finder after Enter');
+  }
+  // #46 Until a place is chosen the example does not start a real quote.
+  await page.goto(base, idle);
+  if (!/quote\/$/.test(await page.getAttribute('[data-r="quote"]', 'href'))) fail('review #46', 'the example card links to a quote for its example place');
+
+  // #6 A reload keeps what was changed; a new link still fills in.
+  await page.goto(base + 'quote/', idle); await tidy();
+  await page.goto(base + 'quote/?location=Bethel%2C%20AK&yard=anchorage', idle);
+  await page.fill('#location', 'Kwethluk, AK');
+  await page.selectOption('#yard', 'Fairbanks');
+  await page.reload(idle);
+  if ((await page.inputValue('#location')) !== 'Kwethluk, AK' || (await page.inputValue('#yard')) !== 'Fairbanks') fail('review #6', 'a reload put the link values back over the draft');
+  await page.goto(base + 'quote/?location=Nome%2C%20AK&yard=anchorage', idle);
+  if ((await page.inputValue('#location')) !== 'Nome, AK' || (await page.inputValue('#yard')) !== 'Anchorage') fail('review #6', 'a new link did not fill in over an old draft');
+  await tidy();
+
+  // #12 The first screen says what came with the link, whatever it was.
+  await page.goto(base + 'quote/?product=Engineered%20Wood%20%26%20Trusses&yard=fairbanks', idle);
+  if (!/Engineered Wood & Trusses · Fairbanks yard/.test(await page.textContent('[data-carried]')) || await page.isHidden('[data-carried]')) fail('review #12', 'product and yard are not confirmed on the first screen');
+  await tidy();
+  await page.goto(base + 'quote/?yard=kent', idle);
+  if (!/Kent yard/.test(await page.textContent('[data-carried]'))) fail('review #12', 'yard alone is not confirmed on the first screen');
+  await page.goto(base + 'quote/', idle);
+  if (!(await page.isHidden('[data-carried]'))) fail('review #12', 'nothing was carried, but the line shows');
+
+  // #8 Picks reach one request from several lines, a later product is added to the list, and the panel follows the list.
+  await tidy();
+  await page.goto(base + 'products/engineered-wood/', idle);
+  await page.click('[data-pline-pick="Glulam beams (GLB)"]');
+  await page.goto(base + 'products/hardware-supplies/', idle);
+  await page.click('[data-pline-pick]');
+  if (!/^2 on the quote/.test(await page.textContent('[data-pline-status]'))) fail('review #8', 'picks did not carry across product lines');
+  await page.goto(new URL(await page.getAttribute('[data-pline-quote]', 'href'), page.url()).href, idle);
+  const both = await page.inputValue('#materials');
+  if (!both.includes('Glulam beams (GLB)') || !/Hardware/.test(both)) fail('review #8', `one request does not hold both lines: ${both}`);
+  await page.fill('#materials', 'Simpson ties\n');
+  await page.goto(base + 'quote/?product=Plywood', idle);
+  const after = await page.inputValue('#materials');
+  if (!after.startsWith('Simpson ties') || !after.includes('Plywood:')) fail('review #8', `a later product was dropped: ${after}`);
+  if (!(await page.textContent('[data-s=attached]')).startsWith('Simpson ties')) fail('review #8', 'the panel disagrees with the materials box');
+  await quoteMinimum(); await send();
+  if (await page.evaluate(() => sessionStorage.getItem('uresco.picks'))) fail('review #8', 'picks left behind after the request was handed off');
+  await tidy();
+
+  // #9 #37 Files accumulate, an oversized one costs nothing, and Remove keeps focus in the list.
+  await page.goto(base + 'quote/', idle);
+  await page.setInputFiles('input[type=file]', file('one.pdf'));
+  await page.setInputFiles('input[type=file]', file('two.pdf'));
+  if ((await page.$$eval('[data-files] li', (l) => l.length)) !== 2) fail('review #9', 'a second file replaced the first');
+  await page.setInputFiles('input[type=file]', file('huge.pdf', 26 * 1024 * 1024));
+  if ((await page.$$eval('[data-files] li', (l) => l.length)) !== 2 || !(await page.isVisible('[data-file-err]'))) fail('review #9', 'an oversized file wiped the list or went unmentioned');
+  if ((await page.$$eval('[data-files] li', (l) => l.length)) === 2) {
+    await page.focus('[data-files] li:first-child button');
+    await page.keyboard.press('Enter');
+    if ((await page.evaluate(() => document.activeElement.textContent)) !== 'Remove') fail('review #37', 'focus fell to the page after Remove');
+    await page.focus('[data-files] li:first-child button');
+    await page.keyboard.press('Enter');
+    if ((await page.evaluate(() => document.activeElement.type)) !== 'file') fail('review #37', 'focus did not return to the picker when the list emptied');
+  }
+
+  // #10 A reload says the files must be chosen again, and the hand-off still mentions them.
+  await page.fill('#name', 'Pat');
+  await page.setInputFiles('input[type=file]', file('plans.pdf'));
+  await page.reload(idle);
+  if (!(await page.isVisible('[data-files-lost]')) || !(await page.textContent('[data-files-lost]')).includes('plans.pdf')) fail('review #10', 'a reload lost the file name silently');
+  if (!/attaching again/.test(await page.textContent('[data-draft-text]'))) fail('review #10', 'the draft line does not mention the lost files');
+  await quoteMinimum(); await send();
+  if (!decodeURIComponent(await page.getAttribute('[data-mail-again]', 'href')).includes('FILES TO ATTACH: plans.pdf')) fail('review #10', 'the email does not mention the file');
+  await tidy();
+
+  // #48 Start over can be undone, with the private fields back too, and nothing of it reaches storage.
+  await page.goto(base + 'accounts/', idle);
+  await page.fill('#company', 'Undo Co'); await page.fill('#ein', '98-7654321');
+  await page.click('[data-draft-clear]');
+  if (await page.inputValue('#company')) fail('review #48', 'Start over did not clear the form');
+  if (!(await page.isVisible('[data-draft-undo]'))) fail('review #48', 'no Undo after Start over');
+  await page.click('[data-draft-undo]');
+  if ((await page.inputValue('#company')) !== 'Undo Co' || (await page.inputValue('#ein')) !== '98-7654321') fail('review #48', 'Undo did not bring the form back');
+  if ((await page.evaluate(() => localStorage.getItem('uresco.draft.credit'))).includes('98-7654321')) fail('review #48', 'Undo saved a tax ID');
+  await tidy();
+
+  // #11 #40 The email hand-off: tax ID and bank details stay out, the tab keeps a copy, and the form can be reopened.
+  await page.goto(base + 'accounts/', idle);
+  for (const [id, v] of [['company', 'North Star Framing'], ['address', '1 Main St, Kent WA'], ['name', 'Pat Builder'], ['phone', '253-555-0100'], ['email', 'pat@example.com'], ['ref1_company', 'Acme Supply'], ['ref1_contact', 'Lee 253-555-0199'], ['signature', 'Pat Builder'], ['signed', '2026-10-22'], ['ein', '12-3456789'], ['bank', 'First Test Bank'], ['bank_contact', 'Jo 555-0123']]) await page.fill('#' + id, v);
+  await page.check('#agree');
+  await send('credit');
+  const body = decodeURIComponent(await page.getAttribute('[data-mail-again]', 'href'));
+  for (const secret of ['12-3456789', 'First Test Bank', 'Jo 555-0123']) if (body.includes(secret)) fail('review #40', `the email carries ${secret}`);
+  for (const kept of ['North Star Framing', 'Acme Supply', 'Pat Builder']) if (!body.includes(kept)) fail('review #40', `the email lost ${kept}`);
+  if (!(await page.isVisible('[data-mail-held]'))) fail('review #40', 'nothing says the tax ID and bank details stayed out of the email');
+  if (!(await page.isVisible('[data-done] [data-print]'))) fail('review #47', 'no Print a copy after the hand-off');
+  await page.emulateMedia({ media: 'print' });
+  if (!(await page.isVisible('form[data-form=credit]')) || await page.isVisible('[data-done]')) fail('review #47', 'Print a copy would not print the application');
+  await page.emulateMedia({ media: null });
+  const copy = await page.evaluate(() => sessionStorage.getItem('uresco.draft.credit'));
+  if (!copy || !copy.includes('North Star') || /12-3456789|First Test Bank|Pat Builder"?,"?signed/.test(copy)) fail('review #40', `the copy kept in this tab is wrong: ${copy}`);
+  await page.click('[data-back]');
+  if ((await page.inputValue('#ein')) !== '12-3456789' || await page.isHidden('form[data-form=credit]')) fail('review #40', 'Back to the form did not restore it');
+  await send('credit');
+  await page.reload(idle);
+  if ((await page.inputValue('#company')) !== 'North Star Framing') fail('review #40', 'a reload after the hand-off lost the application');
+  if (await page.inputValue('#ein')) fail('review #40', 'a tax ID came back from storage');
+  await tidy();
+  // A request too long for an email link is copied, not cut off.
+  await page.goto(base + 'quote/', idle);
+  await quoteMinimum();
+  await page.fill('#materials', '20 sheets of 4x8 plywood\n'.repeat(140));
+  await send();
+  const short = await page.getAttribute('[data-mail-again]', 'href');
+  if (short.length > 1800 || !(await page.isVisible('[data-mail-long]')) || (await page.getAttribute('[data-copy]', 'class')).includes('btn--line')) fail('review #40', 'a long request is not handed to Copy');
+  await tidy();
+
+  // Printed application: two Letter pages, blank and filled in, under the legal name.
+  const paper = (pdf) => { const t = pdf.toString('latin1'); return { pages: (t.match(/\/Type\s*\/Page\b/g) || []).length, letter: (t.match(/\/MediaBox\s*\[\s*0\s+0\s+612\s+792\s*\]/g) || []).length }; };
+  await page.goto(base + 'accounts/', idle);
+  const blank = paper(await page.pdf({ preferCSSPageSize: true }));
+  if (blank.pages !== 2 || blank.letter !== 2) fail('review print', `blank application prints as ${JSON.stringify(blank)}`);
+  await page.emulateMedia({ media: 'print' });
+  const letter = await page.evaluate(() => { const e = document.querySelector('.letterhead'); return { on: getComputedStyle(e).display !== 'none', text: e.innerText, sign: !!document.querySelector('#signature').getBoundingClientRect().height }; });
+  await page.emulateMedia({ media: null });
+  if (!letter.on || !letter.text.includes('Uresco Construction Materials, Inc.') || /draft/i.test(letter.text) || !letter.sign) fail('review print', `the printed head reads "${letter.text}"`);
+  for (const [id, v] of [['company', 'North Star Framing'], ['buyers', 'One\nTwo\nThree\nFour\nFive'], ['bank', 'First Test Bank'], ['signature', 'Pat']]) await page.fill('#' + id, v);
+  const filled = paper(await page.pdf({ preferCSSPageSize: true }));
+  if (filled.pages !== 2 || filled.letter !== 2) fail('review print', `filled application prints as ${JSON.stringify(filled)}`);
+  await tidy();
+
+  // #39 A closed date reads Closed in the yard's own calendar, and the day before does not.
+  for (const [iso, want] of [['2026-11-26T18:00:00Z', 'Closed'], ['2026-11-25T18:00:00Z', 'Open']]) {
+    const ctx = await browser.newContext({ viewport: { width: 1280, height: 800 } });
+    await ctx.addInitScript((t) => { const T = new Date(t).getTime(), D = Date; window.Date = class extends D { constructor(...a) { if (a.length) super(...a); else super(T); } static now() { return T; } }; }, iso);
+    const p = await ctx.newPage();
+    await p.goto(base + 'locations/', idle);
+    const says = [...new Set(await p.$$eval('[data-hours]', (e) => e.map((x) => x.textContent)))];
+    if (says.join() !== want) fail('review #39', `${iso} reads ${says}`);
+    await ctx.close();
+  }
+
+  // #33 If the script never arrives nothing stays hidden.
+  const noScript = await browser.newContext({ viewport: { width: 1280, height: 800 } });
+  const bare = await noScript.newPage();
+  await bare.route('**/assets/js/site.js*', (r) => r.abort());
+  for (const p of ['', 'products/', 'locations/', 'about/', 'services/']) {
+    await bare.goto(base + p, { waitUntil: 'load' });
+    const hid = await bare.$$eval('.reveal', (e) => e.filter((x) => getComputedStyle(x).opacity === '0').length);
+    if (hid) fail(`review #33 /${p}`, `${hid} elements stay hidden when the script does not load`);
+  }
+  await noScript.close();
+
+  // #38 Controls can be seen at rest: 3:1 for the boundary, 4.5:1 for placeholder text.
+  await page.goto(base + 'quote/', idle);
+  const lum = (c) => { const [r, g, b] = c.match(/[\d.]+/g).map(Number).map((v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; }); return 0.2126 * r + 0.7152 * g + 0.0722 * b; };
+  const ratio = (a, b) => { const [x, y] = [lum(a), lum(b)].sort((p, q) => q - p); return (x + 0.05) / (y + 0.05); };
+  const [edge, fill, hint] = await page.$eval('#location', (e) => [getComputedStyle(e).borderTopColor, getComputedStyle(e).backgroundColor, getComputedStyle(e, '::placeholder').color]);
+  if (ratio(edge, 'rgb(255,255,255)') < 3) fail('review #38', `input boundary ${edge} is under 3:1`);
+  if (ratio(hint, fill) < 4.5) fail('review #38', `placeholder ${hint} is under 4.5:1`);
+
+  // #14 #17 #18 At laptop widths: the reference cards line up, the menu cuts nothing off, the stats fit their columns.
+  for (const w of [1024, 1100, 1280]) {
+    const ctx = await browser.newContext({ viewport: { width: w, height: 800 } });
+    const p = await ctx.newPage();
+    await p.goto(base + 'accounts/', idle);
+    const refs = await p.$$eval('.ref', (e) => e.map((x) => [Math.round(x.querySelector('input').getBoundingClientRect().top), x.querySelector('.ref__title span').getBoundingClientRect().height]));
+    if (new Set(refs.map((r) => r[0])).size !== 1 || refs.some((r) => r[1] > 30)) fail(`review #14 ${w}`, `reference cards out of line: ${JSON.stringify(refs)}`);
+    await p.goto(base, idle);
+    const off = await p.$$eval('.stats > div', (e) => e.filter((x) => { const g = document.createRange(); g.selectNodeContents(x.querySelector('dt')); return g.getBoundingClientRect().right > x.getBoundingClientRect().right + 1; }).length);
+    if (off) fail(`review #18 ${w}`, `${off} home stats run out of their column`);
+    if (w >= 1100) {
+      await p.click('.nav__toggle');
+      const cut = await p.$$eval('.mega__item small', (e) => e.filter((x) => getComputedStyle(x).webkitLineClamp !== 'none' || x.scrollHeight > x.clientHeight + 1).length);
+      if (cut) fail(`review #17 ${w}`, `${cut} product lists cut off in the menu`);
+    }
+    await ctx.close();
+  }
+
+  // #35 Sticky panels let go on short screens.
+  for (const [w, h, p, sel] of [[844, 390, '', '.journey__stage'], [667, 375, '', '.journey__stage'], [1024, 500, 'products/framing-lumber/', '.pline-ask'], [1280, 600, 'projects/', '.pj-sector__head']]) {
+    const ctx = await browser.newContext({ viewport: { width: w, height: h } });
+    const q = await ctx.newPage();
+    await q.goto(base + p, idle);
+    const pos = await q.$eval(sel, (e) => getComputedStyle(e).position);
+    if (pos === 'sticky') fail(`review #35 ${w}x${h} /${p}`, `${sel} is still pinned`);
+    await ctx.close();
+  }
+
+  // #34 A larger default text size reflows the page instead of pushing it sideways.
+  for (const size of [20, 24, 32]) {
+    const big = await chromium.launch({ ...(existsSync('/opt/pw-browsers/chromium') ? { executablePath: '/opt/pw-browsers/chromium' } : {}), args: [`--blink-settings=defaultFontSize=${size}`] });
+    for (const w of [390, 1280]) {
+      const ctx = await big.newContext({ viewport: { width: w, height: 844 }, isMobile: w < 700, hasTouch: w < 700 });
+      const p = await ctx.newPage();
+      for (const q of ['', 'services/', 'locations/', 'quote/', 'accounts/']) {
+        await p.goto(base + q, { waitUntil: 'load' });
+        const over = await p.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+        if (over > 0) fail(`review #34 ${size}px text at ${w} /${q}`, `scrolls sideways by ${over}px`);
+      }
+      await ctx.close();
+    }
+    await big.close();
+  }
+};
+
+// On a phone: the yellow button carries the choice, the page ends briefly, and a focused control is not under the bar.
+const reviewOnPhone = async (page) => {
+  const idle = { waitUntil: 'networkidle' };
+  await page.goto(base + 'alaska/', idle);
+  await page.fill('.finder__input', 'Nome');
+  await page.press('.finder__input', 'Enter');
+  await page.waitForTimeout(350);
+  const bar = await page.getAttribute('.actionbar__btn--primary', 'href');
+  if (!/location=Nome/.test(bar) || !/yard=anchorage/.test(bar)) fail('review #7', `the action bar ignores the chosen place: ${bar}`);
+  await page.goto(base + 'products/engineered-wood/', idle);
+  await page.evaluate(() => sessionStorage.clear());
+  await page.reload(idle);
+  await page.tap('[data-pline-pick]');
+  await page.waitForTimeout(150);
+  if (!/product=/.test(await page.getAttribute('.actionbar__btn--primary', 'href'))) fail('review #7', 'the action bar ignores the picked product');
+  await page.evaluate(() => sessionStorage.clear());
+  const end = await page.evaluate(() => ({ foot: document.querySelector('.footer').getBoundingClientRect().height, tels: document.querySelectorAll('.footer a[href^="tel:"]').length }));
+  if (end.foot > 1150 || end.tels < 3) fail('review #19', `phone footer: ${JSON.stringify(end)}`);
+  const pad = await page.evaluate(() => parseFloat(getComputedStyle(document.documentElement).scrollPaddingBottom));
+  if (pad < 60) fail('review #36', 'nothing keeps a focused control clear of the action bar');
+};
+// ---- end of review findings ----
 
 // Without the script every control still has somewhere to go, and what only the script can drive is not shown.
 const withoutScript = async () => {
@@ -276,6 +539,7 @@ for (const [name, viewport, mobile] of [['small phone', { width: 360, height: 74
     if (!/^Nome, Alaska/.test(await page.textContent('[data-r="name"]'))) fail('phone /', 'the Go button did not choose the place');
     if (await page.isVisible('[data-go]')) fail('phone /', 'Go button still showing once the place is answered');
     await innerPhone(page);
+    await reviewOnPhone(page);
   } else if (name === 'desktop') {
     // Quote form: empty submit flags the required fields; a filled one hands off to email.
     await page.goto(base + 'quote/', { waitUntil: 'networkidle' });
@@ -298,7 +562,7 @@ for (const [name, viewport, mobile] of [['small phone', { width: 360, height: 74
     await page.goto(base + 'quote/?product=Cedar%2C%20Decking%20%26%20Fencing', { waitUntil: 'networkidle' });
     if (!(await page.inputValue('#materials')).startsWith('Cedar, Decking & Fencing:')) fail('desktop /quote/', 'product prefill missing');
 
-    // Credit application: required fields, consent box, routing to the home yard.
+    // Credit application: required fields, certification, routing to the chosen yard.
     await page.goto(base + 'accounts/', { waitUntil: 'networkidle' });
     await page.click('form[data-form=credit] button[type=submit]');
     const bad = await page.$$eval('[aria-invalid="true"]', (els) => els.map((e) => e.id));
@@ -343,11 +607,11 @@ for (const [name, viewport, mobile] of [['small phone', { width: 360, height: 74
     await page.waitForTimeout(250);
     const chosen = await page.textContent('[data-r="name"]');
     if (chosen !== 'Utqiaġvik, Alaska') fail('desktop /', `finder chose "${chosen}"`);
-    if (!(await page.isVisible('.route__y[data-y="fairbanks"]'))) fail('desktop /', 'Utqiaġvik did not point to the Fairbanks yard');
+    if (!(await page.isVisible('.route__y[data-y="anchorage"]'))) fail('desktop /', 'Utqiaġvik did not point to the Anchorage yard');
     const how = await page.textContent('.route__modes');
     if (!/Barge in season/.test(how) || !/Air year-round/.test(how)) fail('desktop /', `Utqiaġvik freight reads "${how.trim()}"`);
     const href = await page.getAttribute('[data-r="quote"]', 'href');
-    if (!href.includes('location=Utqia%C4%A1vik%2C%20AK') || !href.endsWith('yard=fairbanks')) fail('desktop /', `finder quote link is ${href}`);
+    if (!href.includes('location=Utqia%C4%A1vik%2C%20AK') || !href.endsWith('yard=anchorage')) fail('desktop /', `finder quote link is ${href}`);
     if ((await page.textContent('.map__tag--dest')) !== 'Utqiaġvik' || await page.isHidden('.map__tag--dest')) fail('desktop /', 'chosen place not marked on the map');
     // Pause motion stops every endless animation; Play starts them again.
     const loopStates = () => page.evaluate(() => document.getAnimations().filter((a) => a.effect.getComputedTiming().iterations === Infinity).map((a) => a.playState));
@@ -366,15 +630,16 @@ for (const [name, viewport, mobile] of [['small phone', { width: 360, height: 74
     if (!(await page.isVisible('[data-r="else"]')) || !(await page.isVisible('.route__y[data-y="any"]'))) fail('desktop /', 'unknown place got no answer');
     await page.goto(base + 'quote/' + href.slice(href.indexOf('?')), { waitUntil: 'networkidle' });
     if ((await page.inputValue('#location')) !== 'Utqiaġvik, AK') fail('desktop /quote/', 'place from the finder not filled in');
-    if ((await page.inputValue('#yard')) !== 'Fairbanks') fail('desktop /quote/', 'yard from the finder not selected');
+    if ((await page.inputValue('#yard')) !== 'Anchorage') fail('desktop /quote/', 'yard from the finder not selected');
     // An off-road place starts on remote shipping, and the first screen says what carried over.
     if (!(await page.isChecked('input[name=delivery][value="Remote Alaska shipping"]'))) fail('desktop /quote/', 'off-road place left on job-site delivery');
-    if (!/Utqiaġvik, AK · Fairbanks yard/.test(await page.textContent('[data-carried]')) || await page.isHidden('[data-carried]')) fail('desktop /quote/', 'first screen does not say what the link carried over');
+    if (!/Utqiaġvik, AK · Anchorage yard/.test(await page.textContent('[data-carried]')) || await page.isHidden('[data-carried]')) fail('desktop /quote/', 'first screen does not say what the link carried over');
     await page.evaluate(() => localStorage.clear());
     await page.goto(base + 'quote/?location=Tacoma%2C%20WA&yard=kent', { waitUntil: 'networkidle' });
     if (!(await page.isChecked('input[name=delivery][value="Job-site delivery"]'))) fail('desktop /quote/', 'road-system place did not stay on job-site delivery');
     await page.evaluate(() => localStorage.clear());
     await innerDesktop(page);
+    await reviewFindings(page);
   }
   await ctx.close();
 }
@@ -410,4 +675,4 @@ if (problems.length) {
   console.log(`\n${problems.length} problem(s):\n` + problems.map((p) => '  ✗ ' + p).join('\n'));
   process.exit(1);
 }
-console.log(`browser: ${paths.length} pages × 5 widths clean; finder, quote form, credit application, hours, dialogs, the fold (plain and hinted), product filter and picks, projects filter, service anchors and the no-JavaScript fallbacks work\nALL CHECKS PASSED`);
+console.log(`browser: ${paths.length} pages × 5 widths clean; finder, quote form, credit application, hours, dialogs, the fold (plain and hinted), product filter and picks, projects filter, service anchors, the no-JavaScript fallbacks and the review findings work\nALL CHECKS PASSED`);

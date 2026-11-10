@@ -34,7 +34,7 @@ const LINE = {
   'siding-exterior': { headline: 'The envelope, <em>kept tight.</em>', caption: 'Lap siding and trimmed windows on a two-story house.', services: ['takeoffs', 'delivery', 'remote'] },
   'insulation-drywall': { headline: 'Foam, batts <em>and board.</em>', caption: 'Fiberglass batts going in between the studs.', services: ['takeoffs', 'delivery', 'remote'] },
   'windows-doors-cabinets': { headline: 'Ships with <em>the rest of the job.</em>', caption: 'New windows staged in front of a wrapped and sheathed house.', services: ['takeoffs', 'crating', 'remote'] },
-  'hardware-supplies': { headline: 'Down to <em>the last box.</em>', hero: 'framer', caption: 'A framer nailing off a wall frame.', services: ['takeoffs', 'remote', 'delivery'] },
+  'hardware-supplies': { headline: 'Down to <em>the last box.</em>', hero: 'forklift-yard', caption: 'A forklift among wrapped pallets in a building-supply yard.', pos: '50% 58%', services: ['takeoffs', 'remote', 'delivery'] },
 };
 
 // What tends to land on the same truck as each line.
@@ -75,7 +75,9 @@ const AZ_GROUPS = AZ.reduce((groups, entry) => {
   if (last && last.letter === letter) last.entries.push(entry); else groups.push({ letter, entries: [entry] });
   return groups;
 }, []);
-const termsOf = (c) => fold([c.name, c.short, c.lede, ...c.items.flat(), ...c.brands, ...ALSO_KNOWN_AS.filter(([, slug]) => slug === c.slug).map(([n]) => n)].join(' '));
+// Words a builder types that the finder should understand but the A to Z should not list.
+const SEARCH_TERMS = { 'hardware-supplies': 'joist hanger hangers strongtie strong tie connectors' };
+const termsOf = (c) => fold([c.name, c.lede, ...c.items.flat(), ...c.brands, ...ALSO_KNOWN_AS.filter(([, slug]) => slug === c.slug).map(([n]) => n), SEARCH_TERMS[c.slug] || ''].join(' '));
 
 const yardLinks = () => LOCATIONS.map((l) => html`<a href="${tel(l.phone)}">${l.city} ${l.phone}</a>`);
 
@@ -86,21 +88,22 @@ const index = {
   render: (ctx) => layout(ctx, {
     title: 'Products',
     description: 'Framing lumber and timbers, plywood and OSB, engineered wood and trusses, cedar, siding, insulation, forming panels, windows, doors, cabinets and hardware from Uresco Construction Materials.',
-    preload: [preloadFor(ctx, 'pine-racking')],
+    preload: [preloadFor(ctx, 'timber-weathered')],
     body: html`
 ${pageHero(ctx, {
   crumbs: [['Products']],
   eyebrow: 'Products · Nine lines · Three yards',
   title: 'Everything <em>on the list.</em>',
-  lede: 'A wholesale dealer’s full line, from framing packages to the last box of fasteners. Find the line below, then ask your yard what is on the ground today.',
-  photoKey: 'pine-racking',
-  caption: 'Bundled lumber on cantilever racking.',
-  actions: html`<a class="btn" href="${ctx.u('quote/')}">Request a quote ${icon('arrow', { size: 18 })}</a>${callLink(ctx)}`,
+  lede: 'Wholesale building materials, from framing lumber to fasteners. Find the line below, then ask your yard what is on the ground today.',
+  photoKey: 'timber-weathered',
+  caption: 'Weathered timber ends, showing their rings.',
+  pos: '50% 55%',
+  actions: html`<a class="btn" href="${ctx.u('quote/')}">Request a quote ${icon('arrow', { size: 18 })}</a>${callLink(ctx)}<a class="link prod-jump" href="#lines" data-prod-jump>Find a product ${icon('arrow', { size: 16, cls: 'prod-jump__i' })}</a>`,
 })}
 
 <section class="section prod-lines" id="lines" aria-labelledby="lines-title">
   <div class="wrap">
-    ${sectionHead({ no: '01', eyebrow: 'The stock list', id: 'lines-title', title: 'Nine lines, <em>one load.</em>', lede: 'Every line opens to what is in it. For sizes, grades and what is on the ground today, call your yard.' })}
+    ${sectionHead({ no: '01', eyebrow: 'Product lines', id: 'lines-title', title: 'Nine <em>product lines.</em>', lede: 'Every line opens to what is in it. For sizes, grades and what is on the ground today, call your yard.' })}
     <div class="stock prod-ledger" data-prod-ledger>
       ${stockFrame(ctx, { sizes: '(min-width: 1440px) 430px, (min-width: 1000px) 30vw, 1px', caption: html`<span data-prod-cap>01 · ${CATEGORIES[0].name}</span>` })}
       <div class="prod-ledger__body">
@@ -121,7 +124,7 @@ ${pageHero(ctx, {
               <p class="prod-row__lede">${c.lede}</p>
             </div>
             <ul class="prod-row__items">${c.items.map(([n, note]) => html`<li data-t="${fold(n + ' ' + note)}">${n}</li>`)}</ul>
-            <a class="prod-row__quote" href="${quoteUrl(ctx, c)}">Add to a quote<span class="sr-only">: ${c.name}</span></a>
+            <a class="prod-row__quote" href="${quoteUrl(ctx, c)}">Quote this line<span class="sr-only">: ${c.name}</span></a>
             ${icon('arrow', { size: 20, cls: 'stock__go' })}
           </li>`)}
         </ol>
@@ -145,7 +148,7 @@ ${pageHero(ctx, {
           return html`<li class="rv" style="--i:${i}"><a href="${lineUrl(ctx, c)}">
             <span class="prod-brands__name">${b}</span>
             ${icon('arrow', { size: 20, cls: 'prod-brands__go' })}
-            <span class="prod-brands__meta"><span class="prod-brands__what">${what}</span><span class="prod-brands__line"><span class="sr-only">, in line </span>${noOf(c)}<span class="prod-brands__short"> · ${c.short}</span></span></span>
+            <span class="prod-brands__meta"><span class="prod-brands__what">${what}</span><span class="prod-brands__line"><span class="sr-only">, in line </span>${noOf(c)}<span class="prod-brands__short"> · ${c.name}</span></span></span>
           </a></li>`;
         })}
       </ul>
@@ -161,7 +164,7 @@ ${pageHero(ctx, {
 
 <section class="section section--paper2 prod-az" id="a-z" aria-labelledby="az-title">
   <div class="wrap">
-    ${sectionHead({ no: '02', eyebrow: 'Index', id: 'az-title', title: 'Every product, <em>A to Z.</em>', lede: 'Know the name but not the line? Each entry opens the line it belongs to. The number is the line.' })}
+    ${sectionHead({ no: '02', eyebrow: 'Index', id: 'az-title', title: 'Products, <em>A to Z.</em>', lede: 'Know the name but not the line? Each entry opens the line it belongs to. The number is the line.' })}
     <div class="prod-az__cols">
       ${AZ_GROUPS.map((g) => html`<div class="prod-az__group">
         <h3 class="prod-az__letter">${g.letter}</h3>
@@ -171,7 +174,7 @@ ${pageHero(ctx, {
   </div>
 </section>
 
-${interlude(ctx, 'timber-weathered', { line: 'Not on the list? <em>Ask your yard.</em>', note: 'Weathered timber ends, showing their rings.', pos: '50% 55%' })}
+${interlude(ctx, 'combilift', { line: 'Not on the list? <em>Ask your yard.</em>', note: 'A forklift operator moving lumber in a warehouse.', pos: '50% 40%' })}
 
 ${closing(ctx)}
 `,
@@ -191,14 +194,14 @@ const titleOf = (c) => {
 // The closing manifest, with the line already written on it: both buttons carry the line to the quote form.
 const lineClosing = (ctx, c) => closing(ctx, {
   title: 'Put it <em>on the list.</em>',
-  body: `Send drawings or a materials list. The quote form opens with ${c.short.toLowerCase()} already on it, and the yard prices the line with the rest of the job.`,
+  body: 'Send drawings or a materials list. The quote form opens with this line already on it. The yard nearest your project helps with the take-off and gives you an estimate.',
   cta: 'Quote this line',
   query: quoteQuery(c),
   rows: [
     ['Line', `${noOf(c)} · ${c.name}`],
     ['Send', 'Plans, drawings or a materials list'],
     ['To', 'The yard nearest your project'],
-    ['Returns', 'A take-off, priced with the rest of the job'],
+    ['Returns', 'A take-off and an estimate'],
   ],
 });
 
@@ -217,7 +220,7 @@ const category = (c, i) => {
       preload: [preloadFor(ctx, heroKey)],
       body: html`
 ${pageHero(ctx, {
-  crumbs: [['Products', 'products/'], [c.short]],
+  crumbs: [['Products', 'products/'], [c.name]],
   eyebrow: `Product line ${two(i + 1)} of ${two(CATEGORIES.length)}`,
   title: titleOf(c),
   lede: c.lede,
@@ -277,7 +280,7 @@ ${pageHero(ctx, {
     <div class="prod-svc__grid">
       <div class="prod-svc__lead">
         <h2 class="h2 rv" id="svc-title">From the list <em>to the site.</em></h2>
-        <p class="lede rv" style="--i:1">Any line can be estimated, packaged and delivered with the rest of the job. For ${c.short.toLowerCase()}, start by asking about these three.</p>
+        <p class="lede rv" style="--i:1">Any line can be estimated, packaged and delivered with the rest of the job. For this one, start by asking about these three.</p>
         <a class="link rv" style="--i:2" href="${ctx.u('services/')}">All six services ${icon('arrow', { size: 16 })}</a>
         <figure class="print print--inline prod-svc__print rv" style="--i:3">
           ${picture(ctx, 'uresco-stack', { sizes: '200px' })}

@@ -4,14 +4,14 @@ import { layout } from '../lib/layout.mjs';
 import { sectionHead, pageHero } from '../lib/components.mjs';
 import { field, select, textarea, radios, yardSelect, fileDrop, formOpen, formFoot, doneNotice, sheetHead, slip, dial, callList, closingYards } from '../lib/forms.mjs';
 
-// The quote request is the freight manifest the rest of the site keeps pointing at, for real.
-// A sheet of ruled cells on the left; on the right the manifest's own rows, which read as
+// The quote request, drawn as the ruled sheet the rest of the site keeps pointing at.
+// A sheet of ruled cells on the left; on the right a summary whose rows read as
 // instructions until the form fills them in with this job.
 const ROWS = [
   ['from', 'From', 'You and your company'],
   ['send', 'Send', 'Plans or a materials list'],
   ['to', 'To', 'The yard you choose'],
-  [null, 'Returns', 'A take-off and a quote. We work out the freight with you.'],
+  [null, 'Returns', 'Help with the take-off, and a quote. We work out the freight with you.'],
   ['ships', 'Ships', 'To the site or the dock'],
 ];
 const NEED = 'Still needed: Name, Phone, Email, Project location.';
@@ -27,8 +27,8 @@ export default {
 ${pageHero(ctx, {
   crumbs: [['Request a quote']],
   eyebrow: 'Estimates & take-offs',
-  title: 'Send the plans. <em>We’ll price the list.</em>',
-  lede: 'Tell us where the job is and attach drawings or a materials list. The yard you choose builds the take-off and quotes it.',
+  title: 'Send the plans. <em>We’ll quote the list.</em>',
+  lede: 'Tell us where the job is and attach drawings or a materials list. The yard you choose helps with the take-off and quotes it.',
   actions: html`<a class="btn btn--line" href="#plans">${icon('upload', { size: 18 })} Attach plans</a>`,
   cls: 'fp-hero fp-hero--quote',
   tail: dial(),
@@ -58,7 +58,7 @@ ${pageHero(ctx, {
 
         <fieldset class="fieldset" id="plans">
           <legend><span>03</span>Plans &amp; materials</legend>
-          ${fileDrop({ id: 'plans', name: 'plans', label: 'Plans, lists or photos', hint: 'PDF, DWG, images or spreadsheets, up to 25 MB each', touch: 'Tap to add plans or photos', note: 'Drawings get the most accurate take-off.', accept: '.pdf,.dwg,.dxf,.jpg,.jpeg,.png,.heic,.xls,.xlsx,.csv,.doc,.docx' })}
+          ${fileDrop({ id: 'plans', name: 'plans', label: 'Plans, lists or photos', hint: 'PDF, DWG, images or spreadsheets, up to 25 MB each', touch: 'Tap to add plans or photos', note: 'Drawings help most with a take-off.', accept: '.pdf,.dwg,.dxf,.jpg,.jpeg,.png,.heic,.xls,.xlsx,.csv,.doc,.docx' })}
           ${textarea({ id: 'materials', label: 'Materials or scope', hint: 'a list, quantities, or a description of the build', rows: 6, cls: 'field--lined' })}
           ${textarea({ id: 'notes', label: 'Anything else?', rows: 3, cls: 'field--lined' })}
         </fieldset>
@@ -68,7 +68,7 @@ ${pageHero(ctx, {
     </div>
 
     <div class="fp-side" role="group" aria-label="Your request at a glance">
-      ${slip({ head: 'Manifest', note: 'Fills in as you go', rows: ROWS, need: NEED })}
+      ${slip({ head: 'Your request', note: 'Fills in as you go', rows: ROWS, need: NEED })}
       ${callList()}
     </div>
   </div>

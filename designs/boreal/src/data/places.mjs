@@ -10,6 +10,8 @@
 //            seasonal  off the road system: barge in the ice-free season, air year-round
 // yard     who to call, following the guidance on the Locations page: Puget Sound → Kent;
 //          Southcentral Alaska or a remote site → Anchorage; the Interior and points north → Fairbanks.
+//          Six off-road places fit both halves of that (Galena, Fort Yukon and the Arctic coast): until the owner
+//          rules, everything off the road system goes to Anchorage as "a remote site", the same answer for all of it.
 // label    side of the dot the map label sits on (n, e, s, w). Only places with a label are named
 //          on the map; the rest are dots until they are chosen.
 //
@@ -84,12 +86,12 @@ export const PLACES = [
   P('Nome', 'AK', 64.501, -165.406, 'Seward Peninsula', 'seasonal', 'anchorage', 'w'),
   P('Kotzebue', 'AK', 66.898, -162.597, 'Northwest Arctic', 'seasonal', 'anchorage', 'w'),
   P('McGrath', 'AK', 62.956, -155.596, 'Kuskokwim River', 'seasonal', 'anchorage'),
-  P('Galena', 'AK', 64.741, -156.931, 'Interior Alaska', 'seasonal', 'fairbanks', 'w'),
-  P('Fort Yukon', 'AK', 66.565, -145.274, 'Interior Alaska', 'seasonal', 'fairbanks'),
-  P('Point Hope', 'AK', 68.348, -166.808, 'North Slope', 'seasonal', 'fairbanks'),
-  P('Wainwright', 'AK', 70.637, -160.038, 'North Slope', 'seasonal', 'fairbanks'),
-  P('Utqiaġvik', 'AK', 71.291, -156.789, 'North Slope', 'seasonal', 'fairbanks', 'n'),
-  P('Kaktovik', 'AK', 70.132, -143.624, 'North Slope', 'seasonal', 'fairbanks'),
+  P('Galena', 'AK', 64.741, -156.931, 'Interior Alaska', 'seasonal', 'anchorage', 'w'),
+  P('Fort Yukon', 'AK', 66.565, -145.274, 'Interior Alaska', 'seasonal', 'anchorage'),
+  P('Point Hope', 'AK', 68.348, -166.808, 'North Slope', 'seasonal', 'anchorage'),
+  P('Wainwright', 'AK', 70.637, -160.038, 'North Slope', 'seasonal', 'anchorage'),
+  P('Utqiaġvik', 'AK', 71.291, -156.789, 'North Slope', 'seasonal', 'anchorage', 'n'),
+  P('Kaktovik', 'AK', 70.132, -143.624, 'North Slope', 'seasonal', 'anchorage'),
 ];
 
 // Other names people type for the same place.

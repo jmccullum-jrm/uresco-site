@@ -8,6 +8,10 @@
 //     masthead at every width, the map's labels stay on the sheet, the products, services and projects pages do
 //     what their controls promise, and without the script every call, directions and menu control still leads somewhere.
 //     ONLY=inner node tests/check.mjs runs this part alone.
+//  4. The review round: every serious finding, as a check, so it cannot come back. The credit application stays complete,
+//     prints on two Letter pages and keeps sensitive fields out of drafts and email; links beat drafts; the finder, Find,
+//     the manifest and the highlighter behave; larger text, keyboard focus, print and forced colours stay usable.
+//     ONLY=review node tests/check.mjs runs this part alone.
 import { readFileSync, readdirSync, statSync, existsSync } from 'fs';
 import { join, dirname, resolve, relative } from 'path';
 import { fileURLToPath } from 'url';
@@ -50,6 +54,10 @@ for (const file of pages) {
   for (const claim of ['one point of contact', 'from quote to landing', 'price it delivered', 'delivered pricing', 'quoted together', 'varies by yard', 'estimators, designers', 'takes about ten minutes', 'on puget sound', 'last sailings', 'rfi log', 'volcanic peak']) {
     if (src.toLowerCase().includes(claim)) fail(rel, `says "${claim}", which FACTS.md does not support`);
   }
+  // And what the second review ruled out: invented account terms, invented guarantees, labels that read as real departments or documents.
+  for (const claim of ['pay on a statement', 'job accounts', 'buy on account', 'specimen', 'one account. all three', 'set up once', 'confirm your limit', 'home yard', 'charge account', 'authorize uresco', 'obtain credit information', 'what we promise', 'every stick', 'build the take-off', 'builds the take-off', 'we fill in this column', 'priced material list', 'a sketch', 'use one or all', 'any station', 'past the curb', 'not at the curb', 'where the crew needs', 'dispatch', 'delivery ticket', 'core of what we ship', 'sequenced to the schedule', 'staged out of', 'nothing gets left', 'arrive the way they left', 'survive the trip', 'banded', 'band and wrap', 'steel banding', 'no line carries', 'owner-builder', 'tribal or alaska', 'agency, tribe', 'one ring']) {
+    if (src.toLowerCase().includes(claim)) fail(rel, `says "${claim}", which the review ruled out`);
+  }
   // Yard hours are placeholders. They print on the Locations page and nowhere else, and never in structured data.
   if (/openingHours/.test(src)) fail(rel, 'structured data states opening hours');
   if (rel !== 'locations/index.html') {
@@ -57,7 +65,7 @@ for (const file of pages) {
     if (when) fail(rel, `prints a time: "${when[0]}"`);
   }
   // No invented drawing-control numbers.
-  const code = textOf(src).match(/\bSheet\s+[A-Z]?-?\d+\b|\bRev\.\s*\d{4}/);
+  const code = textOf(src).match(/\bSheet\s+[A-Z]?-?\d+\b|\bRev\.\s*\d{4}|\bDwg\.?\s+[A-Z]?-?\d+|\bItem\s+\d{3}\.\d|\bLine\s+\d{3}\s+of\s+\d{3}/);
   if (code) fail(rel, `prints a drawing-control number: "${code[0]}"`);
   // Every number and address a visitor can tap is one of the yards'.
   for (const m of src.matchAll(/href="(tel:[^"]+)"/g)) if (!YARD_TELS.has(m[1])) fail(rel, `unknown phone number ${m[1]}`);
@@ -86,6 +94,13 @@ for (const file of pages) {
     if (hash && target.endsWith('.html') && !readFileSync(target, 'utf8').includes(`id="${hash}"`)) fail(rel, `broken anchor ${ref}`);
   }
 }
+// Every photograph shipped is one a page shows, or the source a page's crop is cut from.
+const PHOTOS = JSON.parse(readFileSync(join(ROOT, 'scripts/photos.json'), 'utf8'));
+const builtHtml = pages.map((f) => readFileSync(f, 'utf8')).join('');
+const photoKeys = [...new Set(readdirSync(join(DOCS, 'assets/img')).map((f) => f.replace(/-\d+\.webp$/, '')))];
+const shownPhotos = photoKeys.filter((k) => builtHtml.includes(`assets/img/${k}-`));
+const cropSources = shownPhotos.map((k) => PHOTOS[k]?.src).filter((s) => s?.startsWith('@')).map((s) => s.slice(1));
+for (const k of photoKeys) if (!shownPhotos.includes(k) && !cropSources.includes(k)) fail('assets/img', `${k} is published but no page shows it`);
 console.log(`static: ${pages.length} pages checked`);
 
 // ---- Browser pass ----
@@ -232,7 +247,7 @@ const innerChecks = async () => {
   const vis = await phone.$$eval('.pj-group', (l) => l.filter((g) => !g.hidden).map((g) => g.id));
   if (vis.join() !== 'institutional') fail('phone /projects/', `filter showed [${vis}]`);
   const says = await phone.textContent('[data-pj-count]');
-  if (says !== 'Institutional: 2 kinds of work') fail('phone /projects/', `filter status reads "${says}"`);
+  if (says !== 'Institutional: 1 kind of work') fail('phone /projects/', `filter status reads "${says}"`);
   if ((await phone.getAttribute('.pj-filter [data-filter="Institutional"]', 'aria-pressed')) !== 'true') fail('phone /projects/', 'pressed filter is not marked');
   await phone.click('.pj-filter [data-filter="all"]');
   if ((await phone.$$eval('.pj-group', (l) => l.filter((g) => !g.hidden).length)) !== 4) fail('phone /projects/', '"All work" did not restore every sector');
@@ -260,6 +275,248 @@ const innerChecks = async () => {
   await nojs.close();
 };
 
+// ---- The review round ----
+const reviewChecks = async () => {
+  const sheets = (pdf) => (pdf.toString('latin1').match(/\/Type\s*\/Page[^s]/g) || []).length;
+  const SECRETS = { ein: '12-3456789', bank: 'First Bank Kent', bank_contact: 'Jo 253-555-0111' };
+  const fillCredit = async (p) => {
+    for (const [id, v] of [['company', 'Test Framing LLC'], ['address', '1 Main St, Kent WA'], ['name', 'Pat Builder'], ['phone', '253-555-0100'], ['email', 'pat@example.com'], ['ref1_company', 'Acme Supply'], ['ref1_contact', 'Lee 253-555-0199'], ['signature', 'Pat Builder'], ['signed', '2026-10-22'], ...Object.entries(SECRETS)]) await p.fill('#' + id, v);
+    await p.check('#agree');
+  };
+  const SUBMIT = 'form[data-form=credit] button[type=submit]';
+  const DRAFT = () => localStorage.getItem('uresco.draft.credit');
+
+  // The credit application: complete, printable, and careful with what it keeps and sends.
+  const desk = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+  const p = await desk.newPage();
+  await p.goto(base + 'accounts/', { waitUntil: 'networkidle' });
+  const WHOLE = ['company', 'dba', 'entity', 'ein', 'license', 'years', 'website', 'address', 'name', 'title', 'phone', 'email', 'ap_contact', 'buyers', 'yard', 'limit', 'monthly', 'ref1_company', 'ref1_contact', 'ref2_company', 'ref2_contact', 'ref3_company', 'ref3_contact', 'bank', 'bank_contact', 'agree', 'signature', 'signed'];
+  const lost = await p.evaluate((ids) => ids.filter((id) => !document.querySelector(`form[data-form=credit] #${id}`)), WHOLE);
+  if (lost.length) fail('/accounts/', `the credit application has lost: ${lost.join(', ')}`);
+  for (const name of ['po', 'tax']) if (!(await p.$(`form[data-form=credit] input[name=${name}]`))) fail('/accounts/', `the credit application has lost its ${name} choices`);
+  if (await p.$('#terms, .ac-sched, .ac-stmt')) fail('/accounts/', 'the account terms section is back');
+  const blank = sheets(await p.pdf({ format: 'Letter' }));
+  if (blank !== 2) fail('print /accounts/', `a blank application prints on ${blank} pages`);
+  await fillCredit(p);
+  await p.click(SUBMIT);
+  await p.waitForSelector('[data-done]:not([hidden])');
+  const body = decodeURIComponent((await p.getAttribute('[data-mail-again]', 'href')).split('body=')[1] || '');
+  const shown = await p.textContent('[data-mail-text]');
+  for (const v of Object.values(SECRETS)) if (body.includes(v) || shown.includes(v)) fail('/accounts/', `"${v}" went into the email`);
+  if (!/give these to your yard/.test(body)) fail('/accounts/', 'the email does not say how to give the tax ID and bank details');
+  if (!(await p.isVisible('[data-held-note]'))) fail('/accounts/', 'the notice does not say the tax ID and bank details were left out');
+  if (!(await p.isVisible('[data-done] [data-print]')) || !(await p.isVisible('[data-done] [data-back]'))) fail('/accounts/', 'the notice has lost Print or Back to the form');
+  const filled = sheets(await p.pdf({ format: 'Letter' }));
+  if (filled !== 2) fail('print /accounts/', `a submitted application prints on ${filled} pages`);
+  await p.emulateMedia({ media: 'print' });
+  const onPaper = await p.$eval('form[data-form=credit]', (f) => (getComputedStyle(f).display !== 'none' ? f.querySelector('#company').value : ''));
+  await p.emulateMedia({ media: 'screen' });
+  if (onPaper !== 'Test Framing LLC') fail('print /accounts/', 'a submitted application does not print with its answers');
+  await p.click('[data-done] [data-back]');
+  if (!(await p.isVisible('#company')) || (await p.inputValue('#company')) !== 'Test Framing LLC') fail('/accounts/', 'Back to the form lost the answers');
+  await p.close();
+  // Only a form service can say a thing was sent: a failure keeps the draft, a confirmed send clears it.
+  const svc = await desk.newPage();
+  let status = 500;
+  await svc.route('https://forms.invalid/**', (r) => r.fulfill({ status, headers: { 'access-control-allow-origin': '*' }, contentType: 'application/json', body: '{}' }));
+  await svc.goto(base + 'accounts/', { waitUntil: 'networkidle' });
+  await svc.$eval('form[data-form=credit]', (f) => { f.dataset.endpoint = 'https://forms.invalid/x'; });
+  await fillCredit(svc);
+  await svc.click(SUBMIT);
+  await svc.waitForSelector('[data-failed]:not([hidden])');
+  if (!(await svc.evaluate(DRAFT))) fail('/accounts/', 'a failed send lost the draft');
+  status = 200;
+  await svc.click(SUBMIT);
+  await svc.waitForSelector('[data-done]:not([hidden])');
+  if (await svc.evaluate(DRAFT)) fail('/accounts/', 'a confirmed send left the draft behind');
+  await desk.close();
+  // With the script off the browser writes the email itself, so held fields must have no name to be written under.
+  if (!SITE.formEndpoint) {
+    const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 }, javaScriptEnabled: false });
+    const off = await ctx.newPage();
+    await off.goto(base + 'accounts/', { waitUntil: 'load' });
+    for (const id of Object.keys(SECRETS)) if ((await off.getAttribute('#' + id, 'name')) !== null) fail('no script /accounts/', `#${id} would be written into the email`);
+    if ((await off.getAttribute('form[data-form]', 'enctype')) !== 'text/plain') fail('no script /accounts/', 'the email would arrive URL-encoded');
+    if (!/left out of it/.test(await off.textContent('.fm-foot'))) fail('no script /accounts/', 'the note does not warn about the tax ID and bank details');
+    await off.goto(base + 'alaska/', { waitUntil: 'load' });
+    if (!(await off.getAttribute('.masthead__cta', 'href')).includes('yard=anchorage')) fail('no script /alaska/', 'the masthead quote link does not start on Anchorage');
+    await ctx.close();
+  }
+
+  // Phone: the quote form, links against drafts, the finder, Find and the manifest.
+  const touch = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+  const m = await touch.newPage();
+  await m.goto(base + 'quote/', { waitUntil: 'networkidle' });
+  for (const [id, v] of [['name', 'Sam'], ['location', 'Bethel, AK'], ['phone', 'abc'], ['email', 'pat@x']]) await m.fill('#' + id, v);
+  await m.click('button[type=submit]');
+  await m.waitForTimeout(120);
+  if (await m.isVisible('[data-done]')) fail('/quote/', 'a phone of "abc" and an email of "pat@x" went through');
+  await m.goto(base + 'quote/?location=Nome%2C%20AK', { waitUntil: 'networkidle' });
+  if ((await m.inputValue('#location')) !== 'Nome, AK' || !/Bethel/.test(await m.textContent('[data-link-note]'))) fail('/quote/', 'a link did not beat the saved draft and say so');
+  if (new URL(m.url()).search) fail('/quote/', 'the link parameters stayed in the address, so a reload overrules the person');
+  await m.goto(base + 'quote/?yard=anchorage', { waitUntil: 'networkidle' });
+  await m.selectOption('#yard', 'Fairbanks');
+  await m.waitForTimeout(60);
+  await m.reload({ waitUntil: 'networkidle' });
+  if ((await m.inputValue('#yard')) !== 'Fairbanks') fail('/quote/', 'a reload put the yard back to what the link said');
+  await m.setInputFiles('input[type=file]', { name: 'plan-a1.pdf', mimeType: 'application/pdf', buffer: Buffer.from('%PDF-1.4') });
+  await m.waitForTimeout(80);
+  await m.reload({ waitUntil: 'networkidle' });
+  if (!/plan-a1\.pdf was not kept/.test(await m.textContent('[data-file-err]'))) fail('/quote/', 'a reload dropped the file without saying so');
+  if (!/Files are not/.test(await m.textContent('[data-draft-state]'))) fail('/quote/', 'the draft line implies files are kept');
+  await m.evaluate(() => localStorage.clear());
+
+  await m.goto(base + 'alaska/', { waitUntil: 'networkidle' });
+  const alaskaLinks = await m.$$eval('.takeoff a[href*="quote/"], .actionbar__btn--primary, .tb__cta a[href*="quote/"]', (l) => l.map((a) => a.getAttribute('href')));
+  if (alaskaLinks.length < 4 || !alaskaLinks.every((h) => h.includes('yard=anchorage'))) fail('/alaska/', `a quote link does not start on Anchorage: ${alaskaLinks.join(' ')}`);
+  await m.tap('.shipto__chip[data-place="Bethel"]');
+  await m.waitForTimeout(200);
+  if (!/barge window/i.test(await m.textContent('[data-r="season"]'))) fail('/alaska/', 'the ticket does not say a whole package is planned around the barge');
+  if (!/^Lane [A-D]$/.test((await m.textContent('[data-r="t0"]')).trim())) fail('/alaska/', 'the ticket shows a bare lane letter');
+  const toQuote = new URL(await m.getAttribute('[data-r="quote"]', 'href'), base + 'alaska/').href;
+  await m.goto(toQuote, { waitUntil: 'networkidle' });
+  if (!/Remote Alaska/.test(await m.$eval('input[name=delivery]:checked', (e) => e.value))) fail('/quote/', 'a Bethel quote does not start on remote shipping');
+  if ((await m.inputValue('#role')) !== '') fail('/quote/', 'an untouched "I am a" is sent as an answer');
+  await m.evaluate(() => localStorage.clear());
+  await m.goto(base + 'alaska/', { waitUntil: 'networkidle' });
+  await m.fill('.shipto__input', 'Kotzebue');
+  await m.$eval('.shipto__input', (e) => e.blur());
+  await m.waitForTimeout(350);
+  if (!/Kotzebue/.test(await m.textContent('[data-r="name"]'))) fail('/alaska/', 'a town typed but not picked left another town on the ticket');
+  if ((await m.$$eval('[data-y]:not([hidden])', (l) => l.map((e) => e.dataset.y))).join() !== 'anchorage,fairbanks') fail('/alaska/', 'Kotzebue should show both Alaska yards');
+
+  await m.goto(base + 'products/', { waitUntil: 'networkidle' });
+  for (const [word, line] of [['sheetrock', 'Insulation'], ['2x4', 'Framing'], ['joist hangers', 'Hardware']]) {
+    await m.fill('#find', word);
+    await m.waitForTimeout(60);
+    const hit = await m.$$eval('.pidx-line:not([hidden]) h3', (l) => l.map((h) => h.textContent).join());
+    if (!hit.includes(line)) fail('/products/', `Find "${word}" did not show ${line}: [${hit}]`);
+  }
+  await m.fill('#find', 'gutters');
+  await m.waitForTimeout(60);
+  if (!/Nothing listed.*Ask your yard/s.test(await m.textContent('[data-find-none]')) || !/Nothing listed/.test(await m.textContent('[data-find-status]'))) fail('/products/', 'no match reads as a statement that we do not carry it');
+
+  await m.goto(base, { waitUntil: 'networkidle' });
+  if (await m.$('details.mline[open]')) fail('phone /', 'a manifest line starts open on a phone');
+  if (!/\(LVL\)/.test((await m.$$eval('.mline__sum', (l) => l[2].textContent)))) fail('phone /', 'the closed row drops the abbreviation a framer looks for');
+  await m.goto(base + 'products/hardware-supplies/', { waitUntil: 'networkidle' });
+  const rows = await m.$$eval('.tsheet__row span:nth-child(2)', (l) => l.map((s) => s.textContent).join());
+  if (!/Simpson/.test(rows) || /Dimensional lumber/.test(rows)) fail('/products/hardware-supplies/', `the take-off sheet is not this line's items: ${rows}`);
+  await touch.close();
+
+  // Mouse: the manifest's hover intent, the menu's Escape, one name per line, the current nav item.
+  const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 }, reducedMotion: 'reduce' });
+  const d = await ctx.newPage();
+  await d.goto(base, { waitUntil: 'networkidle' });
+  const hover = await d.evaluate(async () => {
+    const rows = [...document.querySelectorAll('details.mline summary')], lines = rows.map((r) => r.parentElement);
+    const openNow = () => lines.findIndex((x) => x.open);
+    const before = openNow(), during = new Set();
+    for (const row of rows.slice(1)) for (let i = 0; i < 3; i++) { row.dispatchEvent(new MouseEvent('mousemove', { bubbles: true })); await new Promise((r) => setTimeout(r, 40)); during.add(openNow()); }
+    rows[3].dispatchEvent(new MouseEvent('mousemove', { bubbles: true }));
+    await new Promise((r) => setTimeout(r, 400));
+    return { before, during: [...during], rested: openNow() };
+  });
+  if (hover.during.join() !== String(hover.before)) fail('/', `crossing the rows switched the open line: ${hover.during}`);
+  if (hover.rested !== 3) fail('/', `resting on a row did not open it: line ${hover.rested}`);
+  const names = await d.$$eval('details.mline', (l) => l.map((x) => [x.querySelector('.mline__name').textContent, x.querySelector('.dwg__bar span').textContent]));
+  const words = (s) => s.toLowerCase().replace(/[^a-z-]+/g, ' ').trim().split(' ').filter((w) => w.length > 2);
+  for (const [full, short] of names) if (!words(short).every((w) => words(full).includes(w))) fail('/', `"${short}" is not drawn from "${full}"`);
+  await d.mouse.move(0, 400);
+  const nav = await d.$eval('.nav__item--menu .nav__link', (a) => { const r = a.getBoundingClientRect(); return { x: r.x + 10, y: r.y + 10 }; });
+  await d.mouse.move(nav.x, nav.y);
+  await d.waitForTimeout(350);
+  if (!(await d.isVisible('.mega'))) fail('/', 'the Products menu did not open on hover');
+  await d.keyboard.press('Escape');
+  await d.waitForTimeout(350);
+  if (await d.isVisible('.mega')) fail('/', 'Escape does not close a menu opened by the pointer');
+  await d.mouse.move(0, 400);
+  await d.goto(base + 'pacific-northwest/', { waitUntil: 'networkidle' });
+  if (!/Pacific/.test(await d.$eval('.nav__link[aria-current="page"]', (a) => a.textContent).catch(() => ''))) fail('/pacific-northwest/', 'no nav item is marked current');
+
+  // The highlighter never strands a short word at the end of a line.
+  const stranded = () => {
+    const out = [];
+    document.querySelectorAll('.display em, .h2 em').forEach((em) => {
+      const r = document.createRange(), nodes = [], walker = document.createTreeWalker(em, NodeFilter.SHOW_TEXT);
+      while (walker.nextNode()) nodes.push(walker.currentNode);
+      let top = null, first = '';
+      for (const n of nodes) for (let i = 0; i < n.length; i++) {
+        r.setStart(n, i); r.setEnd(n, i + 1);
+        const b = r.getBoundingClientRect();
+        if (!b.height) continue;
+        if (top === null) top = b.top;
+        if (Math.abs(b.top - top) < b.height / 2) first += n.data[i];
+      }
+      if (new Set([...em.getClientRects()].map((c) => Math.round(c.top))).size > 1 && /^(a|an|and|the|of|or|to|in|on|at|by|for|our)$/i.test(first.replace(/\s/g, ' ').trim())) out.push(em.textContent.trim());
+    });
+    return out;
+  };
+  for (const width of [390, 1440]) {
+    await d.setViewportSize({ width, height: 900 });
+    for (const u of SWEEP_PAGES) {
+      await d.goto(base + u, { waitUntil: 'load' });
+      (await d.evaluate(stranded)).forEach((t) => fail(`${width}px /${u}`, `the highlighter strands a short word: "${t}"`));
+    }
+  }
+
+  // On paper: ink objects print black, framed objects stay whole, the highlighter does not paint over the line above.
+  await d.setViewportSize({ width: 1440, height: 900 });
+  await d.emulateMedia({ media: 'print' });
+  await d.goto(base + 'locations/', { waitUntil: 'networkidle' });
+  if ((await d.$eval('.board__digits .fl', (e) => getComputedStyle(e).color)) !== 'rgb(0, 0, 0)') fail('print /locations/', 'the phone numbers do not print black');
+  await d.goto(base + 'alaska/', { waitUntil: 'networkidle' });
+  const whole = await d.evaluate(() => ['.shipto__card', '.pmap', '.dwg'].filter((s) => getComputedStyle(document.querySelector(s)).breakInside !== 'avoid'));
+  if (whole.length) fail('print /alaska/', `can split across a page: ${whole.join(', ')}`);
+  if ((await d.$eval('.display em', (e) => getComputedStyle(e).backgroundImage)) !== 'none') fail('print /alaska/', 'the highlighter still prints');
+  await ctx.close();
+
+  // Tab focus never lands behind the action bar.
+  const kb = await browser.newContext({ viewport: { width: 390, height: 844 }, reducedMotion: 'reduce' });
+  const k = await kb.newPage();
+  await k.goto(base + 'locations/', { waitUntil: 'networkidle' });
+  let behind = 0;
+  for (let i = 0; i < 40; i++) {
+    await k.keyboard.press('Tab');
+    await k.waitForTimeout(25);
+    if (await k.evaluate(() => {
+      const a = document.activeElement, bar = document.querySelector('.actionbar');
+      if (!a || a === document.body || a.closest('.actionbar, .masthead')) return false;
+      const b = a.getBoundingClientRect(), top = bar.getBoundingClientRect().top;
+      return Math.max(0, Math.min(b.bottom, innerHeight) - Math.max(b.top, top)) > b.height / 2;
+    })) behind++;
+  }
+  if (behind) fail('390px /locations/', `${behind} tab stops land behind the action bar`);
+  await kb.close();
+
+  // Touch targets at tablet width, where a mouse-sized link is easy to miss.
+  const tab = await browser.newContext({ viewport: { width: 768, height: 1024 }, isMobile: true, hasTouch: true });
+  const t = await tab.newPage();
+  await t.goto(base + 'products/', { waitUntil: 'networkidle' });
+  const small = await t.$$eval('.pidx-az a, .crumbs a, .footer a', (l) => l.filter((a) => { const r = a.getBoundingClientRect(); return r.width && r.height < 39.5; }).map((a) => a.textContent.trim()));
+  if (small.length) fail('768px /products/', `links under 40 px: ${small.slice(0, 8).join(', ')}`);
+  await tab.close();
+
+  // Windows High Contrast: a chosen option still looks chosen.
+  const hc = await browser.newContext({ viewport: { width: 1440, height: 900 }, forcedColors: 'active' });
+  const h = await hc.newPage();
+  await h.goto(base + 'quote/', { waitUntil: 'networkidle' });
+  const mark = await h.evaluate(() => getComputedStyle(document.querySelector('.fm-opt:has(input:checked) .fm-opt__box'), '::after').backgroundColor);
+  if (mark === 'rgba(0, 0, 0, 0)') fail('forced colours /quote/', 'a chosen option looks unchosen');
+  await hc.close();
+
+  // Larger text: Chrome's "Very large" default falls through to the stacked layouts instead of running off the page.
+  const big = await chromium.launch({ args: ['--blink-settings=defaultFontSize=24'] });
+  const bc = await big.newContext({ viewport: { width: 1280, height: 900 }, reducedMotion: 'reduce' });
+  const b = await bc.newPage();
+  for (const u of ['', 'alaska/', 'quote/', 'accounts/', 'locations/']) {
+    await b.goto(base + u, { waitUntil: 'load' });
+    const over = await b.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+    if (over > 0) fail(`24px text /${u}`, `scrolls sideways by ${over}px`);
+  }
+  await big.close();
+};
+
 const finish = () => {
   if (problems.length) {
     console.log(`\n${problems.length} problem(s):\n` + problems.map((p) => '  ✗ ' + p).join('\n'));
@@ -273,6 +530,15 @@ if (process.env.ONLY === 'inner') {
   server.close();
   finish();
   console.log(`inner pages: sweep of ${SWEEP.length} widths, map, products, services and projects clean\nINNER CHECKS PASSED`);
+  process.exit(0);
+}
+
+if (process.env.ONLY === 'review') {
+  await reviewChecks();
+  await browser.close();
+  server.close();
+  finish();
+  console.log('review round: clean\nREVIEW CHECKS PASSED');
   process.exit(0);
 }
 
@@ -360,8 +626,10 @@ for (const [name, viewport, mobile] of [['small phone', { width: 360, height: 74
     if (await page.isVisible('form[data-form]')) fail('desktop /accounts/', 'form still on screen after submit');
     const to2 = await page.textContent('[data-mail-to]');
     if (to2 !== 'fairbanks@uresco.com') fail('desktop /accounts/', `application routed to ${to2}`);
-    const leftBehind = await page.evaluate(() => localStorage.getItem('uresco.draft.credit'));
-    if (leftBehind) fail('desktop /accounts/', 'draft left in the browser after submit');
+    // Handing over to an email app proves nothing was sent, so the typing stays until the person clears it. Sensitive fields never do.
+    const keptAfter = await page.evaluate(() => localStorage.getItem('uresco.draft.credit'));
+    if (!keptAfter || !keptAfter.includes('Test Framing LLC')) fail('desktop /accounts/', 'the draft was lost after the email hand-off');
+    if (keptAfter && /"(ein|bank|bank_contact|signature|signed|agree)"/.test(keptAfter)) fail('desktop /accounts/', `sensitive field in the draft after submit: ${keptAfter}`);
     // Sensitive fields are never kept in a draft.
     await page.goto(base + 'accounts/', { waitUntil: 'networkidle' });
     await page.fill('#company', 'Draft Co'); await page.fill('#ein', '12-3456789');
@@ -400,8 +668,9 @@ for (const [mode, b] of [['', browser], [' hinted', hinted]]) {
 await overflowSweep(hinted, ' hinted');
 await hinted.close();
 await innerChecks();
+await reviewChecks();
 await browser.close();
 server.close();
 
 finish();
-console.log(`browser: ${paths.length} pages × 5 widths clean; quote form, credit application, hours, dialogs and the fold work\ninner pages: sweep of ${SWEEP.length} widths, map, products, services and projects clean\nALL CHECKS PASSED`);
+console.log(`browser: ${paths.length} pages × 5 widths clean; quote form, credit application, hours, dialogs and the fold work\ninner pages: sweep of ${SWEEP.length} widths, map, products, services and projects clean\nreview round: credit application, drafts, finder, Find, manifest, highlighter, print, focus and large text clean\nALL CHECKS PASSED`);

@@ -7,6 +7,7 @@ which the page templates read for widths, dimensions, alt text and focal points.
 
     python3 scripts/images.py            # build anything missing
     python3 scripts/images.py --force    # rebuild everything
+    python3 scripts/images.py --only rainier-tacoma,valdez-pier   # rebuild these keys
 """
 import hashlib, json, sys, urllib.request
 from pathlib import Path
@@ -35,6 +36,9 @@ def grade(im, spec):
         return im
     g = {**GRADE, **(spec or {})}
     a = np.asarray(im).astype(np.float32) / 255.0
+    # An optional per-channel gain, for a photo with a colour cast the rest of the grade cannot lift.
+    if g.get('wb'):
+        a = np.clip(a * np.array(g['wb'], dtype=np.float32), 0, 1)
     lum = (a * np.array([0.2126, 0.7152, 0.0722], dtype=np.float32)).sum(-1, keepdims=True)
     a = lum + (a - lum) * g['sat']
     shadows, highlights = (1 - lum) ** 2.0, lum ** 2.0
@@ -74,7 +78,7 @@ def crop_portrait(im, focal):
     return im.crop((left, top, left + cw, top + ch))
 
 
-def main(force=False):
+def main(force=False, only=frozenset()):
     photos = {k: v for k, v in json.loads(MANIFEST.read_text()).items() if not k.startswith('_')}
     OUT.mkdir(parents=True, exist_ok=True)
     out = {}
@@ -93,9 +97,10 @@ def main(force=False):
         # Small originals (the old site's photos) keep their native size as the largest file.
         if not widths or (im.width < 1200 and im.width > widths[-1] * 1.1):
             widths.append(im.width)
+        redo = force or key in only
         for w in widths:
             dest = OUT / f'{key}-{w}.webp'
-            if force or not dest.exists():
+            if redo or not dest.exists():
                 h = round(im.height * w / im.width)
                 im.resize((w, h), Image.LANCZOS).save(dest, 'WEBP', quality=QUALITY, method=6)
         portrait, pw, ph = [], None, None
@@ -107,7 +112,7 @@ def main(force=False):
                 portrait.append(pw)
             for w in portrait:
                 dest = OUT / f'{key}-p-{w}.webp'
-                if force or not dest.exists():
+                if redo or not dest.exists():
                     crop_im.resize((w, round(ph * w / pw)), Image.LANCZOS).save(dest, 'WEBP', quality=QUALITY, method=6)
         out[key] = {
             'widths': widths,
@@ -148,4 +153,5 @@ def main(force=False):
 
 
 if __name__ == '__main__':
-    main(force='--force' in sys.argv)
+    only = set(sys.argv[sys.argv.index('--only') + 1].split(',')) if '--only' in sys.argv else set()
+    main(force='--force' in sys.argv, only=only)

@@ -26,7 +26,7 @@ const LEGS = [
 // Also the page's FAQPage structured data, so every answer here must stand on its own.
 const FAQ = [
   ['Can you deliver to my community?', 'Yes. Delivery is available anywhere in Alaska, from Sitka to Utqiaġvik (Barrow). Tell us where the job is. We will quote the package and work out the freight with you.'],
-  ['When should I order for barge season?', 'Early. Off the road system, barges run in the ice-free season, so plan for the barge window first. Ask your yard what yours looks like.'],
+  ['When should I order for barge season?', 'Early, if your community depends on a seasonal barge. In Western and Arctic Alaska and along the rivers, barges generally run only in the ice-free season. Ask your yard what yours looks like.'],
   ['Do you ship complete building packages?', 'Yes. We are fully equipped to handle remote-location and export building packages, with crating and packaging for the trip.'],
   ['Can you work from my plans?', 'Yes. Send drawings or a materials list. We offer material take-off assistance and estimates, and design services for your unique project needs.'],
   ['Who coordinates the shipping?', 'We work with you on all aspects of shipping coordination, dock delivery and rural Alaska delivery.'],
@@ -40,8 +40,8 @@ const TOWN_ORDER = ['ketchikan', 'sitka', 'juneau', 'cordova', 'valdez', 'homer'
 const TOWNS = TOWN_ORDER.map((id) => MAP_TOWNS.find((t) => t.id === id).name);
 // The question in the hero cycles through a few of them.
 const ASK = ['Bethel', 'Nome', 'Sitka', 'Kotzebue', 'Galena', 'Utqiaġvik', 'my village'];
-// A quote link from this page starts the form on remote shipping.
-const REMOTE_QUOTE = 'quote/?delivery=Remote%20Alaska%20shipping';
+// A quote link from this page starts the form on remote shipping, with the yard that takes remote sites.
+const REMOTE_QUOTE = 'quote/?yard=anchorage&delivery=Remote%20Alaska%20shipping';
 // Which yard to call (FACTS: "Which yard should I call?"), for the no-JavaScript answer.
 const CALL_FOR = { kent: 'Puget Sound', anchorage: 'Southcentral Alaska or a remote site', fairbanks: 'The Interior and points north' };
 const MODE_ICONS = ['truck', 'ship', 'plane', 'pin'];
@@ -80,7 +80,7 @@ ${pageHero(ctx, {
   title: 'Yes. <span class="yes__strap">Anywhere in Alaska.</span>',
   lede: 'Delivery is available from Sitka to Utqiaġvik, by truck, ocean freight, barge or air. Tell us where the job is and we’ll work out the way in.',
   photoKey: 'floatplane',
-  caption: 'Port Alsworth, Alaska',
+  caption: 'A small plane over skiffs at Port Alsworth, Alaska',
   actions: html`<a class="btn" href="${ctx.u(REMOTE_QUOTE)}">Quote a remote job ${icon('arrow', { size: 18 })}</a>${callBtn(ctx, { cls: 'btn--line', label: 'Call an Alaska yard' })}${pauseBtn()}`,
   after: html`<p class="phero__jump"><a class="link" href="#lookup">Look up your community ${icon('arrow', { size: 16 })}</a></p>`,
 })}
@@ -88,17 +88,13 @@ ${pageHero(ctx, {
 <section class="section field-k finder clip" id="route">
   <div class="divider divider--u" aria-hidden="true"><i class="plx"></i><i class="plx"></i><i class="plx"></i></div>
   <div class="wrap finder__grid">
-    <div class="finder__head" id="lookup">
+    <div class="finder__head">
       ${eyebrow('Route finder')}
-      <h2 class="d2">Name the place. <em>See the way in.</em></h2>
+      <h2 class="d2 finder__title">Name the place. <br><em>See the way in.</em></h2>
       <p class="lede">Type your town or village. You get the yard to call and how freight typically gets there.</p>
     </div>
-    <div class="finder__map">
-      ${deliveryMap(ctx)}
-      ${sticker(raw('Sitka <span aria-hidden="true">→</span><span class="sr-only">to</span> Utqiaġvik'), { tone: 'y', rot: -7, cls: 'finder__sticker' })}
-    </div>
     <div class="finder__pick" data-finder>
-      <div class="finder__search">
+      <div class="finder__search" id="lookup">
         <label class="finder__label" for="finder-input">Where are you building?</label>
         <div class="finder__field">
           ${icon('search', { size: 22, cls: 'finder__i' })}
@@ -125,9 +121,8 @@ ${pageHero(ctx, {
         <div class="way__yard">
           <p class="way__sub">Yard to call</p>
           <a class="btn btn--block nums" data-way-call href="${tel(byId('anchorage').phone)}">${icon('phone', { size: 16 })} <span data-way-yard>Anchorage</span><span data-way-phone>${byId('anchorage').phone}</span></a>
-          ${callBtn(ctx, { cls: 'btn--block', size: 16, attrs: raw(' data-way-any hidden') })}
         </div>
-        <a class="btn btn--block btn--line way__quote" data-way-quote href="${ctx.u('quote/')}"><span data-way-short>Quote this job</span> ${icon('arrow', { size: 16 })}</a>
+        <a class="btn btn--block btn--line way__quote" data-way-quote href="${ctx.u(REMOTE_QUOTE)}"><span data-way-short>Quote this job</span> ${icon('arrow', { size: 16 })}</a>
         <p class="way__note" data-way-note>Typical for the region, not a schedule or a price. Any yard can help.</p>
       </div>
       <p class="sr-only" data-live aria-live="polite" aria-atomic="true"></p>
@@ -143,12 +138,16 @@ ${pageHero(ctx, {
         </div>
       </noscript>
     </div>
+    <div class="finder__map">
+      ${deliveryMap(ctx)}
+      ${sticker(raw('Sitka <span aria-hidden="true">→</span><span class="sr-only">to</span> Utqiaġvik'), { tone: 'y', rot: -7, cls: 'finder__sticker' })}
+    </div>
   </div>
 </section>
 
 <section class="section field-p legsec">
   <div class="wrap">
-    ${sectionHead({ eyebrow: 'How a remote package works', title: 'Four legs. <em>One package.</em>', lede: 'A building bound for a place with no lumber yard cannot be one box of hangers short. One complete package beats a second freight bill.' })}
+    ${sectionHead({ eyebrow: 'How a remote package works', title: 'Four legs. <br><em>One package.</em>', lede: 'One complete package beats a second freight bill.' })}
     <ol class="legs">
       ${LEGS.map((l, i) => html`<li class="leg" style="--i:${i}" data-reveal>
         <span class="leg__no nums" aria-hidden="true">${String(i + 1).padStart(2, '0')}</span>
@@ -168,7 +167,7 @@ ${pageHero(ctx, {
       <p class="lede">Utqiaġvik, on the Arctic coast, is the northernmost community in Alaska. It is still on our map: delivery is available from Sitka to Utqiaġvik, anywhere in the state.</p>
     </div>
     <div class="north__fig">
-      ${win(ctx, 'remote-village', { cls: 'north__win', sizes: '(min-width: 900px) 26vw, 56vw', after: photoCaption('remote-village', 'Utqiaġvik, 71.3° N') })}
+      ${win(ctx, 'north-slope', { cls: 'north__win', sizes: '(min-width: 900px) 26vw, 56vw', after: photoCaption('north-slope', 'A loaded pickup in the snow, Interior Alaska') })}
     </div>
   </div>
   <div class="tape" role="img" aria-label="Latitude scale from 46 to 72 degrees north: Kent yard 47.4, Sitka 57.1, Anchorage yard 61.2, Fairbanks yard 64.8, Utqiaġvik 71.3.">
@@ -190,7 +189,7 @@ ${pageHero(ctx, {
     </ul>
     <div class="season on-y" data-reveal>
       <span class="season__icon">${icon('snow', { size: 30 })}</span>
-      <p><strong>Plan around the season.</strong> Off the road system, barges run only in the ice-free season, so plan for the barge window first. Call a yard early.</p>
+      <p><strong>Plan around the season.</strong> In Western and Arctic Alaska and along the rivers, barges generally run only in the ice-free season, so plan for the barge window first. Call a yard early.</p>
       ${callBtn(ctx, { cls: 'btn--sm', size: 16 })}
     </div>
   </div>

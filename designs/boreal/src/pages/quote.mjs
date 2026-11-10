@@ -41,16 +41,16 @@ const slipMap = (ctx) => html`
   <span class="qt-map__tag qt-map__tag--dest" data-map-tag="dest" hidden></span>`;
 
 const STEPS = [
-  ['The yard reviews it', 'Your plans or list go to the yard you chose, and it builds the take-off.'],
+  ['Send it to a yard', 'Your plans or list go to the yard you chose, and we help with the take-off.'],
   ['We quote it', 'We will quote the package and work out the freight with you.'],
-  ['You order', 'We schedule delivery, or package and ship it.'],
+  ['You order', 'We work with you on delivery or shipping.'],
 ];
 
 export default {
   path: 'quote/',
   render: (ctx) => layout(ctx, {
     title: 'Request a Quote',
-    description: 'Send plans or a materials list to Uresco Construction Materials for a take-off and quote, with delivery to your job site or anywhere in Alaska.',
+    description: 'Send plans or a materials list to Uresco Construction Materials. We help with the take-off and the estimate, and delivery is available to job sites and anywhere in Alaska.',
     bodyClass: 'pg-quote',
     body: html`
 <section class="phero phero--plain fm-page">
@@ -58,7 +58,7 @@ export default {
     <div class="phero__copy fm-page__head">
       ${eyebrow('Estimates & take-offs')}
       <h1 class="display">Send the job. <em>Get a quote.</em></h1>
-      <p class="phero__lede">Attach plans or a list and say where you are building. The yard you choose reviews it and gets back to you with a take-off and pricing.</p>
+      <p class="phero__lede">Attach plans or a list and say where you are building. We help with the take-off and the estimate, and we will quote the package and work out the freight with you.</p>
       <p class="qt-carried" data-carried hidden></p>
       <a class="link qt-jump" href="#plans">${icon('upload', { size: 16 })} Already have plans? Attach them</a>
     </div>
@@ -75,7 +75,7 @@ export default {
           ${field({ id: 'company', label: 'Company', attrs: html` autocomplete="organization"` })}
           ${field({ id: 'phone', label: 'Phone', type: 'tel', required: true, missing: 'Add a phone number the yard can reach you on.', attrs: html` autocomplete="tel" inputmode="tel"` })}
           ${field({ id: 'email', label: 'Email', type: 'email', required: true, missing: 'Add an email address so the yard can reply.', attrs: html` autocomplete="email" inputmode="email"` })}
-          ${select({ id: 'role', label: 'I am a', full: true, options: ['Contractor / builder', 'Owner-builder', 'Architect or engineer', 'Agency, tribe or institution', 'Other'] })}
+          ${select({ id: 'role', label: 'I am a', full: true, options: ['Contractor / builder', 'Architect or engineer', 'Institution or agency', 'Other'] })}
         </fieldset>
 
         <fieldset class="fieldset" id="job" data-step>
@@ -83,7 +83,7 @@ export default {
           <p class="fm-state jsonly" data-step-state="job" aria-hidden="true"></p>
           ${field({ id: 'location', label: 'Project location', required: true, hint: 'City or community, state', missing: 'Add the town or community where you are building.', attrs: html` placeholder="e.g. Bethel, AK"` })}
           ${field({ id: 'needed', label: 'Needed by', type: 'date' })}
-          ${radios('delivery', 'Delivery', [['Job-site delivery', 'truck'], ['Remote Alaska shipping', 'ship'], ['Export', 'route'], ['Pick up at the yard', 'pin']])}
+          ${radios('delivery', 'Delivery', [['Job-site delivery', 'truck'], ['Remote Alaska shipping', 'ship'], ['Export', 'route'], ['Not sure yet', 'pin']])}
           ${yardSelect()}
           <div class="field field--full qt-route jsonly">
             <div class="qt-route__place">
@@ -93,7 +93,7 @@ export default {
             </div>
             ${modes()}
             ${whoAnswers()}
-            <p class="qt-route__note">Typical for the region, not a schedule or a price. Any yard can help.</p>
+            <p class="qt-route__note">Typical for the region, not a schedule or a price. <span class="qt-route__air">A whole package generally moves by sea or barge; air is generally for smaller loads. </span>Any yard can help.</p>
           </div>
         </fieldset>
 
@@ -107,7 +107,7 @@ export default {
         ${formFoot('Send request')}
         <p class="sr-only" data-live aria-live="polite"></p>
       </form>
-      ${doneNotice({ sent: 'Thanks. The yard has your request and will be in touch.', almost: 'your request' })}
+      ${doneNotice({ sent: 'Thanks. Your request is in.', almost: 'your request' })}
     </div>
 
     <aside class="fm-rail" aria-label="Your request and the yards’ phone numbers">

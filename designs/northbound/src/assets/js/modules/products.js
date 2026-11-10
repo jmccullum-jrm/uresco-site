@@ -9,6 +9,7 @@
   const imgs = $$('.stock__frame img', root);
   const cap = $('[data-prod-cap]', root);
   const wide = matchMedia('(min-width: 1000px)');
+  const coarse = matchMedia('(pointer: coarse)');
 
   const show = (i) => {
     if (!wide.matches || !imgs[i]) return;
@@ -44,7 +45,7 @@
       $$('.prod-row__items li', r).forEach((li) => li.classList.toggle('is-hit', words.length > 0 && words.some((w) => li.dataset.t.includes(w))));
     });
     const n = left().length;
-    count.textContent = !words.length ? `${rows.length} lines` : n === 1 ? '1 line · Enter opens it' : n ? `${n} of ${rows.length} lines` : 'No match';
+    count.textContent = !words.length ? `${rows.length} lines` : n === 1 ? (coarse.matches ? '1 line' : '1 line · Enter opens it') : n ? `${n} of ${rows.length} lines` : 'No match';
     none.hidden = n > 0;
     clear.hidden = !input.value;
     // Keep the frame on a line that is still in the list.
@@ -56,6 +57,13 @@
     if (e.key === 'Escape' && input.value) { e.preventDefault(); input.value = ''; apply(); }
   });
   clear.addEventListener('click', () => { input.value = ''; apply(); input.focus(); });
+  // "Find a product" in the hero: bring the field up and put the cursor in it.
+  const jump = $('[data-prod-jump]');
+  if (jump) jump.addEventListener('click', (e) => {
+    e.preventDefault();
+    input.scrollIntoView({ block: 'start' });
+    input.focus({ preventScroll: true });
+  });
   // A value the browser restored on the way back from a line page still filters.
   if (input.value) apply();
   window.addEventListener('pageshow', () => { if (input.value) apply(); });

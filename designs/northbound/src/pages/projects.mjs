@@ -11,8 +11,6 @@ import { PROJECTS, SECTORS, SECTOR_NOTES } from '../data/projects.mjs';
 // The sector filter is in modules/projects.js: [data-filters] holds the buttons and every
 // [data-sector] that does not match is hidden.
 const two = (n) => String(n).padStart(2, '0');
-// Line numbers the way a take-off sheet counts them: 010, 020, 030.
-const line = (n) => String((n + 1) * 10).padStart(3, '0');
 // A job off the road system starts with the yard that handles it: Anchorage for remote sites,
 // Fairbanks for the Interior. Quote links carry the kind of work, and the yard where there is one.
 const YARD = { 'village-housing': 'anchorage', 'interior-north': 'fairbanks' };
@@ -36,14 +34,16 @@ const GROUPS = SECTORS.map((name, i) => ({
 const MIRRORED = ['Commercial'];
 // The sector past the end of the road system: it sits on the cold sheet, after a photograph of the road.
 const OFF_ROAD = 'Remote Alaska';
-// Where each photograph is cropped to in the frame it gets.
+// Where each photograph is cropped to in the frame it gets. `key` shows a different photograph here
+// than the data's, with `caption`, `place` and `lat` describing that one; big photographs stay off
+// more than one page.
 const CROP = {
-  'village-housing': { pos: '45% 58%' },
+  'village-housing': { key: 'juneau-freight', caption: 'Containers in a freight yard.', place: 'Juneau, Alaska', lat: LAT.juneau, pos: '50% 62%' },
   'interior-north': { pos: '66% 60%' },
-  'export-packages': { pos: '58% 50%' },
+  'export-packages': { key: 'export', caption: 'A container ship berthed beneath gantry cranes.', pos: '62% 62%' },
   'multifamily-framing': { pos: '58% 45%' },
   'concrete': { pos: '60% 40%' },
-  'exteriors': { pos: '40% 60%' },
+  'exteriors': { key: 'cedar', caption: 'Vertical cedar siding under a deep roof overhang.', pos: '65% 50%' },
 };
 
 // One kind of work: the photograph (what such work looks like), what it is, and what goes on the list.
@@ -52,10 +52,10 @@ const kind = (ctx, p, i, mirrored) => {
   const c = CROP[p.id] || {};
   return html`
   <article class="pjx-kind ${wide ? 'pjx-kind--wide' : 'pjx-kind--tall'}" id="${p.id}">
-    ${figure(ctx, p.pagePhoto || p.photo, {
+    ${figure(ctx, c.key || p.pagePhoto || p.photo, {
       ratio: wide ? 'land' : 'port',
-      sizes: wide ? '(min-width: 900px) min(52vw, 48rem), 100vw' : '(min-width: 900px) min(30vw, 27rem), (min-width: 600px) 26rem, 72vw',
-      caption: p.caption, place: p.photoPlace, lat: p.photoLat ? LAT[p.photoLat] : null, pos: c.pos,
+      sizes: wide ? '(min-width: 900px) min(52vw, 48rem), 100vw' : '(min-width: 900px) min(30vw, 27rem), (min-width: 600px) 22rem, 72vw',
+      caption: c.caption || p.caption, place: c.key ? c.place : p.photoPlace, lat: c.key ? c.lat : (p.photoLat ? LAT[p.photoLat] : null), pos: c.pos,
     })}
     <div class="pjx-kind__body">
       ${p.real && (p.place || p.year) ? html`<p class="label pjx-kind__real">${[p.place, p.year].filter(Boolean).join(' · ')}</p>` : ''}
@@ -64,7 +64,7 @@ const kind = (ctx, p, i, mirrored) => {
       <div class="pjx-kind__list rv" style="--i:2">
         <p class="label">On the list</p>
         <ol>${p.materials.map((m, n) => {
-          const row = html`<span class="pjx-kind__no">${line(n)}</span><span class="pjx-kind__item">${m}</span>`;
+          const row = html`<span class="pjx-kind__item">${m}</span>`;
           return html`<li>${p.links?.[n] ? html`<a href="${ctx.u(p.links[n])}">${row}${icon('arrow', { size: 16, cls: 'pjx-kind__go' })}</a>` : html`<span>${row}</span>`}</li>`;
         })}</ol>
       </div>
@@ -83,8 +83,8 @@ export default {
 ${pageHero(ctx, {
   crumbs: [['Projects']],
   eyebrow: 'Projects · The kinds of work we supply',
-  title: 'What our materials <em>become.</em>',
-  lede: 'Uresco supplies institutional, commercial and residential builders across the Pacific Northwest and all of Alaska. This is the work the lists are for.',
+  title: 'The work <em>we supply.</em>',
+  lede: 'Uresco supplies institutional, commercial and residential builders across the Pacific Northwest and all of Alaska.',
   photoKey: 'cranes-dusk',
   caption: 'Tower cranes over a construction site at dusk.',
   actions: html`<a class="btn" href="${ctx.u('quote/')}">Request a quote ${icon('arrow', { size: 18 })}</a>${callLink(ctx)}`,
@@ -109,7 +109,7 @@ ${pageHero(ctx, {
 <div class="pjx-sectors">
   ${GROUPS.map((g) => html`${g.name === OFF_ROAD ? html`
   <div class="pjx-turn" data-sector="${g.name}">
-    ${interlude(ctx, 'winter-road', { line: 'Then the road <em>runs out.</em>', note: 'A winter highway through the spruce.', place: 'Interior Alaska', pos: '52% 66%' })}
+    ${interlude(ctx, 'winter-road', { line: 'Then the road <em>runs out.</em>', note: 'A winter highway through the spruce.', pos: '52% 66%' })}
   </div>` : ''}
   <section class="pjx-sector${MIRRORED.includes(g.name) ? ' pjx-sector--flip' : ''}${g.name === OFF_ROAD ? ' section--ice' : ''}" id="${g.id}" data-sector="${g.name}" aria-labelledby="${g.id}-title">
     <div class="wrap">
@@ -131,13 +131,9 @@ ${pageHero(ctx, {
   </section>`)}
 </div>
 
-<section class="section pjx-pull-sec" aria-label="Whatever it becomes">
-  <div class="wrap"><p class="pull rv">Whatever it becomes, it starts <em>as a list.</em></p></div>
-</section>
-
 ${closing(ctx, {
   title: 'Have a job <em>like these?</em>',
-  body: 'Send plans or a materials list and tell us where it is going. The yard nearest your project builds the take-off and prices it.',
+  body: 'Send plans or a materials list and tell us where it is going. The yard nearest your project helps with the take-off and gives you an estimate.',
   more: html`<a class="link" href="${ctx.u('services/')}">How a job gets from plans to site ${icon('arrow', { size: 16 })}</a>`,
 })}
 `,

@@ -34,9 +34,11 @@ Three ideas make the direction unmistakable. Keep all three on every page you bu
 | `--snow` | `#F4F6F6` | page background |
 | `--white` | `#FFFFFF` | cards on snow or ice |
 | `--ice` | `#E8EEEF` | ice surfaces, insets, chips, photo placeholders |
-| `--mist` | `#D9E1E3` | hairlines, input borders |
+| `--mist` | `#D9E1E3` | hairlines |
 | `--fog` | `#B4C1C5` | stronger borders, decorative marks (never text) |
-| `--slate` | `#51636A` | muted text on light (5.9:1 on snow) and the quiet half of a headline |
+| `--field-line` | `#7E8F96` | the edge of a control at rest: inputs, selects, textareas, radios, choice tiles, the drop zone (3.36:1 on white, 3.09:1 on snow; WCAG 1.4.11) |
+| `--field-hint` | `#5C6D74` | placeholder text (4.97:1 on snow) |
+| `--slate` | `#51636A` | muted text on light (5.79:1 on snow, 6.28:1 on white) and the quiet half of a headline |
 | `--ink` / `--ink-hi` | `#0E0E0C` / `#2C2C27` | text, dark buttons / a dark button under the pointer |
 | `--night` / `--night-2` / `--night-3` | `#0E0E0C` / `#1A1A17` / `#272823` | dark surfaces and things raised on them |
 | `--night-line` | `rgba(255,255,255,.14)` | hairlines on night |
@@ -68,7 +70,7 @@ Geist (400–700 variable, 19 KB) and Geist Mono (400–600 variable, 15 KB), se
 | `--t-lede` · `.lede` | clamp(1.0625rem → 1.25rem) | 400, 1.5, `--slate` |
 | `--t-body` | 1rem | 400, 1.6 |
 | `--t-small` | .875rem | secondary lines |
-| `--t-micro` | .75rem | mono labels: Geist Mono 500, uppercase, tracking .06em. **Nothing is smaller than this**, on any surface. |
+| `--t-micro` | .75rem | mono labels: Geist Mono 500, uppercase, tracking .06em. **No page text is smaller than this**, on any surface. Words drawn inside an SVG figure scale with the drawing (about 6 to 8 px on a phone); they are part of a picture hidden from assistive technology, and nothing a visitor needs is only there. |
 
 - Headlines are sentence case, medium weight, never bold, never all caps.
 - **Two-tone headlines:** wrap the second half of the sentence in `<em>`. It is not italic; it is the
@@ -89,8 +91,9 @@ Geist (400–700 variable, 19 KB) and Geist Mono (400–600 variable, 15 KB), se
   `inset 0 0 0 1px rgba(255,255,255,.14)` instead.
 - Motion: `--ease` cubic-bezier(.2,.7,.2,1) for UI, `--ease-map` cubic-bezier(.45,0,.15,1) for the camera.
   `--fast` .16s (hover) · `--ui` .32s (menus, dialogs) · `--slow` .7s (reveals) · `--camera` 1.1s.
-- Touch: controls are at least 40px on a touch screen. `.link` and `.crumbs a` grow to that on their own under
-  `(pointer: coarse)`; chips grow in the finder and the product filter.
+- Touch: controls are at least 40px on a touch screen, tablets and touch laptops included. Under `(pointer: coarse)` `.link`,
+  `.crumbs a`, the utility strip's numbers (the strip is 40px tall there) and `.nav__toggle` grow on their own; `.map__tag`
+  carries an invisible 40px target at every width; chips grow in the finder and the product filter.
 
 ## 3. Grid and rhythm
 
@@ -102,7 +105,9 @@ Geist (400–700 variable, 19 KB) and Geist Mono (400–600 variable, 15 KB), se
   Two surfaces in a row are separated by a seam of `--inset`, not by a section's padding (the rule at the
   end of the Sections block in `10-base.css` handles neighbours, and the footer).
 - Section heads are a spread: headline left, lede and link right (`sectionHead()`).
-- Breakpoints: 700px (phone below: `--inset` 8px, action bar appears, radii step down), 900px (journey and
+- Breakpoints are written in em (the px values below ÷ 16), so a larger default text size in the browser collapses the layout
+  the way a narrower window does (WCAG 1.4.4; `tests/check.mjs` fails on a px breakpoint). `pages/zz-large-text.css` is the last stop: at 150 to 200%
+  browser text on a phone, what normally stays on one line wraps instead of pushing the page sideways. 700px (phone below: `--inset` 8px, action bar appears, radii step down), 900px (journey and
   remote photo stack), 1000px (utility bar, inner-page hero and product preview), 1100px (desktop nav and
   the map's side-by-side layout), 1200px (services and projects lay out in columns), 1360px (the A–Z's third
   column).
@@ -127,8 +132,9 @@ src/assets/css/30-components.css      stage + map + finder, yard cards, page her
 src/assets/css/40-forms.css           the shared form: fieldsets, fields, choices, drop zone, side panel (.fm-*)
 src/assets/css/90-print.css           the credit application as a paper form; chrome never prints
 src/assets/css/pages/<page>.css       one file per page type (below)
+src/assets/css/pages/zz-large-text.css  very large browser text on a narrow screen; loads last
 src/assets/js/00-core.js              window.UCM helpers ($, $$, calm)
-src/assets/js/10-chrome.js            dialogs, masthead, products menu, Pause motion, action bar
+src/assets/js/10-chrome.js            dialogs, masthead, products menu, generic quote links, Pause motion, action bar
 src/assets/js/20-hours.js             open/closed status and local clocks
 src/assets/js/site.js                 forms (kept under its old name)
 src/assets/js/modules/finder.js       the combobox, route card and map camera
@@ -194,7 +200,7 @@ Without lede and action it becomes `.shead--solo`.
 - `.status[data-hours]` — `openStatus(location)`. The hours script fills it with the word "Open" or "Closed", and
   never a time, and adds `.is-open`. It is hidden until then. `clock(location)` renders
   `<span class="clock" data-clock="America/Anchorage">` with the yard's local time.
-  Hours in the data are placeholders: show the status, never advertise the hours.
+  Hours in the data are placeholders: show the status, never advertise the hours. `closedDates` (`locations.mjs`, yard-local ISO dates, also placeholders) makes the status say Closed whatever the weekly table says.
 
 ### Photographs — `.frame` and `picture(ctx, key, { sizes, art, eager, alt })`
 ```html
@@ -249,7 +255,7 @@ The signature component. `variant: 'hero'` fills the first screen (home); `'embe
 own white panel (`.finder.pn-panel`, `.finder.lc-board`), because they have no combobox. The stage contains:
 
 - `.stage__sky` — the night and its aurora.
-- `.stage__map` › `mapPlate()` → `.map[data-map]` › `.map__cam[data-cam]` holding, in one 1800 × 1000
+- `.stage__map` (after `.stage__ui` in the markup, so the keyboard reaches the words and finder before the pins; `order` puts the map first on screen below 1100px) › `mapPlate()` → `.map[data-map]` › `.map__cam[data-cam]` holding, in one 1800 × 1000
   space: `img.map__base` (`assets/map.svg`, written by `mapSvg()`), `svg.map__lanes` (roads, barge lanes,
   the ocean lane, the route arc) and `.map__pins` (graticule labels, a `.map__dot` button per place, a
   `.map__yard` link per yard with a `.map__tag`, and the `.map__dest` marker).
@@ -259,8 +265,8 @@ own white panel (`.finder.pn-panel`, `.finder.lc-board`), because they have no c
   (`.route__y--any`) shows the site's guidance with all three yards' numbers. `.finder__go` is a visible
   submit button, shown while the field holds something not yet answered. A place not on the list is a real row in
   the suggestions ("Use Kwethluk").
-- `legend({ items, note })` → `ul.legend`: `items` are `[swatch, label]` (swatches `yard sea road barge arc`, classes
-  `.lg--*`), and the default is the four lanes plus "Lanes are illustrative". On the finder it adds **Yard to call**,
+- `legend({ items, note })` → `ul.legend`: `items` are `[swatch, label]` (swatches `yard sea inside road barge arc`, classes
+  `.lg--*`), and the default is the yards, the four lanes (Southeast by sea included) plus "Lanes are illustrative". On the finder it adds **Yard to call**,
   the white dashed arc from the yard to the chosen place. The arc says who to call; it is never a route.
 
 Layouts: ≥1100px words and finder left over open sea, map filling the rest; 700–1099px the map as a band
@@ -269,15 +275,18 @@ place's label above its dot); <700px words, the map cropped to Alaska and the la
 you regenerate the map with a different projection, update them.
 
 Behaviour (`modules/finder.js`): the route card is rendered at build time for the example place, so
-nothing shifts when the script starts; choosing a place fills the card, draws an arc from the yard to
+nothing shifts when the script starts. While it is marked Example the card's button is a plain "Request a quote" that carries
+nothing; choosing a place names it on the button, fills the card, draws an arc from the yard to
 the place, flips labels out of each other's way and flies the camera (`--tx`, `--ty`, `--z` on
-`.map__cam`; pins counter-scale with `--z`). Unknown places get "any yard can help". The quote button
-carries `?location=…&yard=…`, which the quote form reads (it also starts a known off-road place on Remote Alaska
+`.map__cam`; pins counter-scale with `--z`). Unknown places get "any yard can help". After a choice the quote button
+carries `?location=…&yard=…`, and every generic quote link on the page (`[data-quote-link]`: the action bar, the masthead,
+the closing band) follows it, as they follow the picks on a line page. The quote form reads those parameters (it also starts a known off-road place on Remote Alaska
 shipping and says what carried over in `.qt-carried`). Without JavaScript the panel is a list of the three
 yards (`.finder__nojs`).
 
 Data: add places in `src/data/places.mjs`, then run
-`node scripts/map.mjs <tools dir> src/data/map.json`. What the card says about freight is general Alaska
+`node scripts/map.mjs <tools dir> src/data/map.json`. Every place off the road system names Anchorage ("or a remote site"),
+Galena, Fort Yukon and the Arctic coast included, until the owner rules on places that also fit "the Interior and points north". What the card says about freight is general Alaska
 geography, labelled "typical": never a carrier, schedule, transit time or price.
 
 `mapPlate(ctx, { dots, eager, example, marker })` is the map on its own. `marker: { left, top, name }` drops the
@@ -296,7 +305,8 @@ destination marker somewhere that is not a place (the 404 page's "This page").
   </div>
 </article>
 ```
-Lay them out in `.ycards` (three up) or `.ycards--2`; one card to a row (700 to 1180px) puts the facts beside the number.
+Lay them out in `.ycards` (three up) or `.ycards--2`; one card to a row (700 to 1180px) puts the facts beside the number, with the
+number, its buttons and the quote link together at the top of the left column. Live details (Local time) are `.jsonly`.
 `compact` drops toll-free, fax, email and mail and links to the card on Locations instead (`.ycard__more`); `contact`
 keeps the fax and email on a compact card. Yard cards have no photograph: every picture we have of those places is a
 stock postcard, and none may sit beside a yard's name. The hours are placeholders: the Hours row prints on the
@@ -321,7 +331,7 @@ A photograph as a surface (21:9; 4:5 portrait crop on phones) with one line over
 line, `<em>` is yellow. The note carries the photo credit. At most one per page.
 
 ### Closing call to action — `quoteBand(ctx, { eyebrow, title, body, href, label, actions, call, items, media })`
-A dark surface (`.cta` › `.cta__card`): eyebrow, two-tone `h2`, one paragraph, primary and glass buttons and
+A primary button with no `href` is `data-quote-link`. A dark surface (`.cta` › `.cta__card`): eyebrow, two-tone `h2`, one paragraph, primary and glass buttons and
 a **take-off sheet** (`takeoffSheet`), so the band shows what a take-off is. `items` are its rows (five at most; a
 product line passes its own), `href` and `label` change the primary button, `actions` replaces it outright, `call: false`
 drops Call a yard for a band that shows the numbers, and `media` swaps the sheet for your own element (the quote
@@ -332,11 +342,13 @@ page puts the three yards there). Every inner page ends with it. The home page e
 - **Filter** `.pidx-find` — the finder's field asking what you need. It narrows the ledger as you type, across
   names, notes, brands and trade abbreviations (`data-pidx-*`).
 - **Ledger** `.pidx-list` › `li.pidx-row.rowcard` — number, glyph, the line, *every* product in it (never cut
-  short), a `.go`, and "Add to a quote" (`?product=<line>`). The whole row is a link except that one.
+  short), a `.go`, and "Quote this line" (`?product=<line>`). The whole row is a link except that one. "Add to quote" has
+  one meaning across the site: the toggle on a line page.
 - **Brands** `.pidx-brand` inside `.faq-wrap`; **A–Z** `.pidx-az`, set like a book's index, each entry deep-linking to
   its row on the line page.
 - **Line page** — `pageHero` with `.pline-step` beside the eyebrow and a `.glass.pline-hero__panel` in the photograph;
-  `.pline-list` › `.pline-item` with an "Add to quote" toggle (`data-pline-pick`); `.pline-ask`, the sticky dark
+  `.pline-list` › `.pline-item` with an "Add to quote" toggle (`data-pline-pick`, kept for the visit in sessionStorage `uresco.picks`
+  so several lines reach one request); `.pline-tray` right under the list with the status and the link to the quote; `.pline-ask`, the sticky dark
   card with the three yards' numbers; `.mode.pline-svc.has-go` link cards; `.pline-rel` related lines (glyph, name,
   every item); `.pline-pager`. Every `[data-pline-quote]` link carries the line and the picks to the quote form.
 - Breakpoints 700, 900, 1000, 1200 and 1360.
@@ -344,29 +356,28 @@ page puts the three yards there). Every inner page ends with it. The home page e
 ### Services (`pages/services.css`)
 The six services are one freight line, in the order a job meets them (`seq`, `leg`, `step` on each service in
 `src/data/services.mjs`). `.sv-line` is the dark line map: `.sv-map__stop` per service, ending at a white "Your site"
-tag. Below it `article.sv-stop`, built like the yard card: a drawing (`.fig.sv-fig`) or photograph, the service,
+tag. Below it `article.sv-stop`, built like the yard card: a drawing (`.fig.sv-fig`), the service,
 a facts list `.sv-spec` or checklist `.sv-kit`, one action, and small prints of Uresco's own photographs
 (`.sv-proof`). A link to `services/#crating` rings that card.
 
 ### Projects (`pages/projects.css`, `modules/projects.js`)
 Kinds of work, never jobs. `.pj-bar` › `.pj-filter` chips (plain links without the script). `section.pj-sector`, one per
 sector: a sticky head (`.pj-yards` where a sector has yards to call) and `article.pj-kind` cards: photograph
-with `.glass.glass--over` ("Typically on the load"), the scope, `.pj-route` (the services line in small, the stops this
-work typically uses filled in; `services` on each entry in `src/data/projects.mjs`) and a quote link carrying the
-kind of work. Each sector's `id` is its name in lower case with hyphens (the home page's sector cards link to them).
+with `.glass.glass--over` ("Often needed for this work"), the scope, `.pj-route` (the services line in small, the stops to
+ask about filled in; `services` on each entry in `src/data/projects.mjs`) and a quote link carrying the
+kind of work. `[data-pj-count]` stays empty until a filter is applied. Each sector's `id` is its name in lower case with hyphens (the home page's sector cards link to them).
 
 ### Pacific Northwest (`pages/pacific-northwest.css`)
 The Alaska page's sibling, one zoom level in. `#sound` is a close-up of Puget Sound (Natural Earth 10 m coastline, held in
 `SOUND` in `regions.mjs`): Kent as a live beacon, dashed "yard to call" lines to eleven towns, `.pn-panel` with the Kent number
-and town chips that start a quote. Then `.pn-gear` (`BOOM_TRUCK` and `MOFFETT_TRUCK` as `.fig.pn-fig`), the range as a load
-sheet (`.pn-bill`), the corridor map (`#north`) and the Kent yard.
+and town chips that start a quote. Then `.pn-gear` (`BOOM_TRUCK` and `MOFFETT_TRUCK` as `.fig.pn-fig`), the product lines (`.pn-bill`), the corridor map (`#north`) and the Kent yard.
 
 ### Locations (`pages/locations.css`)
 One screen answers "which yard, and what is the number?": the map behind `.lc-board`, whose `.lc-row`s are the guidance and the
 tap-to-call numbers at once. Each yard then has a wide card with every detail. This is the only page that prints hours.
 
 ### About and 404 (`pages/about.css`)
-`.ab-card` is the company on one sheet; `.ab-promises` the mission a line at a time, each with where to check it; `.ab-ruler`
+`.ab-card` is the company on one sheet; `.ab-promises` the mission a line at a time, each with what it means on a job; `.ab-ruler`
 the yards by latitude with Sitka to Utqiaġvik marked. `.nf-*` is the not-found page: every link is absolute to `SITE.base`,
 so check it in a build with `BASE=/`.
 
@@ -375,7 +386,16 @@ White step cards (`.fieldset[data-step]`) on the left, a sticky dark panel (`.fm
 filled in, and the three yards' numbers always in reach (`.fm-rail__call` beside the form, `.fm-page__call` above it where
 the panel does not fit). Every field is label, then hint, then control, then error. `site.js` finds forms by `[data-form]`
 and handles validation, drafts (never tax IDs, bank details or signatures), uploads, the email hand-off and the printed
-application. Quote parts are `.qt-*`, account parts `.ac-*`.
+application. The rules that matter:
+- A link's values (`?product=`, `?location=`, `?yard=`) go in once. A draft saved under the same link keeps what was changed since; a different link fills in over it. Products from a link are added to the materials box, never swapped in, and the panel's Materials row reads the box. `.qt-carried` says what came with the link.
+- Files add up, and an oversized one costs nothing already on the list. A file cannot be kept in a draft, so a restored draft names what must be chosen again (`[data-files-lost]`) and the email still says which files to attach.
+- Start over is undoable (`[data-draft-undo]`) until the visitor types again. The snapshot stays in the page's memory, never in storage.
+- After the hand-off to the email app the draft leaves localStorage, but the tab keeps a copy in sessionStorage (without the private fields) until it closes, because nobody knows yet whether the email went. `[data-back]` reopens the form. A form service's success clears both.
+- Email is not private, so `ein`, `bank` and `bank_contact` stay out of the message (`HELD` in `site.js`) and go by phone or on paper; the page and the notice both say so. They still post to a form service once there is one.
+- A mailto over 1,800 characters is not opened: Copy becomes the main action (`[data-mail-long]`).
+
+The credit application (accounts page) is the real form: company details, contacts, tax details, trade and bank references, certification and signature. It says what the form does and sends every question about limits, terms, approvals or statements to the yard. On paper it is two Letter pages (`90-print.css`) under the legal name, a form someone can sign by hand; a form that has been started prints what was typed, except the signature. While there is no `SITE.formEndpoint` the drop zone says the email app does the sending, `formFoot(label, note)` can say more about
+how the form travels, and without JavaScript the send button gives way to a note with the phone and email route. Quote parts are `.qt-*`, account parts `.ac-*`.
 
 ### Chrome (`src/lib/layout.mjs`)
 - `.utility` — desktop only: a black strip hanging from the top edge with the three yards, numbers in yellow, live status,
@@ -383,16 +403,17 @@ application. Quote parts are `.qt-*`, account parts `.ac-*`.
 - `.masthead` — sticky, translucent snow. `.brand` (the end-grain U, "Uresco", mono descriptor), `.nav`
   (`.nav__link`, current page gets a white pill), the Products menu, `.masthead__call` (opens the call
   sheet; a link to Locations without the script), `.masthead__cta`.
-- Products menu `.mega` — opens on hover, on focus, and from `.nav__toggle` (`aria-expanded`); Escape
-  closes. Nine lines with thumbnails, and a dark side panel for "not on the list".
+- Products menu `.mega` — opens on hover and from `.nav__toggle` (the keyboard's only way in; it does not open on focus).
+  `aria-expanded` follows what is on screen, a second press closes it, and Escape closes it wherever the pointer or focus is. Nine lines with thumbnails, and a dark side panel for "not on the list".
 - `dialog.drawer#drawer` — the phone menu: large links, product-line pills, and a sticky foot with
   *Call a yard* and *Get a quote*.
 - `dialog.sheet#call-sheet` — all three yards: status, number as a yellow button, directions. Any element
   with `data-open="call-sheet"` opens it.
 - `.actionbar` — phones only, floating: Call (opens the sheet) · Directions · Quote (on the quote page, Send plans,
-  to `#plans`). It slides away while a field has focus.
+  to `#plans`, gone once the form has been handed off). It slides away while a field has focus.
 - `.footer` › `.footer__band` (the page's one large yellow surface: the tagline and the two ways to start) and
-  `.footer__card` (a black surface with the map faint behind it: yards, links, latitudes).
+  `.footer__card` (a black surface with the map faint behind it: yards, links, latitudes). On a phone each yard is one row of name,
+  status and number, with toll-free, email and address one tap away on Yard details, and the band drops its sentence.
 - `[data-motion]` — Pause motion, in the utility bar, the phone menu and the footer, shown only where something loops.
   It sets `html.is-still`, which pauses endless animations and nothing that draws once, and is remembered between pages.
 - Every opener is a link underneath (`locations/`, or `#site-index` for the menu), so Call, Directions and Menu lead
@@ -403,13 +424,14 @@ application. Quote parts are `.qt-*`, account parts `.ac-*`.
 - Animate only `transform`, `opacity`, `clip-path` and SVG stroke properties.
 - Quiet and one-directional: things ease in once (`.reveal`, add `style="--i:n"` or an nth-child rule to
   stagger by 70ms), the map's lane draws once, beacons pulse slowly, the camera flies on request.
-- Nothing loops on a phone except the yard beacons (transform and opacity only). Dash animations repaint on every
+- Nothing loops on a phone except the beacons on the map (transform and opacity only); the sky's breathing light runs from 700px up. Dash animations repaint on every
   frame, so all of them, the lane's one-time draw included, run from 700px up (on a phone the lane is simply there) and
   the loops pause when the map is off screen (`.is-paused`). On a throttled phone the draw alone took the home page's
   Lighthouse score from 98 to 75.
 - Everything is visible and still under `prefers-reduced-motion` (a global rule in `10-base.css` plus
   `UCM.calm` in scripts), and without JavaScript (`.js` is set on `<html>` in the head; `.jsonly` and
-  `.nojs` switch content with no flash or shift).
+  `.nojs` switch content with no flash or shift). `.reveal` hides things only under `html.reveal-on`, which the reveal script sets
+  just before it starts watching, so a script that never arrives hides nothing. Whatever is already on screen at that moment stays put and does not animate.
 - State is never shown by motion or colour alone: the current journey step has a filled chip and a rail,
   "open" has a word beside its dot.
 
@@ -418,11 +440,12 @@ application. Quote parts are `.qt-*`, account parts `.ac-*`.
 - The home page's largest paint is `assets/map.svg` (about 14 KB compressed), preloaded, as it is on Alaska and
   Locations; pages on `pageHero` preload their photograph. No layout shift: every image has dimensions, the route card
   and status rows reserve their space.
-- Fonts 34 KB, CSS about 31 KB compressed, JS about 15 KB compressed. No frameworks, no external requests.
+- Fonts 34 KB, CSS about 32 KB compressed, JS about 17 KB compressed. No frameworks, no external requests.
 - Checks: `node build.mjs && node tests/check.mjs`: static (links and anchors, aria references, the claims the facts do
   not allow, hours only on Locations and never in JSON-LD, every phone, email and address against the facts, photo
   captions), five widths on every page, finder, forms, the fold (plain and with font hinting), filters, Pause motion,
-  the 12px and 40px floors on every page type on a phone, and the no-JavaScript fallbacks. Then the axe scan, and
+  the 12px and 40px floors on every page type on a phone, the no-JavaScript fallbacks, and the design review's serious findings
+  (`reviewFindings`, `reviewOnPhone`: form drafts and hand-off, the two-page printed application, larger browser text, a missing script, closed dates). Then the axe scan, and
   Lighthouse on a phone profile.
 - Combobox follows the ARIA 1.2 pattern (`role="combobox"`, `aria-controls`, `aria-activedescendant`,
   a polite live region for the answer). Map dots are a pointer shortcut and are hidden from assistive

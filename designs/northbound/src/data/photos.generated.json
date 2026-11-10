@@ -1,31 +1,4 @@
 {
- "hero-truck-denali": {
-  "widths": [
-   240,
-   640,
-   960,
-   1280,
-   1920,
-   2400
-  ],
-  "width": 2400,
-  "height": 1600,
-  "alt": "A freight truck on a highway through spruce forest with Denali rising behind it",
-  "focal": "60% 50%",
-  "credit": "Joseph Corl / Unsplash",
-  "page": "https://unsplash.com/photos/OVKRxZub9f4",
-  "standIn": false,
-  "portrait": [
-   480,
-   640,
-   800,
-   960,
-   1280
-  ],
-  "pwidth": 1280,
-  "pheight": 1706,
-  "color": "#85918d"
- },
  "lumber-stack": {
   "widths": [
    240,
@@ -53,43 +26,16 @@
   "pheight": 1602,
   "color": "#7c6854"
  },
- "pine-racking": {
+ "timber-ends": {
   "widths": [
    240,
    640,
    960,
    1280,
-   1920,
-   2400
+   1920
   ],
-  "width": 2400,
-  "height": 1600,
-  "alt": "Bundles of lumber on cantilever racking in a warehouse",
-  "focal": "60% 50%",
-  "credit": "PJ Wallace / Unsplash",
-  "page": "https://unsplash.com/photos/EFR6ICYBMN0",
-  "standIn": false,
-  "portrait": [
-   480,
-   640,
-   800,
-   960,
-   1200
-  ],
-  "pwidth": 1200,
-  "pheight": 1600,
-  "color": "#6f5136"
- },
- "timber-ends": {
-  "widths": [
-   240,
-   480,
-   800,
-   1200,
-   1600
-  ],
-  "width": 1600,
-  "height": 2214,
+  "width": 1920,
+  "height": 2657,
   "alt": "Ends of pressure-treated timbers stacked in a bundle",
   "focal": null,
   "credit": "roselino rocha / Unsplash",
@@ -98,7 +44,7 @@
   "portrait": [],
   "pwidth": null,
   "pheight": null,
-  "color": "#807957"
+  "color": "#7f795d"
  },
  "plywood": {
   "widths": [
@@ -126,31 +72,6 @@
   "pwidth": 2000,
   "pheight": 2667,
   "color": "#867d70"
- },
- "framer": {
-  "widths": [
-   240,
-   640,
-   960,
-   1280,
-   1920
-  ],
-  "width": 1920,
-  "height": 1280,
-  "alt": "A framer in a hard hat nailing a wall frame",
-  "focal": "35% 40%",
-  "credit": "Josh Olalde / Unsplash",
-  "page": "https://unsplash.com/photos/EWoU3snzadU",
-  "standIn": false,
-  "portrait": [
-   480,
-   640,
-   800,
-   960
-  ],
-  "pwidth": 960,
-  "pheight": 1280,
-  "color": "#97988d"
  },
  "framing-joists": {
   "widths": [
@@ -364,7 +285,7 @@
   ],
   "pwidth": 960,
   "pheight": 1280,
-  "color": "#706251"
+  "color": "#6c6255"
  },
  "cranes-dusk": {
   "widths": [
@@ -566,7 +487,7 @@
   ],
   "pwidth": 960,
   "pheight": 1280,
-  "color": "#648283"
+  "color": "#6a8081"
  },
  "insulation": {
   "widths": [
@@ -616,7 +537,7 @@
   ],
   "pwidth": 960,
   "pheight": 1280,
-  "color": "#656e79"
+  "color": "#666e76"
  },
  "hardware": {
   "widths": [
@@ -663,26 +584,6 @@
   "pwidth": null,
   "pheight": null,
   "color": "#797879"
- },
- "deck": {
-  "widths": [
-   240,
-   480,
-   800,
-   1200,
-   1600
-  ],
-  "width": 1600,
-  "height": 1066,
-  "alt": "A sunlit wood deck beside a dark-stained house",
-  "focal": "50% 65%",
-  "credit": "Eli Chamoun / Unsplash",
-  "page": "https://unsplash.com/photos/R5ExRDtg_BM",
-  "standIn": false,
-  "portrait": [],
-  "pwidth": null,
-  "pheight": null,
-  "color": "#868674"
  },
  "remote-village": {
   "widths": [
@@ -749,7 +650,7 @@
   "portrait": [],
   "pwidth": null,
   "pheight": null,
-  "color": "#8393a1"
+  "color": "#85939e"
  },
  "custom-home": {
   "widths": [
@@ -769,7 +670,7 @@
   "portrait": [],
   "pwidth": null,
   "pheight": null,
-  "color": "#bca386"
+  "color": "#b7a38c"
  },
  "north-slope": {
   "widths": [
@@ -810,26 +711,6 @@
   "pwidth": null,
   "pheight": null,
   "color": "#7e8e9b"
- },
- "yard-kent": {
-  "widths": [
-   240,
-   480,
-   800,
-   1200,
-   1600
-  ],
-  "width": 1600,
-  "height": 2400,
-  "alt": "A forklift in a building-supply yard",
-  "focal": "50% 55%",
-  "credit": "Sergej / Unsplash",
-  "page": "https://unsplash.com/photos/V5YPZo528n4",
-  "standIn": true,
-  "portrait": [],
-  "pwidth": null,
-  "pheight": null,
-  "color": "#90887d"
  },
  "fairbanks": {
   "widths": [
@@ -876,7 +757,7 @@
   ],
   "pwidth": 1200,
   "pheight": 1600,
-  "color": "#67677d"
+  "color": "#61666f"
  },
  "floatplane": {
   "widths": [

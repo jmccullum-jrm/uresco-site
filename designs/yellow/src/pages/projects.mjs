@@ -7,25 +7,21 @@ import { LOCATIONS, tel } from '../data/locations.mjs';
 
 // The page shows KINDS of work, grouped by the four sectors: no job, customer or place is named
 // because none has been supplied (see data/projects.mjs). The order follows the home page's arcade.
-const ORDER = ['Remote Alaska', 'Institutional', 'Commercial', 'Residential'];
+const ORDER = ['Remote & export', 'Institutional', 'Commercial', 'Residential'];
 const LINE = {
-  'Remote Alaska': 'Communities off the road system',
+  'Remote & export': 'Remote sites, points north and export',
   Institutional: 'Public and institutional work',
   Commercial: 'Commercial and multifamily work',
   Residential: 'Custom homes and exteriors',
 };
-const slug = (s) => s.toLowerCase().replace(/[^a-z]+/g, '-');
+// The first sector keeps the anchor #remote-alaska: the home page and older links use it.
+const slug = (s) => (s.startsWith('Remote') ? 'remote-alaska' : s.toLowerCase().replace(/[^a-z]+/g, '-'));
 const GROUPS = [...ORDER, ...SECTORS.filter((s) => !ORDER.includes(s))].filter((s) => SECTORS.includes(s)).map((sector) => ({
   sector,
   id: slug(sector),
   // A real project, once there is one, leads its sector and shows its place and year.
   kinds: PROJECTS.filter((p) => p.sector === sector).sort((a, b) => (b.real ? 1 : 0) - (a.real ? 1 : 0)),
 }));
-
-// Counts are written as words in headlines, and always follow the data.
-const WORD = ['No', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Eleven', 'Twelve'];
-const count = (n) => WORD[n] || String(n);
-const KINDS = GROUPS.reduce((n, g) => n + g.kinds.length, 0);
 
 // "Which yard should I call?", as the site answers it everywhere.
 const WHERE = { kent: 'Puget Sound and the Northwest', anchorage: 'Southcentral or remote Alaska', fairbanks: 'The Interior and points north' };
@@ -54,21 +50,17 @@ export default {
 ${pageHero(ctx, {
   cls: 'pj-hero',
   eyebrow: 'Projects',
-  title: 'What it <em>becomes.</em>',
-  lede: 'We supply the materials; builders turn them into buildings. So this is not a list of jobs: it is the kinds of work our three yards supply.',
+  title: 'The jobs <em>we supply.</em>',
+  lede: 'We supply the materials; builders turn them into buildings. These are the kinds of work our three yards supply materials for.',
   photoKey: 'framer',
   caption: 'A framer nailing a wall frame',
   actions: html`<a class="btn" href="${ctx.u('quote/')}">Request a quote ${icon('arrow', { size: 18 })}</a>${callBtn(ctx, { cls: 'btn--line' })}`,
-  after: html`<nav class="pj-jump" aria-label="Sectors">
-    <span class="pj-jump__k" aria-hidden="true">${count(GROUPS.length)} sectors</span>
-    <ul>${GROUPS.map((g) => html`<li><a href="#${g.id}">${g.sector}</a></li>`)}</ul>
-  </nav>`,
 })}
 
 <section class="section field-k pj-work clip" id="work">
   <div class="divider divider--u" aria-hidden="true"><i class="plx"></i><i class="plx"></i><i class="plx"></i></div>
   <div class="wrap">
-    ${sectionHead({ eyebrow: 'Kinds of work', title: `${count(KINDS)} kinds. <em>${count(GROUPS.length)} sectors.</em>`, lede: 'Institutional, commercial and residential builders, and communities off the road system.' })}
+    ${sectionHead({ eyebrow: 'Kinds of work', title: 'By <em>sector.</em>', lede: 'Institutional, commercial and residential builders, on the road system and off it.' })}
     <div class="pj-filter" data-filters role="group" aria-label="Show one sector">
       <button type="button" class="toggle pj-pill" data-filter="all" aria-pressed="true">All work</button>
       ${GROUPS.map((g) => html`<button type="button" class="toggle pj-pill" data-filter="${g.sector}" aria-pressed="false">${g.sector}</button>`)}
@@ -76,7 +68,7 @@ ${pageHero(ctx, {
     <p class="sr-only" role="status" data-filter-status></p>
     <div class="pj-sectors" data-filter-grid>
       ${GROUPS.map((g, n) => html`
-      <section class="pj-sector" data-sector="${g.sector}" id="${g.id}" aria-labelledby="pj-h-${g.id}">
+      <section class="pj-sector" data-sector="${g.sector}" id="${g.id}" aria-labelledby="pj-h-${g.id}" style="--n:${g.kinds.length}">
         <header class="pj-sector__head">
           <span class="pj-sector__no nums" aria-hidden="true">${String(n + 1).padStart(2, '0')}</span>
           <h3 class="pj-sector__name" id="pj-h-${g.id}">${g.sector}</h3>

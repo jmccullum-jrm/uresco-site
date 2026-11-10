@@ -3,7 +3,7 @@
    ========================================================================== */
 
 *, *::before, *::after { box-sizing: border-box; }
-html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; scroll-padding-top: calc(var(--mast) + 1.5rem); }
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; scroll-padding-block: calc(var(--mast) + 1.5rem) calc(var(--bar) + 1rem); }
 @media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
 /* Reduced motion: states still change, nothing travels to get there. */
 @media (prefers-reduced-motion: reduce) {
@@ -24,6 +24,8 @@ h1, h2, h3, h4, p, figure, blockquote, dl, dd, ol, ul { margin: 0; }
 ol[class], ul[class] { list-style: none; padding: 0; }
 address { font-style: normal; }
 a { color: inherit; text-underline-offset: .18em; text-decoration-thickness: 1px; }
+/* An address is one long word: it may break rather than push the page sideways. */
+a[href^="mailto:"] { overflow-wrap: anywhere; }
 button, input, select, textarea { font: inherit; color: inherit; }
 button { cursor: pointer; }
 [hidden] { display: none !important; }
@@ -70,6 +72,8 @@ small { font-size: var(--t-small); }
   font: 600 1rem/1.1 var(--sans); letter-spacing: -.005em; text-decoration: none; white-space: nowrap;
   transition: background-color var(--d-1), color var(--d-1), border-color var(--d-1);
 }
+/* At the very narrowest (or with very large browser text) a button may take two lines rather than run off the page. */
+@media (max-width: 40em) { .btn { white-space: normal; } }
 .btn .i { flex: none; transition: transform var(--d-2) var(--ease); }
 .btn:hover { background: var(--ink); color: var(--paper); }
 .btn:hover .i:last-child { transform: translateX(4px); }

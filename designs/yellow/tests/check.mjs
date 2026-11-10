@@ -3,11 +3,13 @@
 //     and every internal link, image and asset resolves to a file in docs/.
 //  2. Browser: every page loads in Chromium at five widths with no errors, no horizontal
 //     scroll and no stretched hero photo, and both forms validate and hand off.
-import { readFileSync, readdirSync, statSync, existsSync } from 'fs';
+import { readFileSync, readdirSync, statSync, existsSync, mkdtempSync, cpSync, writeFileSync, rmSync } from 'fs';
 import { join, dirname, resolve, relative } from 'path';
+import { tmpdir } from 'os';
 import { fileURLToPath } from 'url';
 import { createServer } from 'http';
 import { createRequire } from 'module';
+import { execFileSync } from 'child_process';
 import { LOCATIONS } from '../src/data/locations.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -48,7 +50,15 @@ for (const file of pages) {
 }
 // Things the site must never say (see the review rules). Checked on visible text only.
 const NEVER = [/one point of contact/i, /from quote to landing/i, /price it delivered/i, /delivered pricing/i, /quoted together/i, /takes? about \w+ minutes/i,
-  /stock varies/i, /last sailings/i, /estimators,? designers and drivers/i, /\bon (the )?puget sound\b/i, /priced and ready to order/i, /carrier bookings/i, /ships together/i, /\bbuilds? the take-?off/i];
+  /stock varies/i, /last sailings/i, /estimators,? designers and drivers/i, /\bon (the )?puget sound\b/i, /priced and ready to order/i, /carrier bookings/i, /ships together/i, /\bbuilds? the take-?off/i,
+  // Accounts: no invented document, process or reach.
+  /yard ticket/i, /paper works too/i, /drop it at any yard/i, /return to your home yard/i, /any of (our|the) three yards/i,
+  // Freight: no guarantee, no packing method or pick-up nobody confirmed, no route of Uresco's own.
+  /arrives the way it left/i, /\bbanded\b/i, /or yard pick-?up/i, /pick up at the yard/i, /truck from (kent|anchorage|fairbanks)/i, /not at the curb/i, /where the crew needs/i, /the lane north/i, /we schedule delivery/i, /off the road system, barges run/i,
+  // Take-offs are help, design is not engineering, and Uresco supplies: it does not build or say who may buy.
+  /we fill in this column/i, /get a take-?off/i, /every stick\. counted/i, /designed to fit/i, /engineered to your plans/i, /who we build for/i, /owner-builder/i, /agency, tribe/i, /tribal or alaska native/i];
+// The accounts page may ask for anything on the application, but it states nothing about what an account includes, or about limits, terms, approvals or statements.
+const ACCOUNT_CLAIMS = [/what an account does/i, /buy on account/i, /job accounts/i, /monthly statements?/i, /\bnet[ -]?\d+\b/i, /once it.?s approved/i, /once it has been reviewed/i, /we check references/i, /confirm your limit/i, /limits and terms are confirmed/i, /authorize uresco/i];
 // The only contact details the site may print (data/locations.mjs, which FACTS.md backs).
 const PHONES = new Set(LOCATIONS.flatMap((l) => [l.phone, l.tollFree, l.fax]).filter(Boolean));
 const MAILS = new Set(LOCATIONS.map((l) => l.email));
@@ -59,6 +69,7 @@ for (const file of pages) {
   const ld = [...src.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)].map((m) => m[1]).join(' ');
   const text = src.replace(/<(script|style)[\s\S]*?<\/\1>/g, ' ').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ');
   for (const re of NEVER) if (re.test(text) || re.test(ld)) fail(rel, `says something the rules forbid: ${(text.match(re) || ld.match(re))[0]}`);
+  if (rel === join('accounts', 'index.html')) for (const re of ACCOUNT_CLAIMS) if (re.test(text)) fail(rel, `makes a claim about accounts: ${text.match(re)[0]}`);
   // The yard hours are placeholders: they appear in the Locations details and nowhere else.
   if (rel !== join('locations', 'index.html') && /Mon[–-]Fri|Sat[–-]Sun|\b\d{1,2}(:\d\d)? ?[ap]\.m\./.test(text)) fail(rel, 'prints yard hours');
   if (/\buntil\b/i.test(text)) fail(rel, `says "until": ${text.match(/.{30}\buntil\b.{20}/i)[0]}`);
@@ -76,14 +87,15 @@ const require = createRequire(import.meta.url);
 let chromium;
 try { ({ chromium } = require('playwright')); } catch { ({ chromium } = require('/opt/node22/lib/node_modules/playwright')); }
 const TYPES = { html: 'text/html', css: 'text/css', js: 'text/javascript', webp: 'image/webp', png: 'image/png', jpg: 'image/jpeg', svg: 'image/svg+xml', woff2: 'font/woff2', json: 'application/json', webmanifest: 'application/manifest+json', xml: 'application/xml', txt: 'text/plain' };
-const server = createServer((req, res) => {
+const serve = (dir) => createServer((req, res) => {
   let p = decodeURIComponent(req.url.split('?')[0]);
-  let f = join(DOCS, p);
+  let f = join(dir, p);
   if (p.endsWith('/')) f = join(f, 'index.html');
   if (!existsSync(f)) { res.writeHead(404); return res.end('not found'); }
   res.writeHead(200, { 'content-type': TYPES[f.split('.').pop()] || 'application/octet-stream' });
   res.end(readFileSync(f));
 }).listen(0);
+const server = serve(DOCS);
 const base = `http://127.0.0.1:${server.address().port}/`;
 const browser = await chromium.launch(existsSync('/opt/pw-browsers/chromium') ? { executablePath: '/opt/pw-browsers/chromium' } : {});
 const paths = pages.filter((f) => !/http-equiv="refresh"/.test(readFileSync(f, 'utf8'))).map((f) => relative(DOCS, f)).filter((r) => r !== '404.html')
@@ -189,6 +201,8 @@ for (const [name, viewport, mobile] of [['small phone', { width: 360, height: 74
 
     // Credit application: required fields, consent box, routing to the home yard.
     await page.goto(base + 'accounts/', { waitUntil: 'networkidle' });
+    for (const sel of ['#dba', '#entity', '#ein', '#license', '#years', '#website', '#title', '#ap_contact', '#buyers', '#limit', '#monthly', '#ref2_company', '#ref2_contact', '#ref3_company', '#ref3_contact', '#bank', '#bank_contact', 'input[name=documents]', 'input[name=po]', 'input[name=tax]'])
+      if (!(await page.$(`form[data-form=credit] ${sel}`))) fail('desktop /accounts/', `the application has lost ${sel}`);
     await page.click('form[data-form=credit] button[type=submit]');
     const bad = await page.$$eval('[aria-invalid="true"]', (els) => els.map((e) => e.id));
     for (const id of ['company', 'address', 'name', 'phone', 'email', 'ref1_company', 'ref1_contact', 'agree', 'signature', 'signed'])
@@ -207,10 +221,11 @@ for (const [name, viewport, mobile] of [['small phone', { width: 360, height: 74
     if (leftBehind) fail('desktop /accounts/', 'draft left in the browser after submit');
     // Sensitive fields are never kept in a draft.
     await page.goto(base + 'accounts/', { waitUntil: 'networkidle' });
-    await page.fill('#company', 'Draft Co'); await page.fill('#ein', '12-3456789');
+    await page.fill('#company', 'Draft Co'); await page.fill('#ein', '12-3456789'); await page.fill('#bank', 'First Test Bank'); await page.fill('#bank_contact', 'Teller 555-0100');
+    await page.fill('#signature', 'Sig Nature'); await page.fill('#signed', '2026-10-22'); await page.check('#agree');
     const draft = await page.evaluate(() => localStorage.getItem('uresco.draft.credit'));
-    if (!draft || !draft.includes('Draft Co') || draft.includes('12-3456789')) fail('desktop /accounts/', `draft handling wrong: ${draft}`);
-    await page.evaluate(() => localStorage.clear());
+    if (!draft || !draft.includes('Draft Co') || /12-3456789|First Test Bank|Teller 555|Sig Nature|2026-10-22|"agree"/.test(draft)) fail('desktop /accounts/', `draft handling wrong: ${draft}`);
+    await page.evaluate(() => { localStorage.clear(); sessionStorage.clear(); });
 
     // Open/closed status is filled in from each yard's hours.
     await page.goto(base + 'locations/', { waitUntil: 'networkidle' });
@@ -363,7 +378,7 @@ for (const [name, viewport, mobile] of [['phone', { width: 390, height: 844 }, t
   if (hooks.length !== 6 || hooks.includes(false)) fail('/services/', `rack links: ${hooks}`);
   // Projects: a sector pill shows that sector's two kinds of work; a link to a sector opens it.
   await page.goto(base + 'projects/', { waitUntil: 'networkidle' });
-  await page.click('.pj-pill[data-filter="Institutional"]');
+  await page.click('.pj-pill[data-filter="Commercial"]');
   const shown = await page.$$eval('.pj-sector:not([hidden])', (els) => [els.length, els.reduce((n, e) => n + e.querySelectorAll('.pj-kind').length, 0)]);
   if (shown[0] !== 1 || shown[1] !== 2) fail('/projects/', `filter showed ${shown[0]} sectors, ${shown[1]} kinds`);
   await page.goto(base + 'projects/#commercial', { waitUntil: 'networkidle' });
@@ -374,6 +389,217 @@ for (const [name, viewport, mobile] of [['phone', { width: 390, height: 844 }, t
     if (!(await page.isVisible('.phero .wcap'))) fail(`/${p}`, 'hero photograph has no caption');
   }
   await ctx.close();
+}
+
+// What the reviews found. Each of these shipped once; none may come back.
+{
+  const open = async (path, width, height, opts = {}) => {
+    const ctx = await browser.newContext({ viewport: { width, height }, reducedMotion: 'reduce', ...opts });
+    const page = await ctx.newPage();
+    await page.goto(base + path, { waitUntil: 'networkidle' });
+    return page;
+  };
+  const shut = (page) => page.context().close();
+  const PHONE = { isMobile: true, hasTouch: true };
+
+  // The credit application prints as a form to sign: two Letter pages, blank or filled, with the choices ticked on a filled copy only.
+  const pdfPages = async (page) => Math.max(0, ...[...(await page.pdf({ format: 'Letter', preferCSSPageSize: true, printBackground: true })).toString('latin1').matchAll(/\/Count\s+(\d+)/g)].map((m) => +m[1]));
+  const paper = (page) => page.evaluate(() => {
+    const on = (s) => { const e = document.querySelector(s); return !!e && getComputedStyle(e).display !== 'none' && e.getBoundingClientRect().height > 0; };
+    return { letterhead: on('.letterhead'), yards: on('.ac-return'), refs: on('.refs'), signature: on('#signature'), footer: on('.footer'), hero: on('.phero'), aside: on('.fm-aside'), ticks: [...document.querySelectorAll('.pbox.is-on')].map((b) => b.textContent.trim()).join() };
+  });
+  {
+    const page = await open('accounts/', 1440, 900);
+    await page.emulateMedia({ media: 'print' });
+    const blank = await paper(page);
+    if (!blank.letterhead || !blank.yards || !blank.refs || !blank.signature || blank.footer || blank.hero || blank.aside || blank.ticks) fail('print /accounts/', `blank copy: ${JSON.stringify(blank)}`);
+    await page.emulateMedia({ media: null });
+    const empty = await pdfPages(page);
+    if (empty !== 2) fail('print /accounts/', `blank application is ${empty} pages, expected 2`);
+    for (const [id, v] of [['company', 'Test Framing LLC'], ['ein', '12-3456789'], ['address', '1 Main St, Kent WA'], ['name', 'Pat Builder'], ['phone', '253-555-0100'], ['email', 'pat@example.com'], ['buyers', 'Pat\nSam\nLee'], ['ref1_company', 'Acme Supply'], ['ref1_contact', 'Lee 253-555-0199'], ['bank', 'Test Bank'], ['signature', 'Pat Builder'], ['signed', '2026-10-22']]) await page.fill('#' + id, v);
+    await page.selectOption('#entity', 'LLC'); await page.selectOption('#yard', 'Fairbanks'); await page.check('#agree');
+    await page.emulateMedia({ media: 'print' });
+    const filled = await paper(page);
+    if (filled.ticks !== 'LLC,Fairbanks') fail('print /accounts/', `filled copy ticks [${filled.ticks}], expected LLC and Fairbanks`);
+    if (!(await page.$eval('.seg input:checked', (i) => getComputedStyle(i).boxShadow !== 'none'))) fail('print /accounts/', 'a chosen radio prints empty');
+    await page.emulateMedia({ media: null });
+    const full = await pdfPages(page);
+    if (full !== 2) fail('print /accounts/', `filled application is ${full} pages, expected 2`);
+    // After sending, the notice offers a paper copy and the paper copy is still the form.
+    await page.click('form[data-form=credit] button[type=submit]');
+    await page.waitForTimeout(300);
+    if (!(await page.isVisible('[data-done] [data-print]'))) fail('/accounts/', 'no way to print what was sent');
+    if (await pdfPages(page) !== 2) fail('print /accounts/', 'printing after submit is not the two-page form');
+    await shut(page);
+  }
+
+  // Every other page prints whole: nothing waits for a scroll, and an inner page keeps its headline.
+  for (const p of ['alaska/', 'services/', 'products/framing-lumber/']) {
+    const page = await open(p, 1280, 900, { reducedMotion: 'no-preference' });
+    await page.emulateMedia({ media: 'print' });
+    const r = await page.evaluate(() => ({ blank: [...document.querySelectorAll('[data-reveal]')].filter((e) => getComputedStyle(e).opacity !== '1').length, h1: !!document.querySelector('h1').offsetParent }));
+    if (r.blank || !r.h1) fail(`print /${p}`, `${r.blank} blocks print blank, h1 ${r.h1 ? 'shown' : 'missing'}`);
+    await shut(page);
+  }
+
+  // Locations: nothing paints over the details, and the pills keep clear of the next column.
+  for (const w of [768, 860, 1024, 1100, 1280]) {
+    const page = await open('locations/', w, 900);
+    const hit = await page.evaluate(() => [...document.querySelectorAll('.lc-band')].flatMap((band) => {
+      band.scrollIntoView({ block: 'center' });
+      const rows = band.querySelector('.lc-rows'), out = [];
+      const pills = Math.max(...[...band.querySelectorAll('.lc-yard__call .btn')].map((b) => b.getBoundingClientRect().right));
+      if (rows.getBoundingClientRect().left < pills && rows.getBoundingClientRect().top < band.querySelector('.lc-yard__call').getBoundingClientRect().bottom - 4) out.push(`pills run into the details on ${band.id}`);
+      const walk = document.createTreeWalker(rows, NodeFilter.SHOW_TEXT);
+      while (walk.nextNode()) {
+        if (!walk.currentNode.textContent.trim()) continue;
+        const g = document.createRange(); g.selectNodeContents(walk.currentNode);
+        const box = g.getBoundingClientRect(), at = document.elementFromPoint(box.right - 2, box.top + box.height / 2);
+        if (at && !rows.contains(at)) out.push(`${walk.currentNode.textContent.trim().slice(0, 20)} on ${band.id} is covered`);
+      }
+      return out;
+    }));
+    hit.forEach((m) => fail(`${w}px /locations/`, m));
+    await shut(page);
+  }
+
+  // A photo credit never lies under the tilted tape or the next band.
+  for (const [p, w, h] of [['about/', 900, 800], ['about/', 1440, 900], ['about/', 2560, 1440], ['products/', 1920, 1080], ['products/', 2560, 1440], ['services/', 1366, 768], ['services/', 2560, 1440], ['products/hardware-supplies/', 1920, 900]]) {
+    const page = await open(p, w, h);
+    const under = await page.evaluate(() => [...document.querySelectorAll('.wcap')].filter((c) => c.offsetParent).filter((c) => {
+      c.scrollIntoView({ block: 'center' });
+      const b = c.getBoundingClientRect();
+      for (let i = .05; i < 1; i += .1) for (const j of [.1, .5, .9]) { const at = document.elementFromPoint(b.left + b.width * i, b.top + b.height * j); if (at && !c.contains(at)) return true; }
+      return false;
+    }).map((c) => c.textContent.trim().slice(0, 30)));
+    if (under.length) fail(`${w}x${h} /${p}`, `caption covered: ${under}`);
+    await shut(page);
+  }
+
+  // Pacific Northwest: the latitudes on the tape stay on the screen.
+  for (const w of [320, 360, 900, 1024]) {
+    const page = await open('pacific-northwest/', w, 900);
+    const right = await page.$$eval('.pn-north .pn-tape *', (els) => Math.max(...els.filter((e) => !e.children.length && e.textContent.trim()).map((e) => { const g = document.createRange(); g.selectNodeContents(e); return g.getBoundingClientRect().right; })));
+    if (right > w) fail(`${w}px /pacific-northwest/`, `tape runs ${Math.ceil(right - w)}px off the screen`);
+    await shut(page);
+  }
+
+  // The route finder answers the question asked.
+  {
+    const page = await open('alaska/', 1440, 900);
+    const links = await page.evaluate(() => ['.phero .actions a.btn', '.qband .actions a.btn', '[data-way-quote]'].map((s) => document.querySelector(s).getAttribute('href')));
+    if (!links.every((h) => /yard=anchorage/.test(h))) fail('/alaska/', `a remote quote starts at the wrong yard: ${links}`);
+    const find = async (t) => { await page.fill('#finder-input', t); await page.press('#finder-input', 'Enter'); await page.waitForTimeout(120); return page.evaluate(() => ({ name: document.querySelector('[data-way-name]').textContent, region: document.querySelector('[data-way-region]').textContent, card: document.querySelector('.way--live').textContent, quote: document.querySelector('[data-way-quote]').getAttribute('href'), yard: document.querySelector('[data-way-yard]').textContent })); };
+    for (const [t, want] of [['Bethel AK', 'Bethel'], ['Kotzebue, AK', 'Kotzebue'], ['barrow ak', 'Utqiaġvik']]) { const a = await find(t); if (a.name !== want) fail('/alaska/ finder', `"${t}" answered ${a.name}`); }
+    const bethel = await find('Bethel');
+    if (!/Complete building packages go here/.test(bethel.card)) fail('/alaska/ finder', 'an off-road card does not say a package can go there');
+    if (/Alaska, Alaska/.test((await find('Sitka')).region)) fail('/alaska/ finder', 'region reads "Alaska, Alaska"');
+    if ((await find('Utqiaġvik')).yard !== 'Anchorage') fail('/alaska/ finder', 'an off-road place does not go to Anchorage');
+    if (/pick-?up|Truck from/i.test((await find('Deadhorse')).card)) fail('/alaska/ finder', 'a road place promises pick-up or a route');
+    const unlisted = await find('Kwigillingok');
+    if (!/yard=anchorage/.test(unlisted.quote) || !/delivery=Remote/.test(unlisted.quote)) fail('/alaska/ finder', `unlisted place quotes as ${unlisted.quote}`);
+    // The towns on the map are not dead taps.
+    await page.click('.finder .dmap__pick[data-place-pick="Nome"]');
+    await page.waitForTimeout(150);
+    if ((await page.textContent('[data-way-name]')) !== 'Nome') fail('/alaska/ finder', 'clicking a town on the map does nothing');
+    // The answer lands where it can be read.
+    await page.goto(base + 'alaska/#lookup', { waitUntil: 'networkidle' });
+    await find('Bethel');
+    await page.waitForTimeout(700);
+    const box = await page.$eval('.way--live', (c) => { const r = c.getBoundingClientRect(); return [r.top, r.bottom, innerHeight]; });
+    if (box[0] < 0 || box[1] > box[2]) fail('/alaska/ finder', `answer off screen: ${box.map(Math.round)}`);
+    await shut(page);
+  }
+
+  // Forms: a tray adds, a corrected prefill survives a reload, and a request handed to the email app is not thrown away.
+  {
+    const page = await open('quote/', 1440, 900);
+    const file = (name) => ({ name, mimeType: 'application/pdf', buffer: Buffer.from('%PDF-1.4') });
+    await page.setInputFiles('input[type=file]', file('one.pdf'));
+    await page.setInputFiles('input[type=file]', file('two.pdf'));
+    if ((await page.$$eval('[data-files] li', (l) => l.length)) !== 2) fail('/quote/', 'a second pick replaced the first file');
+    await page.goto(base + 'quote/?yard=anchorage&location=Bethel%2C%20AK&delivery=Remote%20Alaska%20shipping', { waitUntil: 'networkidle' });
+    await page.fill('#location', 'Kwethluk, AK'); await page.selectOption('#yard', 'Fairbanks');
+    await page.waitForTimeout(100);
+    await page.reload({ waitUntil: 'networkidle' });
+    if ((await page.inputValue('#location')) !== 'Kwethluk, AK' || (await page.inputValue('#yard')) !== 'Fairbanks') fail('/quote/', 'a reload put the link\'s prefill back over what was corrected');
+    for (const [id, v] of [['name', 'Pat'], ['phone', '907-555-0100'], ['email', 'p@example.com']]) await page.fill('#' + id, v);
+    await page.click('form[data-form] button[type=submit]');
+    await page.waitForTimeout(300);
+    await page.reload({ waitUntil: 'networkidle' });
+    if ((await page.inputValue('#name')) !== 'Pat') fail('/quote/', 'the draft was thrown away at the mail hand-off');
+    await shut(page);
+  }
+
+  // Keyboard: Escape dismisses the Products menu, and focus never hides behind the action bar.
+  {
+    const page = await open('', 1440, 900);
+    await page.focus('.nav__item--menu > .nav__link');
+    await page.waitForTimeout(350);
+    await page.keyboard.press('Escape');
+    await page.waitForTimeout(350);
+    const m = await page.evaluate(() => [getComputedStyle(document.querySelector('.megamenu')).visibility, document.querySelector('.nav__item--menu > .nav__link').getAttribute('aria-expanded'), document.activeElement.textContent.trim().split(/\s/)[0]]);
+    if (m[0] !== 'hidden' || m[1] !== 'false' || m[2] !== 'Products') fail('/ menu', `after Escape: ${m}`);
+    await shut(page);
+    const phone = await open('', 390, 844);
+    let hidden = 0;
+    for (let i = 0; i < 70; i++) {
+      await phone.keyboard.press('Tab');
+      hidden += await phone.evaluate(() => { const e = document.activeElement, bar = document.querySelector('.actionbar'); if (!e || e === document.body || bar.contains(e)) return 0; const r = e.getBoundingClientRect(), b = bar.getBoundingClientRect(); return r.bottom > b.top && r.top < b.bottom && b.height > 0 ? 1 : 0; });
+    }
+    if (hidden) fail('390px /', `${hidden} focus stops hidden behind the action bar`);
+    await shut(phone);
+  }
+
+  // Every part of the masthead is still reachable, including Pacific Northwest.
+  {
+    const page = await open('', 1440, 900);
+    if (!(await page.$('.nav__link[href*="pacific-northwest"]'))) fail('/', 'Pacific Northwest is missing from the masthead');
+    if (!(await page.$('main a[href*="pacific-northwest"]'))) fail('/', 'the home page does not lead to Pacific Northwest');
+    if (await page.$('.megamenu__grid img')) fail('/', 'the Products menu has gone back to photo thumbnails');
+    await shut(page);
+  }
+
+  // A fourth yard, with a long name and no hours, still builds and still fits.
+  {
+    const tmp = mkdtempSync(join(tmpdir(), 'uresco-yard-'));
+    try {
+      cpSync(join(ROOT, 'src'), join(tmp, 'src'), { recursive: true });
+      cpSync(join(ROOT, 'build.mjs'), join(tmp, 'build.mjs'));
+      cpSync(join(ROOT, 'package.json'), join(tmp, 'package.json'));
+      const f = join(tmp, 'src/data/locations.mjs');
+      const data = readFileSync(f, 'utf8');
+      const end = data.indexOf('\n];', data.indexOf('export const LOCATIONS'));
+      writeFileSync(f, data.slice(0, end) + `\n  { id: 'north', city: 'North Anchorage Port', state: 'AK', region: 'Alaska', role: 'Test', street: '1 Test St', zip: '99501', phone: '(907) 563-2500', fax: '(907) 561-2076', email: 'anchorage@uresco.com', hours: null, page: 'alaska/', photo: 'rainier-tacoma', photoCaption: 'Test', geo: { lat: 61.3, lng: -149.8 } },` + data.slice(end));
+      execFileSync(process.execPath, ['build.mjs'], { cwd: tmp, env: { ...process.env, OUT: join(tmp, 'docs') }, stdio: 'pipe' });
+      const other = serve(join(tmp, 'docs'));
+      for (const w of [390, 1024, 1440]) {
+        const ctx = await browser.newContext({ viewport: { width: w, height: 900 } });
+        const page = await ctx.newPage();
+        await page.goto(`http://127.0.0.1:${other.address().port}/locations/`, { waitUntil: 'networkidle' });
+        const r = await page.evaluate(() => ({ wide: document.documentElement.scrollWidth, row: [...document.querySelectorAll('#north .lc-rows *')].some((e) => /^Hours/.test(e.textContent.trim())) }));
+        if (r.wide > w) fail(`${w}px 4th yard`, `page is ${r.wide}px wide`);
+        if (r.row) fail(`${w}px 4th yard`, 'a yard with no hours prints an Hours row');
+        await ctx.close();
+      }
+      other.close();
+    } catch (e) { fail('4th yard', String(e.stderr || e.message).split('\n')[0]); }
+    rmSync(tmp, { recursive: true, force: true });
+  }
+
+  // Text at 200%: nothing makes the page wider than the screen.
+  const big = await chromium.launch({ args: ['--blink-settings=defaultFontSize=32'] });
+  for (const [w, mobile] of [[320, true], [390, true], [1280, false]]) {
+    const ctx = await big.newContext({ viewport: { width: w, height: 844 }, reducedMotion: 'reduce', isMobile: mobile, hasTouch: mobile });
+    const page = await ctx.newPage();
+    for (const p of paths) {
+      await page.goto(base + p, { waitUntil: 'networkidle' });
+      const wide = await page.evaluate(() => document.documentElement.scrollWidth);
+      if (wide > w) fail(`200% text ${w}px /${p}`, `page is ${wide}px wide`);
+    }
+    await ctx.close();
+  }
+  await big.close();
 }
 
 // The yard phone numbers are the point of the hero: on common screens they show without scrolling.
@@ -404,4 +630,4 @@ if (problems.length) {
   console.log(`\n${problems.length} problem(s):\n` + problems.map((p) => '  ✗ ' + p).join('\n'));
   process.exit(1);
 }
-console.log(`browser: ${paths.length} pages × 5 widths clean; quote form, credit application, hours, dialogs, shared components, products, services, projects and the fold work\nALL CHECKS PASSED`);
+console.log(`browser: ${paths.length} pages × 5 widths clean; quote form, credit application and its print copy, hours, dialogs, shared components, products, services, projects, the route finder, the review findings, 200% text and the fold work\nALL CHECKS PASSED`);

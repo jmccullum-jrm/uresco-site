@@ -37,8 +37,8 @@ main { overflow-x: hidden; overflow-x: clip; }
 .ystrip__item:hover { transform: translateY(-4px); box-shadow: 0 6px 0 rgba(14, 14, 12, .28); }
 .ystrip__item:hover .ystrip__go { transform: rotate(-18deg) scale(1.12); }
 .ystrip__item:active { transform: scale(.97); }
-@media (max-width: 1359px) and (min-width: 1000px) { .ystrip__go { display: none; } .ystrip__item { padding-right: 1.2rem; grid-template-columns: 1fr; grid-template-areas: "city" "num"; } }
-@media (max-width: 999px) {
+@media (max-width: 84.9375em) and (min-width: 62.5em) { .ystrip__go { display: none; } .ystrip__item { padding-right: 1.2rem; grid-template-columns: 1fr; grid-template-areas: "city" "num"; } }
+@media (max-width: 62.4375em) {
   .ystrip { grid-template-columns: minmax(0, 1fr); gap: .45rem; }
   .ystrip__item { grid-template-columns: auto minmax(0, 1fr) auto; grid-template-areas: "city num go"; min-height: 56px; padding: .35rem .4rem .35rem 1.2rem; gap: .75rem; }
   .ystrip__city { align-self: center; flex-direction: column; align-items: flex-start; gap: .12rem; min-width: 6.1rem; }
@@ -46,7 +46,7 @@ main { overflow-x: hidden; overflow-x: clip; }
   .ystrip__go { width: 46px; height: 46px; }
   .ystrip .status { font-size: .75rem; }
 }
-@media (max-width: 374px) {
+@media (max-width: 23.375em) {
   .ystrip__item { gap: .5rem; padding-left: 1rem; } .ystrip__city { min-width: 4.9rem; } .ystrip__city b { font-stretch: 100%; letter-spacing: .03em; }
   .ystrip__num { font-size: 1.04rem; } .ystrip__go { width: 40px; height: 40px; }
 }
@@ -158,6 +158,9 @@ main { overflow-x: hidden; overflow-x: clip; }
 /* The city fills the space beside the window whatever the card's width. */
 .yard__city { grid-column: 1; font-size: 2rem; font-size: clamp(.92rem, 8.5cqi - 9px, 2.5rem); line-height: .9; font-weight: 900; font-stretch: var(--wide); letter-spacing: -.03em; text-transform: uppercase; }
 .yard .yard__role { grid-column: 1; margin: .55rem 0 0; font-size: .92rem; line-height: 1.3; font-weight: 600; color: var(--umber); max-width: 24ch; }
+.yard__role a { position: relative; text-decoration-thickness: 2px; }
+.yard__role a:hover { color: var(--black); }
+@media (max-width: 999px), (pointer: coarse) { .yard__role a::after { content: ''; position: absolute; inset: -.75rem -.25rem; height: 44px; } }
 .yard__fig { grid-column: 2; grid-row: 1 / -1; align-self: start; display: grid; justify-items: center; margin-top: -1.35rem; }
 .yard__media { aspect-ratio: 3 / 4; width: 100%; }
 /* What the photograph shows: a place, never the yard itself. */
@@ -236,6 +239,12 @@ main { overflow-x: hidden; overflow-x: clip; }
 .dmap__yard[data-side="ne"] > b { left: 12px; bottom: 15px; }
 .dmap__yard:hover > i, .dmap__yard:focus-visible > i { transform: scale(1.25) rotate(-8deg); }
 .dmap__yard:focus-visible { outline: 0; box-shadow: none; } .dmap__yard:focus-visible > b { outline: 3px solid var(--paper); outline-offset: 2px; }
+/* Touch: a yard's mark and name are full targets without taking up more of the map. */
+.dmap__yard::after { content: ''; position: absolute; left: -22px; top: -22px; width: 44px; height: 44px; }
+.dmap__yard > b::after { content: ''; position: absolute; inset: -.55rem -.2rem; }
+/* The route finder's map: a town's whole label is a 40px target (data-place-pick, 00-core.js). */
+.dmap__pick { position: absolute; inset: calc((19px - 44px) / 2) -.3rem; padding: 0; background: none; border: 0; border-radius: var(--r-pill); cursor: pointer; }
+.dmap__town:has(.dmap__pick):hover > b { background: var(--black); color: var(--yellow); box-shadow: 0 0 0 2px var(--yellow); }
 /* A chosen destination. */
 .dmap__town.is-on { z-index: 3; }
 .dmap__town.is-on > i { transform: scale(1.5); background: var(--paper); border-color: var(--black); box-shadow: 0 0 0 3px var(--paper); }
@@ -288,7 +297,9 @@ main { overflow-x: hidden; overflow-x: clip; }
 @media (max-width: 899px) { .phero__seal { left: -19%; bottom: auto; top: 16%; } }
 .phero__title--long { font-size: clamp(1.6rem, .9rem + 3.4vw, 4.4rem); line-height: .9; }
 .phero__lede { margin-top: clamp(1.1rem, 2vw, 1.75rem); max-width: 44ch; }
-.phero__art { position: relative; z-index: 1; justify-self: center; align-self: start; width: min(100%, calc(var(--wrap) * .293)); margin-right: clamp(0px, 3vw, 3rem); }
+/* The hero holds its window: the bottom margin keeps the caption inside the yellow, clear of the next
+   band and of a tilted tape, which overlaps the hero by up to about 4vw at the right-hand edge. */
+.phero__art { position: relative; z-index: 1; justify-self: center; align-self: start; width: min(100%, calc(var(--wrap) * .293)); margin-right: clamp(0px, 3vw, 3rem); margin-bottom: calc(1.05rem + 1.25rem + 2.8vw); }
 .phero__media { aspect-ratio: 4 / 5.3; }
 .crumbs { margin-bottom: 1.4rem; font-size: .76rem; font-weight: 750; font-stretch: 112%; letter-spacing: .05em; text-transform: uppercase; }
 .crumbs ol { display: flex; flex-wrap: wrap; gap: .3rem .55rem; }
@@ -301,6 +312,7 @@ main { overflow-x: hidden; overflow-x: clip; }
   .phero__grid { grid-template-columns: minmax(0, 1fr); gap: 0; min-height: 0; }
   .phero__copy { padding-block: 1.75rem 2.25rem; }
   .phero__art { align-self: end; width: min(66vw, 300px); margin: clamp(1.75rem, 9vw, 3rem) auto 0; }
+  .phero__art .wcap { bottom: calc(1.5rem + 2.8vw); }
   .phero__media { aspect-ratio: 1 / 1.08; border-radius: var(--r-pill) var(--r-pill) 0 0; }
   .phero__art .rings > i { inset: calc(var(--n) * var(--step) * -1) calc(var(--n) * var(--step) * -1) 0; border: var(--w) solid currentColor; border-bottom: 0; border-radius: var(--r-pill) var(--r-pill) 0 0; }
 }
@@ -312,7 +324,6 @@ main { overflow-x: hidden; overflow-x: clip; }
 .wcap__by { font-weight: 500; color: var(--stone); }
 .qband__art .wcap, .win--arch > .wcap, .win--pill > .wcap { bottom: .9rem; }
 .win--u > .wcap { bottom: 16%; }
-@media (max-width: 899px) { .phero__art .wcap { bottom: 1.5rem; } }
 @media (max-width: 480px) { .wcap { max-width: calc(100% + 1rem); padding-inline: .6rem; } .win > .wcap { max-width: calc(100% - .75rem); } }
 
 /* ---------- Closing call to action: an arch standing on a yellow field ---------- */
@@ -323,7 +334,7 @@ main { overflow-x: hidden; overflow-x: clip; }
 .qband__media { aspect-ratio: 4 / 4.9; }
 .qband__copy { padding-bottom: var(--section); }
 .qband__copy .lede { margin-top: 1.4rem; }
-/* The take-off sheet: a paper arch; the Qty column is the part Uresco fills in. */
+/* The take-off sheet: a paper arch; the Qty column is where Uresco can help. */
 .tsheet { container-type: inline-size; position: relative; display: flex; flex-direction: column; overflow: hidden; background: var(--white); color: var(--black); border: var(--line) solid var(--black); border-bottom: 0; border-radius: var(--r-pill) var(--r-pill) 0 0; }
 .tsheet__title { margin: 15cqi 0 0; padding: 0 12cqi; font-size: 9.4cqi; line-height: 1; font-weight: 900; font-stretch: var(--wide); letter-spacing: -.02em; text-transform: uppercase; text-align: center; }
 .tsheet__rows { flex: 1; display: flex; flex-direction: column; margin-top: 6.5cqi; border-top: var(--line) solid var(--black); background: linear-gradient(90deg, transparent 72%, var(--black) 72%, var(--black) calc(72% + 2px), var(--yellow) calc(72% + 2px)); }
@@ -333,7 +344,7 @@ main { overflow-x: hidden; overflow-x: clip; }
 .tsheet__row--head { flex: none; padding-block: .55em .45em; border-bottom: var(--line) solid var(--black); font-size: .75rem; font-weight: 800; font-stretch: 118%; letter-spacing: .08em; text-transform: uppercase; }
 .tsheet__row--head span:last-child { justify-self: center; padding: 0; }
 .tsheet__row:not(.tsheet__row--head) span:last-child { justify-self: center; width: 44%; height: 2px; padding: 0; background: var(--black); opacity: .35; }
-.tsheet__note { position: absolute; right: 4cqi; bottom: 9cqi; font-size: .75rem; white-space: normal; width: min-content; min-width: 7.2em; text-align: center; line-height: 1.12; padding: .6em .9em .52em; }
+.tsheet__note { position: absolute; right: 4cqi; bottom: 9cqi; font-size: .75rem; white-space: normal; width: min-content; min-width: 9.4em; text-align: center; line-height: 1.12; padding: .6em .9em .52em; }
 @media (max-width: 899px) {
   .qband__grid { grid-template-columns: minmax(0, 1fr); gap: 0; }
   .qband__copy { order: -1; padding-bottom: 0; }

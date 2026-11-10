@@ -42,7 +42,7 @@ export default {
     ${latRule()}
     </div>
     <div class="hero__object">
-      ${plate(ctx, 'barge-strip', { cls: 'hero__media', fig: '1', caption: 'A tug and a loaded freight barge.', more: 'Off the road system, freight generally arrives like this.', eager: true, ...HERO })}
+      ${plate(ctx, 'barge-strip', { cls: 'hero__media', fig: '1', caption: 'A tug and a loaded freight barge. A stock photograph, not a Uresco load.', eager: true, ...HERO })}
       ${board(ctx)}
       <a class="hero__acct" href="${ctx.u('accounts/')}">
         <span class="hero__acct-no num" aria-hidden="true">+</span>
@@ -59,40 +59,40 @@ export default {
   <div class="wrap">
     <div class="shead__bar"><span class="bub num" aria-hidden="true">01</span><p class="label shead__label">General notes</p></div>
     <div class="notes__top">
-      <p class="notes__line" id="notes-t">One of the largest independent building material suppliers serving Alaska and the Pacific Northwest. Our specialty is the job that is <em>a long way from a lumber yard.</em></p>
+      <p class="notes__line" id="notes-t">One of the largest independent building material suppliers serving Alaska and the Pacific Northwest. Our specialty is the job that is <em>a&nbsp;long way from a lumber yard.</em></p>
       ${plate(ctx, 'uresco-truck', { cls: 'notes__tag', fig: '2', caption: 'The tag on a Uresco load.', sizes: '(min-width: 900px) 15rem, 10.5rem' })}
     </div>
     <dl class="notes__grid">
       <div><dt class="num" data-count>${SITE.years}+</dt><dd>years supplying institutional, commercial and residential builders.</dd></div>
-      <div><dt class="num" data-count>03</dt><dd>distribution centers that work as one team: Kent, Anchorage and Fairbanks.</dd></div>
+      <div><dt class="num" data-count>${String(LOCATIONS.length).padStart(2, '0')}</dt><dd>distribution centers that work as one team: Kent, Anchorage and Fairbanks.</dd></div>
       <div><dt class="num" data-count>09</dt><dd>product lines, from framing lumber to the last box of fasteners.</dd></div>
-      <div><dt class="num" data-count>71.3°<small>N</small></dt><dd>Delivery anywhere in Alaska, from Sitka to Utqiaġvik.</dd></div>
+      <div><dt class="num" data-count>71.3°<small>N</small></dt><dd>delivery anywhere in Alaska, from Sitka to Utqiaġvik.</dd></div>
     </dl>
   </div>
 </section>
 
 <section class="section section--flush" id="manifest">
   <div class="wrap">
-    ${sectionHead({ no: '02', eyebrow: 'The manifest', title: 'Everything on the load, <em>line by line.</em>', lede: 'A wholesale dealer’s full list. Open a line to see what is in it and how it goes together.', action: html`<a class="link" href="${ctx.u('products/')}">All products ${icon('arrow', { size: 16 })}</a>` })}
+    ${sectionHead({ no: '02', eyebrow: 'The manifest', title: 'Everything on the load, <em>line by line.</em>', lede: 'Nine product lines. Open one to see what is in it and how it goes together.', action: html`<a class="link" href="${ctx.u('products/')}">All products ${icon('arrow', { size: 16 })}</a>` })}
     ${manifest(ctx)}
   </div>
 </section>
 
 <section class="section section--panel" id="delivery">
   <div class="wrap">
-    ${sectionHead({ no: '03', eyebrow: 'Delivery area', title: 'Down the road or <em>across an ocean.</em>', lede: 'Moffett forklifts and boom trucks at the job site. Off the road system, freight generally moves by sea, barge or air, and we can work with you on all of it. We specialize in remote location delivery.' })}
+    ${sectionHead({ no: '03', eyebrow: 'Delivery area', title: 'Down the road or <em>across an ocean.</em>', lede: 'Moffett forklifts and boom trucks at the job site. Off the road system, freight generally moves by sea, barge or air, and we can work with you on all of it. We specialize in remote-location delivery.' })}
     ${deliveryMap(ctx, { compact: true, action: html`<a class="btn btn--dark btn--block" href="${ctx.u('alaska/')}">How Alaska delivery works ${icon('arrow', { size: 18 })}</a><a class="link pmap__quote" href="${quoteHref(ctx, { yard: 'anchorage' })}">Quote a remote job ${icon('arrow', { size: 16 })}</a>` })}
   </div>
 </section>
 
 <section class="section" id="services">
   <div class="wrap">
-    ${sectionHead({ no: '04', eyebrow: 'Services', title: 'From the plans <em>to the pad.</em>', lede: 'Six services, in the order a package moves through them. Use one or all.', action: html`<a class="link" href="${ctx.u('services/')}">All services ${icon('arrow', { size: 16 })}</a>` })}
+    ${sectionHead({ no: '04', eyebrow: 'Services', title: 'From the plans <em>to&nbsp;the pad.</em>', lede: 'Six services, in the order a package moves through them.', action: html`<a class="link" href="${ctx.u('services/')}">All services ${icon('arrow', { size: 16 })}</a>` })}
     ${sequence(SERVICES.map((s) => ({ no: s.no, name: s.name, body: s.short, href: ctx.u('services/') + '#' + s.id, link: 'Details' })), { cls: 'seq--six' })}
   </div>
 </section>
 
-${quoteBand(ctx, { no: '05', body: 'Send drawings or a list. We will build the take-off and quote it, and work out the freight with you.' })}
+${quoteBand(ctx, { no: '05', body: 'Send drawings or a list. We will help with the take-off and quote the package, and work out the freight with you.' })}
 
 <div class="wrap stubrow">
   ${stub({ tag: 'Contractor accounts', title: 'Buying regularly? Open an account.', body: 'Apply online and name the yard you buy from most.', level: 2, actions: html`<a class="btn btn--dark" href="${ctx.u('accounts/')}">Apply for an account ${icon('arrow', { size: 18 })}</a>` })}
@@ -100,7 +100,7 @@ ${quoteBand(ctx, { no: '05', body: 'Send drawings or a list. We will build the t
 
 <section class="section" id="work">
   <div class="wrap">
-    ${sectionHead({ no: '06', eyebrow: 'Who we supply', title: 'Institutional. Commercial. <em>Residential.</em>', lede: 'From schools and multifamily framing to custom homes and packages for communities off the road system.', action: html`<a class="link" href="${ctx.u('projects/')}">See project types ${icon('arrow', { size: 16 })}</a>` })}
+    ${sectionHead({ no: '06', eyebrow: 'Who we supply', title: '<em>Institutional. Commercial. Residential.</em>', lede: 'From schools and multifamily framing to custom homes and packages for communities off the road system.', action: html`<a class="link" href="${ctx.u('projects/')}">See project types ${icon('arrow', { size: 16 })}</a>` })}
     <div class="sched" role="table" aria-label="Kinds of work Uresco supplies">
       <div class="sched__cols label" role="row"><span role="columnheader">Mark</span><span role="columnheader">Sector</span><span role="columnheader">Work</span><span role="columnheader">Typical package</span></div>
       ${WORK.map(([t, k]) => [PROJECTS.find((p) => p.title === t), k]).map(([p, k], i) => html`

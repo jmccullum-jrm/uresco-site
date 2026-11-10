@@ -28,7 +28,10 @@ writeFileSync(join(OUT, 'uresco-mark-ink.svg'), markSvg({ tile: INK, ink: YELLOW
 
 const browser = await chromium.launch(process.env.CHROMIUM ? { executablePath: process.env.CHROMIUM } : { executablePath: '/opt/pw-browsers/chromium' });
 const page = await browser.newPage();
+// `node scripts/brand.mjs og.jpg` renders one file and leaves the others alone.
+const only = process.argv[2];
 const shot = async (file, w, h, body, css = '') => {
+  if (only && only !== file) return;
   await page.setViewportSize({ width: w, height: h });
   // Rendered from a file so the page may load the local fonts and photo.
   const tmp = join(ROOT, 'tests', '.out', 'brand.html');
@@ -56,14 +59,14 @@ const lockup = (fg, bg, mark) => `<div style="display:flex;align-items:center;ga
 await shot('uresco-lockup-dark.png', 760, 192, lockup(PAPER, INK, markSvg()));
 await shot('uresco-lockup-light.png', 760, 192, lockup(INK, YELLOW, markSvg({ tile: INK, ink: YELLOW })));
 
-// Social card: the home page poster.
-const photo = pathToFileURL(join(ROOT, 'src/assets/img/hero-truck-denali-p-960.webp'));
+// Social card: the home page poster. The U holds the mark, not a photograph: a card shared in a
+// text message has no caption to say a stock truck is not Uresco's.
 const ring = (n) => `<i style="position:absolute;inset:0 ${-n * 52}px ${-n * 52}px;border:24px solid ${DEEP};border-top:0;border-radius:0 0 999px 999px"></i>`;
 await shot('og.jpg', 1200, 630, `
 <div style="position:relative;width:1200px;height:630px;background:${YELLOW};color:${INK};overflow:hidden;font-family:Archivo">
   <div style="position:absolute;right:86px;top:0;width:330px;height:500px">
     ${[1, 2, 3, 4].map(ring).join('')}
-    <div style="position:absolute;inset:0;border-radius:0 0 999px 999px;overflow:hidden;background:${INK}"><img src="${photo}" style="width:100%;height:100%;object-fit:cover;filter:grayscale(1) contrast(1.12)"></div>
+    <div style="position:absolute;inset:0;border-radius:0 0 999px 999px;overflow:hidden;background:${INK};display:grid;place-items:center">${markSvg({ tile: INK, ink: YELLOW }).replace('<svg ', '<svg width="270" height="270" ')}</div>
   </div>
   <div style="position:absolute;left:64px;top:56px;display:flex;align-items:center;gap:16px">
     <div style="width:64px;height:64px">${markSvg({ tile: INK, ink: YELLOW }).replace('<svg ', '<svg width="64" height="64" ')}</div>

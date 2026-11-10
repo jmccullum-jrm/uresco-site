@@ -27,6 +27,34 @@ const onScroll = () => mast.toggleAttribute('data-scrolled', window.scrollY > 8)
 onScroll();
 window.addEventListener('scroll', onScroll, { passive: true });
 }
+/* Products menu: opens on hover and focus (CSS). Escape dismisses it where it stands, and it comes
+back the next time the pointer or focus arrives. aria-expanded follows what is actually open. */
+const menuItem = $('.nav__item--menu');
+if (menuItem) {
+const link = $('.nav__link', menuItem);
+const menuOpen = () => !menuItem.classList.contains('is-dismissed') && (menuItem.matches(':hover') || menuItem.matches(':focus-within'));
+const sync = () => link.setAttribute('aria-expanded', String(menuOpen()));
+const undismiss = () => { if (!menuItem.matches(':hover') && !menuItem.matches(':focus-within')) { menuItem.classList.remove('is-dismissed'); sync(); } };
+sync();
+menuItem.addEventListener('mouseenter', sync);
+menuItem.addEventListener('focusin', sync);
+menuItem.addEventListener('mouseleave', () => { menuItem.classList.remove('is-dismissed'); setTimeout(sync, 0); });
+menuItem.addEventListener('focusout', () => setTimeout(undismiss, 0));
+document.addEventListener('keydown', (e) => {
+if (e.key !== 'Escape' || !menuOpen()) return;
+menuItem.classList.add('is-dismissed');
+if (menuItem.contains(document.activeElement)) link.focus();
+sync();
+});
+}
+/* The route finder's map: a town's label asks the finder about that town, the same way as typing it. */
+document.addEventListener('click', (e) => {
+const pick = e.target.closest('[data-place-pick]');
+const input = pick && $('.finder__input');
+if (!input) return;
+input.value = pick.dataset.placePick;
+input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+});
 /* The phone action bar steps aside while the keyboard is up. */
 const TYPING = 'input:not([type=radio],[type=checkbox],[type=file]), textarea, select';
 document.addEventListener('focusin', (e) => { if (e.target.matches?.(TYPING)) document.body.classList.add('is-typing'); });
@@ -94,10 +122,16 @@ const d = {};
 fields().filter((el) => !PRIVATE.test(el.name)).forEach((el) => {
 if (el.type === 'radio') { if (el.checked) d[el.name] = el.value; } else if (el.type === 'checkbox') d[el.name] = el.checked; else d[el.name] = el.value;
 });
+if (bag.files.length) d._files = bag.files.length;
 try { localStorage.setItem(DRAFT, JSON.stringify(d)); } catch { /* private mode */ }
 };
+const shelve = () => { try { const d = localStorage.getItem(DRAFT); if (d) sessionStorage.setItem(DRAFT, d); localStorage.removeItem(DRAFT); } catch { /* ignore */ } };
+const forget = () => { try { localStorage.removeItem(DRAFT); sessionStorage.removeItem(DRAFT); } catch { /* ignore */ } };
+const unshelve = () => { try { const d = sessionStorage.getItem(DRAFT); if (d && !localStorage.getItem(DRAFT)) localStorage.setItem(DRAFT, d); sessionStorage.removeItem(DRAFT); } catch { /* ignore */ } };
+unshelve();
 try {
 const d = JSON.parse(localStorage.getItem(DRAFT) || 'null');
+if (d) form.dataset.touched = '1';
 if (d) fields().forEach((el) => {
 if (!(el.name in d)) return;
 if (el.type === 'radio') el.checked = d[el.name] === el.value; else if (el.type === 'checkbox') el.checked = !!d[el.name]; else el.value = d[el.name];
@@ -105,11 +139,16 @@ if (el.type === 'radio') el.checked = d[el.name] === el.value; else if (el.type 
 const kept = $('[data-restored]', form);
 if (d && kept && fields().some((el) => !el.matches('select, [type=radio], [type=checkbox]') && el.value.trim())) {
 kept.hidden = false;
-$('[data-draft-clear]', kept).addEventListener('click', () => { try { localStorage.removeItem(DRAFT); } catch { /* ignore */ } location.reload(); });
+const filesNote = $('[data-restored-files]', kept);
+if (filesNote && d._files) filesNote.hidden = false;
+$('[data-draft-clear]', kept).addEventListener('click', () => { forget(); location.reload(); });
 }
 } catch { /* ignore */ }
 form.addEventListener('input', save);
 form.addEventListener('change', save);
+const touched = () => { form.dataset.touched = '1'; };
+form.addEventListener('input', touched);
+form.addEventListener('change', touched);
 const params = new URLSearchParams(location.search);
 const product = params.get('product');
 const materials = $('textarea[name=materials]', form);
@@ -125,6 +164,11 @@ if (delivery) $$('input[name=delivery]', form).forEach((r) => { r.checked = r.va
 const yardParam = (params.get('yard') || '').toLowerCase();
 const yardSel = $('select[name=yard]', form);
 if (yardParam && yardSel) $$('option', yardSel).forEach((o) => { if (o.value.toLowerCase() === yardParam) yardSel.value = o.value; });
+if (product || place || delivery || yardParam) {
+touched();
+save();
+setTimeout(() => history.replaceState(history.state, '', location.pathname + location.hash), 0);
+}
 const input = $('input[type=file]', form);
 const drop = $('[data-drop]', form);
 const list = $('[data-files]', form);
@@ -140,7 +184,9 @@ const rm = document.createElement('button'); rm.type = 'button'; rm.textContent 
 rm.addEventListener('click', () => {
 const next = new DataTransfer();
 Array.from(bag.files).forEach((g, j) => { if (j !== i) next.items.add(g); });
-bag = next; input.files = bag.files; render();
+bag = next; input.files = bag.files; render(); save();
+const left = $$('[data-files] button', form);
+(left[i] || left[i - 1] || input).focus();
 });
 li.append(name, meta, rm);
 list.append(li);
@@ -148,15 +194,20 @@ list.append(li);
 };
 const add = (files) => {
 const tooBig = [];
-Array.from(files).forEach((f) => (f.size > MAX ? tooBig.push(f.name) : bag.items.add(f)));
+const same = (a, b) => a.name === b.name && a.size === b.size && a.lastModified === b.lastModified;
+Array.from(files).forEach((f) => {
+if (f.size > MAX) tooBig.push(f.name);
+else if (!Array.from(bag.files).some((g) => same(f, g))) bag.items.add(f);
+});
 input.files = bag.files;
 render();
+save();
 const note = $('[data-file-err]', form);
 note.hidden = !tooBig.length;
 if (tooBig.length) note.textContent = `${tooBig.join(', ')} ${tooBig.length > 1 ? 'are' : 'is'} over 25 MB. Email large files to the yard directly, or send a download link in the notes.`;
 };
 if (input && drop) {
-input.addEventListener('change', () => { const f = Array.from(input.files); bag = new DataTransfer(); add(f); });
+input.addEventListener('change', () => add(Array.from(input.files)));
 ['dragenter', 'dragover'].forEach((t) => drop.addEventListener(t, (e) => { e.preventDefault(); drop.classList.add('is-over'); }));
 ['dragleave', 'drop'].forEach((t) => drop.addEventListener(t, (e) => { e.preventDefault(); drop.classList.remove('is-over'); }));
 drop.addEventListener('drop', (e) => add(e.dataTransfer.files));
@@ -231,7 +282,6 @@ const btn = $('button[type=submit]', form);
 const endpoint = form.dataset.endpoint;
 if (failed) failed.hidden = true;
 const finish = () => {
-try { localStorage.removeItem(DRAFT); } catch { /* ignore */ }
 form.hidden = true; done.hidden = false; done.focus();
 window.scrollTo({ top: done.getBoundingClientRect().top + window.scrollY - 120 });
 };
@@ -240,6 +290,7 @@ btn.disabled = true; btn.dataset.label = btn.innerHTML; btn.textContent = 'Sendi
 try {
 const r = await fetch(endpoint, { method: 'POST', body: data, headers: { Accept: 'application/json' } });
 if (!r.ok) throw new Error(r.status);
+forget();
 finish();
 } catch {
 failed.hidden = false; failed.focus();
@@ -269,6 +320,9 @@ const label = $('span', copy);
 try { await navigator.clipboard.writeText(`To: ${to}\nSubject: ${subject}\n\n${text}`); label.textContent = 'Copied'; }
 catch { label.textContent = 'Copy didn’t work'; }
 };
+const back = $('[data-mail-back]', done);
+if (back) back.onclick = () => { unshelve(); done.hidden = true; form.hidden = false; form.scrollIntoView({ block: 'start' }); $('input:not([type=hidden]), select, textarea', form)?.focus(); };
+shelve();
 finish();
 });
 });
@@ -283,6 +337,9 @@ const $$ = (s, el = box) => Array.from(el.querySelectorAll(s));
 const calm = matchMedia('(prefers-reduced-motion: reduce)');
 const fold = (s) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[’'.]/g, '').toLowerCase().trim();
 const slug = (s) => s.toLowerCase().normalize('NFD').replace(/[^a-z]/g, '');
+const bare = (s) => fold(s).split(',')[0].replace(/\s+(ak|alaska|wa|washington)(\s+\d{5}(-\d{4})?)?$/, '').trim();
+const inWashington = (s) => /[,\s]\s*(wa|washington)\b/i.test(s);
+const touch = matchMedia('(hover: none)');
 const places = data.places.map(([name, st, region, access, yard, lanes, xy]) => ({ name, st, region, access, yard, lanes, xy, key: fold(name) }));
 const byName = new Map(places.map((p) => [p.name, p]));
 const aliases = Object.entries(data.aliases).map(([alias, name]) => ({ alias, key: fold(alias), place: byName.get(name) }));
@@ -292,7 +349,8 @@ const input = $('.finder__input'), list = $('.finder__list'), clear = $('[data-c
 const chips = $$('.town');
 const card = $('[data-way]'), live = $('[data-live]');
 const part = (name) => card.querySelector(`[data-way-${name}]`);
-const quote = part('quote'), call = part('call'), any = part('any'), how = part('how');
+const quote = part('quote'), call = part('call'), how = part('how');
+const NOTE = 'Typical for the region, not a schedule or a price. Any yard can help.';
 const quoteBase = quote.getAttribute('href').split('?')[0];
 const map = document.querySelector('.finder [data-map]');
 const labels = map && map.querySelector('.dmap__labels');
@@ -302,41 +360,45 @@ let active = -1, options = [];
 /* ---- The card ---- */
 const pop = () => { card.classList.remove('is-new'); void card.offsetWidth; card.classList.add('is-new'); };
 const showQuote = (label, href) => { part('short').textContent = label; quote.href = href; };
+const showYard = (yard) => { part('yard').textContent = yard.name; part('phone').textContent = yard.phone; call.href = yard.tel; };
 const fill = (p) => {
 const acc = data.access[p.access], yard = data.yards[p.yard];
 const modes = acc.modes.map(([ic, text]) => [ic, text.replace('{yard}', yard.name)]);
 part('label').textContent = acc.tag;
 part('name').textContent = p.name;
-part('region').textContent = `${p.region}, ${STATE[p.st]}`;
+part('region').textContent = /Alaska/.test(p.region) ? p.region : `${p.region}, ${STATE[p.st]}`;
 part('region').hidden = false;
-part('text').hidden = true;
+const offRoad = p.access === 'coastal' || p.access === 'seasonal';
+const line = acc.note || '';
+part('text').textContent = line;
+part('text').hidden = !line;
 how.hidden = false;
 modes.forEach(([ic, text], i) => {
 card.querySelector(`[data-way-m="${i}"]`).textContent = text;
 card.querySelectorAll(`[data-ic^="${i}-"]`).forEach((el) => { el.hidden = el.dataset.ic !== `${i}-${ic}`; });
 });
-part('yard').textContent = yard.name;
-part('phone').textContent = yard.phone;
-call.href = yard.tel; call.hidden = false; any.hidden = true;
-const offRoad = p.access === 'coastal' || p.access === 'seasonal';
+showYard(yard);
 showQuote(`Get a quote for ${p.name}`, `${quoteBase}?yard=${p.yard}&location=${encodeURIComponent(`${p.name}, ${p.st}`)}${offRoad ? '&delivery=Remote%20Alaska%20shipping' : ''}`);
-part('note').hidden = false;
+part('note').textContent = NOTE;
 card.dataset.ico = acc.icon;
-live.textContent = `${p.name}, ${STATE[p.st]}. ${acc.tag}. How freight typically gets there: ${modes.map((m) => m[1]).join(', ')}. Yard to call: ${yard.name}, ${yard.phone}. Typical for the region, not a schedule or a price.`;
+live.textContent = `${p.name}, ${STATE[p.st]}. ${acc.tag}. ${line ? `${line} ` : ''}How freight typically gets there: ${modes.map((m) => m[1]).join(', ')}. Yard to call: ${yard.name}, ${yard.phone}. Typical for the region, not a schedule or a price.`;
 pop();
 };
 const fillUnknown = (text) => {
-part('label').textContent = 'Not on our short list';
+const wa = inWashington(text);
+const id = wa ? 'kent' : 'anchorage';
+const say = 'We don’t have that one listed, but that doesn’t rule it out. Send the details and a yard will work out the way in.';
+part('label').textContent = wa ? 'Not listed' : 'Delivery anywhere in Alaska';
 part('name').textContent = text;
 part('region').hidden = true;
-part('text').textContent = 'That is not on our short list, which does not mean we cannot get there. Send the details and a yard will work out the route.';
+part('text').textContent = say;
 part('text').hidden = false;
 how.hidden = true;
-call.hidden = true; any.hidden = false;
-showQuote(`Get a quote for ${text}`, `${quoteBase}?location=${encodeURIComponent(text)}`);
-part('note').hidden = true;
+showYard(data.yards[id]);
+showQuote(`Get a quote for ${text}`, `${quoteBase}?yard=${id}&location=${encodeURIComponent(text)}${wa ? '' : '&delivery=Remote%20Alaska%20shipping'}`);
+part('note').textContent = 'Any yard can help.';
 delete card.dataset.ico;
-live.textContent = `${text} is not on our short list, which does not mean we cannot get there. Any yard can help. Use the quote button, or call a yard.`;
+live.textContent = `${text}. ${say} Yard to call: ${data.yards[id].name}, ${data.yards[id].phone}. Any yard can help.`;
 pop();
 };
 /* ---- The map: light the lanes, the place and the yard to call ---- */
@@ -371,7 +433,6 @@ return Math.hypot(p.xy[0] - x, p.xy[1] - y) < 12;
 /* ---- Choosing ---- */
 const press = (name) => chips.forEach((c) => c.setAttribute('aria-pressed', String(c.dataset.place === name)));
 const reveal = () => {
-if (window.innerWidth >= 1000) return;
 setTimeout(() => {
 const bar = document.querySelector('.actionbar'), mast = document.querySelector('.masthead');
 const low = (bar && bar.getClientRects().length ? bar.getBoundingClientRect().top : window.innerHeight) - 14;
@@ -386,18 +447,18 @@ const choose = (p, { typed = false } = {}) => {
 close();
 input.value = p.name; clear.hidden = false;
 press(p.name); fill(p); draw(p);
-if (typed) input.blur();
+if (typed && touch.matches) input.blur();
 reveal();
 };
 const chooseUnknown = (text) => {
 close();
 clear.hidden = false; press(''); fillUnknown(text.slice(0, 60)); draw(null);
-input.blur();
+if (touch.matches) input.blur();
 reveal();
 };
 /* ---- The combobox ---- */
 const search = (q) => {
-const k = fold(q);
+const k = bare(q);
 if (!k) return SUGGEST;
 const out = [];
 places.forEach((p) => { const i = p.key.indexOf(k); if (i === 0) out.push({ p, rank: 0 }); else if (i > 0) out.push({ p, rank: p.key[i - 1] === ' ' ? 1 : 2 }); });
@@ -423,8 +484,8 @@ list.append(li);
 });
 if (!options.length) {
 const li = document.createElement('li');
-li.className = 'is-none'; li.setAttribute('role', 'option'); li.setAttribute('aria-disabled', 'true'); li.setAttribute('aria-selected', 'false');
-li.textContent = 'Not on our short list. Press Enter and we will still point you to a yard.';
+li.className = 'is-none'; li.id = 'finder-opt-0'; li.setAttribute('role', 'option'); li.setAttribute('aria-selected', 'false');
+li.textContent = `Not listed, but we can still help. ${touch.matches ? 'Tap here or Search' : 'Press Enter'} and we’ll point you to a yard.`;
 list.append(li);
 }
 list.hidden = false;
@@ -457,6 +518,7 @@ if (!list.hidden) { e.preventDefault(); close(); } else if (input.value) { input
 list.addEventListener('mousedown', (e) => e.preventDefault());
 list.addEventListener('click', (e) => {
 const li = e.target.closest('[role=option]');
+if (li && li.classList.contains('is-none')) return chooseUnknown(input.value.trim());
 const o = li && options[Array.prototype.indexOf.call(list.children, li)];
 if (o) choose(o.p, { typed: true });
 });
@@ -464,6 +526,12 @@ clear.addEventListener('click', () => { input.value = ''; clear.hidden = true; i
 box.addEventListener('click', (e) => {
 const chip = e.target.closest('.town');
 if (chip && byName.has(chip.dataset.place)) choose(byName.get(chip.dataset.place));
+});
+if (map) map.addEventListener('click', (e) => {
+if (e.target.closest('[data-place-pick]')) return;
+const town = e.target.closest('.dmap__town[data-town]');
+const p = town && places.find((x) => slug(x.name) === town.dataset.town);
+if (p) choose(p);
 });
 })();
 (() => {
@@ -525,6 +593,17 @@ const lines = (q.get('product') || '').split(/:?\n/).map((s) => s.trim()).filter
 const text = lines.length ? lines[0] + (lines.length > 1 ? ` +${lines.length - 1} more` : '')
 : q.get('location') ? `Job in ${q.get('location')}` : yard && q.get('yard') ? `For the ${yard.value} yard` : q.get('delivery') || '';
 if (text) carried.textContent = text;
+}
+/* On paper a select is a row of boxes: a copy someone has filled in ticks the one chosen, a blank one stays blank. */
+const boxRows = $$('[data-boxes-of]', form);
+if (boxRows.length) {
+const tickBoxes = () => boxRows.forEach((row) => {
+const sel = form.elements[row.dataset.boxesOf];
+$$('.pbox', row).forEach((b) => b.classList.toggle('is-on', !!form.dataset.touched && !!sel && b.textContent.trim() === sel.value));
+});
+tickBoxes();
+form.addEventListener('input', tickBoxes);
+form.addEventListener('change', tickBoxes);
 }
 /* The list of parts beside a long form: ticked when its required fields are done, marked while on screen. */
 const steps = $$('[data-step]');
@@ -619,7 +698,7 @@ const hits = on ? r.items.filter(hit) : [];
 const byName = on && has(r.hay, ws);
 const show = !on || byName || hits.length > 0;
 r.row.hidden = !show;
-r.items.forEach((it) => { const h = hits.includes(it); it.el.hidden = on && !h && !byName; it.el.classList.toggle('is-hit', h); });
+r.items.forEach((it) => { const h = hits.includes(it); it.el.hidden = on && (hits.length ? !h : !byName); it.el.classList.toggle('is-hit', h); });
 if (on && show) { lines++; products += hits.length; if (!first) first = hits.length ? hits[0].link : r.link; }
 });
 clear.hidden = !input.value;
@@ -634,6 +713,8 @@ input.addEventListener('input', run);
 form.addEventListener('submit', (e) => { e.preventDefault(); if (first) location.href = first.href; });
 clear.addEventListener('click', () => { input.value = ''; run(); input.focus(); });
 input.addEventListener('keydown', (e) => { if (e.key === 'Escape' && input.value) { e.preventDefault(); input.value = ''; run(); } });
+const go = document.querySelector('[data-find-go]');
+if (go) go.addEventListener('click', (e) => { e.preventDefault(); input.focus(); });
 input.addEventListener('focus', () => { if (matchMedia('(max-width: 899px)').matches) form.scrollIntoView({ block: 'start' }); });
 window.addEventListener('pageshow', run);
 run();

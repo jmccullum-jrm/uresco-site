@@ -3,13 +3,14 @@ import { icon, mark } from './icons.mjs';
 import { glyph } from './drawings.mjs';
 import { SITE } from '../config.mjs';
 import { LOCATIONS, tel, mapsUrl } from '../data/locations.mjs';
-import { openStatus, YARD_FOR, lineNo, two } from './components.mjs';
+import { openStatus, YARD_FOR, lineNo, two, quoteHref } from './components.mjs';
 import { CATEGORIES, BRANDS } from '../data/products.mjs';
 
 const NAV = [
   { href: 'products/', label: 'Products', menu: true },
   { href: 'services/', label: 'Services' },
-  { href: 'alaska/', label: 'Alaska delivery' },
+  { href: 'alaska/', label: 'Alaska delivery', tight: 'Alaska' },
+  { href: 'pacific-northwest/', label: 'Pacific Northwest', tight: 'Pacific NW' },
   { href: 'projects/', label: 'Projects' },
   { href: 'locations/', label: 'Locations' },
   { href: 'about/', label: 'About' },
@@ -26,6 +27,8 @@ const brand = (ctx, { cls = '' } = {}) => html`
   </a>`;
 
 const isCurrent = (ctx, href) => (href === '' ? ctx.path === '' : ctx.path.startsWith(href));
+// A quote started from a region's page starts with that region's yard.
+const quoteLink = (ctx) => quoteHref(ctx, { yard: ctx.path.startsWith('alaska/') ? 'anchorage' : ctx.path.startsWith('pacific-northwest/') ? 'kent' : undefined });
 
 // The Products menu is the manifest in miniature: nine numbered lines, each with its drawing.
 const productMenu = (ctx) => html`
@@ -53,7 +56,7 @@ const header = (ctx) => html`
       <ul class="utility__yards">
         ${LOCATIONS.map((l) => html`<li>
           <a href="${tel(l.phone)}"><span class="utility__city">${l.city}</span> <span class="utility__num">${l.phone}</span></a>
-          <span class="utility__time js-only" data-clock="${l.hours.tz}" aria-hidden="true">--:--</span>
+          ${l.hours ? html`<span class="utility__time js-only" data-clock="${l.hours.tz}" aria-hidden="true">--:--</span>` : ''}
           ${openStatus(l)}
         </li>`)}
       </ul>
@@ -69,14 +72,14 @@ const header = (ctx) => html`
       <nav class="nav" aria-label="Main">
         <ul class="nav__list">
           ${NAV.map((n) => html`<li class="${n.menu ? 'nav__item nav__item--menu' : 'nav__item'}">
-            <a class="nav__link" href="${ctx.u(n.href)}"${raw(isCurrent(ctx, n.href) ? ' aria-current="page"' : '')}>${n.label}${n.menu ? icon('chevron-down', { size: 14, cls: 'nav__caret' }) : ''}</a>
+            <a class="nav__link" href="${ctx.u(n.href)}"${raw(isCurrent(ctx, n.href) ? ' aria-current="page"' : '')}>${n.tight ? html`<span class="nav__long">${n.label}</span><span class="nav__tight">${n.tight}</span>` : n.label}${n.menu ? icon('chevron-down', { size: 14, cls: 'nav__caret' }) : ''}</a>
             ${n.menu ? productMenu(ctx) : ''}
           </li>`)}
         </ul>
       </nav>
       <div class="masthead__acts">
         <a class="btn btn--sm btn--line masthead__call" href="${ctx.u('locations/')}" data-open="call-sheet" aria-haspopup="dialog">${icon('phone', { size: 16 })}<span>Call<span class="mh-long"> a yard</span></span></a>
-        <a class="btn btn--sm masthead__cta" href="${ctx.u('quote/')}"><span><span class="mh-long">Request a </span>quote</span>${icon('arrow', { size: 16 })}</a>
+        <a class="btn btn--sm masthead__cta" href="${quoteLink(ctx)}"><span><span class="mh-long">Request a </span>quote</span>${icon('arrow', { size: 16 })}</a>
         <a class="masthead__menu" href="#index" data-open="drawer" aria-haspopup="dialog" aria-controls="drawer">
           <span>Menu</span>${icon('menu', { size: 20 })}
         </a>
@@ -99,12 +102,11 @@ const header = (ctx) => html`
         </details></li>` : html`<li><a href="${ctx.u(n.href)}"${raw(isCurrent(ctx, n.href) ? ' aria-current="page"' : '')}><span class="num">${two(i)}</span>${n.label}${icon('arrow', { size: 20 })}</a></li>`)}
       </ol>
       <ul class="drawer__minor">
-        <li><a href="${ctx.u('pacific-northwest/')}">Pacific Northwest</a></li>
         <li><a href="mailto:${SITE.email}">${SITE.email}</a></li>
       </ul>
     </nav>
     <div class="drawer__cta">
-      <a class="btn btn--block" href="${ctx.u('quote/')}">Request a quote ${icon('arrow', { size: 18 })}</a>
+      <a class="btn btn--block" href="${quoteLink(ctx)}">Request a quote ${icon('arrow', { size: 18 })}</a>
       <a class="btn btn--block btn--line" href="${ctx.u('accounts/')}">Open an account</a>
     </div>
     <ul class="drawer__yards">
@@ -147,7 +149,7 @@ const actionBar = (ctx) => html`
   <div class="actionbar" role="region" aria-label="Quick actions">
     <a class="actionbar__btn" href="${ctx.u('locations/')}" data-open="call-sheet" aria-haspopup="dialog">${icon('phone', { size: 20 })}Call</a>
     <a class="actionbar__btn" href="${ctx.u('locations/')}" data-open="call-sheet" aria-haspopup="dialog">${icon('directions', { size: 20 })}Directions</a>
-    <a class="actionbar__btn actionbar__btn--primary" href="${ctx.u('quote/')}">${icon('file', { size: 20 })}Quote</a>
+    <a class="actionbar__btn actionbar__btn--primary" href="${quoteLink(ctx)}">${icon('file', { size: 20 })}Quote</a>
   </div>`;
 
 // The footer is the sheet's title block: firm, yards, index, sheet name.
@@ -162,18 +164,19 @@ const footer = (ctx, title) => html`
         </div>
         <div class="tb__cell tb__cta">
           <p class="label">Start here</p>
-          <a class="btn" href="${ctx.u('quote/')}">Request a quote ${icon('arrow', { size: 18 })}</a>
+          <a class="btn" href="${quoteLink(ctx)}">Request a quote ${icon('arrow', { size: 18 })}</a>
           <a class="btn btn--line" href="${ctx.u('accounts/')}">Open an account</a>
         </div>
         ${LOCATIONS.map((l, i) => html`
           <div class="tb__cell tb__yard">
-            <h3 class="label">Yard ${two(i)} · ${l.city}, ${l.state}</h3>
+            <h3 class="label"><span class="tb__ref">Yard ${two(i)} · </span>${l.city}, ${l.state}</h3>
             <a class="tb__phone num" href="${tel(l.phone)}">${l.phone}</a>
-            ${l.tollFree ? html`<a class="num" href="${tel(l.tollFree)}">${l.tollFree} <small>toll-free</small></a>` : ''}
-            <address>${l.street}<br>${l.city}, ${l.state} ${l.zip}</address>
-            <a href="mailto:${l.email}">${l.email}</a>
-            ${l.fax ? html`<span class="tb__fax">Fax <span class="num">${l.fax}</span></span>` : ''}
+            ${l.tollFree ? html`<a class="num tb__extra" href="${tel(l.tollFree)}">${l.tollFree} <small>toll-free</small></a>` : ''}
+            <address class="tb__extra">${l.street}<br>${l.city}, ${l.state} ${l.zip}</address>
+            <a class="tb__extra" href="mailto:${l.email}">${l.email}</a>
+            ${l.fax ? html`<span class="tb__fax tb__extra">Fax <span class="num">${l.fax}</span></span>` : ''}
             ${openStatus(l)}
+            <a class="tb__more" href="${ctx.u('locations/')}#${l.id}">Address, email, fax<span class="sr-only"> for the ${l.city} yard</span></a>
           </div>`)}
         <nav class="tb__cell tb__index" id="index" aria-label="Footer">
           <h3 class="label">Index</h3>
@@ -194,7 +197,7 @@ const footer = (ctx, title) => html`
           <span>Serving the Pacific Northwest and all of Alaska.</span>
         </div>
         <div class="tb__cell tb__stamp"><span class="label">Sheet</span><b>${sheetName(ctx, title)}</b></div>
-        <div class="tb__cell tb__stamp"><span class="label">Yards</span><b class="num">03</b></div>
+        <div class="tb__cell tb__stamp"><span class="label">Yards</span><b class="num">${String(LOCATIONS.length).padStart(2, '0')}</b></div>
       </div>
     </div>
   </footer>`;

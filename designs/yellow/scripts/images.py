@@ -6,6 +6,7 @@ which the page templates read for widths, dimensions, alt text and focal points.
 
     python3 scripts/images.py            # build anything missing
     python3 scripts/images.py --force    # rebuild everything
+    python3 scripts/images.py --only a,b # rebuild those keys (after changing a crop or focal)
 """
 import json, sys, urllib.request
 from pathlib import Path
@@ -49,11 +50,12 @@ def crop_portrait(im, focal):
     return im.crop((left, top, left + cw, top + ch))
 
 
-def main(force=False):
+def main(force=False, only=()):
     photos = {k: v for k, v in json.loads(MANIFEST.read_text()).items() if not k.startswith('_')}
     OUT.mkdir(parents=True, exist_ok=True)
     out = {}
     for key, spec in photos.items():
+        redo = force or key in only
         alias = spec['src'][1:] if spec['src'].startswith('@') else None
         base = photos[alias] if alias else spec
         im = Image.open(source(alias or key, base))
@@ -69,7 +71,7 @@ def main(force=False):
             widths.append(im.width)
         for w in widths:
             dest = OUT / f'{key}-{w}.webp'
-            if force or not dest.exists():
+            if redo or not dest.exists():
                 h = round(im.height * w / im.width)
                 im.resize((w, h), Image.LANCZOS).save(dest, 'WEBP', quality=QUALITY, method=6)
         portrait, pw, ph = [], None, None
@@ -81,7 +83,7 @@ def main(force=False):
                 portrait.append(pw)
             for w in portrait:
                 dest = OUT / f'{key}-p-{w}.webp'
-                if force or not dest.exists():
+                if redo or not dest.exists():
                     crop_im.resize((w, round(ph * w / pw)), Image.LANCZOS).save(dest, 'WEBP', quality=QUALITY, method=6)
         out[key] = {
             'widths': widths,
@@ -122,4 +124,5 @@ def main(force=False):
 
 
 if __name__ == '__main__':
-    main(force='--force' in sys.argv)
+    args = sys.argv[1:]
+    main(force='--force' in args, only=set(args[args.index('--only') + 1].split(',')) if '--only' in args else set())

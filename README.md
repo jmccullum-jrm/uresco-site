@@ -27,8 +27,6 @@ Open the preview and use the bar across the top:
 - `"featured"` is the design that loads first.
 - `"hide"` lists designs to leave out, for example `["boreal"]` to narrow the choice to three. With only one
   left, the chooser goes away and that design becomes the whole site.
-- `"finished"` lists the pages that are done in every design; on any other page the bar says "Draft page".
-  Remove it once every page is finished.
 
 The preview is the `docs/` folder of this branch. To serve it from GitHub Pages: repository **Settings → Pages →
 Build and deployment → Branch**, choose this branch and the `/docs` folder.
@@ -72,12 +70,23 @@ npm run serve        # http://localhost:8080
 
 ## Still needed from Uresco
 
-The designs use only facts from the current uresco.com. These are placeholders or open questions:
+The designs state only what the current uresco.com says. These are placeholders or open questions, and each one changes
+some wording on the site:
 
-- **Yard hours.** Monday to Friday, 7:00 to 4:30 is a placeholder; it drives the open/closed indicators.
-- **Photographs.** Most photos are stock (credited in each design's `PHOTO-CREDITS.md`) and are never captioned
-  as Uresco's own. Real photos of the yards, trucks, loads and finished projects would improve every design.
-- **Projects.** No real project list was supplied, so the projects pages describe kinds of work only.
+- **Credit application.** Is there a real Uresco form? Please supply or confirm its fields and the wording for the
+  certification, any authorization to check references and credit, and the signature. It now says only "I certify the
+  information above is true."
+- **Contractor accounts.** What does an account include (limits, terms, statements, authorized buyers), and does it work at
+  all three yards? Until then the site says "Ask your yard."
+- **Form service.** Until one is connected, quote requests and credit applications go through the visitor's own email app,
+  so plans are attached by hand. It must be suitable for tax IDs and bank details, which is why most designs keep those out
+  of the email.
+- **Yard hours and closed days.** Monday to Friday, 7:00 to 4:30 is a placeholder. It appears on the Locations page and
+  drives the open/closed indicators, which hide on federal holidays until closed days are supplied.
+- **Remote northern places.** Which yard should Nome, Kotzebue, Galena, Fort Yukon, Point Hope, Wainwright, Utqiaġvik and
+  Kaktovik call?
+- **What the yards do.** Are boom truck and Moffett deliveries run from Kent specifically? Does Uresco band or wrap loads,
+  and can customers pick up at a yard?
+- **Photographs and projects.** Most photos are stock (credited in each design's `PHOTO-CREDITS.md`) and are never captioned
+  as Uresco's own. Real photos of the yards, trucks and loads, and a real project list, would improve every design.
 - **Phone and fax details.** Confirm the Anchorage toll-free number (800 or 888) and the Kent fax number.
-- **Credit terms** for the contractor account application.
-- **Where the quote form should send.** Until a form service is set up, it opens a pre-filled email.

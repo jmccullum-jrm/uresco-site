@@ -27,6 +27,10 @@
     let bag = new DataTransfer();
 
     const yardSel = $('select[name=yard]', form);
+    // A yard's id lives on its <option>; the option's value stays the name people read.
+    const yardId = () => yardSel?.selectedOptions[0]?.dataset.id || '';
+    const yardOf = (id) => (yardSel ? $$('option', yardSel).find((o) => o.dataset.id === id) : null);
+    const yardName = (id) => yardOf(id)?.value || '';
     const placeField = $('input[name=location]', form);
     const materials = $('textarea[name=materials]', form);
     // Once a yard or a delivery has been picked (by hand or by the link that brought them here) the form never changes it.
@@ -35,13 +39,18 @@
 
     const draftText = $('[data-draft-text]', form);
     const draftClear = $('[data-draft-clear]', form);
-    const draftSays = (t) => { if (draftText) draftText.textContent = t; if (draftClear) draftClear.hidden = false; };
+    const draftUndo = $('[data-draft-undo]', form);
+    const draftSays = (t) => { if (draftText) draftText.textContent = t + (lost.length ? ' Your files need attaching again.' : ''); if (draftClear) draftClear.hidden = false; };
+    // Names of files a restored draft had attached. A file itself cannot be kept in a draft, so the visitor is told.
+    let lost = [];
 
     // Drafts: a request half-typed on a job site survives a dropped signal or a closed tab.
     const fields = () => $$('input, select, textarea', form).filter((el) => el.name && el.type !== 'file' && el.type !== 'hidden');
     const typed = () => fields().some((el) => el.matches('input:not([type=radio],[type=checkbox]), textarea') && el.value.trim());
     // Tax IDs, bank details and signatures are never left behind on a shared computer.
     const PRIVATE = /^(ein|bank|bank_contact|signature|signed|agree)$/;
+    // Ordinary email is not private: without a form service these stay out of the message and go by phone or on paper.
+    const HELD = /^(ein|bank|bank_contact)$/;
     const save = () => {
       const d = {};
       fields().filter((el) => !PRIVATE.test(el.name)).forEach((el) => {
@@ -49,10 +58,16 @@
       });
       if (yardPicked) d._yard = true;
       if (deliveryPicked) d._delivery = true;
+      if (location.search) d._q = location.search;
+      const names = [...Array.from(bag.files).map((f) => f.name), ...lost];
+      if (names.length) d._files = names;
       try { localStorage.setItem(DRAFT, JSON.stringify(d)); if (typed()) draftSays('Draft saved on this device.'); } catch { /* private mode */ }
     };
+    // The link's values go in once. A draft saved under the same link already holds them, plus anything changed since.
+    let linkApplied = false;
     try {
-      const d = JSON.parse(localStorage.getItem(DRAFT) || 'null');
+      // sessionStorage holds the copy kept after the hand-off to email (see finish).
+      const d = JSON.parse(localStorage.getItem(DRAFT) || sessionStorage.getItem(DRAFT) || 'null');
       if (d) {
         fields().forEach((el) => {
           if (!(el.name in d)) return;
@@ -60,6 +75,8 @@
         });
         yardPicked = !!d._yard;
         deliveryPicked = !!d._delivery;
+        lost = Array.isArray(d._files) ? d._files : [];
+        linkApplied = !!location.search && d._q === location.search;
         if (typed()) draftSays('Draft picked up from this device.');
       }
     } catch { /* ignore */ }
@@ -68,16 +85,20 @@
 
     // What the visitor was looking at when they followed the link here.
     const prefill = () => {
-      // Arriving from a product page: start the materials list with that line.
+      // Arriving from a product page: add that line, or each picked line, to the materials list.
       const product = query.get('product');
-      if (product && materials && !materials.value) materials.value = product + ':\n';
+      if (product && materials) {
+        const have = materials.value;
+        const fresh = product.split('\n').map((l) => l.trim()).filter((l) => l && !have.includes(l)).map((l) => l + ':');
+        if (fresh.length) materials.value = (have.trim() ? have.trimEnd() + '\n' : '') + fresh.join('\n') + '\n';
+      }
       const yardParam = (query.get('yard') || '').toLowerCase();
-      if (yardParam && yardSel) $$('option', yardSel).forEach((o) => { if (o.value.toLowerCase() === yardParam) { yardSel.value = o.value; yardPicked = true; } });
+      if (yardOf(yardParam)) { yardSel.value = yardOf(yardParam).value; yardPicked = true; }
       // Arriving from the finder: the place is already known.
       const placeParam = query.get('location');
       if (placeParam && placeField) placeField.value = placeParam.slice(0, 80);
     };
-    prefill();
+    if (!linkApplied) prefill();
 
     /* ---- The side panel: answers the place, names the yard, keeps count ---- */
     const yardHint = $('#yard-hint', form);
@@ -90,7 +111,6 @@
       Object.entries(geo.aliases).forEach(([alias, name]) => index.set(fold(alias), places.find((p) => p.name === name)));
     }
     const lookup = (v) => index.get(fold(v.split(',')[0]).replace(/\s+(ak|alaska|wa|washington)$/, '')) || null;
-    const cityOf = (id) => id && id[0].toUpperCase() + id.slice(1);
 
     const slipMap = $('[data-slip-map]');
     const arc = slipMap && $('[data-arc]', slipMap);
@@ -112,13 +132,13 @@
       });
     };
     if (slipMap && 'ResizeObserver' in window) new ResizeObserver(placeLabels).observe(slipMap);
-    const paintMap = (p, yardId) => {
+    const paintMap = (p, yard) => {
       if (!slipMap) return;
-      $$('[data-map-yard]', slipMap).forEach((g) => g.classList.toggle('is-on', g.dataset.mapYard === yardId));
-      const home = $(`[data-map-yard="${yardId}"]`, slipMap);
-      labels.yard = home && { text: cityOf(yardId), xy: geo.yards[yardId], west: home.dataset.side === 'w' };
-      const d = p && geo.yards[yardId] ? arcPath(geo.yards[yardId], p.xy) : '';
-      labels.dest = d ? { text: p.name, xy: p.xy, west: p.xy[0] < geo.yards[yardId][0] } : null;
+      $$('[data-map-yard]', slipMap).forEach((g) => g.classList.toggle('is-on', g.dataset.mapYard === yard));
+      const home = $(`[data-map-yard="${yard}"]`, slipMap);
+      labels.yard = home && { text: yardName(yard), xy: geo.yards[yard], west: home.dataset.side === 'w' };
+      const d = p && geo.yards[yard] ? arcPath(geo.yards[yard], p.xy) : '';
+      labels.dest = d ? { text: p.name, xy: p.xy, west: p.xy[0] < geo.yards[yard][0] } : null;
       placeLabels();
       if (!d) {
         dest.setAttribute('visibility', 'hidden'); arc.setAttribute('visibility', 'hidden');
@@ -137,30 +157,35 @@
       if (!geo || !placeField) return;
       const text = placeField.value.trim();
       const p = text ? lookup(text) : null;
-      if (p && !yardPicked && yardSel.value !== cityOf(p.yard)) yardSel.value = cityOf(p.yard);
+      if (p && !yardPicked && yardId() !== p.yard && yardOf(p.yard)) yardSel.value = yardOf(p.yard).value;
       // A known place off the road system starts on remote shipping; anywhere else on job-site delivery.
       if (p && !deliveryPicked) {
         const want = p.access === 'coastal' || p.access === 'seasonal' ? 'Remote Alaska shipping' : 'Job-site delivery';
         $$('input[name=delivery]', form).forEach((r) => { r.checked = r.value === want; });
       }
       if (yardHint) yardHint.textContent = p && !yardPicked ? `Picked for ${p.name}. Change it if you work with another yard.` : yardHintDefault;
-      const yardId = yardSel.value.toLowerCase();
+      const yard = yardId();
       const acc = p && geo.access[p.access];
-      // Say what the link carried over, on the first screen.
-      if (carried && query.get('location')) { carried.hidden = !text; carried.textContent = `Quote for ${text} · ${cityOf(yardId)} yard`; }
+      // Say what the link carried over (product, place, yard) on the first screen.
+      if (carried) {
+        const what = [query.get('product')?.replace(/\n+/g, '; '), query.get('location') && text].filter(Boolean).join(' · ');
+        const from = (query.get('yard') || (query.get('location') && text)) && yardName(yard) ? `${yardName(yard)} yard` : '';
+        carried.hidden = !(what || from);
+        carried.textContent = what ? `Quote for ${what}${from ? ' · ' + from : ''}` : `Quote for the ${from}`;
+      }
       put('place', p ? `${p.name}, ${geo.states[p.st]}` : text || 'Where is the job?');
-      put('meta', p ? `${p.region} · ${acc.tag}` : text ? 'Not on our short list, which does not mean we cannot get there. A yard will work out the route.' : 'Add the project location and this fills in.');
+      put('meta', p ? `${p.region} · ${acc.tag}` : text ? 'Not on our short list, which does not mean we cannot get there. We will work out the freight with you.' : 'Add the project location and this fills in.');
       $$('[data-s-modes]').forEach((el) => el.classList.toggle('is-empty', !acc));
       $$('[data-ic]').forEach((el) => { const [i, k] = el.dataset.ic.split('-'); el.hidden = !(acc && acc.modes[i]?.[0] === k); });
-      [0, 1].forEach((i) => put('m' + i, acc && acc.modes[i] ? acc.modes[i][1].replace('{yard}', cityOf(yardId)) : ''));
-      paintMap(p, yardId);
+      [0, 1].forEach((i) => put('m' + i, acc && acc.modes[i] ? acc.modes[i][1].replace('{yard}', yardName(yard)) : ''));
+      paintMap(p, yard);
     };
 
     const live = $('[data-live]', form);
     let lastYard = '';
     const paintYard = () => {
       if (!yardSel) return;
-      const id = yardSel.value.toLowerCase();
+      const id = yardId();
       $$('[data-y]').forEach((el) => { el.hidden = el.dataset.y !== id; });
       if (live && lastYard && lastYard !== id) live.textContent = `${yardSel.value} will answer this.`;
       lastYard = id;
@@ -193,8 +218,9 @@
       const delivery = $('input[name=delivery]:checked', form);
       if (delivery) put('delivery', delivery.value);
       const files = Array.from(bag.files);
-      const product = query.get('product');
-      put('attached', files.length ? (files.length === 1 ? files[0].name : `${files.length} files attached`) : product || (materials && materials.value.trim() ? 'Listed in the request' : 'Nothing attached yet'));
+      // The row reads the materials box, so it can never disagree with it.
+      const listed = materials ? materials.value.split('\n').map((l) => l.trim()).filter(Boolean) : [];
+      put('attached', files.length ? (files.length === 1 ? files[0].name : `${files.length} files attached`) : listed.length ? listed[0].replace(/:$/, '') + (listed.length > 1 ? ' and more' : '') : 'Nothing attached yet');
     };
 
     const paint = () => { paintPlace(); paintYard(); paintProgress(); paintDetails(); };
@@ -221,16 +247,31 @@
         rm.addEventListener('click', () => {
           const next = new DataTransfer();
           Array.from(bag.files).forEach((g, j) => { if (j !== i) next.items.add(g); });
-          bag = next; input.files = bag.files; render(); paint();
+          bag = next; input.files = bag.files; render(); paint(); save();
+          // Focus stays with the list: on the next file's Remove button, or back on the picker when none are left.
+          const left = $$('button', list);
+          (left[i] || left[left.length - 1] || input).focus();
         });
         li.append(name, meta, rm);
         list.append(li);
       });
     };
+    const lostNote = $('[data-files-lost]', form);
+    const paintLost = () => {
+      if (!lostNote) return;
+      lostNote.hidden = !lost.length;
+      lostNote.textContent = lost.length ? `You had attached ${lost.join(', ')}. Choose ${lost.length > 1 ? 'them' : 'it'} again: files cannot be kept in a draft.` : '';
+    };
     const add = (files) => {
       const tooBig = [];
-      Array.from(files).forEach((f) => (f.size > MAX ? tooBig.push(f.name) : bag.items.add(f)));
+      const held = Array.from(bag.files);
+      Array.from(files).forEach((f) => {
+        if (f.size > MAX) tooBig.push(f.name);
+        else if (!held.some((g) => g.name === f.name && g.size === f.size)) { bag.items.add(f); held.push(f); }
+      });
       input.files = bag.files;
+      lost = lost.filter((n) => !held.some((g) => g.name === n));
+      paintLost();
       render();
       const note = $('[data-file-err]', form);
       note.hidden = !tooBig.length;
@@ -238,7 +279,8 @@
       paint();
     };
     if (input && drop) {
-      input.addEventListener('change', () => { const f = Array.from(input.files); bag = new DataTransfer(); add(f); });
+      // A new choice adds to the list, as a drop does; the list keeps what is already on it.
+      input.addEventListener('change', () => add(Array.from(input.files)));
       ['dragenter', 'dragover'].forEach((t) => drop.addEventListener(t, (e) => { e.preventDefault(); drop.classList.add('is-over'); }));
       ['dragleave', 'drop'].forEach((t) => drop.addEventListener(t, (e) => { e.preventDefault(); drop.classList.remove('is-over'); }));
       drop.addEventListener('drop', (e) => add(e.dataTransfer.files));
@@ -275,20 +317,42 @@
     })));
 
     // Start over: forget the draft, the files and any errors, but keep what the link brought with it.
-    if (draftClear) draftClear.addEventListener('click', () => {
-      try { localStorage.removeItem(DRAFT); } catch { /* ignore */ }
-      form.reset();
-      bag = new DataTransfer(); if (input) { input.files = bag.files; render(); }
-      yardPicked = false; deliveryPicked = false;
-      prefill();
+    // One stray tap must not cost a whole application, so Undo is offered until the visitor starts typing again.
+    // The snapshot lives in this page's memory only.
+    let undo = null;
+    const offerUndo = (on) => { if (draftUndo) draftUndo.hidden = !on; };
+    const clearMarks = () => {
       $$('[aria-invalid]', form).forEach((el) => { el.removeAttribute('aria-invalid'); });
       $$('.err', form).forEach((el) => { el.hidden = true; el.textContent = ''; });
       if (leftLine) leftLine.dataset.hold = '';
-      draftText.textContent = 'Saved on this device as you type.';
+    };
+    if (draftClear) draftClear.addEventListener('click', () => {
+      undo = { values: fields().map((el) => [el, el.type === 'radio' || el.type === 'checkbox' ? el.checked : el.value]), bag, lost, yardPicked, deliveryPicked };
+      try { localStorage.removeItem(DRAFT); sessionStorage.removeItem(DRAFT); } catch { /* ignore */ }
+      form.reset();
+      lost = [];
+      bag = new DataTransfer(); if (input) { input.files = bag.files; render(); paintLost(); }
+      yardPicked = false; deliveryPicked = false;
+      prefill();
+      clearMarks();
+      draftText.textContent = 'Form cleared.';
       draftClear.hidden = true;
       paint();
-      $('input, select, textarea', form).focus();
+      offerUndo(true);
+      (draftUndo || $('input, select, textarea', form)).focus();
     });
+    if (draftUndo) draftUndo.addEventListener('click', () => {
+      undo.values.forEach(([el, v]) => { if (el.type === 'radio' || el.type === 'checkbox') el.checked = v; else el.value = v; });
+      bag = undo.bag; lost = undo.lost; yardPicked = undo.yardPicked; deliveryPicked = undo.deliveryPicked; undo = null;
+      if (input) { input.files = bag.files; render(); paintLost(); }
+      offerUndo(false);
+      save();
+      if (typed()) draftSays('Draft saved on this device.');
+      draftClear.hidden = false;
+      paint();
+      draftClear.focus();
+    });
+    form.addEventListener('input', () => { if (undo) { undo = null; offerUndo(false); } });
 
     // Plain-text summary of everything filled in, labelled as on screen, for the email fallback.
     const summary = () => {
@@ -296,7 +360,7 @@
       $$('fieldset', form).forEach((fs) => {
         const legend = fs.querySelector('legend')?.textContent.replace(/^\d+/, '').trim();
         const rows = [];
-        fields().filter((el) => fs.contains(el)).forEach((el) => {
+        fields().filter((el) => fs.contains(el) && !HELD.test(el.name)).forEach((el) => {
           if (el.type === 'radio' && !el.checked) return;
           if (el.type === 'checkbox' && el.closest('.seg')) { if (el.checked) rows.push(['', '• ' + el.value]); return; }
           const label = el.dataset.label || (el.type === 'radio' ? $('#' + el.name + '-label', form) : form.querySelector(`label[for="${el.id}"]`))?.childNodes[0]?.textContent.trim() || el.name;
@@ -305,9 +369,11 @@
         });
         if (rows.length) out.push('', `— ${legend.toUpperCase()} —`, ...rows.map(([k, v]) => (k ? `${k}: ${v}` : v)));
       });
-      const names = Array.from(bag.files).map((f) => f.name);
+      const held = fields().some((el) => HELD.test(el.name) && el.value.trim());
+      if (held) out.push('', 'TAX ID AND BANK DETAILS: left out of this email. I will give them to the yard by phone or on a printed copy.');
+      const names = [...Array.from(bag.files).map((f) => f.name), ...lost];
       if (names.length) out.push('', 'FILES TO ATTACH: ' + names.join(', '));
-      return { text: out.join('\n').trim(), files: names };
+      return { text: out.join('\n').trim(), files: names, held };
     };
 
     form.addEventListener('submit', async (e) => {
@@ -322,8 +388,15 @@
       const endpoint = form.dataset.endpoint;
       if (failed) failed.hidden = true;
 
-      const finish = () => {
-        try { localStorage.removeItem(DRAFT); } catch { /* ignore */ }
+      // handedOff: the email app was asked to send, and nobody knows yet whether it did. The saved draft leaves this
+      // browser's long-term storage, but this tab keeps a copy (still without the private fields) until it closes,
+      // so a reload or a mail app that never opened costs nothing.
+      const finish = (handedOff) => {
+        try {
+          if (handedOff) { save(); sessionStorage.setItem(DRAFT, localStorage.getItem(DRAFT)); } else sessionStorage.removeItem(DRAFT);
+          localStorage.removeItem(DRAFT);
+          if (kind === 'quote') sessionStorage.removeItem('uresco.picks');
+        } catch { /* ignore */ }
         form.hidden = true; done.hidden = false; done.focus();
         window.scrollTo({ top: done.getBoundingClientRect().top + window.scrollY - 120 });
       };
@@ -343,22 +416,47 @@
       }
 
       // No form service configured yet: hand the request to the visitor's email app.
-      const { text, files } = summary();
+      const { text, files, held } = summary();
       const subject = `${form.dataset.subject} — ${data.get('company') || data.get('name')}${data.get('location') ? ' — ' + data.get('location') : ''}`;
-      const mail = `mailto:${to}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(text)}`;
-      window.location.href = mail;
-      const note = $('[data-mail-note]', done);
-      if (note) note.hidden = !files.length;
-      $('[data-mail-to]', done).textContent = to;
+      const link = (body) => `mailto:${to}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+      // Mail apps cut off or refuse very long links. A long request is copied and pasted instead of being trimmed.
+      const long = link(text).length > 1800;
+      const mail = long ? link('The details are too long for an email link, so they are pasted below.\n\n') : link(text);
+      if (!long) window.location.href = mail;
+      $$('[data-mail-note]', done).forEach((n) => { n.hidden = !files.length; });
+      $$('[data-mail-held]', done).forEach((n) => { n.hidden = !held; });
+      $$('[data-mail-to]', done).forEach((n) => { n.textContent = to; });
+      $$('[data-mail-short]', done).forEach((n) => { n.hidden = long; });
+      $$('[data-mail-long]', done).forEach((n) => { n.hidden = !long; });
       // Not everyone has an email app set up: they can try again, or paste the text into webmail.
       const again = $('[data-mail-again]', done);
-      if (again) again.href = mail;
       const copy = $('[data-copy]', done);
-      if (copy) copy.onclick = async () => {
+      if (again) {
+        again.href = mail;
+        again.classList.toggle('btn--line', long);
+        $('[data-again-label]', again).textContent = long ? 'Open the email' : 'Open the email again';
+      }
+      if (copy) {
+        copy.classList.toggle('btn--line', !long);
+        if (long && again) copy.after(again);
         const label = $('[data-copy-label]', copy);
-        try { await navigator.clipboard.writeText(`To: ${to}\nSubject: ${subject}\n\n${text}`); label.textContent = 'Copied'; } catch { label.textContent = 'Could not copy. Please call the yard.'; }
-      };
-      finish();
+        label.textContent = long ? 'Copy the details' : 'Copy it instead';
+        copy.onclick = async () => {
+          try { await navigator.clipboard.writeText(`To: ${to}\nSubject: ${subject}\n\n${text}`); label.textContent = 'Copied'; } catch { label.textContent = 'Could not copy. Please call the yard.'; }
+        };
+      }
+      finish(true);
+    });
+
+    // Back from the notice with everything as it was, if the email never opened or something needs changing.
+    const back = $('[data-back]', host);
+    if (back) back.addEventListener('click', () => {
+      done.hidden = true; form.hidden = false;
+      save();
+      try { sessionStorage.removeItem(DRAFT); } catch { /* ignore */ }
+      form.tabIndex = -1;
+      form.focus({ preventScroll: true });
+      window.scrollTo({ top: form.getBoundingClientRect().top + window.scrollY - 120 });
     });
 
     // Paper: a blank form prints blank; one that has been started prints what has been entered.
@@ -370,6 +468,7 @@
     });
     window.addEventListener('afterprint', () => form.classList.remove('is-filled'));
 
+    paintLost();
     paint();
   });
 })();

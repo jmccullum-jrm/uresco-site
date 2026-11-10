@@ -2,10 +2,9 @@ import { html, raw } from '../lib/html.mjs';
 import { icon } from '../lib/icons.mjs';
 import { layout } from '../lib/layout.mjs';
 import { picture, preloadFor, sectionHead, pageHero, quoteBand, yardCard, mapPlate, openStatus, callLink } from '../lib/components.mjs';
-import { LOCATIONS, byId, tel } from '../data/locations.mjs';
+import { LOCATIONS, tel } from '../data/locations.mjs';
 import { SITE } from '../config.mjs';
 
-const kent = byId('kent'), anchorage = byId('anchorage'), fairbanks = byId('fairbanks');
 
 // The company on one sheet, the way a purchasing department would write it down.
 // Every line is from FACTS.md or src/data.
@@ -22,8 +21,8 @@ const SHEET = (ctx) => [
   ['Specialty', 'Remote location delivery, from Sitka to Utqiaġvik'],
 ];
 
-// The mission, a line at a time, with what it comes to on a job.
-const PROMISES = [
+// The mission, a line at a time, with what it means on a job.
+const MISSION = [
   {
     line: 'A trusted, dependable source of <em>quality construction materials.</em>',
     proof: 'Nine product lines, framing lumber to roofing, including James Hardie, CertainTeed, Simpson Strong-Tie, Georgia-Pacific DensGlass and Parallam.',
@@ -36,7 +35,7 @@ const PROMISES = [
   },
   {
     line: 'Professional, <em>prompt service.</em>',
-    proof: 'Job-site delivery by Moffett fork unload and boom truck. Crating and packaging, shipping coordination, dock delivery and rural Alaska delivery when the job is off the road.',
+    proof: 'Job-site delivery by boom truck and truck-mounted Moffett forklift. Crating and packaging, shipping coordination, dock delivery and rural Alaska delivery when the job is off the road.',
     link: ['services/', 'All six services'],
   },
 ];
@@ -91,9 +90,9 @@ ${pageHero(ctx, {
 
 <section class="section section--ice" aria-labelledby="ab-mission-title">
   <div class="wrap">
-    ${sectionHead({ eyebrow: 'The mission', title: 'What we promise, <em>and where to check it.</em>', lede: 'Our mission has three parts. Here is each one, and what it comes to on your job.', id: 'ab-mission-title' })}
+    ${sectionHead({ eyebrow: 'The mission', title: 'Our mission, <em>in three parts.</em>', lede: 'Here is each part, and what it means on your job.', id: 'ab-mission-title' })}
     <ol class="ab-promises">
-      ${PROMISES.map((p, i) => html`<li class="ab-promise reveal" style="--i:${i}">
+      ${MISSION.map((p, i) => html`<li class="ab-promise reveal" style="--i:${i}">
         <span class="ab-promise__no" aria-hidden="true">0${i + 1}</span>
         <h3 class="ab-promise__line">${raw(p.line)}</h3>
         <div class="ab-promise__proof">
@@ -110,14 +109,14 @@ ${pageHero(ctx, {
   <div class="ab-reach__card">
     <div class="ab-reach__head">
       <div>
-        <p class="eyebrow">The specialty</p>
-        <h2 class="h2" id="ab-reach-title">Remote delivery <em>is the specialty.</em></h2>
+        <p class="eyebrow">By latitude</p>
+        <h2 class="h2" id="ab-reach-title">Remote delivery, <em>from Sitka to Utqiaġvik.</em></h2>
       </div>
-      <p class="ab-reach__lede">Three yards on one line north. We specialize in remote location delivery, and delivery is available from Sitka to Utqiaġvik, anywhere in Alaska.</p>
+      <p class="ab-reach__lede">We specialize in remote location delivery, and delivery is available anywhere in Alaska.</p>
     </div>
     <div class="ab-ruler" role="group" aria-label="Uresco’s yards and delivery range, by latitude, south to north">
       <ol class="ab-ruler__yards">
-        ${[kent, anchorage, fairbanks].map((l, i) => html`<li class="ab-mark" style="--at:${along(l.geo.lat)};--i:${i}">
+        ${LOCATIONS.map((l, i) => html`<li class="ab-mark" style="--at:${along(l.geo.lat)};--i:${i}">
           <i class="ab-mark__dot" aria-hidden="true"></i>
           <span class="ab-mark__lat">${l.latShort}</span>
           <b class="ab-mark__name">${l.city}</b>

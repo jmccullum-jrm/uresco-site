@@ -70,6 +70,8 @@
 .answer__ic[hidden] { display: none; }
 .answer__yard { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .5rem 1rem; }
 .answer__yard[hidden] { display: none; }
+/* A remote place in the Interior or north of it lists both Alaska yards. */
+.answer__yards { display: grid; gap: .6rem; }
 .answer__city { display: flex; flex-wrap: wrap; align-items: baseline; gap: .15rem .8rem; font: 480 1.25rem/1.2 var(--serif); letter-spacing: -.008em; }
 .answer__call { min-height: 2.75rem; padding: .55rem 1rem; font-variant-numeric: tabular-nums; }
 .answer__else { padding: 0 0 1rem; color: var(--ink-2); }
@@ -152,6 +154,7 @@
 .region__places { grid-column: 1 / -1; font: 400 var(--t-label)/1.5 var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); }
 .region__how { grid-column: 1 / -1; color: var(--ink-2); font-size: .9375rem; line-height: 1.45; }
 .region__acts { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0 1rem; margin-top: .15rem; }
+.region__calls { display: grid; justify-items: start; }
 .region__call { display: inline-flex; align-items: center; gap: .45rem; min-height: 2.75rem; font-size: .9375rem; font-weight: 600; text-decoration: none; }
 .region__call b { font-weight: 600; font-variant-numeric: tabular-nums; text-decoration: underline; text-decoration-color: var(--yellow); text-decoration-thickness: 2px; text-underline-offset: .25em; }
 .region__call:hover b { text-decoration-color: var(--ink); }

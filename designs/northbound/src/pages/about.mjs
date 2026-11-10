@@ -37,9 +37,9 @@ const RINGS = (() => {
     `<path class="${i === N - 1 ? 'abt-ring abt-ring--open' : heavy(i) ? 'abt-ring abt-ring--h' : 'abt-ring'}" pathLength="1" style="--r:${i}" d="${d}"/>`).join('')}</svg>`);
 })();
 
-// Every line of the mission, and what stands behind it.
+// Every line of the mission, and what it means on a job.
 const PROMISES = [
-  { promise: 'A trusted, dependable source of quality construction materials.', backing: `Nine product lines, from framing lumber and engineered beams to siding, insulation, windows and fasteners, with brands including ${BRANDS.slice(0, 3).join(', ')}.`, link: ['See what we carry', 'products/'] },
+  { promise: 'A trusted, dependable source of quality construction materials.', backing: `Nine product lines, from framing lumber and engineered beams to siding, insulation, windows and fasteners, with brands including ${BRANDS.slice(0, 2).join(', ')} and ${BRANDS[2]}.`, link: ['See what we carry', 'products/'] },
   { promise: 'A knowledgeable, resourceful sales staff.', backing: 'Material take-offs, estimates and design services for your unique project needs. On a remote job, we work with you on all aspects of shipping coordination.', link: ['See the services', 'services/'] },
   { promise: 'Professional and prompt service.', backing: 'Dependable site delivery to job sites down the road or across an ocean: boom trucks and truck-mounted Moffett forklifts around the Puget Sound region, dock and rural delivery anywhere in Alaska.', link: ['How delivery works', 'services/#delivery'] },
 ];
@@ -57,23 +57,23 @@ const about = {
   render: (ctx) => layout(ctx, {
     title: 'About Uresco',
     description: `For more than ${SITE.years} years, Uresco Construction Materials has been a trusted source for quality building materials throughout the Pacific Northwest and all of Alaska.`,
-    preload: [preloadFor(ctx, 'lumber-stack')],
+    preload: [preloadFor(ctx, 'timber-ends')],
     body: html`
 ${pageHero(ctx, {
   crumbs: [['About']],
   eyebrow: `About Uresco · More than ${SITE.years} years`,
   title: 'Who you are <em>buying from.</em>',
   lede: `Uresco Construction Materials is a wholesale dealer in building materials, with yards in Kent, Anchorage and Fairbanks. For more than ${SITE.years} years we have supplied builders across the Pacific Northwest and all of Alaska.`,
-  photoKey: 'lumber-stack',
-  caption: 'Ends of stacked dimensional lumber.',
-  pos: '50% 52%',
+  photoKey: 'timber-ends',
+  caption: 'Ends of pressure-treated timbers, stacked in a bundle.',
+  pos: '50% 16%',
   actions: html`<a class="btn" href="${ctx.u('quote/')}">Request a quote ${icon('arrow', { size: 18 })}</a>${callLink(ctx)}`,
 })}
 
 <section class="abt-stand" aria-label="What we do">
   <div class="wrap abt-stand__grid">
     <p class="label abt-stand__side">In short</p>
-    <p class="prologue__text rv">We sell building materials, wholesale, to institutional, commercial and residential builders across the Pacific Northwest and all of Alaska. Our specialty is the hard part: <em>a complete building package, delivered to a site with no road to it.</em></p>
+    <p class="prologue__text rv">We sell building materials, wholesale, to institutional, commercial and residential builders across the Pacific Northwest and all of Alaska. Our specialty is the hard part: <em>a complete building package, delivered to a site with no road&nbsp;to&nbsp;it.</em></p>
   </div>
 </section>
 
@@ -84,7 +84,7 @@ ${pageHero(ctx, {
       <p class="abt-rings__fig" aria-hidden="true"><span>${SITE.years}</span><sup>+</sup></p>
     </div>
     <div class="abt-years__text">
-      <p class="shead__bar rv-line"><span class="chead__no">01</span><span>On the record</span></p>
+      <p class="shead__bar rv-line"><span class="chead__no">01</span><span>Thirty-five years</span></p>
       <h2 class="h2 rv" id="years-title">Thirty-five rings <em>and counting.</em></h2>
       <p class="lede rv" style="--i:1">For more than ${SITE.years} years, Uresco has been a trusted source for quality building materials throughout the Pacific Northwest and all of Alaska, and is one of the largest independent building material suppliers serving Alaska and the Pacific Northwest.</p>
       <p class="abt-years__note rv" style="--i:2">Drawn with one ring for each of those years. The last ring is still open.</p>
@@ -95,26 +95,25 @@ ${pageHero(ctx, {
 <section class="section section--paper2 abt-sheet" aria-labelledby="sheet-title">
   <div class="wrap abt-sheet__grid">
     <div class="abt-sheet__intro">
-      <p class="shead__bar rv-line"><span class="chead__no">02</span><span>Company record</span></p>
+      <p class="shead__bar rv-line"><span class="chead__no">02</span><span>At a glance</span></p>
       <h2 class="h2 rv" id="sheet-title">The short version, <em>on one sheet.</em></h2>
-      <p class="lede rv" style="--i:1">For purchasing departments, and anyone checking who they are about to buy from.</p>
+      <p class="lede rv" style="--i:1">The basics, in one place.</p>
       <a class="link rv" style="--i:2" href="${ctx.u('accounts/')}">Open a contractor account ${icon('arrow', { size: 16 })}</a>
     </div>
     <div class="abt-form rv" style="--i:1">
       <div class="abt-form__head">
         <p class="label">Who we are</p>
-        <p class="label abt-form__no" aria-hidden="true">Company record</p>
       </div>
       <dl class="abt-form__rows">
         <div><dt>Name</dt><dd>${SITE.legal}</dd></div>
         <div><dt>Known as</dt><dd>Uresco, or UCM</dd></div>
         <div><dt>Business</dt><dd>Wholesale dealer in building materials</dd></div>
         <div><dt>Customers</dt><dd>Institutional, commercial and residential builders</dd></div>
-        <div><dt>In business</dt><dd>More than ${SITE.years} years</dd></div>
-        <div><dt>Standing</dt><dd>One of the largest independent building material suppliers serving Alaska and the Pacific Northwest</dd></div>
+        <div><dt>In business</dt><dd class="abt-form__plain">More than ${SITE.years} years</dd></div>
+        <div><dt>Size</dt><dd>One of the largest independent building material suppliers serving Alaska and the Pacific Northwest</dd></div>
         <div><dt>Yards</dt><dd class="abt-form__yards">${LOCATIONS.map((l) => html`<a href="${ctx.u('locations/')}#${l.id}">${l.city}, ${l.state}${l.id === 'kent' ? ' (headquarters)' : ''}</a>`)}</dd></div>
         <div><dt>Serves</dt><dd>The Pacific Northwest and all of Alaska, from Sitka to Utqiaġvik</dd></div>
-        <div><dt>Specialty</dt><dd>Remote location and export building packages</dd></div>
+        <div><dt>Specialty</dt><dd>Remote-location and export building packages</dd></div>
       </dl>
       <p class="abt-form__foot">${SITE.tagline}</p>
     </div>
@@ -123,7 +122,7 @@ ${pageHero(ctx, {
 
 <section class="section section--deep abt-mission" aria-labelledby="mission-title">
   <div class="wrap">
-    ${sectionHead({ no: '03', eyebrow: 'Our mission', id: 'mission-title', title: 'Three promises, <em>and what backs them up.</em>', lede: 'Our mission, line by line, and what each line means on a job.' })}
+    ${sectionHead({ no: '03', eyebrow: 'Mission', id: 'mission-title', title: 'Our mission, <em>line by line.</em>', lede: 'What each line means on a job.' })}
     <ol class="abt-promises">
       ${PROMISES.map((p, i) => html`<li class="abt-promise rv" style="--i:${i}">
         <span class="abt-promise__no" aria-hidden="true">${String(i + 1).padStart(2, '0')}</span>
@@ -220,8 +219,8 @@ const notFound = {
         </div>
       </div>
       <div class="lost__fix">
-        <p class="lost__deg" aria-hidden="true"><small>Your position</small><span>40.4</span><sup>°N</sup></p>
-        <p class="lost__note">That is well south of our first yard, at ${deg(LAT.kent)}.</p>
+        <p class="lost__deg" aria-hidden="true"><small>Not on the chart</small><span>40.4</span><sup>°N</sup></p>
+        <p class="lost__note">That is well south of our southernmost yard, at ${deg(LAT.kent)}.</p>
       </div>
     </div>
     <div class="lost__where">

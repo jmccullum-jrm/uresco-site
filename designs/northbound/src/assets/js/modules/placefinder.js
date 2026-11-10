@@ -9,7 +9,7 @@
   const coarse = matchMedia('(pointer: coarse)');
   const fold = (s) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[’'.]/g, '').toLowerCase().trim();
 
-  const places = data.places.map(([name, st, lat, xy, region, access, yard, group, label]) => ({ name, st, lat, xy, region, access, yard, group, label, key: fold(name) }));
+  const places = data.places.map(([name, st, lat, xy, region, access, yard, group, label, both]) => ({ name, st, lat, xy, region, access, yard, group, label, both, key: fold(name) }));
   const byName = new Map(places.map((p) => [p.name, p]));
   const aliases = Object.entries(data.aliases).map(([alias, name]) => ({ alias, key: fold(alias), place: byName.get(name) }));
   const SUGGEST = ['Bethel', 'Nome', 'Kotzebue', 'Utqiaġvik', 'Juneau', 'Sitka', 'Anchorage', 'Fairbanks'].map((name) => ({ p: byName.get(name) }));
@@ -21,8 +21,14 @@
   let active = -1, options = [];
 
   /* ---- The answer ---- */
-  const quoteUrl = (where, yard) => `${data.quote}?location=${encodeURIComponent(where)}${yard ? '&yard=' + yard : ''}`;
-  const showYard = (id) => $$('[data-y]', answer).forEach((el) => { el.hidden = el.dataset.y !== id; });
+  const quoteUrl = (where, yard, remote) => `${data.quote}?location=${encodeURIComponent(where)}${yard ? '&yard=' + yard : ''}${remote ? '&delivery=remote' : ''}`;
+  // Who to call: one yard to start with, or both Alaska yards for a remote place in the Interior or
+  // north of it, where the yards' own guidance points both ways.
+  const yardsFor = (p) => (p.both ? ['anchorage', 'fairbanks'] : [p.yard]);
+  const showYards = (ids) => $$('[data-y]', answer).forEach((el) => { el.hidden = !ids.includes(el.dataset.y); });
+  // The quote links that follow the visitor around the page carry the place they chose.
+  const carried = $$('.actionbar a[href*="quote/"], .masthead a[href*="quote/"], #drawer a[href*="quote/"], .closing a[href*="quote/"]');
+  const carry = (url) => carried.forEach((a) => { const hash = a.getAttribute('href').split('#')[1]; a.setAttribute('href', url + (hash ? `#${hash}` : '')); });
   const swap = () => {
     if (calm.matches) return;
     answer.classList.add('is-swapping');
@@ -36,7 +42,9 @@
     field('region').textContent = p.region;
     field('name').textContent = `${p.name}, ${data.states[p.st]}`;
     field('tag').textContent = acc.tag; field('tag').hidden = false;
-    showYard(p.yard);
+    const ids = yardsFor(p), plural = ids.length > 1;
+    showYards(ids);
+    field('yardlabel').textContent = plural ? 'Yards to call' : 'Start with';
     [0, 1].forEach((i) => {
       const m = acc.modes[i];
       field('m' + i).textContent = m ? modes[i] : '';
@@ -45,8 +53,11 @@
     });
     field('how').hidden = false; field('else').hidden = true; field('note').hidden = false;
     field('short').textContent = p.name;
-    field('quote').href = quoteUrl(`${p.name}, ${p.st}`, p.yard);
-    live.textContent = `${p.name}, ${data.states[p.st]}. ${acc.tag}. How freight typically gets there: ${modes.join('; ')}. Yard to call: ${yard.name}, ${yard.phone}. Typical for the region, not a schedule or a price. Any yard can help.`;
+    const url = quoteUrl(`${p.name}, ${p.st}`, plural ? null : p.yard, p.access === 'coastal' || p.access === 'seasonal');
+    field('quote').setAttribute('href', url);
+    carry(url);
+    const who = ids.map((id) => `${data.yards[id].name}, ${data.yards[id].phone}`).join(' or ');
+    live.textContent = `${p.name}, ${data.states[p.st]}. ${acc.tag}. How freight typically gets there: ${modes.join('; ')}. ${plural ? 'Yards to call' : 'Start with'}: ${who}. Typical for the region, not a schedule or a price. Any yard can help.`;
   };
   const fillUnknown = (text) => {
     field('eg').hidden = true;
@@ -54,11 +65,14 @@
     field('region').textContent = 'Not on our short list';
     field('name').textContent = text;
     field('tag').hidden = true;
-    showYard('any');
+    showYards(['any']);
+    field('yardlabel').textContent = 'Call';
     field('how').hidden = true; field('else').hidden = false; field('note').hidden = true;
     field('short').textContent = text;
-    field('quote').href = quoteUrl(text);
-    live.textContent = `${text} is not on our short list, which does not mean we cannot get there. Any yard can help. Use the quote button, or call a yard.`;
+    const url = quoteUrl(text);
+    field('quote').setAttribute('href', url);
+    carry(url);
+    live.textContent = `${text} is not on our short list. Any yard can help. Use the quote button, or call a yard.`;
   };
 
   /* ---- The route plate ---- */
@@ -205,6 +219,9 @@
       if (o) pick(o);
     } else if (e.key === 'Escape') {
       if (!list.hidden) { e.preventDefault(); close(); } else if (input.value) { e.preventDefault(); input.value = ''; clear.hidden = true; }
+    } else if (e.key === 'Tab') {
+      // Closed now, not on blur: otherwise focus lands in the scrolling list and falls to <body>.
+      close();
     }
   });
   // mousedown, not click: the choice must land before the field's blur closes the list.
@@ -216,7 +233,8 @@
   });
   clear.addEventListener('click', () => { input.value = ''; clear.hidden = true; input.focus(); });
   finder.addEventListener('click', (e) => {
-    const eg = e.target.closest('[data-place]');
+    // A button only: the section around the finder carries data-place too, for the rail.
+    const eg = e.target.closest('button[data-place]');
     if (eg && byName.has(eg.dataset.place)) choose(byName.get(eg.dataset.place));
   });
 })();

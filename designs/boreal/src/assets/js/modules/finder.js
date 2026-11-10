@@ -14,7 +14,7 @@
     const places = data.places.map(([name, st, xy, lat, lon, region, access, yard]) => ({ name, st, xy, lat, lon, region, access, yard, key: fold(name) }));
     const byName = new Map(places.map((p) => [p.name, p]));
     const aliases = Object.entries(data.aliases).map(([alias, name]) => ({ alias, key: fold(alias), place: byName.get(name) }));
-    const SUGGEST = ['Anchorage', 'Fairbanks', 'Bethel', 'Nome', 'Kotzebue', 'Utqiaġvik', 'Juneau', 'Seattle'].map((s) => ({ p: byName.get(s) }));
+    const SUGGEST = ['Anchorage', 'Fairbanks', 'Bethel', 'Nome', 'Kotzebue', 'Utqiaġvik', 'Juneau', 'Seattle'].map((s) => byName.get(s)).filter(Boolean).map((p) => ({ p }));
 
     const input = $('.finder__input', finder), list = $('.finder__list', finder), clear = $('[data-clear]', finder), go = $('[data-go]', finder);
     const route = $('[data-route]', finder), live = $('[data-live]', finder);
@@ -24,7 +24,15 @@
     let active = -1, options = [], current = byName.get(data.example), zoomed = false;
 
     /* ---- The card ---- */
-    const quoteUrl = (where, yard) => `${data.quote}?location=${encodeURIComponent(where)}${yard ? '&yard=' + yard : ''}`;
+    const quoteQuery = (where, yard) => `?location=${encodeURIComponent(where)}${yard ? '&yard=' + yard : ''}`;
+    const quoteUrl = (where, yard) => data.quote + quoteQuery(where, yard);
+
+    // Every other quote link on the page starts from the same answer as the card, so two yellow
+    // buttons on one screen never give different results.
+    // [data-quote-link] buttons follow the card on their own (10-chrome.js); this is for the links in the page.
+    const generic = $$('a[href]:not([data-quote-link])').filter((a) => a !== field('quote') && a.host === location.host && /\/quote\/$/.test(a.pathname) && !a.search);
+    const carry = (where, yard) => generic.forEach((a) => a.setAttribute('href', data.quote + quoteQuery(where, yard) + a.hash));
+
     const showYard = (id) => $$('[data-y]', route).forEach((el) => { el.hidden = el.dataset.y !== id; });
     const swap = () => {
       if (calm.matches) return;
@@ -65,6 +73,7 @@
       field('how').hidden = false; field('else').hidden = true; field('note').hidden = false;
       field('short').textContent = p.name;
       field('quote').href = quoteUrl(`${p.name}, ${p.st}`, p.yard);
+      carry(`${p.name}, ${p.st}`, p.yard);
       live.textContent = `${p.name}, ${data.states[p.st]}. ${acc.tag}. Yard to call: ${yard.name}, ${yard.phone}. ${acc.modes.map((m) => m[1].replace('{yard}', yard.name)).join('; ')}.`;
     };
     const fillUnknown = (text) => {
@@ -77,6 +86,7 @@
       field('how').hidden = true; field('else').hidden = false; field('note').hidden = true;
       field('short').textContent = text;
       field('quote').href = quoteUrl(text);
+      carry(text);
       live.textContent = `${text} is not on our short list. Any yard can help: Kent for Puget Sound and the Pacific Northwest, Anchorage for Southcentral and remote Alaska, Fairbanks for the Interior and points north.`;
     };
 
@@ -99,7 +109,7 @@
     // finder, leaving room for their labels, which keep their size however far the camera zooms.
     const fly = (yard, place, name = '') => {
       if (!yard) return setCam(0, 0, 1);
-      const W = map.offsetWidth, H = map.offsetHeight, k = W / data.w, phone = window.innerWidth < 700;
+      const W = map.offsetWidth, H = map.offsetHeight, k = W / data.w, phone = matchMedia('(max-width: 43.6875em)').matches;
       const mr = map.getBoundingClientRect(), cr = map.parentElement.getBoundingClientRect(), sr = stage.getBoundingClientRect(), fr = finder.getBoundingClientRect();
       let left = Math.max(0, cr.left - mr.left, sr.left - mr.left), right = Math.min(W, cr.right - mr.left, sr.right - mr.left);
       let top = Math.max(0, cr.top - mr.top, sr.top - mr.top), bottom = Math.min(H, cr.bottom - mr.top, sr.bottom - mr.top);
@@ -155,18 +165,31 @@
     // The Go button stands in for a keyboard's Enter: it shows while there is something unanswered in the field.
     let answered = '';
     const syncButtons = () => { clear.hidden = !input.value; go.hidden = !input.value.trim() || input.value === answered; };
+    // A blur puts a phone's keyboard away. Everywhere else the field keeps focus, so a keyboard or
+    // screen-reader user stays where they are while the answer is announced.
+    const dismissKeyboard = () => { if (matchMedia('(pointer: coarse)').matches) input.blur(); };
     const choose = (p, { typed = false } = {}) => {
       current = p;
       close();
       input.value = p.name; answered = p.name; syncButtons();
       press(p.name); swap(); fill(p); draw(p);
-      if (typed) input.blur();
+      if (typed) dismissKeyboard();
+    };
+    // On a phone a chip or a map dot can leave the card behind the action bar: bring it up, without
+    // losing the top of the card under the masthead.
+    const showCard = () => {
+      if (!matchMedia('(max-width: 43.6875em)').matches) return;
+      const bar = $('.actionbar'), mast = $('[data-masthead]');
+      const floor = (bar ? bar.getBoundingClientRect().top : window.innerHeight) - 12;
+      const ceiling = (mast ? mast.offsetHeight : 0) + 12;
+      const box = route.getBoundingClientRect(), by = Math.min(box.bottom - floor, box.top - ceiling);
+      if (by > 0) window.scrollBy({ top: by, behavior: calm.matches ? 'auto' : 'smooth' });
     };
     const chooseUnknown = (text) => {
       current = null;
       answered = input.value; syncButtons();
       close(); press(''); swap(); fillUnknown(text.slice(0, 60)); draw(null);
-      input.blur();
+      dismissKeyboard();
     };
     // Enter and the Go button: the row in focus if the list is open, else the best match, else the words as typed.
     const submit = () => {
@@ -178,7 +201,8 @@
 
     /* ---- The combobox ---- */
     const search = (q) => {
-      const k = fold(q);
+      // People write a place the way an envelope does: "Bethel, AK" or "Nome Alaska" still means Bethel.
+      const k = fold(q).split(',')[0].replace(/\s+(ak|alaska|wa|washington)$/, '').trim();
       if (!k) return SUGGEST;
       const out = [];
       places.forEach((p) => { const i = p.key.indexOf(k); if (i === 0) out.push({ p, rank: 0 }); else if (i > 0) out.push({ p, rank: p.key[i - 1] === ' ' ? 1 : 2 }); });
@@ -198,7 +222,7 @@
         const li = document.createElement('li');
         li.setAttribute('role', 'option'); li.id = `${list.id}-${i}`; li.setAttribute('aria-selected', 'false');
         const name = document.createElement('span'); name.textContent = o.alias ? `${o.p.name} (${o.alias})` : o.p.name;
-        const meta = document.createElement('small'); meta.textContent = `${o.p.region}, ${o.p.st}`;
+        const meta = document.createElement('small'); meta.textContent = /Alaska|Washington/.test(o.p.region) ? o.p.region : `${o.p.region}, ${o.p.st}`;
         li.append(name, meta);
         list.append(li);
       });
@@ -223,7 +247,7 @@
     input.addEventListener('focus', () => {
       input.select(); open();
       // On a phone, lift the field above the keyboard's reach.
-      if (window.innerWidth < 700) input.scrollIntoView({ block: 'start', behavior: calm.matches ? 'auto' : 'smooth' });
+      if (matchMedia('(max-width: 43.6875em)').matches) input.scrollIntoView({ block: 'start', behavior: calm.matches ? 'auto' : 'smooth' });
     });
     input.addEventListener('blur', () => setTimeout(close, 120));
     input.addEventListener('keydown', (e) => {
@@ -252,12 +276,12 @@
 
     finder.addEventListener('click', (e) => {
       const chip = e.target.closest('.chip[data-place]');
-      if (chip && byName.has(chip.dataset.place)) choose(byName.get(chip.dataset.place));
+      if (chip && byName.has(chip.dataset.place)) { choose(byName.get(chip.dataset.place)); showCard(); }
     });
     // Dots on the map are a pointer shortcut; the combobox reaches every place by keyboard.
     map.addEventListener('click', (e) => {
       const dot = e.target.closest('.map__dot');
-      if (dot && byName.has(dot.dataset.place)) choose(byName.get(dot.dataset.place));
+      if (dot && byName.has(dot.dataset.place)) { choose(byName.get(dot.dataset.place)); showCard(); }
     });
     if (reset) reset.addEventListener('click', () => fly());
 

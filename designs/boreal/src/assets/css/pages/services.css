@@ -37,17 +37,17 @@
 .sv-map__end span { display: inline-flex; align-items: center; height: 28px; margin-left: 26px; padding: 0 .6rem; border-radius: 9px; background: #fff; color: var(--ink); font-size: .8125rem; font-weight: 600; white-space: nowrap; box-shadow: 0 6px 18px -4px rgba(0, 0, 0, .5); }
 @media (prefers-reduced-motion: no-preference) {
   /* The line draws itself from the first stop to the last, once, as the stops arrive. */
-  .js .sv-map__stop.reveal::before { transform: scaleX(0); transition: transform .55s var(--ease-map); transition-delay: calc(var(--i, 0) * 120ms + .2s); }
-  .js .sv-map__stop.reveal.is-in::before { transform: none; }
+  .reveal-on .sv-map__stop.reveal::before { transform: scaleX(0); transition: transform .55s var(--ease-map); transition-delay: calc(var(--i, 0) * 120ms + .2s); }
+  .reveal-on .sv-map__stop.reveal.is-in::before { transform: none; }
 }
-@media (prefers-reduced-motion: no-preference) and (min-width: 700px) {
+@media (prefers-reduced-motion: no-preference) and (min-width: 43.75em) {
   .sv-map__end i::after { animation: sv-beacon 2.4s var(--ease) 1.6s infinite; }
 }
 @keyframes sv-beacon { 0% { transform: scale(.6); opacity: .9; } 70%, 100% { transform: scale(2.6); opacity: 0; } }
 /* From 900 to 1099px six columns are narrow: the names carry the line on their own. */
-@media (max-width: 1099px) { .sv-map__stop { padding-right: 1rem; } .sv-map__short { display: none; } .sv-map__name { font-size: 1rem; } }
+@media (max-width: 68.6875em) { .sv-map__stop { padding-right: 1rem; } .sv-map__short { display: none; } .sv-map__name { font-size: 1rem; } }
 /* Below 900px the line runs down the left edge and each stop is a row to tap. */
-@media (max-width: 899px) {
+@media (max-width: 56.1875em) {
   .sv-line__head { grid-template-columns: minmax(0, 1fr); align-items: start; }
   .sv-map__stops { grid-template-columns: minmax(0, 1fr); }
   .sv-map__stop { padding: 0 0 0 2.25rem; }
@@ -62,9 +62,9 @@
   .sv-map__end { padding: 1rem 0 0 2.25rem; }
   .sv-map__end i { top: calc(1.15rem + 1px); }
   .sv-map__end span { margin-left: 0; }
-  @media (prefers-reduced-motion: no-preference) { .js .sv-map__stop.reveal::before { transform: scaleY(0); transition-delay: .15s; } }
+  @media (prefers-reduced-motion: no-preference) { .reveal-on .sv-map__stop.reveal::before { transform: scaleY(0); transition-delay: .15s; } }
 }
-@media (max-width: 699px) { .sv-line__card { padding: 1.5rem 1.1rem 1.5rem; } }
+@media (max-width: 43.6875em) { .sv-line__card { padding: 1.5rem 1.1rem 1.5rem; } }
 
 /* ---------- A leg of the line: two stops side by side ---------- */
 .sv-leg__grid { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 1.25rem; }
@@ -81,19 +81,15 @@
 .sv-stop__media--night { --ring: var(--yellow); color: #fff; background: radial-gradient(70% 60% at 80% -10%, rgba(227, 231, 230, .1), transparent 70%), var(--night); }
 .sv-stop__bar { position: absolute; z-index: 2; top: 0; left: 0; right: 0; display: flex; justify-content: space-between; margin: 0; padding: 1.1rem 1.25rem 0; font-family: var(--mono); font-size: var(--t-micro); font-weight: 500; letter-spacing: .06em; text-transform: uppercase; color: var(--haze); }
 .sv-stop__bar b { color: #fff; font-weight: 500; }
-/* Over a photograph the two labels sit on glass, like a caption. */
-.sv-stop__media--photo .sv-stop__bar { padding: .8rem .8rem 0; font-size: .75rem; color: var(--frost); }
-.sv-stop__media--photo .sv-stop__bar span { padding: .45rem .65rem; border-radius: 9px; background: rgba(14, 14, 12, .72); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
-.sv-stop__media--photo .frame__cap { left: .8rem; bottom: .8rem; }
 .sv-fig { position: absolute; left: 1rem; top: 2.25rem; width: calc(100% - 2rem); height: calc(100% - 2.75rem); }
 /* The take-off card is wide enough from 1200px to show the plans beside the list made from them. */
 .sv-fig--pair { display: none; }
-@media (min-width: 1200px) { .sv-fig--pair { display: block; } .sv-fig--solo { display: none; } }
+@media (min-width: 75em) { .sv-fig--pair { display: block; } .sv-fig--solo { display: none; } }
 @media (prefers-reduced-motion: no-preference) {
   /* A drawing finishes itself as its card arrives: the take-off ticks its rows, the crate gets its bands. */
-  .js .sv-stop.reveal .sv-fig .tick { stroke-dasharray: 18; stroke-dashoffset: 18; transition: stroke-dashoffset .35s var(--ease) calc(.55s + var(--i, 0) * 130ms); }
-  .js .sv-stop.reveal .sv-fig .y.w { stroke-dasharray: 284; stroke-dashoffset: 284; transition: stroke-dashoffset 1s var(--ease-map) .5s; }
-  .js .sv-stop.reveal.is-in .sv-fig .tick, .js .sv-stop.reveal.is-in .sv-fig .y.w { stroke-dashoffset: 0; }
+  .reveal-on .sv-stop.reveal .sv-fig .tick { stroke-dasharray: 18; stroke-dashoffset: 18; transition: stroke-dashoffset .35s var(--ease) calc(.55s + var(--i, 0) * 130ms); }
+  .reveal-on .sv-stop.reveal .sv-fig .y.w { stroke-dasharray: 284; stroke-dashoffset: 284; transition: stroke-dashoffset 1s var(--ease-map) .5s; }
+  .reveal-on .sv-stop.reveal.is-in .sv-fig .tick, .reveal-on .sv-stop.reveal.is-in .sv-fig .y.w { stroke-dashoffset: 0; }
 }
 
 .sv-stop__body { display: flex; flex-direction: column; flex: 1; padding: 1.5rem 1.5rem 1.5rem; }
@@ -101,7 +97,6 @@
 .sv-stop__text { margin: .85rem 0 0; max-width: 33em; font-size: 1.0625rem; line-height: 1.5; color: var(--slate); }
 .sv-stop__side { margin-top: 1.4rem; }
 .sv-stop__acts { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem 1.5rem; margin-top: auto; padding-top: 1.5rem; }
-.sv-stop__where { font-family: var(--mono); font-size: .75rem; font-weight: 500; letter-spacing: .05em; text-transform: uppercase; color: var(--glacier-ink); }
 /* The wide stop of a leg: words on the left, the facts beside them. */
 .sv-stop--wide .sv-stop__body { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); grid-template-rows: auto 1fr; column-gap: clamp(1.5rem, 3vw, 2.75rem); }
 .sv-stop--wide .sv-stop__main { grid-area: 1 / 1; }
@@ -132,22 +127,27 @@
 .sv-proof figcaption span { font-family: var(--mono); font-size: .75rem; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; }
 
 /* Below 1200px the two stops of a leg are equals and the wide one reads top to bottom like the other. */
-@media (max-width: 1199px) {
+@media (max-width: 74.9375em) {
   .sv-leg__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .sv-stop--wide .sv-stop__body { display: flex; }
   .sv-stop--wide .sv-stop__side { margin-top: 1.4rem; }
   .sv-stop--wide .sv-stop__acts { align-self: auto; justify-content: space-between; }
 }
-/* Between 700 and 999px a leg stacks and each stop lies on its side: picture left, words right. */
-@media (max-width: 999px) {
+/* Between 700 and 999px a leg stacks: the drawing as a wide band over the card, the words and the facts side by side under it. */
+@media (max-width: 62.4375em) {
   .sv-leg__grid, .sv-leg__grid--even { grid-template-columns: minmax(0, 1fr); }
-  .sv-stop { flex-direction: row; }
-  .sv-stop__media { flex: 0 0 42%; height: auto; min-height: 19rem; margin: .5rem 0 .5rem .5rem; }
+  .sv-stop__media { height: clamp(15rem, 34vw, 19rem); }
+  .sv-stop__body, .sv-stop--wide .sv-stop__body { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); grid-template-rows: auto 1fr; column-gap: clamp(1.5rem, 3vw, 2.75rem); }
+  .sv-stop__main { grid-area: 1 / 1; }
+  .sv-stop__side, .sv-stop--wide .sv-stop__side { grid-area: 1 / 2 / 3 / 3; margin-top: .35rem; }
+  .sv-stop__acts, .sv-stop--wide .sv-stop__acts { grid-area: 2 / 1; align-self: end; justify-content: flex-start; }
 }
-@media (max-width: 699px) {
+@media (max-width: 43.6875em) {
   .sv-leg__grid { gap: .75rem; }
-  .sv-stop { flex-direction: column; }
   .sv-stop__media { flex: none; height: auto; min-height: 0; aspect-ratio: 16 / 10; margin: .4rem .4rem 0; }
+  .sv-stop__body, .sv-stop--wide .sv-stop__body { display: flex; }
+  .sv-stop__side, .sv-stop--wide .sv-stop__side { margin-top: 1.4rem; }
+  .sv-stop__acts, .sv-stop--wide .sv-stop__acts { align-self: auto; justify-content: space-between; }
   .sv-stop__bar { padding: .8rem 1rem 0; font-size: .75rem; }
   .sv-fig { left: .5rem; top: 1.75rem; width: calc(100% - 1rem); height: calc(100% - 2rem); }
   .sv-stop__body { padding: 1.15rem 1.1rem 1.25rem; }
@@ -155,4 +155,4 @@
   .sv-stop__acts .btn { flex: 1 1 100%; }
   .sv-spec > div { grid-template-columns: 5.5rem minmax(0, 1fr); }
 }
-@media (max-width: 379px) { .sv-kit__list { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 23.6875em) { .sv-kit__list { grid-template-columns: minmax(0, 1fr); } }

@@ -12,7 +12,7 @@
   const fold = (s) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[’'.]/g, '').toLowerCase().trim();
 
   const data = JSON.parse($('[data-finder-data]').textContent);
-  const places = data.places.map(([name, st, region, access, yard, x, y]) => ({ name, st, region, access, yard, x, y, key: fold(name) }));
+  const places = data.places.map(([name, st, region, access, yard, x, y, both]) => ({ name, st, region, access, yard, x, y, both, key: fold(name) }));
   const byName = new Map(places.map((p) => [p.name, p]));
   const aliases = Object.entries(data.aliases).map(([alias, name]) => ({ alias, key: fold(alias), place: byName.get(name) }));
   const SUGGEST = data.suggest.map((name) => ({ p: byName.get(name) }));
@@ -20,14 +20,16 @@
   const input = $('.shipto__input'), list = $('.shipto__list'), clear = $('[data-clear]');
   const route = $('[data-route]'), live = $('[data-live]'), searchEl = $('.shipto__search');
   const field = (k) => $(`[data-r="${k}"]`, route);
-  let active = -1, options = [];
+  let active = -1, options = [], settled = '';   // settled: the text the ticket last answered for
 
   /* ---- The ticket ---- */
-  const quoteUrl = (where, yard) => `${data.quote}?location=${encodeURIComponent(where)}${yard ? '&yard=' + yard : ''}`;
-  // Once a place is named, every plain quote link on the page carries it.
-  const quoteLinks = Array.from(document.querySelectorAll('a[href$="quote/"]'));
-  const carry = (url) => { field('quote').href = url; quoteLinks.forEach((a) => { a.href = url; }); };
-  const showYard = (id) => $$('[data-y]', route).forEach((el) => { el.hidden = el.dataset.y !== id; });
+  const quoteUrl = (where, yard, remote) => `${data.quote}?location=${encodeURIComponent(where)}${yard ? '&yard=' + yard : ''}${remote ? '&delivery=' + encodeURIComponent(data.delivery) : ''}`;
+  // On this page a quote starts with the Anchorage yard, the one the guidance gives for a remote site.
+  // Once a place is named, every general quote link on the page carries it; a yard card's own "Quote from" link keeps its yard.
+  const quoteLinks = Array.from(document.querySelectorAll('a[href*="quote/"]')).filter((a) => !a.closest('.yard, [data-route]'));
+  quoteLinks.forEach((a) => { if (!a.search) a.search = '?yard=anchorage'; });
+  const carry = (url) => { field('quote').href = url; quoteLinks.forEach((a) => { a.href = url + a.hash; }); };
+  const showYard = (ids) => $$('[data-y]', route).forEach((el) => { el.hidden = !ids.includes(el.dataset.y); });
   // The new name is written in the same way a drawing is plotted.
   const plot = () => {
     if (calm.matches) return;
@@ -44,32 +46,34 @@
     field('eg').hidden = true;
     field('region').textContent = p.region;
     field('tag').textContent = acc.tag;
-    field('tag').hidden = false;
-    showYard(p.yard);
+    field('tag').hidden = !acc.tag;
+    const start = p.both ? ['anchorage', 'fairbanks'] : [p.yard];
+    showYard(start);
     modes.forEach(([lane, text], i) => {
       field(`m${i}`).textContent = text;
-      field(`t${i}`).textContent = lane;
-      field(`t${i}`).classList.toggle('is-none', !lane);
+      field(`t${i}`).textContent = lane ? `Lane ${lane}` : '';
+      field(`t${i}`).hidden = !lane;
     });
-    if (modes.some(([lane]) => lane)) field('modes').removeAttribute('data-lanes'); else field('modes').dataset.lanes = 'none';
+    field('season').textContent = acc.note || '';
+    field('season').hidden = !acc.note;
     field('how').hidden = false;
     field('else').hidden = true;
     field('note').hidden = false;
     field('short').textContent = p.name;
-    carry(quoteUrl(`${p.name}, ${p.st}`, p.yard));
-    live.textContent = `${p.name}, ${data.states[p.st]}. ${acc.tag}. Yard to call: ${yard.name}, ${yard.phone}. How freight typically gets there: ${modes.map((m) => m[1]).join('; ')}. Typical for the region, not a schedule or a price. Any yard can help.`;
+    carry(quoteUrl(`${p.name}, ${p.st}`, p.yard, acc.remote));
+    live.textContent = `${p.name}, ${data.states[p.st]}. ${acc.tag ? acc.tag + '. ' : ''}Start with ${start.map((id) => `${data.yards[id].name}, ${data.yards[id].phone}`).join(', or ')}. How freight typically gets there: ${modes.map((m) => m[1]).join('; ')}. ${acc.note ? acc.note + ' ' : ''}Typical for the region, not a schedule or a price. Any yard can help.`;
   };
   const fillUnknown = (text) => {
     field('name').textContent = text;
     field('eg').hidden = true;
     field('region').textContent = 'Not on our short list';
     field('tag').hidden = true;
-    showYard('any');
+    showYard(['any']);
     field('how').hidden = true;
     field('else').hidden = false;
     field('note').hidden = true;
     field('short').textContent = text.length > 22 ? 'this job' : text;
-    carry(quoteUrl(text));
+    carry(quoteUrl(text, 'anchorage'));
     live.textContent = `${text} is not on our short list, which does not mean we cannot get there. Any yard can help. Use the quote button, or call a yard.`;
   };
 
@@ -102,22 +106,27 @@
   /* ---- Choosing ---- */
   const press = (name) => $$('.shipto__chip').forEach((c) => c.setAttribute('aria-pressed', String(c.dataset.place === name)));
   const settle = () => { if (touch.matches) input.blur(); };
-  const choose = (p) => {
+  // The answer can be under the fold: bring the whole ticket into view, unless the visitor has already moved on.
+  const show = () => route.scrollIntoView({ block: 'nearest', behavior: calm.matches ? 'auto' : 'smooth' });
+  const choose = (p, quiet) => {
     close();
-    input.value = p.name;
+    input.value = settled = p.name;
     clear.hidden = false;
     press(p.name);
     fill(p);
     plot();
     pinOn(p);
+    if (!quiet) show();
   };
-  const chooseUnknown = (text) => {
+  const chooseUnknown = (text, quiet) => {
     close();
+    settled = text;
     clear.hidden = false;
     press('');
     fillUnknown(text.slice(0, 60));
     plot();
     pinOn(null);
+    if (!quiet) show();
   };
 
   /* ---- The combobox ---- */
@@ -172,8 +181,8 @@
     input.removeAttribute('aria-activedescendant');
     active = -1;
   }
-  const take = (o) => {
-    if (o.unknown) chooseUnknown(o.unknown); else choose(o.p);
+  const take = (o, quiet) => {
+    if (o.unknown) chooseUnknown(o.unknown, quiet); else choose(o.p, quiet);
     settle();
   };
 
@@ -185,7 +194,12 @@
     if (window.innerWidth < 700) input.scrollIntoView({ block: 'start', behavior: calm.matches ? 'auto' : 'smooth' });
   });
   input.addEventListener('click', () => { if (list.hidden) open(); });
-  input.addEventListener('blur', () => setTimeout(close, 120));
+  input.addEventListener('blur', () => setTimeout(() => {
+    close();
+    // Typed a name and put the keyboard away: answer for it, as Enter would, so the ticket never shows another town.
+    const text = input.value.trim();
+    if (text && text !== settled && document.activeElement !== input) take(search(text)[0], true);
+  }, 120));
   input.addEventListener('keydown', (e) => {
     if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
       e.preventDefault();

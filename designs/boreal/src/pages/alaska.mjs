@@ -7,13 +7,13 @@ import { LOCATIONS } from '../data/locations.mjs';
 // How freight generally moves in Alaska. Uresco works with the customer on shipping coordination;
 // nothing here is a Uresco schedule, carrier or route.
 const MODES = [
-  { icon: 'road', name: 'The road system', where: 'Southcentral · the Interior · the highway north', body: 'Job sites on the road system are typically reached by truck from the Anchorage and Fairbanks yards, with Moffett fork unload and boom trucks.' },
+  { icon: 'road', name: 'The road system', where: 'Southcentral · the Interior · the highway north', body: 'Job sites on the road system are typically reached by truck from the Anchorage and Fairbanks yards, with boom trucks and truck-mounted Moffett forklifts.' },
   { icon: 'ship', name: 'Ocean freight & barge', where: 'Southeast · the coast · western and Arctic Alaska', body: 'Coastal communities are generally reached by sea, and river communities by barge in the ice-free season. We work with you on shipping coordination and dock delivery.' },
   { icon: 'plane', name: 'Air cargo', where: 'Year-round, off the road system', body: 'Off the road system, air is the year-round way in. Tell us where you are building and we will work out the freight with you.' },
 ];
 
 const STEPS = [
-  ['Plans in, take-off out', 'Send drawings or a list. We help with the take-off and quote the package.'],
+  ['Send plans or a list', 'Send drawings or a list. We help with the take-off and quote the package.'],
   ['Package and crate', 'The complete package comes together, with crating and packaging for the trip.'],
   ['Coordinate the freight', 'Truck, ocean freight, barge or air: we work with you on all aspects of shipping coordination.'],
   ['Dock or site delivery', 'Delivered to the dock or straight to the site.'],
@@ -23,9 +23,9 @@ const STEPS = [
 const FAQ = [
   ['Can you deliver to my community?', 'Delivery is available anywhere in Alaska, from Sitka to Utqiaġvik (Barrow). Tell us where the job is and we will work with you on how to get it there: road, ocean freight, barge or air.'],
   ['Which yard should I call?', 'Southcentral Alaska or a remote site: Anchorage. The Interior and points north: Fairbanks. Puget Sound: Kent. Any yard can help; they work as one team.'],
-  ['When should I order for barge season?', 'Early. Off the road system, barges generally run only in the ice-free season, so a package has to be ready before the barge window closes. Tell us where you are building and when you need it, and we will work out the freight with you.'],
+  ['When should I order for barge season?', 'Early. In western and Arctic Alaska, barges generally run only in the ice-free season, so a package has to be ready before the barge window closes. Tell us where you are building and when you need it, and we will work out the freight with you.'],
   ['Do you ship complete building packages?', 'Yes. We are fully equipped to handle remote-location and export building packages, with crating and packaging for the trip. One complete package beats a second freight bill.'],
-  ['Can you work from my plans?', 'Yes. Send drawings or a materials list and we will help with the take-off and the estimate. Design services are available for your unique project needs.'],
+  ['Can you work from my plans?', 'Yes. Send drawings or a materials list and we will help with the take-off and the estimate. Design help is available for projects that need more than a list.'],
   ['Who coordinates the shipping?', 'We work with you on all aspects of shipping coordination, dock delivery and rural Alaska delivery.'],
   ['Does the quote include freight?', 'We will quote the package and work out the freight with you. Ask your yard.'],
 ];
@@ -67,7 +67,7 @@ export default {
     </div>
     <div class="callout reveal">
       <span class="callout__icon">${icon('snow', { size: 22 })}</span>
-      <p><strong>Plan around the season.</strong> Off the road system, barges generally run only in the ice-free season. Call early so the package is ready for the barge window.</p>
+      <p><strong>Plan around the season.</strong> In western and Arctic Alaska, barges generally run only in the ice-free season. Call early so the package is ready for the barge window.</p>
       <a class="link" href="${ctx.u('quote/')}">Request a quote ${icon('arrow', { size: 16 })}</a>
     </div>
   </div>

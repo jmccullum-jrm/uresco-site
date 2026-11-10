@@ -4,12 +4,13 @@
 // anywhere in Alaska, and a place that is missing here gets the "ask a yard" answer, not a "no".
 //
 // access   how freight typically reaches the place (general Alaska geography, not a Uresco schedule):
-//            local     Puget Sound, by truck from the Kent yard
-//            road      on the Alaska road system, by truck from an Alaska yard
+//            local     Puget Sound, by truck
+//            road      on the Alaska road system, by truck
 //            coastal   off the road system, reached by sea (Southeast and the Gulf coast) and by air
 //            seasonal  off the road system: barge in the ice-free season, air year-round
-// yard     who to call, following the guidance on the Locations page: Puget Sound → Kent;
-//          Southcentral Alaska or a remote site → Anchorage; the Interior and points north → Fairbanks.
+// yard     who to call, following the guidance on the Locations page literally: Puget Sound → Kent;
+//          Southcentral Alaska or any remote (off-road) site → Anchorage; the Interior and points
+//          north on the road system → Fairbanks. Any yard can help.
 //
 // After editing, re-project:  node scripts/map.mjs <tools dir> src/data/map.json
 
@@ -81,13 +82,13 @@ export const PLACES = [
   P('Unalakleet', 'AK', 63.873, -160.788, 'Norton Sound', 'seasonal', 'anchorage'),
   P('Nome', 'AK', 64.501, -165.406, 'Seward Peninsula', 'seasonal', 'anchorage'),
   P('Kotzebue', 'AK', 66.898, -162.597, 'Northwest Arctic', 'seasonal', 'anchorage'),
-  P('McGrath', 'AK', 62.956, -155.596, 'Interior Alaska', 'seasonal', 'fairbanks'),
-  P('Galena', 'AK', 64.741, -156.931, 'Interior Alaska', 'seasonal', 'fairbanks'),
-  P('Fort Yukon', 'AK', 66.565, -145.274, 'Interior Alaska', 'seasonal', 'fairbanks'),
-  P('Point Hope', 'AK', 68.348, -166.808, 'North Slope', 'seasonal', 'fairbanks'),
-  P('Wainwright', 'AK', 70.637, -160.038, 'North Slope', 'seasonal', 'fairbanks'),
-  P('Utqiaġvik', 'AK', 71.291, -156.789, 'North Slope', 'seasonal', 'fairbanks'),
-  P('Kaktovik', 'AK', 70.132, -143.624, 'North Slope', 'seasonal', 'fairbanks'),
+  P('McGrath', 'AK', 62.956, -155.596, 'Interior Alaska', 'seasonal', 'anchorage'),
+  P('Galena', 'AK', 64.741, -156.931, 'Interior Alaska', 'seasonal', 'anchorage'),
+  P('Fort Yukon', 'AK', 66.565, -145.274, 'Interior Alaska', 'seasonal', 'anchorage'),
+  P('Point Hope', 'AK', 68.348, -166.808, 'North Slope', 'seasonal', 'anchorage'),
+  P('Wainwright', 'AK', 70.637, -160.038, 'North Slope', 'seasonal', 'anchorage'),
+  P('Utqiaġvik', 'AK', 71.291, -156.789, 'North Slope', 'seasonal', 'anchorage'),
+  P('Kaktovik', 'AK', 70.132, -143.624, 'North Slope', 'seasonal', 'anchorage'),
 ];
 
 // Other names people type for the same place.
@@ -97,10 +98,10 @@ export const ALIASES = { Barrow: 'Utqiaġvik', Utqiagvik: 'Utqiaġvik', 'Dutch H
 // on the page. No carriers, schedules, transit times or prices.
 // lanes: which lanes the map lights ('sea' and 'barge' are refined per place below).
 export const ACCESS = {
-  local: { tag: 'On the road system', icon: 'truck', lanes: 'local', modes: [['truck', 'Truck from {yard}'], ['pin', 'Or yard pick-up']] },
-  road: { tag: 'On the road system', icon: 'truck', lanes: 'road', modes: [['truck', 'Truck from {yard}'], ['pin', 'Or yard pick-up']] },
-  coastal: { tag: 'Off the road system', icon: 'ship', lanes: 'barge', modes: [['ship', 'By sea to the dock'], ['plane', 'Air cargo']] },
-  seasonal: { tag: 'Off the road system', icon: 'ship', lanes: 'barge', modes: [['ship', 'Barge in season'], ['plane', 'Air year-round']] },
+  local: { tag: 'Puget Sound', icon: 'truck', lanes: 'local', modes: [['truck', 'By truck'], ['pin', 'Ask Kent about delivery']] },
+  road: { tag: 'On the road system', icon: 'truck', lanes: 'road', modes: [['truck', 'By truck on the road system'], ['pin', 'Ask your yard about delivery']] },
+  coastal: { tag: 'Off the road system', icon: 'ship', lanes: 'barge', modes: [['ship', 'By sea to the dock'], ['plane', 'Air cargo']], note: 'Complete building packages go here.' },
+  seasonal: { tag: 'Off the road system', icon: 'ship', lanes: 'barge', modes: [['ship', 'Barge in season'], ['plane', 'Air year-round']], note: 'Complete building packages go here. Plan for the barge window first.' },
 };
 
 // Southeast and the Gulf coast are reached by ocean lanes alone; other coastal places share the barge lanes.
