@@ -148,31 +148,41 @@ const settled = (page, key, path = '') => page.waitForFunction(([k, p, b]) => {
   await page.close();
 }
 
-// The bar fits at every width, whichever design is showing.
+// The bar fits at every width, whichever design is showing, and whatever font the device gives it:
+// the second pass widens every letter to stand in for a wider system font (the bar uses the system font).
 {
   const page = await browser.newPage();
   watch(page, 'chooser widths');
-  for (const w of [320, 360, 390, 600, 768, 900, 1024, 1100, 1280, 1440, 1920]) {
-    await page.setViewportSize({ width: w, height: 800 });
-    for (const k of keys) {
-      await page.goto(`${origin}/blank-does-not-matter`);
-      await page.goto(`${home}#${k}/`, { waitUntil: 'domcontentloaded' });
-      await page.waitForFunction((key) => document.querySelector('.pick[aria-current="true"]')?.dataset.key === key, k);
-      const r = await page.evaluate(() => {
-        const bar = document.querySelector('.bar');
-        const shown = [...bar.querySelectorAll('.pick, .tool, .bar__title, .bar__blurb')].filter((e) => e.offsetParent !== null);
-        return {
-          over: document.documentElement.scrollWidth - innerWidth,
-          right: Math.max(...shown.map((e) => e.getBoundingClientRect().right)),
-          height: bar.getBoundingClientRect().height,
-          picks: [...bar.querySelectorAll('.pick')].filter((e) => e.offsetParent !== null).length,
-          small: shown.filter((e) => e.matches('.pick, .tool') && (e.getBoundingClientRect().width < 36 || e.getBoundingClientRect().height < 36)).length,
-        };
-      });
-      if (r.over > 0 || r.right > w + 0.5) fail(`${w}px with ${k} showing: the bar is wider than the screen (reaches ${Math.round(r.right)}px)`);
-      if (r.height > 56) fail(`${w}px with ${k} showing: the bar wrapped to ${Math.round(r.height)}px tall`);
-      if (r.picks !== keys.length) fail(`${w}px with ${k} showing: only ${r.picks} of ${keys.length} choices are visible`);
-      if (r.small) fail(`${w}px with ${k} showing: ${r.small} bar buttons are smaller than 36px`);
+  for (const wide of [false, true]) {
+    for (const w of [320, 360, 390, 600, 779, 780, 979, 980, 1024, 1100, 1199, 1200, 1280, 1359, 1360, 1440, 1920]) {
+      await page.setViewportSize({ width: w, height: 800 });
+      for (const k of keys) {
+        await page.goto(`${origin}/blank-does-not-matter`);
+        await page.goto(`${home}#${k}/`, { waitUntil: 'domcontentloaded' });
+        await page.waitForFunction((key) => document.querySelector('.pick[aria-current="true"]')?.dataset.key === key, k);
+        if (wide) {
+          await page.addStyleTag({ content: '.bar, .bar * { letter-spacing: .12em !important; word-spacing: .12em !important; }' });
+          await page.evaluate(() => dispatchEvent(new Event('resize')));
+        }
+        const r = await page.evaluate(() => {
+          const bar = document.querySelector('.bar');
+          const shown = [...bar.querySelectorAll('.pick, .tool, .bar__title, .bar__blurb')].filter((e) => e.offsetParent !== null);
+          return {
+            over: document.documentElement.scrollWidth - innerWidth,
+            right: Math.max(...shown.map((e) => e.getBoundingClientRect().right)),
+            height: bar.getBoundingClientRect().height,
+            picks: [...bar.querySelectorAll('.pick')].filter((e) => e.offsetParent !== null).length,
+            small: shown.filter((e) => e.matches('.pick, .tool') && (e.getBoundingClientRect().width < 36 || e.getBoundingClientRect().height < 36)).length,
+            cut: [...bar.querySelectorAll('.pick__name')].filter((n) => getComputedStyle(n).position !== 'absolute' && n.scrollWidth > n.clientWidth + 0.5).map((n) => n.textContent).join(', '),
+          };
+        });
+        const at = `${w}px${wide ? ' in a wide font' : ''} with ${k} showing`;
+        if (r.over > 0 || r.right > w + 0.5) fail(`${at}: the bar is wider than the screen (reaches ${Math.round(r.right)}px)`);
+        if (r.height > 56) fail(`${at}: the bar wrapped to ${Math.round(r.height)}px tall`);
+        if (r.picks !== keys.length) fail(`${at}: only ${r.picks} of ${keys.length} choices are visible`);
+        if (r.small) fail(`${at}: ${r.small} bar buttons are smaller than 36px`);
+        if (r.cut && !(wide && w < 400)) fail(`${at}: design names are cut short (${r.cut})`);
+      }
     }
   }
   await page.close();

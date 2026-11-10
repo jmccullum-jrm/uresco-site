@@ -25,6 +25,16 @@
     return { key: m[1], path: has(m[1], p) ? p : '' };
   };
 
+  // Fit the bar to the font this device gives it: drop one detail at a time until nothing is cut off
+  // (the steps are listed in shell.css).
+  const bar = document.querySelector('.bar');
+  const cramped = () => bar.scrollWidth > bar.clientWidth + 0.5
+    || [...bar.querySelectorAll('.pick__name')].some((n) => getComputedStyle(n).position !== 'absolute' && n.scrollWidth > n.clientWidth + 0.5);
+  const fit = () => {
+    for (let i = 1; i <= 5; i++) bar.classList.remove(`f${i}`);
+    for (let i = 1; i <= 5 && cramped(); i++) bar.classList.add(`f${i}`);
+  };
+
   const show = () => {
     const d = byKey[key];
     for (const a of picks) {
@@ -38,6 +48,7 @@
     if (open) open.href = urlFor(key, path).href;
     const want = `#${key}/${path}`;
     if (location.hash !== want) history.replaceState(null, '', want);
+    fit();
   };
 
   // Where is the frame now? Read it back so links clicked inside the design keep the bar in step.
@@ -79,6 +90,8 @@
     const h = fromHash();
     if (h && (h.key !== key || h.path !== path)) go(h.key, h.path);
   });
+
+  addEventListener('resize', fit);
 
   if (view) {
     view.hidden = false;

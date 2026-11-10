@@ -3,7 +3,7 @@
 *, *::before, *::after { box-sizing: border-box; }
 html, body { height: 100%; }
 body {
-  margin: 0; display: grid; grid-template-rows: auto minmax(0, 1fr);
+  margin: 0; display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr);
   height: 100vh; height: 100dvh; overflow: hidden;
   background: #0c0c0d; color: #ecebe7;
   font: 500 14px/1.2 system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -51,17 +51,25 @@ a { color: inherit; }
 .stage.is-phone iframe { width: 390px; max-width: 100%; height: min(844px, 100%); border-radius: 28px; box-shadow: 0 0 0 10px #050506, 0 0 0 11px #3a3a3d, 0 30px 80px rgba(0, 0, 0, .6); }
 .noscript { margin: 0; padding: 8px 12px; background: #2a2a2d; font-size: 13px; }
 
-/* Narrow bars: drop the description first, then the tool labels, then the words, then the names of the designs that are not showing. */
-@media (max-width: 1279px) { .bar__blurb { display: none; } }
-@media (max-width: 1099px) {
-  .tool span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+/* Fitting the bar. It is set in the device's own font, whose width varies, so widths alone cannot decide what fits.
+   shell.js adds .f1 to .f5 one at a time until nothing is cut off; the media queries below are the
+   no-JavaScript baseline and apply the same five steps at cautious widths. Keep the two lists in step.
+     1 no description   2 tools as icons   3 no sub-line or "Featured" tag   4 no title   5 other designs as numbers */
+.bar.f1 .bar__blurb { display: none; }
+.bar.f2 .tool { position: relative; width: 36px; padding: 0; justify-content: center; }
+.bar.f2 .tool span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.bar.f3 .bar__title span, .bar.f3 .pick__tag { display: none; }
+.bar.f4 .bar__title { display: none; }
+.bar.f5 .pick { position: relative; }
+.bar.f5 .pick:not([aria-current="true"]) { width: 36px; padding: 0; justify-content: center; }
+.bar.f5 .pick:not([aria-current="true"]) .pick__name { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+@media (max-width: 1359px) { .bar__blurb { display: none; } }
+@media (max-width: 1199px) {
   .tool { position: relative; width: 36px; padding: 0; justify-content: center; }
+  .tool span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 }
-@media (max-width: 899px) {
-  .bar__title span { display: none; }
-  .pick__tag { display: none; }
-}
-@media (max-width: 719px) {
+@media (max-width: 979px) { .bar__title span, .pick__tag { display: none; } }
+@media (max-width: 779px) {
   .bar { gap: 8px; padding: 6px 8px; }
   .bar__title, .tool--view { display: none; }
   .pick { position: relative; }
