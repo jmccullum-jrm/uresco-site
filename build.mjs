@@ -4,7 +4,7 @@
 // Every link is written relative to the page, so the same output works on
 // jmccullum-jrm.github.io/uresco-site/, on uresco.com, or from a local server.
 import { readdirSync, mkdirSync, writeFileSync, rmSync, cpSync, existsSync, readFileSync } from 'fs';
-import { join, dirname } from 'path';
+import { join, dirname, resolve } from 'path';
 import { fileURLToPath, pathToFileURL } from 'url';
 import { createHash } from 'crypto';
 import { SITE } from './src/config.mjs';
@@ -12,14 +12,23 @@ import { markSvg, ringsSvg } from './src/lib/icons.mjs';
 import { mapSvg } from './src/lib/components.mjs';
 
 const ROOT = dirname(fileURLToPath(import.meta.url));
-const OUT = join(ROOT, 'docs');
+// OUT=<dir> builds somewhere else, so several builds can run side by side without clobbering docs/.
+const OUT = process.env.OUT ? resolve(process.env.OUT) : join(ROOT, 'docs');
 const SRC = join(ROOT, 'src');
 
-// Cache-busting token for CSS and JS: changes whenever either file does.
-const version = createHash('sha1')
-  .update(readFileSync(join(SRC, 'assets/css/site.css')))
-  .update(readFileSync(join(SRC, 'assets/js/site.js')))
-  .digest('hex').slice(0, 8);
+// Styles and behaviour are written as small files and shipped as one of each.
+//   src/assets/css/*.css, then src/assets/css/pages/*.css   → assets/css/site.css
+//   src/assets/js/*.js,   then src/assets/js/modules/*.js   → assets/js/site.js
+// Files are joined in name order, so a numeric prefix (00-tokens.css) sets the cascade.
+const bundle = (dir, ext, sub) => [dir, join(dir, sub)]
+  .filter(existsSync)
+  .flatMap((d) => readdirSync(d).filter((f) => f.endsWith(ext)).sort().map((f) => join(d, f)))
+  .map((f) => readFileSync(f, 'utf8')).join('\n');
+const CSS = bundle(join(SRC, 'assets/css'), '.css', 'pages');
+const JS = bundle(join(SRC, 'assets/js'), '.js', 'modules');
+
+// Cache-busting token for CSS and JS: changes whenever either does.
+const version = createHash('sha1').update(CSS).update(JS).digest('hex').slice(0, 8);
 
 const makeCtx = (path) => {
   let n = 0;
@@ -41,8 +50,9 @@ writeFileSync(join(OUT, 'assets', 'rings.svg'), ringsSvg());
 // Light minification of the shipped CSS and JS (sources stay readable in src/).
 const minCss = (css) => css.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\s+/g, ' ').replace(/\s*([{};,>])\s*/g, '$1').replace(/;}/g, '}').trim();
 const minJs = (js) => js.split('\n').map((l) => l.trim()).filter((l) => l && !l.startsWith('//')).join('\n');
-writeFileSync(join(OUT, 'assets/css/site.css'), minCss(readFileSync(join(SRC, 'assets/css/site.css'), 'utf8')));
-writeFileSync(join(OUT, 'assets/js/site.js'), minJs(readFileSync(join(SRC, 'assets/js/site.js'), 'utf8')));
+for (const d of ['assets/css', 'assets/js']) { rmSync(join(OUT, d), { recursive: true, force: true }); mkdirSync(join(OUT, d), { recursive: true }); }
+writeFileSync(join(OUT, 'assets/css/site.css'), minCss(CSS));
+writeFileSync(join(OUT, 'assets/js/site.js'), minJs(JS));
 
 const pages = [];
 for (const file of readdirSync(join(SRC, 'pages')).filter((f) => f.endsWith('.mjs')).sort()) {
@@ -90,4 +100,4 @@ if (!SITE.preview) writeFileSync(join(OUT, 'CNAME'), new URL(SITE.url).host + '\
 // GitHub Pages runs Jekyll unless told not to; we ship finished HTML.
 writeFileSync(join(OUT, '.nojekyll'), '');
 
-console.log(`Built ${pages.length} pages into docs/ (assets v${version})${SITE.preview ? ' — PREVIEW: noindex' : ''}`);
+console.log(`Built ${pages.length} pages into ${process.env.OUT || 'docs/'} (assets v${version})${SITE.preview ? ' — PREVIEW: noindex' : ''}`);

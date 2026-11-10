@@ -10,7 +10,7 @@ import { createServer } from 'http';
 import { createRequire } from 'module';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
-const DOCS = join(ROOT, 'docs');
+const DOCS = process.env.OUT ? resolve(process.env.OUT) : join(ROOT, 'docs');
 const problems = [];
 const fail = (page, msg) => problems.push(`${page}: ${msg}`);
 
