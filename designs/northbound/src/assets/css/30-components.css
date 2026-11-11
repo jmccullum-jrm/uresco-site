@@ -16,6 +16,8 @@
 /* Captions read like a magazine's: what, then where and how far north. */
 .fig__cap { display: flex; justify-content: space-between; align-items: baseline; gap: .4rem 1.5rem; flex-wrap: wrap; padding-top: .75rem; font: 400 var(--t-caption)/1.4 var(--mono); color: var(--ink-3); }
 .fig__place { margin-left: auto; text-transform: uppercase; letter-spacing: .09em; font-size: var(--t-label); white-space: nowrap; }
+/* A long place line may wrap when the screen is narrow for the text size. */
+@media (max-width: 25em) { .fig__place { white-space: normal; } }
 .fig__place::before { content: ""; display: inline-block; width: .5rem; height: .5rem; margin-right: .6rem; background: var(--yellow); }
 /* The photographer's name: every stock picture says so, so none can be taken for Uresco's own. */
 .fig__credit { font-size: inherit; color: inherit; }
@@ -132,10 +134,10 @@
 .manifest__title { max-width: 8em; }
 .manifest__pitch p { color: var(--ink-2); max-width: 30em; }
 .manifest__rows { display: grid; align-content: stretch; border-top: 1px solid var(--ink); }
-.manifest__rows div { display: grid; grid-template-columns: 5.25rem 1fr; gap: 1rem; align-items: baseline; padding: .95rem clamp(1.1rem, 3vw, 2.25rem); border-bottom: 1px dashed var(--rule-2); }
+.manifest__rows div { display: grid; grid-template-columns: 5.25rem minmax(0, 1fr); gap: 1rem; align-items: baseline; padding: .95rem clamp(1.1rem, 3vw, 2.25rem); border-bottom: 1px dashed var(--rule-2); }
 .manifest__rows div:last-child { border-bottom: 0; }
 .manifest__rows dt { font: 400 var(--t-label)/1.4 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); }
-.manifest__rows dd { font: 480 1.1875rem/1.25 var(--serif); letter-spacing: -.002em; }
+.manifest__rows dd { font: 480 1.1875rem/1.25 var(--serif); letter-spacing: -.002em; overflow-wrap: anywhere; }
 .manifest .btn:hover { background: var(--ink); color: var(--paper); }
 .manifest .btn--line { border-color: var(--ink); color: var(--ink); }
 .manifest .btn--line:hover { background: var(--ink); color: var(--paper); }

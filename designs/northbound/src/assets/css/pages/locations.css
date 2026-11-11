@@ -39,7 +39,7 @@
 .lcx-sec { padding-block: var(--section); }
 .lcx-yard .chead__bar { margin-bottom: clamp(1.5rem, 3.2vw, 3rem); }
 .lcx-yard .chead__kicker { color: var(--ink); }
-.lcx-yard__grid { display: grid; gap: 1.5rem var(--col-gap); }
+.lcx-yard__grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.5rem var(--col-gap); }
 .lcx-yard__head { display: grid; gap: .75rem; justify-items: start; align-content: start; }
 .lcx-yard__city { font: 350 clamp(3.25rem, 2rem + 6vw, 7rem)/.92 var(--serif); letter-spacing: -.035em; overflow-wrap: anywhere; }
 .lcx-yard__city span { color: var(--ink-3); font-size: .4em; letter-spacing: -.01em; margin-left: .1em; white-space: nowrap; }
@@ -53,6 +53,8 @@
 .lcx-book__col > h3 { color: var(--ink-3); }
 .lcx-tel { font-size: clamp(1.875rem, 1.5rem + 1.7vw, 2.75rem); font-weight: 600; line-height: 1.15; letter-spacing: -.014em; font-variant-numeric: tabular-nums; white-space: nowrap; text-decoration: underline; text-decoration-color: var(--yellow); text-decoration-thickness: 3px; text-underline-offset: .2em; padding-block: .15rem; }
 .lcx-tel:hover { text-decoration-color: var(--ink); }
+/* Only reached with enlarged browser text (a 320 px screen at normal text is 20em): the number may wrap at its space. */
+@media (max-width: 19.9em) { .lcx-tel { white-space: normal; font-size: 1.625rem; } }
 .lcx-tel2 { display: inline-flex; align-items: center; gap: .4em; min-height: 2.5rem; font-size: 1.125rem; font-weight: 600; font-variant-numeric: tabular-nums; text-decoration-color: var(--rule-2); }
 .lcx-tel2 small { font-weight: 400; color: var(--ink-3); }
 .lcx-now { display: flex; flex-wrap: wrap; align-items: baseline; gap: .15rem 1rem; min-height: 1.25rem; }
