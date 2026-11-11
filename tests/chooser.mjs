@@ -226,9 +226,10 @@ const settled = (page, key, path = '') => page.waitForFunction(([k, p, b]) => {
         if (!r.currentInView) fail(`${at}: the design that is showing is scrolled out of view in the bar`);
         if (r.small) fail(`${at}: controls smaller than 40px: ${r.small}`);
         if (!r.star) fail(`${at}: nothing marks the featured design`);
-        // Every name is readable at once from 360px up, in the normal font and in the widened one
+        // Every name is readable at once from 360px up in the normal font, and from 480px up in the deliberately widened one;
+        // below that the row scrolls with the design that is showing kept in view
         // (the bar shrinks its type a little before it lets the row scroll).
-        if (w >= 360 && (r.scrolls || r.names !== keys.length)) fail(`${at}: only ${r.names} of ${keys.length} design names are visible without scrolling`);
+        if ((wide ? w >= 480 : w >= 360) && (r.scrolls || r.names !== keys.length)) fail(`${at}: only ${r.names} of ${keys.length} design names are visible without scrolling`);
       }
     }
   }

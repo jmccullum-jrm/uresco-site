@@ -1,0 +1,120 @@
+/* Print. The site's chrome stays off paper on every page; the credit application prints as a form to sign.
+   The cells are the same ones as on screen (40-forms.css), redrawn in black and given room for handwriting. */
+@media print {
+  @page { size: letter; margin: 11mm 13mm; }
+  html, body { background: #fff; color: #000; }
+  body { padding: 0; font-size: 9.5pt; line-height: 1.3; }
+  .utility, .masthead, .actionbar, .footer, dialog, .skip, .drawer, .sheet { display: none !important; }
+  a { text-decoration: none; color: inherit; }
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+  /* Ink objects lose their ground on paper, so their lettering prints black. */
+  .board, .board *, .takeoff, .takeoff *, .btn--dark, .pmap__yard, .pmap__yard small { color: #000 !important; }
+  .pmap__yard { background: #fff; border: 1px solid #000; }
+  .board { padding: 0; }
+  /* With background graphics off, Chromium paints the highlighter stroke solid white over the line above it. */
+  .display em, .h2 em, .hl { background: none !important; }
+  /* A stock hero photograph is no use on paper and printed as an empty box. */
+  .plate.phero__media, .hero__media { display: none; }
+  .fl { background: none; }
+  /* Anything drawn in a frame stays whole on one page, and a heading stays with what it introduces. Split across a page, a framed
+     grid printed as an empty box and overlapped the lines at the top of the next page. */
+  .shipto__card, .pn-ticket__card, .pmap, .dwg, .gnote, .yard, .tsheet, .board, .pn-gantt__row { break-inside: avoid; }
+  .shead { break-after: avoid; }
+}
+
+@media print {
+  /* Only the application goes on paper. */
+  body:has(form[data-form]) :is(.phero, .section:not(#apply), .takeoff, #apply .shead, #apply .seq) { display: none !important; }
+  body:has(form[data-form]) .fm-area { padding: 0; }
+  body:has(form[data-form]) .fm-area > .wrap { max-width: none; padding: 0; }
+  body:has(form[data-form]) #apply { padding: 0; }
+  body:has(form[data-form]) #apply > .wrap { max-width: none; padding: 0; }
+
+  .fm-layout { display: block; }
+  .fm-side, .fm-calls, .fm-foot, .fm-notice, .fm-route, .fm-guide, .fm-cell--drop, .fm-sheet__head, .fm-left, .fm-screen, .fm-err { display: none !important; }
+
+  form[data-form="quote"] .fm-sheet__head { display: block !important; padding: 0 0 6pt; border: 0; }
+  .fm-sheet__save, .fm-sheet__private { display: none; }
+  form[data-form] {
+    --cell-h: 32pt;
+    border: 0; background: none; color: #000;
+    font-size: 9.5pt;
+  }
+  form[data-form] .fm-paper { display: block; }
+  form[data-form] .fm-paperopts { display: flex; }
+  form[data-form] .fm-cell.fm-paper { display: flex; }
+
+  /* The letterhead: the title block, in black */
+  form[data-form] .fm-letterhead { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; column-gap: 18pt; padding-bottom: 7pt; margin-bottom: 8pt; border-bottom: 1.5pt solid #000; }
+  .fm-letterhead__brand { display: flex; align-items: center; gap: 9pt; }
+  .fm-letterhead__brand svg { width: 38pt; height: 38pt; }
+  .fm-letterhead__title { margin: 0; font-size: 21pt; line-height: 1; font-weight: 600; letter-spacing: -.035em; }
+  .fm-letterhead__firm { margin: 2pt 0 0; font-size: 9pt; }
+  .fm-letterhead__label { margin: 0 0 2pt; font-family: var(--mono); font-size: 7pt; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; }
+  .fm-letterhead__return ul { list-style: none; margin: 0; padding: 0; font-size: 8pt; line-height: 1.32; }
+  .fm-letterhead__return li { display: grid; grid-template-columns: 50pt 82pt auto; gap: 6pt; }
+  .fm-letterhead__return b { font-weight: 600; }
+  .fm-letterhead__page { position: absolute; top: 0; right: 0; margin: 0; font-family: var(--mono); font-size: 7pt; letter-spacing: .06em; text-transform: uppercase; }
+  form[data-form] { position: relative; }
+  form[data-form] .fm-pagehead { display: flex; justify-content: space-between; break-before: page; padding-bottom: 5pt; margin-bottom: 8pt; border-bottom: 1.5pt solid #000; font-family: var(--mono); font-size: 7.5pt; letter-spacing: .05em; text-transform: uppercase; }
+
+  /* Sections: a heavy rule and the letter, no fills. */
+  .fm-set { break-inside: avoid; overflow: visible; }
+  .fm-set + .fm-set { margin-top: 8pt; }
+  .fm-legend, .fm-set + .fm-set .fm-legend, .fm-paper + .fm-set .fm-legend { float: none; display: flex; align-items: center; gap: 5pt; width: 100%; min-height: 0; padding: 0 0 3pt; background: none; border: 0; font-size: 11pt; font-weight: 600; letter-spacing: -.02em; }
+  .fm-legend .bub { width: 15pt; height: 15pt; border: 1pt solid #000; background: #fff; color: #000; font-size: 7.5pt; }
+  .fm-grid { border-top: 1.25pt solid #000; border-left: .6pt solid #000; margin-right: 0; }
+
+  /* Cells: lettering on top and room to write */
+  .fm-cell, .fm-cell--half, .fm-cell--third, .fm-cell--wide { border-right: .6pt solid #000; border-bottom: .6pt solid #000; background: none; box-shadow: none; break-inside: avoid; min-height: 0; outline: 0; }
+  .fm-label { padding: 2.5pt 4pt 0; font-size: 6.75pt; letter-spacing: .05em; color: #000; gap: 0 6pt; }
+  .fm-hint { flex-basis: auto; order: 0; margin-left: 0; font-size: 7pt; color: #333; }
+  .fm-req { min-height: 0; padding: 0; font-size: 6pt; font-weight: 500; letter-spacing: .04em; }
+  .fm-req::after { display: none; }
+  .fm-cell--req:has(:is(.fm-input:valid, .fm-check input:checked)) .fm-req::before { display: none; }
+
+  .fm-input, .fm-select, .fm-text { min-height: var(--cell-h); padding: 0 4pt 2pt; font-size: 10pt; color: #000; background: none; }
+  form[data-form] .fm-input { height: var(--cell-h); font-size: 10pt; }
+  .fm-input::placeholder { color: transparent; }
+  .fm-input::-webkit-calendar-picker-indicator { display: none; }
+  form:not(.is-filled) input[type="date"]::-webkit-datetime-edit { color: transparent; }
+  .fm-text { min-height: calc(var(--cell-h) * 2); height: calc(var(--cell-h) * 2); margin-top: 0; line-height: 1.3; background: none; resize: none; }
+
+  /* Choices print as tick boxes; a drop-down would print as nothing. */
+  .fm-select { display: none; }
+  .fm-paperopts { display: flex; flex-wrap: wrap; gap: 2.5pt 11pt; padding: 3.5pt 4pt 5pt; font-size: 8.5pt; line-height: 1.2; font-weight: 400; }
+  .fm-paperopts label { display: inline-flex; align-items: center; gap: 3.5pt; white-space: nowrap; }
+  .fm-paperopts input { position: absolute; opacity: 0; width: 0; height: 0; }
+  .fm-opt__box, .fm-check .fm-opt__box { width: 9pt; height: 9pt; margin: 0; border: .75pt solid #000; border-radius: 0; background: none; }
+  .fm-paperopts input:checked + .fm-opt__box::after, form.is-filled .fm-opt:has(input:checked) .fm-opt__box::after, .fm-check input:checked + .fm-opt__box::after { content: ''; width: 0; height: 0; margin: 0; border: 2.75pt solid #000; transform: none; background: none; border-radius: 0; }
+  .fm-opt:has(input:checked) .fm-opt__box::after { content: none; }
+  .fm-seg { display: flex; flex-wrap: wrap; gap: 2.5pt 12pt; margin: 0; padding: 3.5pt 4pt 5pt; border: 0; }
+  .fm-opt, .fm-opt + .fm-opt, .fm-opt:has(input:checked), .fm-seg--4 .fm-opt:nth-child(n+3) { min-height: 0; padding: 0; border: 0; background: none; font-size: 8.5pt; gap: 3.5pt; outline: 0; }
+  .fm-opt input { display: none; }
+  .fm-opt .i { display: none; }
+
+  /* References: three slips across */
+  .fm-refs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-column: span 6; border: 0; }
+  .fm-ref { border-right: .6pt solid #000; border-bottom: .6pt solid #000; }
+  .fm-ref__t { padding: 2.5pt 4pt; border-bottom: .6pt solid #000; font-size: 7pt; letter-spacing: .05em; color: #000; }
+  .fm-ref .fm-cell { border-right: 0; }
+  form[data-form] .fm-ref .fm-input { height: 36pt; min-height: 36pt; }
+
+  /* The signature block: the reason this is on paper */
+  .fm-enclose .fm-label { justify-content: flex-start; }
+  .fm-cell--agree { background: none; }
+  .fm-check { grid-template-columns: auto minmax(0, 1fr); padding: 6pt 5pt; gap: 0 6pt; font-size: 9.5pt; line-height: 1.35; }
+  .fm-check .fm-req { display: none; }
+  .fm-check input { display: none; }
+  form[data-form] #signature, form[data-form] #signed { height: 58pt; min-height: 58pt; }
+  /* Page one lays the business details out for a pen: the business type gets a whole line of tick boxes. */
+  .fm-cell:has(#entity) { grid-column: span 6; }
+  .fm-cell:has(#website) { grid-column: span 2; }
+  .fm-cell:has(#address) { grid-column: span 4; }
+  form[data-form] .fm-yards-line { display: flex; flex-wrap: wrap; gap: 0 14pt; margin: 12pt 0 0; padding-top: 5pt; border-top: 1.25pt solid #000; font-size: 8.5pt; }
+  .fm-yards-line b { font-weight: 600; }
+
+  /* Page one fills the sheet; page two is the references and the signature. */
+  .fm-set--newpage { break-before: avoid; margin-top: 0 !important; }
+  form[data-form] #contacts { break-before: auto; }
+}

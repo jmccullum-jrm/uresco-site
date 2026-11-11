@@ -1,0 +1,8 @@
+/* ---------- Contractor accounts ---------- */
+/* The hero's ticket, then the steps and the sheet (40-forms.css). */
+
+.ac-stub { margin-top: clamp(.25rem, 1vw, 1rem); }
+
+/* How an account opens, then the application */
+.ac-seq { margin-bottom: clamp(2.5rem, 2rem + 2vw, 4rem); }
+.ac-print { background: none; border-width: 0 0 var(--line); cursor: pointer; }

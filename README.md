@@ -1,6 +1,6 @@
-# Uresco website: four designs and a chooser
+# Uresco website: six designs and a chooser
 
-This branch holds four complete candidate designs for the new Uresco Construction Materials website,
+This branch holds six complete candidate designs for the new Uresco Construction Materials website,
 plus a chooser that shows them side by side so the owner can pick one.
 
 | # | Design | Idea |
@@ -9,12 +9,14 @@ plus a chooser that shows them side by side so the owner can pick one.
 | 2 | **Manifest** | Engineered and precise. Drawn like a shipping document, with technical drawings of the products and a live dispatch board for the three yards. |
 | 3 | **Yellow** | Bold poster branding. UCM yellow and black, very large type, and the yard phone numbers right under the headline. |
 | 4 | **Boreal** | Calm and map-first. Opens on a map of Alaska that asks where you are building and names the yard to call. |
+| 5 | **Simple** | Plain and fast. Big phone numbers, one clear next step, no decoration. Built for developers who just want to place the order. |
+| 6 | **Funny** | The same company and facts with jokes on every page. |
 
 ## Looking at the designs
 
 Open the preview and use the bar across the top:
 
-- **The four names** switch designs. You stay on the same page, so you can compare the Alaska page, the quote
+- **The design names** switch designs. You stay on the same page, so you can compare the Alaska page, the quote
   form and so on like for like.
 - **About** shows or hides a one-line description of the design you are looking at.
 - **Phone view** (on a computer) shows the design on a 390 by 844 phone screen.
@@ -55,12 +57,12 @@ docs/                the built preview (committed, because GitHub Pages serves i
 ```
 
 Each design is a zero-dependency static site: `node build.mjs` inside `designs/<name>/` turns `src/` into
-plain HTML, one stylesheet and one script. Content that all four share (yards, phone numbers, products,
+plain HTML, one stylesheet and one script. Content that every design shares (yards, phone numbers, products,
 services) lives in each design's `src/data/`; a design's `DESIGN.md` documents its type, colour, components
 and rules, and its `README.md` covers its build details.
 
 ```sh
-npm run build        # all four designs plus the chooser, into docs/
+npm run build        # all six designs plus the chooser, into docs/
 npm run check        # build, then every check (needs Playwright's Chromium)
 node tests/all.mjs yellow chooser   # only the named parts
 npm run serve        # http://localhost:8080

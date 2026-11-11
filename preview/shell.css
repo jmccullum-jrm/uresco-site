@@ -103,6 +103,8 @@ button { font: inherit; color: inherit; }
 .bar.f6 .picks { gap: 2px; padding-inline: 0; }
 .bar.f6 .pick { gap: 3px; padding: 0 5px; font-size: 11px; }
 .bar.f6 .pick__star { font-size: 10px; }
+.bar.f7 .pick { min-width: 40px; padding: 0 3px; gap: 1px; font-size: 10.5px; letter-spacing: -.01em; }
+.bar.f7 .pick__star { font-size: 9px; margin-left: -1px; }
 body.compact .about__actions { display: flex; }
 body.compact .about__long { display: none; }
 body.compact .about__short { display: inline; }

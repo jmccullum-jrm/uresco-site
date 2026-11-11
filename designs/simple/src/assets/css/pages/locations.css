@@ -1,0 +1,147 @@
+/* ---------- Locations: the board under the headline ---------- */
+.lo-hero .phero__grid { grid-template-areas: "copy plate" "board board"; row-gap: clamp(1.25rem, 2.5vw, 2rem); align-items: end; }
+.lo-hero .phero__inner { grid-area: copy; }
+.lo-hero .phero__media { grid-area: plate; }
+.lo-hero .phero__media .plate__img { aspect-ratio: 2 / 1; }
+/* This photograph's sky is mid-grey, so it is lifted further than the shared plate treatment: the clouds clip to paper like the other hero plates. */
+.lo-hero .plate__img img { filter: grayscale(1) contrast(1.15) brightness(1.55); }
+.lo-hero .display { font-size: clamp(3rem, 5.6vw, 5rem); }
+.lo-board { grid-area: board; min-width: 0; }
+.lo-jump { display: flex; flex-wrap: wrap; align-items: center; gap: .25rem 1.5rem; padding: .3rem clamp(1rem, 2vw, 1.5rem); background: var(--sheet); border: var(--line) solid var(--ink); border-top: 0; }
+.lo-jump .label { color: var(--ink); }
+.lo-jump ul { display: flex; flex-wrap: wrap; gap: 0 1.25rem; list-style: none; margin: 0 0 0 auto; padding: 0; }
+.lo-jump a { display: inline-flex; align-items: center; gap: .3rem; min-height: 40px; font-family: var(--mono); font-size: var(--fs-label); font-weight: 600; letter-spacing: .05em; text-transform: uppercase; text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: .22em; }
+.lo-jump a:hover { background: var(--yellow); text-decoration-color: transparent; }
+@media (max-width: 62.4375em) {
+  .lo-hero .phero__grid { grid-template-areas: "copy" "board" "plate"; }
+  .lo-hero .display { font-size: clamp(2.5rem, 11vw, 4.75rem); }
+  .lo-hero .phero__media .plate__img { aspect-ratio: 16 / 9; }
+}
+@media (max-width: 37.4375em) {
+  .lo-board { margin-inline: calc(var(--margin) * -1); }
+  .lo-jump { padding-inline: var(--margin); border-inline: 0; }
+  .lo-jump ul { margin-left: 0; width: 100%; justify-content: space-between; }
+  .lo-jump .label { padding-top: .35rem; }
+}
+
+/* ---------- Locations: the yard directory ---------- */
+/* Each yard is one row of the directory, and each row is the four ways of reaching that yard. */
+.lo-dir { display: grid; gap: var(--gap); }
+.lo-yard { display: grid; grid-template-columns: minmax(0, 3.4fr) minmax(0, 8.6fr); padding: 0; scroll-margin-top: calc(var(--mast) + 1rem); }
+.lo-yard__id { display: flex; flex-direction: column; gap: .3rem; padding: clamp(1.1rem, 1.8vw, 1.5rem); border-right: var(--line) solid var(--ink); }
+.lo-yard__ref { color: var(--ink-3); }
+.lo-yard .yard__city { font-size: clamp(2rem, 1.3rem + 1.75vw, 2.875rem); }
+.lo-yard:target .yard__city { background: linear-gradient(transparent 0 58%, var(--yellow) 58% 93%, transparent 93%); -webkit-box-decoration-break: clone; box-decoration-break: clone; width: fit-content; }
+.lo-yard__meta { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: .9rem; align-items: end; margin-top: .5rem; }
+.lo-yard__text { display: grid; gap: .55rem; align-content: end; }
+.lo-yard__role { margin: 0; font-size: .9375rem; line-height: 1.35; color: var(--ink-2); }
+.lo-yard__now { display: flex; flex-wrap: wrap; align-items: center; gap: .15rem 1rem; margin: 0; font-size: .9375rem; }
+.lo-yard__now abbr { font-size: .8125rem; letter-spacing: .04em; color: var(--ink-3); text-decoration: none; }
+html:not(.js) .lo-yard__now { display: none; }
+.lo-key { display: grid; gap: .3rem; width: 7.25rem; }
+.lo-key__crop { position: relative; aspect-ratio: 460 / 330; overflow: hidden; border: 1px solid var(--ink); background: var(--sheet); }
+.lo-key__sheet { position: absolute; }
+.lo-key__sheet img { display: block; width: 100%; height: auto; }
+.lo-key i { position: absolute; width: 12px; height: 12px; margin: -6px 0 0 -6px; border: 2px solid var(--ink); border-radius: 50%; background: var(--yellow); }
+.lo-key__cap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0 .4rem; font-family: var(--mono); font-size: .75rem; letter-spacing: .02em; color: var(--ink-3); white-space: nowrap; }
+.lo-yard__quote { align-self: flex-start; margin-top: auto; font-size: .8125rem; }
+
+.lo-ways { display: grid; grid-template-columns: minmax(0, 3.3fr) minmax(0, 3.3fr) minmax(0, 2.4fr); grid-template-rows: auto 1fr; margin: 0; }
+.lo-way { display: grid; align-content: start; gap: .5rem; padding: clamp(1.1rem, 1.8vw, 1.5rem); border-right: 1px solid var(--rule-2); min-width: 0; }
+.lo-way:nth-child(n+3) { border-right: 0; }
+.lo-way--call { grid-column: 1; grid-row: 1 / span 2; }
+.lo-way--visit { grid-column: 2; grid-row: 1 / span 2; }
+.lo-way--fax { grid-column: 3; grid-row: 1; border-bottom: 1px solid var(--rule-2); }
+.lo-way--email { grid-column: 3; grid-row: 2; }
+.lo-way > dt { font-family: var(--mono); font-size: var(--fs-label); font-weight: 600; letter-spacing: .07em; text-transform: uppercase; color: var(--ink); }
+.lo-way > dd { margin: 0; display: grid; gap: .55rem; justify-items: start; min-width: 0; }
+.lo-way__num { position: relative; isolation: isolate; font-size: clamp(1.625rem, 1rem + 1.25vw, 2.125rem); font-weight: 500; letter-spacing: -.02em; line-height: 1.1; text-decoration: none; white-space: nowrap; }
+.lo-way__num::before { content: ''; position: absolute; inset: -.1em -.25em; z-index: -1; background: var(--yellow); transform: scaleX(0); transform-origin: left; transition: transform var(--t-row) var(--ease); }
+.lo-way__num:hover::before, .lo-way__num:focus-visible::before { transform: scaleX(1); }
+.lo-way__toll { display: inline-flex; align-items: baseline; gap: .45rem; font-size: 1.0625rem; font-weight: 500; text-decoration: none; }
+.lo-way__toll small { font-family: var(--mono); font-size: .75rem; letter-spacing: .04em; color: var(--ink-3); }
+.lo-way__toll:hover { text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: .2em; }
+.lo-way__btn { margin-top: .15rem; }
+.lo-way__for { margin: .35rem 0 0; font-size: .9375rem; line-height: 1.35; color: var(--ink-2); }
+.lo-way address { font-style: normal; font-size: 1.125rem; font-weight: 500; line-height: 1.3; letter-spacing: -.01em; }
+.lo-way--fax dd { font-size: 1.125rem; font-weight: 500; letter-spacing: -.01em; }
+.lo-way__mail { font-size: 1.0625rem; font-weight: 500; overflow-wrap: anywhere; text-underline-offset: .2em; }
+.lo-way__mail:hover { background: var(--yellow); text-decoration-color: transparent; }
+.lo-more { display: grid; gap: .55rem; width: 100%; margin: .5rem 0 0; padding-top: .55rem; border-top: 1px solid var(--rule); font-size: .9375rem; line-height: 1.35; }
+.lo-more div { display: grid; grid-template-columns: 3.5rem minmax(0, 1fr); column-gap: .75rem; }
+.lo-more dt { font-family: var(--mono); font-size: var(--fs-label); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); padding-top: .1rem; }
+.lo-more dd { margin: 0; min-width: 0; }
+.lo-hours span { display: block; }
+.lo-hours small { display: block; margin-top: .1rem; font-size: .8125rem; color: var(--ink-3); }
+
+@media (max-width: 68.6875em) {
+  .lo-yard { grid-template-columns: minmax(0, 1fr); }
+  .lo-yard__id { border-right: 0; border-bottom: var(--line) solid var(--ink); }
+  .lo-ways { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: none; }
+  .lo-way--call { grid-column: 1; grid-row: 1 / span 2; }
+  .lo-way--visit { grid-column: 2; grid-row: 1 / span 2; border-right: 0; }
+  .lo-way--fax, .lo-way--email { grid-row: auto; grid-column: auto; border-top: 1px solid var(--rule-2); border-bottom: 0; }
+  .lo-way--fax { border-right: 1px solid var(--rule-2); }
+}
+@media (min-width: 40em) and (max-width: 68.6875em) {
+  /* Tablet: the key plan goes up beside the yard's name. */
+  .lo-yard__id { position: relative; }
+  .lo-yard__meta { display: block; margin-top: .25rem; }
+  .lo-key { position: absolute; top: clamp(1.1rem, 1.8vw, 1.5rem); right: clamp(1.1rem, 1.8vw, 1.5rem); width: 8.5rem; }
+}
+@media (max-width: 39.9375em) {
+  /* Phone: one column, the number first. Rows are ruled; every row is its own target. */
+  .lo-dir { gap: 1.25rem; }
+  .lo-yard { margin-inline: calc(var(--margin) * -1); border-inline: 0; }
+    .lo-yard__id { padding: 1.1rem var(--margin); }
+  .lo-yard__quote { margin-top: .6rem; }
+  .lo-key { width: 6.25rem; }
+  .lo-key__word { display: none; }
+  .lo-key__cap { justify-content: flex-end; }
+  .lo-ways { grid-template-columns: minmax(0, 1fr); }
+  .lo-way, .lo-way--call, .lo-way--visit, .lo-way--fax, .lo-way--email { grid-column: 1; grid-row: auto; padding: .95rem var(--margin); border-right: 0; border-bottom: 1px solid var(--rule-2); border-top: 0; }
+  .lo-way--email { border-bottom: 0; }
+  .lo-way--fax, .lo-way--email { grid-template-columns: 4.5rem minmax(0, 1fr); align-items: baseline; }
+  .lo-way__num { font-size: clamp(1.5625rem, 7.6vw, 2.25rem); }
+  .lo-way--call dd { grid-template-columns: minmax(0, 1fr) auto; column-gap: .75rem; align-items: center; }
+  .lo-way--call .lo-way__num { grid-column: 1; }
+  .lo-way--call .lo-way__toll { grid-column: 1; }
+  .lo-way--call .lo-way__btn { grid-column: 2; grid-row: 1 / span 2; margin: 0; width: 48px; height: 48px; padding: 0; }
+  .lo-way--call .lo-way__btn span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .lo-way--call .lo-way__for { grid-column: 1 / -1; }
+  .lo-way--visit dd { grid-template-columns: minmax(0, 1fr) auto; column-gap: .75rem; }
+  .lo-way--visit address { grid-column: 1; }
+  .lo-way--visit .lo-way__btn { grid-column: 2; grid-row: 1; align-self: start; margin: 0; }
+  .lo-way--visit .lo-more { grid-column: 1 / -1; }
+}
+@media (max-width: 23.6875em) { .lo-way--visit dd { grid-template-columns: minmax(0, 1fr); } .lo-way--visit .lo-way__btn { grid-column: 1; grid-row: auto; justify-self: start; } }
+@media (max-width: 62.4375em), (pointer: coarse) { .lo-way__num { display: inline-flex; align-items: center; min-height: 40px; } .lo-way__toll, .lo-way__mail { display: inline-flex; align-items: center; min-height: 40px; } .lo-way__mail { margin-block: -.3rem; } .lo-yard__quote { min-height: 40px; } }
+
+/* ---------- Locations: which yard? ---------- */
+.lo-route { margin-bottom: clamp(1.5rem, 3vw, 2.5rem); border-top: var(--line) solid var(--ink); }
+.lo-route__cols { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 3fr) minmax(0, 4fr); column-gap: var(--gap); padding: .55rem 0; border-bottom: 1px solid var(--rule-2); }
+.lo-route ol { list-style: none; margin: 0; padding: 0; }
+.lo-route__row { position: relative; isolation: isolate; display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 3fr) minmax(0, 4fr); column-gap: var(--gap); align-items: baseline; padding: clamp(.85rem, 1.6vw, 1.25rem) 0; border-bottom: 1px solid var(--rule-2); text-decoration: none; }
+.lo-route__row::before { content: ''; position: absolute; inset: 0 calc(var(--gap) * -.5); z-index: -1; background: var(--yellow); transform: scaleX(0); transform-origin: left; transition: transform var(--t-row) var(--ease); }
+.lo-route__row:hover::before, .lo-route__row:focus-visible::before { transform: scaleX(1); }
+.lo-route__where { font-size: clamp(1.25rem, .95rem + 1.2vw, 2rem); font-weight: 500; letter-spacing: -.03em; line-height: 1.12; }
+.lo-route__yard { display: flex; align-items: baseline; gap: .6rem; font-size: clamp(1.25rem, .95rem + 1.2vw, 2rem); font-weight: 600; letter-spacing: -.035em; line-height: 1.12; }
+.lo-route__arrow { align-self: center; display: inline-grid; color: var(--ink); }
+.lo-route__num { font-size: clamp(1.25rem, 1rem + .9vw, 1.875rem); font-weight: 500; letter-spacing: -.02em; white-space: nowrap; }
+.lo-route__num--note { font-family: var(--font); font-size: 1.0625rem; letter-spacing: -.01em; white-space: normal; color: var(--ink-2); }
+.lo-route__row:hover .lo-route__arrow, .lo-route__row:focus-visible .lo-route__arrow, .lo-route__row:hover .lo-route__num--note, .lo-route__row:focus-visible .lo-route__num--note { color: var(--ink); }
+@media (max-width: 47.9375em) {
+  .lo-route__cols { display: none; }
+  .lo-route__row { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "where where" "yard num"; row-gap: .45rem; padding-block: .9rem; }
+  .lo-route__where { grid-area: where; font-size: 1.1875rem; }
+  .lo-route__yard { grid-area: yard; font-size: 1.375rem; white-space: nowrap; }
+  .lo-route__num { grid-area: num; align-self: center; font-size: 1.25rem; }
+  .lo-route__num--note { font-size: .9375rem; white-space: normal; text-align: right; max-width: 11em; }
+}
+@media (max-width: 23.6875em) {
+  /* On the smallest phones the note goes under the yard name: "Any of the three" does not wrap and would run into it. */
+  .lo-route__row--any { grid-template-columns: minmax(0, 1fr); grid-template-areas: "where" "yard" "num"; }
+  .lo-route__row--any .lo-route__num--note { text-align: left; max-width: none; }
+  /* The arrows give way together: squeezed beside the number, only the longer names were losing theirs. */
+  .lo-route__arrow { display: none; }
+}

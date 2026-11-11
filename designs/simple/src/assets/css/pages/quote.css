@@ -1,0 +1,7 @@
+/* ---------- Quote request ---------- */
+/* The form itself is in 40-forms.css. This is what comes after it: the three numbers and the account stub. */
+
+/* The form starts as close under the headline as the rhythm allows. */
+.phero:has(+ .fm-area) { padding-bottom: 0; }
+
+.q-stub { margin-top: clamp(1.5rem, 3vw, 2.5rem); }

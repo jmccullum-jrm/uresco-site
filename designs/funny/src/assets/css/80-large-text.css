@@ -1,0 +1,30 @@
+/* ---------- Large text on a phone ----------
+   Text set to 150% or more in the browser, on a narrow screen. These are em widths, and an em in a media query
+   is the visitor's own default size: at normal text 19em is 304px, narrower than any phone, so nothing here
+   touches a normal page. What sets a label beside a number, or a long line that cannot wrap, stacks or wraps
+   here instead of running off the screen. `html` outranks the same rule in the page stylesheets, which load later. */
+@media (max-width: 19em) {
+  /* A word too long for the column breaks rather than being cut off, and display type comes down to fit its words. */
+  html body { overflow-wrap: break-word; }
+  html .d1, html .d2, html .phero__title, html .hero__title, html .footer__tag { font-size: min(11vw, 2.5rem) !important; }
+  html .field, html .fm-filefield, html .drop { min-width: 0; max-width: 100%; }
+  html .ystrip__item, html .ystrip--stack .ystrip__item, html .nf-hero .ystrip__item, html .fm-call, html .fm-u .fm-call, html .fm-tag .fm-call {
+    grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "city go" "num go"; gap: .1rem .4rem; min-height: 0; padding: .5rem .45rem .5rem .9rem;
+  }
+  html .ystrip__city, html .ystrip--stack .ystrip__city, html .fm-call__city, html .fm-u .fm-call__city {
+    flex-flow: row wrap; align-items: center; align-self: end; gap: 0 .4rem; min-width: 0; min-height: 0;
+  }
+  html .ystrip__num, html .ystrip--stack .ystrip__num, html .fm-call__num, html .fm-u .fm-call__num, html .lc-dial__num, html .pj-yard__num { justify-self: start; align-self: start; font-size: 1rem; white-space: normal; }
+  html .lc-dial__call { padding-left: .9rem; }
+  html .link, html .fm-mini, html .toggle { max-width: 100%; white-space: normal; height: auto; }
+  html .link { flex-wrap: wrap; }
+  html .wcap { left: .25rem; right: .25rem; width: auto; max-width: none; transform: none; white-space: normal; }
+  html .snap figcaption { left: 0; max-width: calc(100% - .5rem); white-space: normal; }
+  html .label, html .eyebrow, html .ask__q, html .ask__swap > span { white-space: normal; }
+  html .ask { max-width: 100%; }
+  html .sv-hook__name, html .sv-sheet__head b, html .qt-arch__name, html .sv-stop__no { white-space: normal; overflow-wrap: anywhere; }
+  html .actionbar { grid-template-columns: auto auto auto; }
+  html .actionbar__btn { min-width: 0; gap: 0; font-size: .6875rem; font-stretch: 100%; letter-spacing: 0; }
+  html .actionbar__btn .i { display: none; }
+  html .actionbar__btn--primary { padding-inline: .1rem; }
+}

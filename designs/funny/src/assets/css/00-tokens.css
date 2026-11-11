@@ -1,0 +1,94 @@
+/* Uresco — direction C, "Yellow".
+   Tokens only. Everything else reads from here.
+   Bundled in filename order: 00-tokens, 10-base, 20-chrome, 30-components, 40-forms, 90-print, then pages/*. */
+
+/* One family carries both voices: wide and black for headlines, normal width for reading. */
+@font-face {
+  font-family: 'Archivo';
+  src: url(../fonts/archivo-wide-var.woff2) format('woff2');
+  font-weight: 400 900; font-stretch: 100% 125%; font-display: swap;
+}
+/* Fallbacks, so the swap to Archivo moves as little as possible. One family, three faces picked by
+   the same weight and width the real font is asked for: text, semi-wide labels and buttons, and
+   the wide display. Each is Arial scaled to Archivo's average width, with Archivo's ascent (878)
+   and descent (210) divided by that scale. */
+@font-face {
+  font-family: 'Archivo Fallback'; font-weight: 400 549; font-stretch: 100%;
+  src: local('Arial'), local('ArialMT'), local('Liberation Sans');
+  size-adjust: 100%; ascent-override: 87.8%; descent-override: 21%; line-gap-override: 0%;
+}
+@font-face {
+  font-family: 'Archivo Fallback'; font-weight: 550 900; font-stretch: 100%;
+  src: local('Arial Bold'), local('Arial-BoldMT'), local('Liberation Sans Bold');
+  size-adjust: 96%; ascent-override: 91.5%; descent-override: 21.9%; line-gap-override: 0%;
+}
+@font-face {
+  font-family: 'Archivo Fallback'; font-weight: 400 900; font-stretch: 105% 115%;
+  src: local('Arial Bold'), local('Arial-BoldMT'), local('Liberation Sans Bold');
+  size-adjust: 116%; ascent-override: 75.7%; descent-override: 18.1%; line-gap-override: 0%;
+}
+@font-face {
+  font-family: 'Archivo Fallback'; font-weight: 400 900; font-stretch: 116% 125%;
+  src: local('Arial Bold'), local('Arial-BoldMT'), local('Liberation Sans Bold');
+  size-adjust: 130%; ascent-override: 67.5%; descent-override: 16.2%; line-gap-override: 0%;
+}
+
+:root {
+  /* Colour. Three fields: yellow, black, paper. Yellow is the only loud colour on the site. */
+  --yellow: #F5B800;        /* UCM yellow: fields, fills, type on black. Never type on paper. */
+  --yellow-hi: #FFCC33;     /* hover on yellow fills that sit on black */
+  --yellow-deep: #E5A900;   /* tone-on-tone rings and rules on a yellow field */
+  --black: #0E0E0C;
+  --black-2: #1B1A17;       /* raised surface on black */
+  --black-3: #2E2C27;       /* rules on black */
+  --paper: #F7F3EA;         /* off-white reading ground */
+  --paper-2: #ECE6D8;       /* raised surface and rules on paper */
+  --white: #FFFDF7;
+  --stone: #57524A;         /* quiet text on paper (7.0:1) */
+  --ash: #BDB7AA;           /* quiet text on black (9.7:1) */
+  --umber: #3A2C00;         /* quiet text on yellow (7.6:1) */
+  --open: #7BE0A0;          /* "open now" dot */
+  --error: #B3261E;
+
+  /* Type */
+  --font: 'Archivo', 'Archivo Fallback', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --wide: 125%;             /* display width axis; eased to 116% on small phones */
+  --t-d1: clamp(2.7rem, 1.1rem + 6.6vw, 7.25rem);   /* page headline */
+  --t-d2: clamp(2.05rem, 1.1rem + 4.1vw, 5rem);     /* section headline */
+  --t-d3: clamp(1.3rem, 1rem + 1.3vw, 2.1rem);      /* the failure notice on a form */
+  --t-d4: clamp(1.02rem, .95rem + .3vw, 1.2rem);    /* small headline */
+  --t-lede: clamp(1.1rem, 1rem + .5vw, 1.4rem);
+  --t-body: 1.0625rem;
+  --t-small: .9rem;
+  --t-label: .75rem;
+
+  /* Space: a 4px base. Sections breathe on a fluid scale. */
+  --s1: .25rem; --s2: .5rem; --s3: .75rem; --s4: 1rem; --s5: 1.5rem; --s6: 2rem; --s7: 3rem; --s8: 4rem;
+  --gutter: clamp(1rem, .3rem + 3vw, 3.25rem);
+  --section: clamp(4.25rem, 2.6rem + 7vw, 9rem);
+  --wrap: 1400px;
+
+  /* Shape */
+  --r-s: 10px;              /* inputs, small chips */
+  --r-m: 20px;              /* cards on phones, panels */
+  --r-l: 32px;              /* cards */
+  --r-pill: 999px;          /* buttons, pills, and the round end of every U and arch */
+  --line: 2px;              /* the keyline: every border on the site */
+
+  /* Shadow: only two. A hard "sticker" offset, and one soft lift for things that float. */
+  --sh-sticker: 4px 4px 0 var(--black);
+  --sh-float: 0 28px 60px -18px rgba(14, 14, 12, .5);
+
+  /* Motion: quick, springy, physical. */
+  --spring: cubic-bezier(.2, 1.4, .35, 1);   /* overshoots: flips, pops, stickers */
+  --out: cubic-bezier(.2, .7, .1, 1);        /* settles: wipes, fades, drawers */
+  --t-tap: .14s; --t-flip: .28s; --t-enter: .55s;
+
+  /* Chrome heights */
+  --util: 0px; --mast: 64px; --bar: 60px;
+  color-scheme: light;
+}
+@media (min-width: 62.5em) { :root { --util: 38px; --mast: 76px; --bar: 0px; } }
+@media (max-width: 26.25em) { :root { --wide: 116%; } }
+/* Very large screens get a wider column, so the poster grows with them. */
+@media (min-width: 118.75em) { :root { --wrap: 1640px; } }

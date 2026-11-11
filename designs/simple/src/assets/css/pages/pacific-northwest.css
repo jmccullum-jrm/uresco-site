@@ -1,0 +1,130 @@
+/* ---------- Pacific Northwest: the delivery ticket under the headline ---------- */
+/* The Alaska page's question and ticket pattern (.phero--ask, .shipto), carried over: here the ticket is a plain form. */
+.pn-ticket { grid-area: ship; }
+.pn-ticket__ask { justify-content: flex-start; }
+.pn-ticket__go { display: grid; grid-template-columns: minmax(0, 1fr); gap: .75rem; margin-top: auto; }
+.pn-ticket__card { display: flex; flex-direction: column; min-width: 0; }
+.pn-ticket__head { display: flex; align-items: baseline; gap: 1.25rem; margin: 0; padding: clamp(.8rem, 1.4vw, 1.1rem) clamp(1rem, 1.8vw, 1.5rem); border-bottom: var(--line) solid var(--ink); font-family: var(--mono); font-size: var(--fs-label); letter-spacing: .05em; text-transform: uppercase; color: var(--ink-3); }
+.pn-ticket__head b { margin-right: auto; font-family: var(--font); font-size: clamp(1.125rem, 1rem + .5vw, 1.375rem); font-weight: 600; letter-spacing: -.02em; text-transform: none; color: var(--ink); }
+.pn-ticket__rows { margin: 0; }
+.pn-ticket__rows div { display: grid; grid-template-columns: 5.5rem minmax(0, 1fr); column-gap: .75rem; align-items: baseline; padding: .6rem clamp(1rem, 1.8vw, 1.5rem); border-bottom: 1px solid var(--rule); }
+.pn-ticket__rows dt { font-family: var(--mono); font-size: var(--fs-label); letter-spacing: .07em; text-transform: uppercase; color: var(--ink-3); }
+.pn-ticket__rows dd { margin: 0; font-size: 1.0625rem; font-weight: 500; line-height: 1.35; }
+.pn-ticket__rows dd b { font-weight: 600; margin-right: .35rem; }
+.pn-ticket__dir { margin-left: .5rem; font-size: .8125rem; white-space: nowrap; }
+.pn-ticket__note { margin: auto 0 0; padding: .65rem clamp(1rem, 1.8vw, 1.5rem); font-size: .875rem; line-height: 1.35; color: var(--blue); }
+@media (max-width: 37.4375em) {
+  .pn-ticket__head, .pn-ticket__rows div, .pn-ticket__note { padding-inline: var(--margin); }
+  .pn-ticket__rows div { grid-template-columns: 4.75rem minmax(0, 1fr); }
+  .pn-ticket__rows dd b { display: block; margin: 0; }
+  .pn-ticket__dir { display: inline-flex; margin: .2rem 0 0; }
+}
+@media (max-width: 62.4375em), (pointer: coarse) { .pn-ticket__dir { min-height: 40px; align-items: center; } }
+
+/* ---------- Pacific Northwest: two ways off the truck ---------- */
+.pn-unload { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--gap); }
+.pn-way { display: grid; grid-template-columns: minmax(0, 1fr); gap: .6rem; align-content: start; }
+.pn-way .dwg { margin: 0 0 .9rem; }
+.pn-way > p { margin: 0; color: var(--ink-2); max-width: 34em; }
+.pn-dwg { container-type: inline-size; }
+.pn-dwg .dwg__bar { white-space: nowrap; }
+@container (max-width: 480px) { .pn-dwg .dwg__nts { display: none; } }
+.pn-note { margin-top: clamp(2rem, 4vw, 3rem); max-width: 46rem; }
+.pn-note a { font-weight: 600; white-space: nowrap; }
+@media (max-width: 62.4375em), (pointer: coarse) { .pn-note a { display: inline-block; padding-block: .6rem; margin-block: -.6rem; } }
+@media (max-width: 56.1875em) { .pn-unload { grid-template-columns: minmax(0, 1fr); row-gap: 2.75rem; } }
+@media (max-width: 34.9375em) { .pn-dwg .dwg__nts { display: none; } .pn-dwg .dwg__bar span:nth-child(2) { display: inline; } }
+.pn-way .h3 { font-size: clamp(1.5rem, 1.2rem + 1.2vw, 2.125rem); letter-spacing: -.04em; }
+
+/* ---------- Pacific Northwest: the range as a build schedule ---------- */
+/* The bars step down the sheet from foundation to finish; hardware runs the whole length of the job. */
+.pn-gantt { background: var(--sheet); border: var(--line) solid var(--ink); }
+.pn-gantt__head, .pn-gantt__row { display: grid; grid-template-columns: minmax(0, 5.4fr) minmax(0, 6.6fr); }
+.pn-gantt__head { border-bottom: var(--line) solid var(--ink); }
+.pn-gantt__head > .label { align-self: center; padding: .7rem 1rem; color: var(--ink); font-weight: 600; }
+.pn-gantt__cols { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.pn-gantt__cols span { display: flex; align-items: baseline; gap: .5rem; padding: .7rem .8rem; border-left: 1px solid var(--rule-2); font-size: clamp(1rem, .9rem + .4vw, 1.25rem); font-weight: 600; letter-spacing: -.025em; line-height: 1.1; }
+.pn-gantt__cols b { font-size: .8125rem; font-weight: 600; letter-spacing: .06em; color: var(--blue); }
+.pn-gantt__rows { list-style: none; margin: 0; padding: 0; }
+.pn-gantt__row { position: relative; align-items: stretch; border-bottom: 1px solid var(--rule); text-decoration: none; }
+.pn-gantt__rows li:last-child .pn-gantt__row { border-bottom: 0; }
+.pn-gantt__row:hover, .pn-gantt__row:focus-visible { background: var(--paper-2); }
+.pn-gantt__who { display: grid; grid-template-columns: 2.5rem 2.75rem minmax(0, 1fr); grid-template-areas: "no glyph name" "no glyph items"; column-gap: .6rem; row-gap: .1rem; align-items: center; align-content: center; padding: .65rem 1rem; }
+.pn-gantt__no { grid-area: no; font-size: .8125rem; color: var(--ink-3); letter-spacing: .04em; }
+.pn-gantt__glyph { grid-area: glyph; display: grid; }
+.pn-gantt__name { grid-area: name; font-size: 1.125rem; font-weight: 600; letter-spacing: -.025em; line-height: 1.15; }
+.pn-gantt__items { grid-area: items; font-size: .8125rem; line-height: 1.35; color: var(--ink-3); }
+.pn-gantt__row:hover .pn-gantt__items, .pn-gantt__row:focus-visible .pn-gantt__items, .pn-gantt__row:hover .pn-gantt__no, .pn-gantt__row:focus-visible .pn-gantt__no { color: var(--ink); }
+.pn-gantt__row:hover .pn-gantt__name, .pn-gantt__row:focus-visible .pn-gantt__name { text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: .18em; }
+.pn-gantt__when { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.pn-gantt__track { position: relative; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.pn-gantt__track i { border-left: 1px solid var(--rule-2); }
+.pn-gantt__track b { position: absolute; top: 50%; left: calc((var(--from) - 1) * 25%); width: calc((var(--to) - var(--from)) * 25%); height: 18px; margin-top: -9px; background: var(--yellow); border: var(--line) solid var(--ink); transform-origin: left; }
+.pn-gantt__row:hover .pn-gantt__track b, .pn-gantt__row:focus-visible .pn-gantt__track b { background: var(--ink); }
+.pn-gantt__note { display: flex; flex-wrap: wrap; align-items: baseline; gap: .15rem .8rem; margin: 0; padding: .7rem 1rem; border-top: var(--line) solid var(--ink); font-size: .9375rem; color: var(--ink-2); }
+@media (max-width: 56.1875em) {
+  /* Phone and small tablet: each line is a row of its own, with its stage in words and the chart reduced to one strip. */
+  .pn-gantt__head { display: none; }
+  .pn-gantt__row { grid-template-columns: minmax(0, 1fr); padding: .8rem var(--margin) .9rem; }
+  .pn-gantt__who { padding: 0; }
+  .pn-gantt__when { position: static; width: auto; height: auto; overflow: visible; clip: auto; white-space: normal; grid-column: 1; margin-top: .55rem; font-family: var(--mono); font-size: var(--fs-label); font-weight: 500; letter-spacing: .05em; text-transform: uppercase; color: var(--ink); }
+  .pn-gantt__track { margin-top: .3rem; height: 14px; border-right: 1px solid var(--rule-2); }
+  .pn-gantt__track b { top: 0; bottom: 0; height: auto; margin-top: 0; }
+  .pn-gantt { margin-inline: calc(var(--margin) * -1); border-inline: 0; }
+  .pn-gantt__note { padding-inline: var(--margin); }
+}
+
+/* ---------- Pacific Northwest: Kent yard ---------- */
+.pn-yard { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: var(--gap); align-items: stretch; }
+.pn-also { min-width: 0; border-top: var(--line) solid var(--ink); }
+.pn-also__head { margin: 0; padding: .7rem 0; border-bottom: 1px solid var(--rule-2); color: var(--ink); font-weight: 600; }
+.pn-also ul { list-style: none; margin: 0; padding: 0; }
+.pn-also a { position: relative; isolation: isolate; display: grid; grid-template-columns: 3.5rem minmax(0, 1fr) auto; grid-template-areas: "no name go" "no sum go"; column-gap: .9rem; padding: .95rem 0; border-bottom: 1px solid var(--rule-2); text-decoration: none; }
+.pn-also a::before { content: ''; position: absolute; inset: 0 calc(var(--gap) * -.5); z-index: -1; background: var(--yellow); transform: scaleX(0); transform-origin: left; transition: transform var(--t-row) var(--ease); }
+.pn-also a:hover::before, .pn-also a:focus-visible::before { transform: scaleX(1); }
+.pn-also .num { grid-area: no; font-size: .8125rem; font-weight: 600; letter-spacing: .06em; color: var(--blue); }
+.pn-also a:hover .num, .pn-also a:focus-visible .num { color: var(--ink); }
+.pn-also b { grid-area: name; font-size: clamp(1.125rem, 1rem + .5vw, 1.375rem); font-weight: 600; letter-spacing: -.025em; line-height: 1.15; }
+.pn-also small { grid-area: sum; margin-top: .2rem; font-size: .9375rem; color: var(--ink-2); }
+.pn-also a:hover small, .pn-also a:focus-visible small { color: var(--ink); }
+.pn-also .i { grid-area: go; align-self: center; }
+.pn-yard .yard { margin: 0; }
+@media (max-width: 62.4375em) { .pn-yard { grid-template-columns: minmax(0, 1fr); } }
+
+/* ---------- Pacific Northwest: the lane north, enlarged ---------- */
+.pn-detail { margin-top: clamp(1.5rem, 3vw, 2.5rem); }
+.pn-detail__canvas { position: relative; overflow: hidden; }
+.pn-detail__sheet { position: absolute; }
+.pn-detail .pmap__yard { pointer-events: none; }
+/* The lanes SVG is drawn at twice its usual scale here, so its marks are halved to stay the same size as on the full plate. */
+.pn-detail .pm-lane--sea { stroke-width: 1.8; stroke-dasharray: 7 5; }
+.pn-detail .pm-draw { stroke-width: 10; }
+.pn-detail .pm-town { stroke-width: 1.2; }
+.pn-detail .pm-yard circle { stroke-width: 1.5; }
+/* The name of the lane's end goes under the line and west of it, clear of the Kent marker. */
+.pmap.pn-detail .pn-detail__sound { transform: translate(calc(-100% - 4px), 7px); }
+@media (min-width: 43.75em) and (max-width: 68.6875em) {
+  /* The title block is two-up here; three numbers in one column would leave half of it blank. */
+  .pn-detail__yards { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .pn-detail__yards li + li { border-left: 1px solid var(--rule-2); }
+  .pn-detail .pmap__note { grid-column: 1 / -1; border-left: 0; border-top: 1px solid var(--rule-2); }
+}
+@media (max-width: 43.6875em) {
+  /* The full plate's phone marks are sized for a sheet drawn at half this scale, and would swamp the crop. */
+  .pn-detail .pm-lane--sea { stroke-width: 3.2; stroke-dasharray: 11 8; }
+  .pn-detail .pm-draw { stroke-width: 14; }
+  .pn-detail .pm-town { r: 5px; stroke-width: 2.2; }
+  .pn-detail .pm-yard circle { r: 14px; stroke-width: 3.4; }
+  .pn-detail .pm-yard .pm-yard__dot { r: 5px; }
+}
+.pn-detail__yards { list-style: none; margin: 0; padding: 0; }
+.pn-detail__yards a { position: relative; isolation: isolate; display: grid; gap: .1rem; padding: .7rem 1rem; border-bottom: 1px solid var(--rule-2); text-decoration: none; }
+.pn-detail__yards a::before { content: ''; position: absolute; inset: 0; z-index: -1; background: var(--yellow); transform: scaleX(0); transform-origin: left; transition: transform var(--t-row) var(--ease); }
+.pn-detail__yards a:hover::before, .pn-detail__yards a:focus-visible::before { transform: scaleX(1); }
+.pn-detail__yards .num { font-size: clamp(1.25rem, 1rem + .7vw, 1.5rem); font-weight: 500; letter-spacing: -.01em; }
+
+/* ---------- Pacific Northwest: motion ---------- */
+@media (prefers-reduced-motion: no-preference) {
+  html.js .pn-gantt[data-reveal]:not(.is-in) .pn-gantt__track b { transform: scaleX(0); }
+  .pn-gantt__track b { transition: transform 260ms linear calc(var(--i) * 45ms); }
+}
