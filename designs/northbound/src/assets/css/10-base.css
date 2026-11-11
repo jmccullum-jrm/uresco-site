@@ -1,0 +1,137 @@
+/* ==========================================================================
+   Base: reset, type, the grid, buttons, links, reveal states.
+   ========================================================================== */
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; scroll-padding-block: calc(var(--mast) + 1.5rem) calc(var(--bar) + 1rem); }
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+/* Reduced motion: states still change, nothing travels to get there. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
+}
+body {
+  margin: 0; padding-bottom: var(--bar);
+  background: var(--paper); color: var(--ink);
+  font: 400 var(--t-body)/1.55 var(--sans);
+  -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  overflow-x: clip;
+}
+main, .footer { margin-left: var(--rail); }
+img, svg, picture { display: block; max-width: 100%; }
+img { height: auto; }
+h1, h2, h3, h4, p, figure, blockquote, dl, dd, ol, ul { margin: 0; }
+ol[class], ul[class] { list-style: none; padding: 0; }
+address { font-style: normal; }
+a { color: inherit; text-underline-offset: .18em; text-decoration-thickness: 1px; }
+/* An address is one long word: it may break rather than push the page sideways. */
+a[href^="mailto:"] { overflow-wrap: anywhere; }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+[hidden] { display: none !important; }
+::selection { background: var(--yellow); color: var(--ink); }
+
+:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; border-radius: 1px; }
+.footer :focus-visible, .section--deep :focus-visible { outline-color: var(--yellow); }
+
+.sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
+.skip { position: absolute; left: 1rem; top: -4rem; z-index: 100; padding: .75rem 1rem; background: var(--ink); color: var(--paper); font-weight: 600; text-decoration: none; }
+.skip:focus { top: 1rem; }
+
+/* ---------- Type ---------- */
+.display, .h2, .h3, .h4 { font-family: var(--serif); font-weight: 360; text-wrap: balance; font-kerning: normal; }
+.display { font-size: var(--t-display); line-height: .94; letter-spacing: -.028em; }
+.h2 { font-size: var(--t-h2); line-height: 1; letter-spacing: -.022em; font-weight: 370; }
+.h3 { font-size: var(--t-h3); line-height: 1.08; letter-spacing: -.014em; font-weight: 400; }
+.h4 { font-size: var(--t-h4); line-height: 1.2; letter-spacing: -.008em; font-weight: 440; }
+/* Italic carries the emphasis. One phrase a headline, no more. */
+.display em, .h2 em, .h3 em { font-style: italic; font-weight: 330; letter-spacing: -.03em; }
+.lede { font-size: var(--t-lede); line-height: 1.45; color: var(--ink-2); max-width: 34em; text-wrap: pretty; }
+p { text-wrap: pretty; }
+.label {
+  font: 400 var(--t-label)/1.3 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3);
+}
+small { font-size: var(--t-small); }
+
+/* ---------- Layout ---------- */
+.wrap { width: min(100% - 2 * var(--gutter), var(--max)); margin-inline: auto; }
+.section { padding-block: var(--section); }
+/* Sheets. The page is paper; a section may change the sheet to mark a change of place. */
+.section--paper2 { background: var(--paper-2); }
+.section--ice { background: var(--ice); }
+.section--deep { background: var(--deep); color: var(--on-dark); --rule: var(--rule-dark); --rule-2: rgba(244, 239, 230, .4); --ink-2: var(--on-dark-2); --ink-3: var(--glacier); }
+.section--deep .lede { color: var(--on-dark-2); }
+.section--deep .label { color: var(--glacier); }
+.actions { display: flex; flex-wrap: wrap; gap: .75rem; align-items: center; }
+
+/* ---------- Buttons and links ---------- */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: .6rem;
+  min-height: 3.25rem; padding: .7rem 1.5rem;
+  background: var(--yellow); color: var(--ink); border: 1px solid transparent; border-radius: var(--r-1);
+  font: 600 1rem/1.1 var(--sans); letter-spacing: -.005em; text-decoration: none; white-space: nowrap;
+  transition: background-color var(--d-1), color var(--d-1), border-color var(--d-1);
+}
+/* At the very narrowest (or with very large browser text) a button may take two lines rather than run off the page. */
+@media (max-width: 40em) { .btn { white-space: normal; } }
+.btn .i { flex: none; transition: transform var(--d-2) var(--ease); }
+.btn:hover { background: var(--ink); color: var(--paper); }
+.btn:hover .i:last-child { transform: translateX(4px); }
+.btn:active { background: var(--yellow-2); color: var(--ink); }
+.btn--line { background: transparent; border-color: var(--ink); }
+.btn--line:hover { background: var(--ink); color: var(--paper); }
+.btn--dark { background: var(--ink); color: var(--paper); }
+.btn--dark:hover { background: var(--sea); }
+.btn--sm { min-height: 2.75rem; padding: .5rem 1.05rem; font-size: .9375rem; gap: .5rem; }
+.btn--block { display: flex; width: 100%; }
+.section--deep .btn:hover, .footer .btn:hover { background: var(--paper); color: var(--ink); }
+.section--deep .btn--line, .footer .btn--line { border-color: var(--on-dark); color: var(--on-dark); }
+.section--deep .btn--line:hover, .footer .btn--line:hover { background: var(--on-dark); color: var(--ink); }
+
+.link {
+  display: inline-flex; align-items: center; gap: .5rem; font-weight: 600; text-decoration: none;
+  padding-block: .35rem; border-bottom: 1px solid currentColor;
+}
+.link .i { transition: translate var(--d-2) var(--ease); }
+.link:hover .i { translate: .35rem 0; }
+.link:hover .i--down { translate: 0 .35rem; }
+.iconbtn { display: grid; place-items: center; width: 3rem; height: 3rem; padding: 0; background: transparent; border: 1px solid var(--rule-2); border-radius: var(--r-1); }
+.iconbtn:hover { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+
+/* Live open/closed status. Text carries it; the dot is decoration. */
+.status { display: inline-flex; align-items: center; gap: .4em; font: 400 var(--t-label)/1.2 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); white-space: nowrap; }
+.status::before { content: ""; width: .5em; height: .5em; border-radius: 50%; border: 1px solid currentColor; }
+.status.is-open { color: var(--open); }
+.status.is-open::before { background: currentColor; }
+.footer .status, .section--deep .status { color: var(--on-dark-2); }
+.footer .status.is-open, .section--deep .status.is-open { color: #8FD3AE; }
+
+/* ---------- Reveals ----------
+   Hidden states exist only when JavaScript is running and motion is welcome; otherwise
+   everything is simply there. site.js adds .is-in as an element enters the screen. */
+@media (prefers-reduced-motion: no-preference) {
+  .js .rv { opacity: 0; transform: translateY(1.1rem); transition: opacity var(--d-3) var(--ease), transform var(--d-3) var(--ease); transition-delay: calc(var(--i, 0) * 70ms); }
+  .js .rv.is-in { opacity: 1; transform: none; }
+  .js .rv-img { clip-path: inset(0 0 100% 0); transition: clip-path 1.1s var(--ease); }
+  .js .rv-img img { scale: 1.1; transition: scale 1.6s var(--ease); }
+  .js .rv-img.is-in { clip-path: inset(0); }
+  .js .rv-img.is-in img { scale: 1; }
+  .js .rv-line::after { transform: scaleX(0); }
+  .js .rv-line.is-in::after { transform: none; }
+}
+.rv-line { position: relative; }
+.rv-line::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1px; background: var(--ink); transform-origin: left; transition: transform 1s var(--ease); }
+.section--deep .rv-line::after { background: var(--on-dark); }
+
+/* Page-to-page: a short cross-fade where the browser supports it; the chrome holds still. */
+@media (prefers-reduced-motion: no-preference) { @view-transition { navigation: auto; } }
+.masthead { view-transition-name: masthead; }
+.rail { view-transition-name: rail; }
+.actionbar { view-transition-name: actionbar; }
+::view-transition-old(root), ::view-transition-new(root) { animation-duration: .32s; }
+
+@media print {
+  .dateline, .masthead, .rail, .actionbar, .footer, dialog { display: none !important; }
+  main { margin: 0; }
+  body { background: #fff; padding: 0; }
+}

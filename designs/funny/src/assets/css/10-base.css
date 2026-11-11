@@ -1,0 +1,202 @@
+/* ---------- Reset and base ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-padding-top: calc(var(--mast) + 1rem); }
+/* Under the floating action bar a focused link would be covered: keep it clear of the capsule. */
+@media (max-width: 62.4375em) { html { scroll-padding-bottom: calc(var(--bar) + 2.5rem); } }
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+/* Page to page: a quick cross-fade where the browser supports it; the yellow bar holds still. */
+@media (prefers-reduced-motion: no-preference) { @view-transition { navigation: auto; } }
+body {
+  margin: 0; background: var(--paper); color: var(--black);
+  font-family: var(--font); font-size: var(--t-body); line-height: 1.55; font-weight: 400; font-stretch: 100%;
+  -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+}
+img, svg { display: block; max-width: 100%; }
+img { height: auto; }
+a { color: inherit; text-decoration-thickness: 2px; text-underline-offset: .18em; }
+p { margin: 0 0 1em; text-wrap: pretty; }
+h1, h2, h3, h4 { margin: 0; text-wrap: balance; }
+ul, ol { margin: 0; padding: 0; list-style: none; }
+address { font-style: normal; }
+button { font: inherit; color: inherit; cursor: pointer; }
+/* An element's own display rule must never beat the hidden attribute. */
+[hidden] { display: none !important; }
+/* Focus is a black-and-yellow double ring, so it shows on all three fields. */
+:focus-visible { outline: 3px solid var(--black); outline-offset: 3px; box-shadow: 0 0 0 3px var(--yellow); border-radius: 4px; }
+::selection { background: var(--black); color: var(--yellow); }
+.sr-only { position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+.skip { position: absolute; left: 1rem; top: -100px; z-index: 100; background: var(--black); color: var(--yellow); padding: .8rem 1.2rem; border-radius: var(--r-pill); font-weight: 800; }
+.skip:focus { top: 1rem; }
+.i { flex: none; }
+.nums { font-variant-numeric: tabular-nums; }
+.nw { white-space: nowrap; }
+/* Without JS the pause control has nothing to do; it keeps its place so nothing moves when JS arrives. */
+html:not(.js) [data-motion-toggle] { visibility: hidden; }
+
+/* ---------- Grid ---------- */
+/* One centred column with fluid gutters. */
+.wrap { width: 100%; max-width: calc(var(--wrap) + var(--gutter) * 2); margin-inline: auto; padding-inline: var(--gutter); }
+
+/* ---------- Fields ---------- */
+/* A section is one flat field of colour. --on is its text, --quiet its secondary text, --rule its lines. */
+.section { position: relative; padding-block: var(--section); --on: var(--black); --quiet: var(--stone); --rule: var(--black); }
+.field-y { background: var(--yellow); color: var(--black); --on: var(--black); --quiet: var(--umber); --rule: var(--black); }
+.field-k { background: var(--black); color: var(--paper); --on: var(--paper); --quiet: var(--ash); --rule: var(--black-3); }
+.field-p { background: var(--paper); color: var(--black); }
+.field-k :focus-visible { outline-color: var(--yellow); box-shadow: 0 0 0 3px var(--black); }
+.field-k ::selection { background: var(--yellow); color: var(--black); }
+.clip { overflow: hidden; overflow: clip; }
+
+/* ---------- Type ---------- */
+/* Display: Archivo at its wide, black end, always uppercase, set tight. */
+.d1, .d2 { font-stretch: var(--wide); font-weight: 900; text-transform: uppercase; letter-spacing: -.022em; }
+.d1 { font-size: var(--t-d1); line-height: .86; }
+.d2 { font-size: var(--t-d2); line-height: .9; }
+/* A headline in a split column is sized from that column, not the window: it holds two or three
+   lines at tablet and laptop widths instead of collapsing a word at a time. A column opts in with
+   .fit-col (or by being listed in 30-components.css). */
+.fit-col { container-type: inline-size; }
+@media (min-width: 56.25em) { .fit-col .d2 { font-size: min(var(--t-d2), 9.6cqi); } }
+/* Emphasis inside a headline is the same word in outline: solid and hollow, like sign lettering.
+   It is always the second half of the thought, so it starts its own line. */
+.d1 em, .d2 em { display: block; font-style: normal; color: transparent; -webkit-text-stroke: .028em var(--on, var(--black)); paint-order: stroke fill; }
+.field-k .d1 em, .field-k .d2 em { -webkit-text-stroke-color: var(--yellow); }
+@supports not (-webkit-text-stroke: 1px black) { .d1 em, .d2 em { color: inherit; } }
+.lede { font-size: var(--t-lede); line-height: 1.42; font-weight: 500; max-width: 46ch; color: var(--on, inherit); }
+/* Eyebrow: the small voice. Wide, bold, uppercase, tracked, led by a small U. */
+.eyebrow {
+  display: flex; align-items: center; gap: .6em; margin: 0 0 1.1rem;
+  font-size: var(--t-label); font-weight: 750; font-stretch: var(--wide); letter-spacing: .09em; text-transform: uppercase; line-height: 1.2;
+}
+.eyebrow::before { content: ''; flex: none; width: .95em; height: .95em; border: .22em solid currentColor; border-top: 0; border-radius: 0 0 99px 99px; }
+.field-k .eyebrow { color: var(--yellow); }
+
+/* ---------- Buttons: always pills ---------- */
+.btn {
+  --h: 56px; --bg: var(--black); --fg: var(--yellow); --bd: var(--black);
+  display: inline-flex; align-items: center; justify-content: center; gap: .6em;
+  min-height: var(--h); padding: 0 1.6em; border-radius: var(--r-pill);
+  background: var(--bg); color: var(--fg); border: var(--line) solid var(--bd);
+  font-family: var(--font); font-size: .9rem; font-weight: 800; font-stretch: 112%; letter-spacing: .03em; text-transform: uppercase;
+  text-decoration: none; white-space: nowrap; line-height: 1;
+  transition: transform var(--t-flip) var(--spring), background var(--t-tap) linear, color var(--t-tap) linear, box-shadow var(--t-flip) var(--spring);
+}
+.btn:hover { transform: translateY(-3px); box-shadow: 0 5px 0 var(--sh, rgba(14,14,12,.9)); }
+.btn:active { transform: translateY(1px) scale(.98); box-shadow: none; transition-duration: var(--t-tap); }
+.btn .i:last-child:not(:first-child) { transition: transform var(--t-flip) var(--spring); }
+.btn:hover .i:last-child:not(:first-child) { transform: translateX(4px); }
+.btn--sm { --h: 46px; padding: 0 1.25em; font-size: .8rem; }
+.btn--lg { --h: 68px; padding: 0 2em; font-size: 1rem; }
+.btn--block { width: 100%; }
+/* On a black field the primary button is yellow. */
+.btn--yellow, .field-k .btn:not(.btn--line):not(.btn--paper) { --bg: var(--yellow); --fg: var(--black); --bd: var(--yellow); --sh: rgba(245,184,0,.45); }
+.btn--paper { --bg: var(--white); --fg: var(--black); --bd: var(--black); }
+.btn--line { --bg: transparent; --fg: currentColor; --bd: currentColor; }
+.btn--line:hover { background: var(--black); color: var(--yellow); border-color: var(--black); }
+.field-k .btn--line { --sh: rgba(247,243,234,.3); }
+.field-k .btn--line:hover { background: var(--paper); color: var(--black); border-color: var(--paper); }
+/* A yellow card on a black field: its buttons and focus ring go back to black. */
+.field-k .on-y .btn:not(.btn--line) { --bg: var(--black); --fg: var(--yellow); --bd: var(--black); --sh: rgba(14, 14, 12, .9); }
+.field-k .on-y .btn--line:hover { background: var(--black); color: var(--yellow); border-color: var(--black); }
+.field-k .on-y :focus-visible { outline-color: var(--black); box-shadow: 0 0 0 3px var(--yellow); }
+.actions { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: 2rem; }
+/* Phones: buttons in a group are always full width, so nothing re-wraps when the font arrives. */
+@media (max-width: 559px) { .actions > .btn { flex: 1 1 100%; } }
+/* The smallest phones, and phones with large text (this is why it is in em): long labels wrap and narrow instead of being cut off by a section. */
+@media (max-width: 22.5em) { .btn { max-width: 100%; white-space: normal; text-align: center; font-stretch: 100%; padding: .5em 1.1em; line-height: 1.15; } }
+/* Text link with a travelling arrow. */
+.link { display: inline-flex; align-items: center; gap: .5em; font-weight: 800; font-stretch: 112%; font-size: .86rem; letter-spacing: .03em; text-transform: uppercase; text-decoration: none; padding-bottom: .25em; border-bottom: var(--line) solid currentColor; white-space: nowrap; }
+.link .i { transition: transform var(--t-flip) var(--spring); }
+.link:hover .i { transform: translateX(5px); }
+/* On touch screens a text link is a full 44px target; the underline stays just under its last line. */
+@media (max-width: 999px), (pointer: coarse) {
+  .link { position: relative; min-height: 44px; padding-block: .65em; border-bottom: 0; }
+  .link::after { content: ''; position: absolute; inset: auto 0 .55em; height: var(--line); background: currentColor; }
+}
+
+/* ---------- Stickers ---------- */
+/* Badges that look stuck on: keyline, hard shadow, a few degrees off true. */
+.sticker {
+  --rot: -4deg; --bg: var(--white); --fg: var(--black);
+  display: inline-flex; align-items: center; gap: .5em; padding: .55em 1em .5em;
+  background: var(--bg); color: var(--fg); border: var(--line) solid var(--black); border-radius: var(--r-pill);
+  box-shadow: var(--sh-sticker); transform: rotate(var(--rot));
+  font-size: var(--t-label); font-weight: 800; font-stretch: var(--wide); letter-spacing: .06em; text-transform: uppercase; line-height: 1.1; white-space: nowrap;
+}
+.sticker--y { --bg: var(--yellow); }
+.sticker--k { --bg: var(--black); --fg: var(--yellow); }
+.field-k .sticker { border-color: var(--yellow); box-shadow: 4px 4px 0 var(--yellow); }
+.field-k .sticker--k { box-shadow: 4px 4px 0 var(--yellow); }
+
+/* ---------- The U as a window ---------- */
+/* Every photograph on the site sits in one of these. .win--u hangs (flat top, round bottom),
+   .win--arch stands (round top, flat bottom), .win--pill is both. Photographs are black-and-white
+   on yellow and paper; on black they print in yellow (.win--duo). */
+.win { position: relative; display: block; overflow: hidden; background: var(--black-2); isolation: isolate; }
+.win--u { border-radius: 0 0 var(--r-pill) var(--r-pill); }
+.win--arch { border-radius: var(--r-pill) var(--r-pill) 0 0; }
+.win--pill { border-radius: var(--r-pill); }
+.win--card { border-radius: var(--r-l); }
+.win > img, .win > picture > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: grayscale(1) contrast(1.12); }
+.win--duo { background: var(--yellow); }
+.win--duo > img, .win--duo > picture > img { mix-blend-mode: multiply; filter: grayscale(1) contrast(1.25) brightness(1.08); }
+
+/* Rings: the mark's concentric Us at poster scale, drawn as borders around a window or a point.
+   Put .rings inside a positioned box; each <i> is one ring, --n its order outward. */
+.rings { position: absolute; inset: 0; pointer-events: none; --step: clamp(28px, 4.2vw, 62px); --w: clamp(13px, 1.9vw, 28px); color: var(--yellow-deep); }
+.rings > i {
+  position: absolute; inset: 0 calc(var(--n) * var(--step) * -1) calc(var(--n) * var(--step) * -1);
+  border: var(--w) solid currentColor; border-top: 0; border-radius: 0 0 var(--r-pill) var(--r-pill);
+}
+.field-k .rings { color: var(--black-2); }
+.rings--arch > i { inset: calc(var(--n) * var(--step) * -1) calc(var(--n) * var(--step) * -1) 0; border: var(--w) solid currentColor; border-bottom: 0; border-radius: var(--r-pill) var(--r-pill) 0 0; }
+.rings > i:nth-child(1) { --n: 1; } .rings > i:nth-child(2) { --n: 2; } .rings > i:nth-child(3) { --n: 3; }
+.rings > i:nth-child(4) { --n: 4; } .rings > i:nth-child(5) { --n: 5; } .rings > i:nth-child(6) { --n: 6; }
+
+/* ---------- Section head ---------- */
+.shead { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 4fr); align-items: end; gap: 1.25rem clamp(2rem, 1rem + 5vw, 6rem); margin-bottom: clamp(2.25rem, 1.5rem + 3vw, 4.5rem); }
+.shead--solo { grid-template-columns: minmax(0, 1fr); }
+.shead__aside { display: flex; flex-direction: column; align-items: flex-start; gap: 1.1rem; padding-bottom: .35rem; }
+.shead__aside .lede { margin: 0; font-size: clamp(1.05rem, 1rem + .3vw, 1.2rem); }
+@media (max-width: 860px) { .shead { grid-template-columns: minmax(0, 1fr); } }
+
+/* ---------- Motion ---------- */
+/* Reveal: things arrive once, from just below, with a little spring. JS adds .js to <html> and
+   .is-in to each [data-reveal] as it enters. Without JS, or with reduced motion, nothing is hidden. */
+@media (prefers-reduced-motion: no-preference) {
+  .js [data-reveal] { opacity: 0; transform: translateY(28px); transition: opacity .45s var(--out), transform var(--t-enter) var(--spring); transition-delay: calc(var(--i, 0) * 60ms); }
+  .js [data-reveal="pop"] { transform: scale(.5) rotate(calc(var(--rot, 0deg) - 18deg)); }
+  .js [data-reveal="wipe"] { opacity: 1; transform: none; clip-path: inset(0 0 100% 0); transition: clip-path .7s var(--out); }
+  .js [data-reveal].is-in { opacity: 1; transform: none; }
+  .js [data-reveal="pop"].is-in { transform: rotate(var(--rot, 0deg)); }
+  .js [data-reveal="wipe"].is-in { clip-path: inset(0); }
+}
+/* Parallax: a slow vertical drift tied to the scroll position (no script). */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .plx { animation: plx linear both; animation-timeline: view(); animation-range: entry 0% exit 100%; }
+    html[data-motion="off"] .plx { animation: none; }
+  }
+}
+@keyframes plx { from { transform: translate3d(var(--plx-x0, 0), var(--plx-y0, 60px), 0) scale(var(--plx-s0, 1)); } to { transform: translate3d(var(--plx-x1, 0), var(--plx-y1, -60px), 0) scale(var(--plx-s1, 1)); } }
+/* Ambient motion rests while it is off screen (.is-live comes and goes with the viewport). */
+.js .marquee:not(.is-live) .marquee__track, .js .seal:not(.is-live) .seal__spin, .js .hero__art:not(.is-live) .rings__ripple, .js .dmap:not(.is-live) .lane { animation-play-state: paused; }
+/* The pause control stops everything that moves on its own. */
+html[data-motion="off"] .marquee__track, html[data-motion="off"] .seal__spin, html[data-motion="off"] .rings__ripple, html[data-motion="off"] .dmap__town.is-on::after, html[data-motion="off"] .lane { animation-play-state: paused !important; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; scroll-behavior: auto !important; }
+  [data-motion-toggle] { display: none !important; }
+}
+.motion-toggle {
+  display: inline-flex; align-items: center; gap: .5em; min-height: 44px; padding: 0 1em; border-radius: var(--r-pill);
+  background: transparent; border: var(--line) solid currentColor; font-size: var(--t-label); font-weight: 750; font-stretch: 112%; letter-spacing: .06em; text-transform: uppercase;
+}
+/* Always a circle: never stretched by the row of buttons it sits in. */
+.motion-toggle--icon { flex: none; align-self: center; width: 46px; height: 46px; min-height: 0; aspect-ratio: 1; padding: 0; justify-content: center; }
+/* Phones: a pause control would take a row of its own under the buttons. It sits in the top corner
+   of the hero's copy instead, the same place on every page. */
+@media (max-width: 559px) {
+  .phero__copy > .actions > .motion-toggle--icon { position: absolute; top: .9rem; right: 0; margin: 0; }
+}
+.motion-toggle::before { content: ''; width: .8em; height: .9em; border-inline: .28em solid currentColor; }
+.motion-toggle[data-off]::before { width: 0; height: 0; border: .45em solid transparent; border-left: .75em solid currentColor; border-right: 0; }

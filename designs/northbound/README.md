@@ -1,0 +1,95 @@
+# uresco.com — rebuilt
+
+The new website for **Uresco Construction Materials, Inc.**: lumber and building materials from Kent, Anchorage and Fairbanks, for builders across the Pacific Northwest and all of Alaska.
+
+It is a fast, static, mobile-first site. There is no CMS, database or plugin to patch: the build turns a few data files and templates into plain HTML in `docs/`, which any web host can serve (GitHub Pages, Netlify, Cloudflare Pages, or the current host).
+
+## What's on the site
+
+| Page | URL | Purpose |
+|---|---|---|
+| Home | `/` | A chaptered trip north: the cover and the three yards' phone numbers, Kent and the product lines, the crossing (packaging, freight, the take-off prompt), the Anchorage and Fairbanks yards, remote delivery and the route map, who we supply, the credit application, the yard directory |
+| Products | `/products/` + 9 line pages | Nine product lines you can search, brands, an A to Z of every product, and on each line page the items, the three yards' numbers and a quote link that carries the line |
+| Services | `/services/` | From the plans to the job site: take-offs and estimates, design, remote and export packages, crating, shipping, job-site delivery |
+| Alaska delivery | `/alaska/` | "Can you get a building package to my community?" A place finder over the route map that says how freight typically gets there and who to call, the six regions, how a remote package moves, road/sea/air, barge season, Anchorage and Fairbanks yards, FAQ |
+| Pacific Northwest | `/pacific-northwest/` | The Kent yard, the boom truck and Moffett forklift drawn as blueprints, the product lines, how freight generally moves north from Puget Sound |
+| Projects | `/projects/` | Kinds of work by sector, filterable, each with what goes on the list (see the note below) |
+| Locations | `/locations/` | "Which yard should I call?" as three tap-to-call rows, then each yard sorted into Call, Visit and Write, with the route map. The only page that prints hours |
+| Request a quote | `/quote/` | Form with plan upload, routed to the yard the customer picks |
+| Contractor accounts | `/accounts/` | The credit application in full (company, contacts, trade and bank references, tax details, signature), routed to the yard the customer picks and printable as a two-page paper form. The page states no account terms: for limits and terms, it says to ask the yard |
+| About | `/about/` | Who you are buying from: 35 drawn growth rings, the basics on one sheet, the mission line by line, photos from Uresco's own yards |
+| Not found | `404.html` | "This page missed the barge", a numbered index of the main pages and the three numbers |
+
+On phones a bar fixed to the bottom of the screen gives **Call · Directions · Quote** on every page. Each yard shows a live **open/closed** status worked out in its own time zone, and hides it on federal holidays until real closed dates are supplied (`CLOSED_DATES` in `src/data/locations.mjs`). Both forms save a draft in the browser as people type; the credit application never keeps the tax ID, bank details or signature in one. Product pages pass their product line into the quote form (lines add up rather than replacing one another), each yard card has a quote link that preselects that yard, and links for off-road places start the form on remote shipping.
+
+The old `/products-services/` URL redirects to `/products/`, `/contact/` redirects to `/locations/`, and `/credit/` redirects to `/accounts/`. `/alaska/`, `/pacific-northwest/` and `/locations/` keep their old addresses, so existing links and search results still work.
+
+## Design
+
+The design system is documented in **[DESIGN.md](DESIGN.md)**: tokens, grid, every component, the page-hero pattern, photography and motion rules, and how to build a new page in it. In short:
+
+- **The idea.** The site is a trip north. Latitude organises it: a scale down the left margin reads the latitude as the page scrolls (47.4°N Kent → 61.2°N Anchorage → 64.8°N Fairbanks → 71.3°N Utqiaġvik), chapters are places on the route, and every photograph is captioned with where it is.
+- **Identity.** The mark is the end grain of a flat-sawn board: growth rings that read as a **U**, in UCM yellow and black. Files are in `src/assets/brand/`. The original logo is kept in `originals/uresco/logo-original.png`.
+- **Type.** Fraunces (display serif, set large and light, italic for emphasis), Instrument Sans (text) and DM Mono (latitudes, captions, labels). All self-hosted, 114 KB in total.
+- **Color.** Warm paper `#F4EFE6`, spruce-black ink `#12201B`, UCM yellow `#F5B800` as a signal only (buttons, markers, the needle), and cold tones from the water: sea `#1E4A57`, deep `#0F242C`, ice `#E2EAE8`.
+- **Photographs.** Graded in the image pipeline so the set reads as one shoot (restrained color, cool shadows). Stock photographs are never captioned as Uresco's own.
+- **Map.** A real projection of Natural Earth data (`scripts/map.mjs`) drawn as a cartographic plate: graticule, Arctic Circle, compass, scale, the three yards, and freight lanes that draw themselves as the map comes into view.
+
+## Working on it
+
+Requirements: Node 18+ and Python 3 with Pillow (`pip install pillow`). Playwright and Chromium are needed only for `npm run brand` and `npm run check`.
+
+```bash
+npm run build       # src/ → docs/ (preview: noindex)
+npm run build:live  # the same, for uresco.com: indexable, base '/', writes docs/CNAME
+npm run serve       # http://localhost:8080
+npm run check       # build + link/SEO/facts checks + every page in Chromium at 5 widths, the forms, JavaScript off, and the shared pieces
+npm run images      # after changing scripts/photos.json
+npm run brand       # after changing the logo
+npm run fonts       # re-subset the fonts (needs: pip install fonttools brotli)
+```
+
+Every pull request runs `.github/workflows/check.yml`. It rebuilds the site, fails if `docs/` wasn't rebuilt and committed, and then runs the full check suite in Chromium.
+
+### Where things live
+
+- **Company facts** (phones, faxes, emails, addresses, hours): `src/data/locations.mjs`. Hours are a weekly table per yard, in the yard's own time zone. **The current hours (Mon–Fri 7:00–4:30, closed weekends) are placeholders; confirm them before launch.**
+- **Products**: `src/data/products.mjs`.
+- **Services**: `src/data/services.mjs`.
+- **Projects**: `src/data/projects.mjs`.
+- **Site settings** (preview mode, form endpoint, base path): `src/config.mjs`.
+- **Photos**: `scripts/photos.json` lists every photo with its alt text and credit. Run `npm run images` after editing it. Credits are in `PHOTO-CREDITS.md`.
+  - **To use Uresco's own photos:** put the originals in `originals/uresco/`. Point an entry's `src` at the file, for example `"uresco-yard": { "src": "originals/uresco/kent-yard.jpg", "alt": "…" }`, then run `npm run images && npm run build`. Keys starting `uresco-` print no photographer credit; everything else does.
+  - Large, unedited camera files are best; the script handles resizing.
+  - A photo used as a full-width hero needs `"hero": true, "art": true`, which adds the larger sizes and the phone crop. Add `"focal": [x, y]` (0 to 1) if the crop misses the subject.
+  - The first ones to replace: `combilift` (accounts), `unloading` (job-site delivery), `tug-barge` (home, the crossing) and the small `uresco-*` originals.
+- **Manufacturer literature links**: the `literature` field on each category in `src/data/products.mjs`.
+- **Pages**: `src/pages/*.mjs`. **Styles**: `src/assets/css/*.css` then `src/assets/css/pages/*.css`, joined in name order into one `site.css`. **Behavior**: `src/assets/js/*.js` then `src/assets/js/modules/*.js`, joined the same way; no frameworks.
+
+### Projects gallery
+
+The gallery currently shows **kinds of work** (village housing packages, schools and clinics, multifamily framing and so on), not specific jobs. No project names, places or dates were available, and none were invented. To add real projects, add entries to `src/data/projects.mjs` with `real: true`, a title, place, year, scope and photo. Real projects sort first.
+
+## Launch checklist
+
+1. **Confirm the facts** in the open questions below, then update `src/data/locations.mjs`.
+2. **Turn on the forms.** Create a form endpoint that accepts file uploads, for example a free Formspree form pointed at sales@uresco.com, and paste its URL into `formEndpoint` in `src/config.mjs`. Until then both forms open the visitor's email app with the request filled in: they attach files there, and a credit application's tax ID and bank details travel in that email unless they leave them out and phone them in.
+3. **Build for the live site.** Run `npm run build:live` and commit `docs/`. This switches off noindex, sets the base path to `/`, and writes `docs/CNAME`. To make it permanent, change `preview` and `base` in `src/config.mjs`, so a plain `npm run build` (and the CI check) produces the live site.
+4. **Point the domain.** In the repo's **Settings → Pages**, set the custom domain to `www.uresco.com`. At the registrar, add a `CNAME` record for `www` to `jmccullum-jrm.github.io`, plus GitHub's apex `A` records. Keep the old WordPress site up until the new one serves on uresco.com.
+
+While `preview` is on, every page is `noindex` and `robots.txt` blocks crawlers, so the github.io preview never competes with uresco.com in search.
+
+## Open questions for Uresco
+
+- **Phone and fax conflicts on the old site.** It shows Anchorage toll-free as both (800) and (888) 563-2500, and the Kent fax as both 872-8432 and 872-3693. The new site uses (800) and 872-8432.
+- **Yard hours.** Placeholder hours are in place (Mon–Fri 7:00 a.m.–4:30 p.m. local time, closed weekends). Confirm or correct them per yard; the open/closed status depends on them.
+- **Delivery area and minimums** per yard, if Uresco wants to publish them.
+- **Credit application.** The form asks for references, bank details and a requested limit and promises nothing about terms; the field list is unconfirmed. If Uresco has a standard credit agreement or a PDF application, send it. The only consent wording is "I certify the information above is true": a credit-check authorization needs Uresco's or counsel's words.
+- **Which yard for remote places north of the Interior** (Galena, Fort Yukon, Kotzebue, Point Hope, Wainwright, Utqiaġvik, Kaktovik). The Alaska finder shows both Alaska numbers until Uresco rules.
+- **Closed dates** per yard, for `CLOSED_DATES` in `src/data/locations.mjs`.
+- **Machines per yard.** The Pacific Northwest page names boom trucks and Moffett forklifts for Kent; the facts name them for the company.
+- **Product specs and grades.** Line pages say "Ask your yard" because none are confirmed.
+- **Real photos.** Uresco has them, but none were found in the connected Google Drive. Upload them or share a folder (see **Photos** above for how they go in). The old site's yard photos and the printed "Lumber by UCM" load tag are on the About page, but they are only 714 px wide.
+- **Real projects** for the gallery, as described above.
+- **Founding year**, if Uresco wants it shown ("35+ years" is used now).
+- **Logo.** The new mark is a proposal. If Uresco keeps the classic UCM logo, swap it into `src/lib/layout.mjs` (`brand`).

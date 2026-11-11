@@ -1,0 +1,285 @@
+/* ==========================================================================
+   Forms: the quote request and the credit application.
+   The form is the manifest itself: a sheet of ruled cells, one control to a cell.
+   Print is in 90-print.css.
+   ========================================================================== */
+
+/* ---------- The hero, over a form ---------- */
+/* Tighter than a photo hero: the form should be on the first screen. */
+.fp-hero { padding-top: clamp(1.25rem, 2.6vw, 2.5rem); padding-bottom: clamp(1.5rem, 2.6vw, 2.5rem); }
+.fp-hero .crumbs ol { margin-bottom: clamp(1rem, 1.8vw, 1.75rem); }
+.fp-hero .phero__eyebrow { margin-bottom: .9rem; }
+.fp-hero .phero__title { max-width: none; }
+.fp-hero .phero__title em { display: block; }
+.fp-hero .phero__row { margin-top: clamp(1rem, 1.8vw, 1.75rem); padding-bottom: 0; }
+@media (min-width: 56.25em) { .fp-hero .phero__row { grid-template-columns: minmax(0, 1fr) auto; } }
+@media (max-width: 62.4375em) {
+  .fp-hero { padding-bottom: 0; border-bottom: 0; }
+  .fp-hero--quote .actions { display: none; }
+}
+.no-js [data-print] { display: none; }
+
+/* ---------- Phones and tablets: all three numbers in one ruled row ---------- */
+.fp-dial { margin-top: clamp(1.5rem, 4vw, 2.25rem); }
+.fp-dial__label { padding: 0 var(--gutter) .6rem; color: var(--ink); }
+.fp-dial ul { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); list-style: none; margin: 0; padding: 0; border-block: 1px solid var(--ink); }
+.fp-dial li + li { border-left: 1px solid var(--rule-2); }
+.fp-dial a { display: grid; align-content: center; justify-items: center; gap: .2rem; min-height: 4.75rem; padding: .55rem .15rem .6rem; text-decoration: none; transition: background-color var(--d-1); }
+.fp-dial a:active { background: var(--paper-2); }
+.fp-dial a:focus-visible { outline-offset: -3px; }
+.fp-dial__lat { font: 400 .75rem/1 var(--mono); letter-spacing: .06em; color: var(--ink-3); }
+.fp-dial__city { font: 480 1.25rem/1.1 var(--serif); letter-spacing: -.014em; }
+.fp-dial__num { font: 600 clamp(.75rem, .47rem + 1.28vw, .9375rem)/1.2 var(--sans); font-variant-numeric: tabular-nums; white-space: nowrap; }
+/* Very large browser text on a narrow phone: the number may break rather than push the page sideways. */
+@media (max-width: 19.5em) { .fp-dial__num { white-space: normal; } }
+@media (min-width: 62.5em) { .fp-dial { display: none; } }
+
+/* ---------- The band the sheet lies on, and the two columns ---------- */
+.fp-band { padding-block: clamp(2rem, 4vw, 3.5rem) clamp(3rem, 7vw, 6.5rem); background: var(--paper-2); }
+.fp-grid { display: grid; gap: 2rem var(--col-gap); }
+.fp-side { display: none; }
+@media (min-width: 62.5em) {
+  .fp-grid { grid-template-columns: minmax(0, 7.7fr) minmax(0, 4.3fr); gap: var(--col-gap) clamp(2rem, 3.6vw, 3.75rem); align-items: start; }
+  /* On a short laptop the column scrolls in itself rather than losing its foot off the screen. */
+  .fp-side { display: grid; gap: 1.75rem; justify-items: start; position: sticky; top: calc(var(--mast) + 1.5rem); max-height: calc(100vh - var(--mast) - 2.5rem); overflow-y: auto; scrollbar-width: none; padding: 4px; margin: -4px; }
+  .fp-side > * { justify-self: stretch; }
+  .fp-side > .link { justify-self: start; min-height: 2.75rem; background: none; border-width: 0 0 1px; padding-inline: 0; }
+  .no-js .fp-side__print { display: none; }
+}
+/* A short screen: the column closes up so its last line is not left half under the fold. */
+@media (min-width: 62.5em) and (max-height: 56.25em) {
+  .fp-side { gap: 1rem; }
+  .fp-slip__rows > div { padding-block: .45rem .5rem; }
+  .fp-call a { padding-block: .45rem .5rem; }
+  .fp-call__city { font-size: 1.375rem; }
+}
+
+/* ---------- The sheet ---------- */
+.fp-sheet { --cell: var(--gutter); --line: var(--ink-3); margin-inline: calc(var(--gutter) * -1); background: var(--paper-3); border-block: 1px solid var(--ink); }
+.fp-sheet__head { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; padding: .8rem var(--cell); border-bottom: 1px solid var(--ink); }
+.fp-sheet__head h2 { font-weight: 400; color: var(--ink); }
+@media (max-width: 31.1875em) { .fp-sheet__form { display: none; } }
+@media (min-width: 40em) {
+  .fp-sheet { --cell: clamp(1rem, .6rem + .9vw, 1.5rem); margin-inline: 0; border: 1px solid var(--ink); box-shadow: .5rem .5rem 0 var(--yellow); }
+}
+
+.form { display: grid; }
+/* Off the screen once it is sent, but not off the paper: the application can still be printed. */
+@media screen { .form.is-sent { display: none; } }
+/* What a visitor needs to know before starting: a draft came back, or how the details travel. */
+.form__restored, .form__warn { padding: .85rem var(--cell) .9rem; border-bottom: 1px solid var(--ink); font-size: .9375rem; line-height: 1.4; }
+.form__restored { background: var(--paper-2); }
+.form__restored button { min-height: 2.75rem; padding: 0 .25rem; background: none; border: 0; font-weight: 600; text-decoration: underline; text-underline-offset: .18em; }
+/* The rules are the gaps: a dark fieldset showing between bright cells. */
+.fieldset { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; min-width: 0; margin: 0; padding: 0; border: 0; border-bottom: 1px solid var(--ink); background: var(--line); }
+.fieldset legend { float: left; grid-column: 1 / -1; width: 100%; padding: clamp(1.5rem, 2.8vw, 2.25rem) var(--cell) .85rem; background: var(--paper-3); font: 400 var(--t-h3)/1.1 var(--serif); letter-spacing: -.014em; }
+.fieldset legend > span:first-child { display: inline-flex; align-items: center; gap: .55rem; margin-right: .9rem; font: 400 var(--t-label)/1 var(--mono); letter-spacing: .08em; color: var(--ink); vertical-align: .4em; }
+.fieldset legend > span:first-child::before { content: ""; width: .55rem; height: .55rem; background: var(--yellow); }
+
+/* ---------- A cell ---------- */
+/* Space-between: a long label in one cell must not push its input out of line with the next cell's. */
+.field { position: relative; display: grid; align-content: space-between; gap: .2rem; grid-column: 1 / -1; min-width: 0; padding: .8rem var(--cell) .5rem; background: var(--paper-3); transition: background-color var(--d-1); }
+@media (min-width: 40em) { .field:not(.field--full) { grid-column: span 1; } }
+.field > label, .field > .label { display: block; font: 600 .9375rem/1.3 var(--sans); letter-spacing: 0; text-transform: none; color: var(--ink); }
+.field:has(> label > .req) > label { padding-right: 5.5rem; }
+.hint { font-weight: 400; color: var(--ink-3); }
+/* Required is said in words, with the site's one signal colour beside it. */
+.req { position: absolute; top: .9rem; right: var(--cell); display: inline-flex; align-items: center; gap: .4rem; font: 400 var(--t-label)/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); white-space: nowrap; }
+.req::before { content: ""; width: .5rem; height: .5rem; background: var(--yellow); }
+
+.field input:not([type=radio], [type=checkbox], [type=file]), .field select, .field textarea {
+  display: block; width: 100%; min-width: 0; min-height: 2.75rem; padding: .2rem 0 .35rem;
+  background: transparent; border: 0; border-radius: 0; appearance: none; -webkit-appearance: none;
+  outline: 2px solid transparent; outline-offset: 0;
+  font: 500 1.0625rem/1.4 var(--sans); color: var(--ink);
+}
+.field ::placeholder { color: var(--ink-3); opacity: 1; font-weight: 400; }
+.field select { padding-right: 1.75rem; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2312201B' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") right .1rem center / 1.15rem no-repeat; cursor: pointer; text-overflow: ellipsis; }
+.field input[type=date] { font-variant-numeric: tabular-nums; }
+.field input:-webkit-autofill { -webkit-text-fill-color: var(--ink); box-shadow: inset 0 0 0 100px var(--paper-3); }
+.field textarea { min-height: 7rem; resize: vertical; }
+/* Lined cells read like the take-off sheet they stand in for. */
+.field--lined textarea { padding: 0; line-height: 1.875rem; background: repeating-linear-gradient(transparent 0 calc(1.875rem - 1px), var(--rule) calc(1.875rem - 1px) 1.875rem) local; }
+
+/* Focus: the whole cell lights up. */
+.field:has(> :is(input, select, textarea):focus) { z-index: 1; box-shadow: inset 0 0 0 2px var(--ink); background: #fff; }
+.field:has(> :is(input, select, textarea):focus)::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: .3rem; background: var(--yellow); }
+.field:has(> :is(input, select, textarea):focus) input:-webkit-autofill { box-shadow: inset 0 0 0 100px #fff; }
+
+/* Without :has() the cell cannot light up, so the control carries the ring itself. */
+@supports not selector(:has(*)) {
+  .field :is(input, select, textarea):focus { outline-color: var(--ink); }
+  .seg input:focus-visible { outline: 2px solid var(--yellow); outline-offset: 2px; }
+}
+
+/* A problem: the cell says so in colour and in words. */
+.field:has([aria-invalid="true"]) { background: #FBEDE7; box-shadow: inset .3rem 0 0 #A3341E; }
+.field:has([aria-invalid="true"]) input:-webkit-autofill { box-shadow: inset 0 0 0 100px #FBEDE7; }
+.field:has([aria-invalid="true"]):has(> :is(input, select, textarea):focus) { background: #fff; box-shadow: inset 0 0 0 2px #A3341E; }
+.field:has([aria-invalid="true"]):has(> :is(input, select, textarea):focus)::before { background: #A3341E; }
+.err { color: #A3341E; font-size: .875rem; font-weight: 500; line-height: 1.35; }
+.err:not([hidden]) { display: block; padding-bottom: .35rem; }
+
+/* ---------- Options ---------- */
+.seg { display: grid; grid-template-columns: repeat(var(--n, 2), minmax(0, 1fr)); gap: 1px; margin: .4rem calc(var(--cell) * -1) -.5rem; border-top: 1px solid var(--line); background: var(--line); }
+.seg label { position: relative; display: flex; align-items: center; gap: .65rem; min-height: 3.25rem; padding: .55rem var(--cell); background: var(--paper-3); font: 500 1rem/1.2 var(--sans); color: var(--ink); cursor: pointer; transition: background-color var(--d-1), color var(--d-1); }
+.seg input { flex: none; appearance: none; -webkit-appearance: none; width: 1.125rem; height: 1.125rem; margin: 0; border: 1.5px solid var(--ink); border-radius: var(--r-pill); background: transparent; }
+.seg label:hover { background: var(--paper-2); }
+.seg label:has(:checked) { background: var(--ink); color: var(--paper); }
+.seg input:checked { border-color: var(--yellow); box-shadow: inset 0 0 0 .2rem var(--ink), inset 0 0 0 1rem var(--yellow); }
+.seg label:has(:focus-visible) { z-index: 1; outline: 2px solid var(--ink); outline-offset: -4px; }
+.seg label:has(:checked:focus-visible) { outline-color: var(--yellow); }
+/* Tiles: the delivery choice, with its icon. */
+.seg__tile { flex-wrap: wrap; align-content: flex-start; row-gap: .5rem; min-height: 5.5rem !important; padding-block: .75rem .7rem !important; }
+.seg__tile .i { margin-left: auto; }
+.seg__tile span { flex: 0 0 100%; }
+@media (max-width: 39.9375em) {
+  .seg[style*="--n:4"] { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .seg[style*="--n:3"] label { padding-inline: .75rem .25rem; gap: .45rem; }
+  .seg[style*="--n:3"] label:first-child { padding-left: var(--cell); }
+}
+@media (max-width: 22.4375em) { .seg[style*="--n:3"] { grid-template-columns: minmax(0, 1fr); } }
+
+.field--check { padding-block: 1rem .75rem; }
+.field--check .check { display: flex; gap: .85rem; align-items: flex-start; font: 400 1rem/1.45 var(--sans); cursor: pointer; }
+.check > span:first-of-type { flex: 1; padding-right: 6rem; }
+.check input { flex: none; appearance: none; -webkit-appearance: none; display: grid; place-items: center; width: 1.625rem; height: 1.625rem; margin: 0; background: var(--paper-3); border: 1.5px solid var(--ink); border-radius: var(--r-1); cursor: pointer; }
+.check input:checked { background: var(--ink); }
+.check input:checked::after { content: ""; width: .4375rem; height: .8125rem; margin-top: -.15rem; border: solid var(--yellow); border-width: 0 2px 2px 0; rotate: 45deg; }
+.check input:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+@media (max-width: 39.9375em) {
+  /* On a phone the tag gets its own line above the box, or the sentence runs into it. */
+  .field--check { padding-top: 2.25rem; }
+  .check > span:first-of-type { padding-right: 0; }
+}
+
+/* Signing: the typed name is the signature, so it is set like one. */
+.field--sign input:not([type=radio], [type=checkbox], [type=file]) { font: italic 400 1.5rem/1.25 var(--serif); letter-spacing: -.01em; }
+
+/* ---------- Which yard ---------- */
+.fp-yardnote { display: grid; gap: .1rem; padding: .35rem 0 .15rem; font-size: .9375rem; line-height: 1.35; }
+.no-js .fp-yardnote { display: none; }
+.fp-yardnote__who { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 .85rem; }
+.fp-yardnote b { font-weight: 600; }
+.fp-yardnote b::before { content: ""; display: inline-block; width: .5rem; height: .5rem; margin-right: .5rem; background: var(--yellow); vertical-align: .08em; }
+.fp-yardnote__line { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 1rem; padding-left: 1rem; color: var(--ink-2); }
+.fp-yardnote__line a { font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
+/* On touch screens the number is a full-size target; the padding is taken back so the line holds its height. */
+@media (hover: none) { .fp-yardnote__line a { display: inline-block; padding-block: .65rem; margin-block: -.65rem; } }
+.fp-yardguide { padding: .45rem 0 .35rem; color: var(--ink-3); font-size: .875rem; line-height: 1.4; max-width: 44em; }
+
+/* ---------- Files ---------- */
+.drop { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: .9rem; margin: .4rem 0 .35rem; padding: 1.1rem 1.1rem 1.15rem; border: 1px dashed var(--ink-3); background: transparent; cursor: pointer; transition: background-color var(--d-1), border-color var(--d-1); }
+.drop.is-over, .drop:hover { border-style: solid; border-color: var(--ink); background: var(--paper-2); }
+.drop:focus-within { outline: 2px solid var(--ink); outline-offset: 2px; }
+.drop__icon { display: grid; place-items: center; width: 2.75rem; height: 2.75rem; background: var(--yellow); }
+.drop__text { display: grid; gap: .1rem; }
+.drop__text b { font-weight: 600; }
+.drop__text small { color: var(--ink-3); font-size: .875rem; line-height: 1.35; }
+.drop__touch { display: none; }
+@media (hover: none) { .drop__fine { display: none; } .drop__touch { display: inline; } }
+.files { display: grid; gap: .25rem; list-style: none; padding: 0; margin: .25rem 0 .35rem; }
+.files:empty { display: none; }
+.files li { display: flex; align-items: center; gap: .7rem; padding: .35rem 0 .35rem .75rem; background: var(--paper-2); font-size: .9375rem; }
+.files li span { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.files li small { flex: none; color: var(--ink-3); font-size: .8125rem; font-variant-numeric: tabular-nums; }
+.files .i { flex: none; }
+.files button { flex: none; min-height: 2.75rem; padding: 0 .85rem; background: none; border: 0; font-size: .9375rem; font-weight: 600; text-decoration: underline; text-underline-offset: .18em; }
+
+/* ---------- The foot: last check, then send ---------- */
+.form__foot { display: grid; gap: 1.5rem; padding: 1.5rem var(--cell) 1.75rem; }
+.form__send { display: grid; gap: 1rem; }
+.form__send .btn { width: 100%; min-height: 3.5rem; }
+.form__how { display: grid; gap: .35rem; }
+.form__how p { color: var(--ink-2); font-size: .9375rem; line-height: 1.4; max-width: 34em; }
+.form__how .form__draft { color: var(--ink-3); font-size: .875rem; }
+.no-js .form__draft { display: none; }
+.form__print button { min-height: 2.75rem; padding: 0; background: none; border: 0; color: var(--ink); font-weight: 600; text-decoration: underline; text-underline-offset: .18em; }
+.form__draft button { min-height: 2.75rem; padding: 0; background: none; border: 0; color: var(--ink); font-weight: 600; text-decoration: underline; text-underline-offset: .18em; }
+@media (min-width: 40em) {
+  .form__send { grid-template-columns: auto minmax(0, 1fr); gap: 1.5rem; align-items: center; }
+  .form__send .btn { width: auto; }
+}
+
+/* ---------- The manifest beside the form ---------- */
+.fp-slip__head { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; padding-bottom: .7rem; border-bottom: 1px solid var(--ink); }
+.fp-slip__head .label:first-child { display: inline-flex; align-items: center; gap: .55rem; color: var(--ink); }
+.fp-slip__head .label:first-child::before { content: ""; width: .55rem; height: .55rem; background: var(--yellow); }
+.fp-slip__rows > div { display: grid; grid-template-columns: 4.75rem minmax(0, 1fr); gap: .75rem; align-items: baseline; padding: .7rem 0 .75rem; border-bottom: 1px dashed var(--rule-2); }
+.fp-slip dt { font: 400 var(--t-label)/1.4 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); }
+.fp-slip dd { font: 480 1.125rem/1.25 var(--serif); letter-spacing: -.004em; color: var(--ink); overflow-wrap: anywhere; }
+.fp-slip dd[data-slot]:not(.is-set) { font-style: italic; font-weight: 400; color: var(--ink-3); }
+.no-js .fp-slip__note { display: none; }
+.fp-slip__need { padding-top: .7rem; font-size: .9375rem; line-height: 1.35; font-weight: 600; color: var(--ink-2); }
+.no-js .fp-slip__need { display: none; }
+.fp-slip__need.is-ready { color: var(--ink); }
+.fp-slip__need.is-ready::before { content: ""; display: inline-block; width: .55rem; height: .55rem; margin-right: .5rem; background: var(--yellow); }
+.fp-slip--foot { padding-bottom: .25rem; }
+.fp-slip--foot .fp-slip__rows > div:last-child { border-bottom-style: solid; }
+@media (min-width: 62.5em) { .fp-slip--foot { display: none; } }
+@media (prefers-reduced-motion: no-preference) {
+  .fp-slip dd.is-new { animation: fp-write .42s var(--ease); }
+  .notice--done:not([hidden]) .notice__stamp { animation: fp-stamp .5s var(--ease) both; }
+}
+@keyframes fp-write { from { opacity: 0; transform: translateY(.3rem); } }
+@keyframes fp-stamp { from { opacity: 0; transform: scale(1.35) rotate(-6deg); } to { opacity: 1; transform: rotate(-6deg); } }
+
+/* ---------- The numbers beside the form ---------- */
+.fp-call__lead { padding-bottom: .7rem; border-bottom: 1px solid var(--ink); color: var(--ink); }
+.fp-call ul { list-style: none; margin: 0; padding: 0; }
+.fp-call a { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: baseline; gap: .25rem 1rem; padding: .7rem 0 .75rem; border-bottom: 1px solid var(--rule-2); text-decoration: none; }
+.fp-call__lat { grid-column: 1; grid-row: 1; display: flex; align-items: baseline; gap: .75rem; font: 400 var(--t-label)/1 var(--mono); letter-spacing: .08em; color: var(--ink-3); }
+.fp-call__mark { grid-column: 2; grid-row: 1; justify-self: end; font: 400 var(--t-label)/1 var(--mono); letter-spacing: .06em; color: var(--ink); visibility: hidden; text-transform: uppercase; white-space: nowrap; }
+.fp-call li.is-on .fp-call__mark { visibility: visible; }
+.fp-call li.is-on .fp-call__city::after { content: ""; display: inline-block; width: .55rem; height: .55rem; margin-left: .55rem; background: var(--yellow); vertical-align: .12em; }
+.fp-call__city { grid-column: 1; grid-row: 2; font: 400 1.625rem/1 var(--serif); letter-spacing: -.02em; }
+.fp-call__num { grid-column: 2; grid-row: 2; display: inline-flex; align-items: center; gap: .45rem; font-weight: 600; font-size: 1.0625rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.fp-call__num .i { color: var(--ink-3); }
+.fp-call a:hover .fp-call__num { text-decoration: underline; text-decoration-color: var(--yellow); text-decoration-thickness: 2px; text-underline-offset: .25em; }
+@media (max-width: 73.6875em) { .fp-call__num .i { display: none; } .fp-call__mark { display: none; } }
+
+/* ---------- After sending ---------- */
+.notice { display: grid; grid-template-columns: auto 1fr; gap: .9rem 1.1rem; }
+.notice h2 { margin-bottom: .4rem; font: 400 var(--t-h3)/1.1 var(--serif); letter-spacing: -.014em; }
+.notice p { color: var(--ink-2); }
+.notice a { font-weight: 600; }
+.notice > .i { margin-top: .35rem; }
+.notice[data-failed] { margin: 0 var(--cell) 1.75rem; padding: 1.25rem; background: #FBEDE7; border: 1px solid #A3341E; border-left-width: .3rem; }
+.notice[data-failed] > .i { color: #A3341E; }
+.notice--done { position: relative; padding: clamp(1.75rem, 5vw, 3.5rem) var(--cell) clamp(2rem, 5vw, 3.5rem); }
+.notice--done h2 { font-size: var(--t-h2); line-height: 1; letter-spacing: -.022em; font-weight: 370; margin-bottom: .75rem; padding-right: 6.5rem; }
+.notice--done p { max-width: 34em; font-size: var(--t-lede); line-height: 1.45; }
+.notice--done [data-mail-to] { overflow-wrap: anywhere; }
+.notice__acts { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: 1.5rem; }
+.notice__stamp { position: absolute; top: clamp(1.25rem, 4vw, 2.75rem); right: var(--cell); padding: .4rem .6rem; border: 2px solid var(--ink); font: 400 var(--t-label)/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--ink); transform: rotate(-6deg); white-space: nowrap; }
+.notice__stamp ~ .i { display: none; }
+.notice--done { grid-template-columns: 1fr; }
+.notice:focus { outline: none; }
+.notice:focus-visible { outline: 2px solid var(--ink); outline-offset: -4px; }
+
+/* ---------- Trade references ---------- */
+.refs { padding: 0; gap: 1px; background: var(--line); }
+.ref { display: grid; gap: 1px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.ref__title { grid-column: 1 / -1; display: flex; align-items: baseline; gap: .7rem; padding: .55rem var(--cell) .45rem; background: var(--paper-2); font: 400 var(--t-label)/1.3 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--ink); }
+@media (max-width: 39.9375em) { .ref .field { grid-column: 1 / -1; } }
+
+/* ---------- The end of the page: the three numbers at headline size ---------- */
+.fp-close .shead { margin-bottom: clamp(2rem, 4vw, 3.5rem); }
+.fp-yards { display: grid; list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--ink); }
+.fp-yards a { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: baseline; gap: .55rem 1rem; padding: 1.05rem 0 1.15rem; border-bottom: 1px solid var(--rule-2); text-decoration: none; transition: background-color var(--d-1); }
+.fp-yards__lat { font: 400 var(--t-label)/1 var(--mono); letter-spacing: .1em; color: var(--ink-3); }
+.fp-yards .status { justify-self: end; }
+.fp-yards__city { font: 350 clamp(2.25rem, 1.45rem + 3.4vw, 4.5rem)/.95 var(--serif); letter-spacing: -.03em; }
+.fp-yards__num { font: 600 clamp(1.1875rem, 1.05rem + .5vw, 1.625rem)/1.2 var(--sans); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.fp-yards a:hover .fp-yards__num { text-decoration: underline; text-decoration-color: var(--yellow); text-decoration-thickness: 2px; text-underline-offset: .25em; }
+@media (min-width: 47.5em) {
+  .fp-yards { grid-template-columns: repeat(3, minmax(0, 1fr)); border-bottom: 1px solid var(--rule-2); }
+  .fp-yards li + li { border-left: 1px solid var(--rule-2); }
+  .fp-yards a { padding: 1.25rem clamp(.75rem, 1.6vw, 1.75rem) 1.5rem; border-bottom: 0; }
+  .fp-yards li:first-child a { padding-left: 0; }
+  .fp-yards li:last-child a { padding-right: 0; }
+  .fp-yards__city, .fp-yards__num { grid-column: 1 / -1; }
+  .fp-yards__city { margin-top: .5rem; }
+}
+
+.print-only { display: none; }

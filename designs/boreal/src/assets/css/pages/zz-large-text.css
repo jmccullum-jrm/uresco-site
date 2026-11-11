@@ -1,0 +1,14 @@
+/* ---------- Very large browser text on a narrow screen ----------
+   18.5em is 296px at the default text size, so nobody on an ordinary phone ever gets these rules. At 150% to 200%
+   browser text the same query matches a 390px phone: what normally stays on one line wraps instead of pushing the
+   page sideways. */
+@media (max-width: 18.5em) {
+  main, .footer { overflow-wrap: anywhere; }
+  .btn, .status, .fm-line__num, .pline-ask__num, .pline-item__pick, .lc-row__digits, .lc-yards .ycard__phone, .pidx-brand__line, .pidx-brand__lit, .pidx-az small, .pj-yards a, .dial__num, .finder__yards a, .nf__tel, .phero__row .eyebrow, .stage__copy .eyebrow, .remote__modes li, .sv-map__end span, .brands li, .legend li, .fm-state, .chip { height: auto; white-space: normal; }
+  .btn { max-width: 100%; }
+  .fm-line, .ycard__top, .pline-ask__num, .fm-who__y, .fm-send { flex-wrap: wrap; }
+  .fm-line__num, .pline-ask__num, .ycard__top .status { flex: 0 1 auto; }
+  .fm-state { position: static; }
+  .sv-modes { flex-wrap: wrap; }
+  .sv-modes .chip { height: auto; max-width: 100%; }
+}

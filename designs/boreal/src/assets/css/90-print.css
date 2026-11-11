@@ -1,0 +1,92 @@
+/* ---------- Print ----------
+   Site chrome never prints. The credit application prints as a blank Letter form that says where to
+   send it and has room to sign; a form that has been started prints what has been entered. */
+@media print {
+  @page { size: Letter; margin: .5in .55in .55in; }
+  @page { @bottom-left { content: 'Uresco Construction Materials, Inc.'; font: 7.5pt sans-serif; color: #444; } @bottom-right { content: 'Page ' counter(page) ' of ' counter(pages); font: 7.5pt sans-serif; color: #444; } }
+
+  .utility, .masthead, .actionbar, .footer, dialog, .skip, .cta, .interlude { display: none !important; }
+  html { scroll-padding: 0; }
+  body { background: #fff !important; color: #000; padding: 0 !important; font-size: 9.5pt; line-height: 1.3; }
+  a { text-decoration: none; color: inherit; }
+  .reveal { opacity: 1 !important; transform: none !important; }
+  .frame::after { display: none; }
+
+  .print-only { display: block; }
+  .jsonly, .fm-rail, .fm-page__call, .fm-draft, .form__foot, .drop, .files, .notice, .qt-jump, .qt-next { display: none !important; }
+
+  /* The application: hero, how-it-works and the on-screen heading give way to the letterhead. */
+  .pg-accounts .ac-hero, .pg-accounts .ac-how, .pg-accounts .fm-page__intro { display: none !important; }
+  .fm-page, .phero--plain.fm-page, .fm-page--apply { padding: 0 !important; }
+  .fm-page__head { margin: 0 !important; }
+  .wrap { padding: 0 !important; max-width: none !important; }
+  .fm-page__grid { display: block !important; }
+
+  .letterhead { display: flex; justify-content: space-between; align-items: flex-start; gap: 16pt; padding-bottom: 7pt; margin-bottom: 9pt; border-bottom: 1.5pt solid #000; }
+  .letterhead__brand { display: flex; align-items: center; gap: 8pt; }
+  .letterhead__brand svg { width: 34pt; height: 34pt; }
+  .letterhead__title { margin: 0; font-size: 19pt; line-height: 1; font-weight: 600; letter-spacing: -.03em; }
+  .letterhead p:not(.letterhead__title) { margin: 3pt 0 0; font-size: 8.5pt; }
+  .letterhead p.letterhead__key { margin-top: 2pt; font-size: 7.5pt; color: #444; }
+  .letterhead__return { font-size: 7.5pt; line-height: 1.3; }
+  .letterhead__return b { display: block; margin-bottom: 1.5pt; font-size: 8pt; font-weight: 600; }
+  .letterhead__return table { border-collapse: collapse; }
+  .letterhead__return th { padding: .5pt 8pt .5pt 0; font-weight: 600; text-align: left; }
+  .letterhead__return td { padding: .5pt 8pt .5pt 0; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .letterhead__return td:last-child { padding-right: 0; }
+
+  .form { display: block !important; }
+  .fieldset { display: grid !important; grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 8pt 14pt !important; padding: 0 !important; margin: 0 0 11pt !important; border: 0; border-radius: 0; background: none !important; box-shadow: none !important; break-inside: avoid; }
+  .fieldset legend { float: left; grid-column: 1 / -1; display: flex; align-items: baseline; gap: 5pt; width: 100%; margin: 0 0 1pt; padding: 3pt 0 0 !important; border-top: .75pt solid #000; font-size: 10.5pt; font-weight: 600; letter-spacing: -.01em; }
+  .fieldset legend span { font-family: var(--mono); font-size: 7.5pt; font-weight: 500; color: #333; }
+  .fieldset--newpage { break-before: page; }
+  .fieldset:first-of-type legend { padding-top: 0 !important; border-top: 0; }
+
+  .field { display: grid !important; grid-template-columns: auto minmax(0, 1fr); align-items: baseline; gap: 1pt 5pt !important; min-width: 0; }
+  .field > label:not(.check), .field > .label { display: block; grid-column: 1; font-size: 8.5pt; font-weight: 600; line-height: 1.2; color: #000; }
+  .field > .hint, .field > .label .hint { grid-column: 2; font-size: 7.5pt; font-weight: 400; line-height: 1.2; color: #444; }
+  .field > .input, .field > textarea, .field > select { grid-column: 1 / -1; }
+  .field select { display: block; width: 100%; min-height: 22pt !important; height: 22pt; padding: 0 2pt !important; border: 0 !important; border-bottom: .75pt solid #000 !important; border-radius: 0 !important; background: #fff !important; box-shadow: none !important; font-size: 9.5pt !important; color: #000; }
+  .field > .err { display: none !important; }
+  .field.no-print, .field.fm-inline-who, .field.qt-route { display: none !important; }
+  .req { margin: 0 0 0 2pt !important; font-size: 0 !important; }
+  .req::after { content: '*'; font-family: var(--font); font-size: 9pt; color: #000; }
+
+  .input, .field textarea { display: block; width: 100%; min-height: 22pt !important; height: 22pt; padding: 0 2pt !important; border: 0 !important; border-bottom: .75pt solid #000 !important; border-radius: 0 !important; background: #fff !important; box-shadow: none !important; font-size: 9.5pt !important; line-height: 22pt; color: #000; }
+  /* A long answer prints in full: the box grows with what was typed, and a blank one keeps its writing room. */
+  .field textarea { height: auto !important; min-height: 44pt !important; field-sizing: content; overflow: hidden; border: .75pt solid #000 !important; line-height: 1.3; resize: none; }
+  .input::placeholder { color: transparent !important; }
+  .input::-webkit-calendar-picker-indicator { display: none; }
+  input[type='date']::-webkit-datetime-edit { color: transparent; }
+  input[type='date'].has-date::-webkit-datetime-edit { color: #000; }
+  /* Signing is done by hand, always. */
+  #signature, #signed { color: transparent !important; }
+  #signature ~ .err, #signed ~ .err { display: none; }
+
+  .seg, .seg--tiles { display: flex !important; flex-wrap: wrap; grid-column: 1 / -1; gap: 3pt 12pt !important; margin-top: 1pt; }
+  .seg label, .seg--tiles label, .seg label:has(input:checked) { position: static; display: inline-flex !important; align-items: center; min-height: 0 !important; padding: 0 !important; gap: 3.5pt; border: 0 !important; border-radius: 0; background: none !important; box-shadow: none !important; font-size: 8.5pt; font-weight: 500; line-height: 1.2; }
+  .seg label::before { content: none !important; }
+  .seg .i { display: none; }
+  .seg input { position: static !important; width: 9pt !important; height: 9pt !important; opacity: 1 !important; margin: 0; appearance: none; -webkit-appearance: none; border: .75pt solid #000; border-radius: 1.5pt; background: #fff; }
+  .is-filled .seg input:checked, .seg input[type='checkbox']:checked { background: #000; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+
+  .refs { display: grid !important; grid-column: 1 / -1; grid-template-columns: minmax(0, 1fr) !important; gap: 6pt !important; }
+  .ref { display: grid !important; grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 3pt 14pt !important; padding: 0 !important; background: none !important; box-shadow: none !important; border-radius: 0; break-inside: avoid; }
+  .ref__title { display: block; grid-column: 1 / -1; font-size: 8.5pt; font-weight: 600; margin: 0; }
+  .ref__title .req { display: inline !important; }
+  .ref .input { background: #fff !important; }
+
+  .check { display: flex; gap: 6pt; padding: 0 !important; border: 0 !important; background: none !important; font-size: 8.5pt; line-height: 1.35; }
+  .check .req { display: inline !important; }
+  .check input { flex: none; width: 10pt !important; height: 10pt !important; margin: 1pt 0 0 !important; appearance: none; -webkit-appearance: none; border: .75pt solid #000; border-radius: 1.5pt; background: #fff; }
+  .is-filled .check input:checked { background: #000; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+  #signature, #signed { height: 44pt !important; min-height: 44pt !important; }
+  .field:has(#dba) { grid-column: 1 / -1; }
+  #signature-hint { display: none !important; }
+
+  /* The quote request, if someone prints it. */
+  .pg-quote .fm-page__head { margin-bottom: 8pt !important; }
+  .pg-quote h1 { font-size: 20pt; }
+  .pg-quote .eyebrow { display: none; }
+  .pg-quote .phero__lede { margin: 3pt 0 0; font-size: 9pt; color: #333; max-width: none; }
+}

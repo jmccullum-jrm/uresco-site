@@ -1,0 +1,129 @@
+/* ==========================================================================
+   Pacific Northwest: the Kent yard, the two machines, the product lines,
+   and the chart north.
+   ========================================================================== */
+
+/* The italic phrase takes its own line on phones, so the headline breaks where it reads. */
+@media (max-width: 699px) { [data-page="pnw"] .phero__title em { display: block; } }
+
+/* ---------- 01 The Kent yard ---------- */
+.pnw-yard { padding-bottom: var(--section); }
+.pnw-yard .chead { margin-bottom: clamp(2rem, 4vw, 3.5rem); }
+.pnw-yard__grid { display: grid; gap: 3rem var(--col-gap); }
+.pnw-record { display: grid; justify-items: start; align-content: start; }
+.pnw-record__tel { font-size: clamp(2.125rem, 1.6rem + 2.3vw, 3.5rem); font-weight: 600; line-height: 1.1; letter-spacing: -.016em; font-variant-numeric: tabular-nums; white-space: nowrap; padding-block: .25rem; text-decoration: underline; text-decoration-color: var(--yellow); text-decoration-thickness: 3px; text-underline-offset: .18em; }
+.pnw-record__tel:hover { text-decoration-color: var(--ink); }
+@media (max-width: 19.5em) { .pnw-record__tel { white-space: normal; } }
+.pnw-record__status { min-height: 1.4rem; margin-top: .55rem; }
+.pnw-record .yard__lines { margin-top: 1.5rem; }
+@media (max-width: 379px) { .pnw-record .yard__lines > div { grid-template-columns: 5.25rem minmax(0, 1fr); } }
+.pnw-record .yard__actions { margin-top: 1.25rem; }
+.pnw-yard__side { display: grid; gap: 2.5rem; align-content: start; }
+.pnw-prints { position: relative; width: min(100%, 34rem); padding: 0 0 2.5rem 0; }
+.pnw-print { width: min(62%, 21.25rem); padding: .55rem .55rem .75rem; rotate: -1.8deg; }
+.pnw-print img { aspect-ratio: 357 / 322; }
+/* The second print hangs over this one's lower right corner: the photograph, never the caption. */
+.pnw-print:not(.pnw-print--2) figcaption { padding-right: 12%; }
+.pnw-print--2 { position: absolute; right: 0; bottom: 0; width: min(42%, 14.5rem); rotate: 2.6deg; }
+.pnw-print--2 img { aspect-ratio: 1; }
+.pnw-does ul { list-style: none; margin: .9rem 0 0; padding: 0; border-top: 1px solid var(--ink); }
+.pnw-does a { display: flex; justify-content: space-between; align-items: center; gap: 1rem; min-height: 3rem; padding: .8rem 0; border-bottom: 1px solid var(--rule-2); text-decoration: none; font: 480 1.1875rem/1.25 var(--serif); letter-spacing: -.004em; }
+.pnw-does .i { flex: none; color: var(--ink-3); transition: translate var(--d-2) var(--ease), color var(--d-1); }
+.pnw-does a:hover .i, .pnw-does a:focus-visible .i { translate: .3rem 0; color: var(--ink); }
+.pnw-does a:hover { text-decoration: underline; text-decoration-color: var(--yellow); text-decoration-thickness: 2px; text-underline-offset: .2em; }
+@media (min-width: 700px) { .pnw-yard__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 1000px) {
+  .pnw-yard__grid { grid-template-columns: minmax(0, 5.6fr) minmax(0, 6.4fr); column-gap: clamp(2.5rem, 6vw, 6.5rem); }
+}
+
+/* ---------- 02 The two machines, drawn on the blueprint sheet ---------- */
+.pnw-drop { padding-bottom: 0; }
+.pnw-rigs { display: grid; gap: var(--col-gap); }
+.pnw-rig { margin: 0; display: grid; grid-template-rows: auto auto 1fr; border: 1px solid var(--rule-2); background: var(--deep-2); }
+.pnw-rig__head { display: flex; justify-content: space-between; gap: 1rem; padding: .7rem clamp(1rem, 2.2vw, 1.5rem); border-bottom: 1px solid var(--rule-2); font: 400 var(--t-label)/1.3 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--glacier); }
+.pnw-rig__draw { padding: clamp(.75rem, 2vw, 1.5rem) clamp(.5rem, 1.5vw, 1.25rem) .25rem; }
+.pnw-rig__draw svg { width: 100%; height: auto; overflow: visible; }
+.pnw-rig__text { display: grid; gap: .75rem; align-content: start; padding: 1.25rem clamp(1rem, 2.2vw, 1.5rem) 1.5rem; border-top: 1px solid var(--rule-2); }
+.pnw-rig__text p { color: var(--on-dark-2); max-width: 28em; }
+.pnw-rig__steps { display: grid; gap: .4rem; margin-top: .4rem; list-style: none; padding: 0; color: var(--on-dark); }
+.pnw-rig__steps li { display: grid; grid-template-columns: 1.6rem minmax(0, 1fr); gap: .6rem; align-items: baseline; font-size: 1rem; line-height: 1.35; }
+.pnw-rig__steps span { display: grid; place-items: center; width: 1.5rem; height: 1.5rem; border: 1px solid var(--yellow); border-radius: 50%; font: 400 .75rem/1 var(--mono); }
+.pnw-rig .ln { fill: none; stroke: var(--on-dark); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.pnw-rig .ln--thick { stroke-width: 4; }
+.pnw-rig .ln--thin { stroke: var(--glacier); stroke-width: 1.1; }
+.pnw-rig .hatch { fill: none; stroke: var(--glacier); stroke-width: 1; stroke-dasharray: 2 9; }
+.pnw-rig .dash { fill: none; stroke: var(--glacier); stroke-width: 1.2; stroke-dasharray: 5 5; }
+.pnw-rig .dots { fill: none; stroke: var(--yellow); stroke-width: 2; stroke-dasharray: .1 7; stroke-linecap: round; }
+.pnw-rig .load { fill: var(--yellow); stroke: var(--ink); stroke-width: 1; }
+.pnw-rig .load__band { fill: none; stroke: var(--ink); stroke-width: 1.6; }
+.pnw-mk circle { fill: var(--deep); stroke: var(--yellow); stroke-width: 1.3; }
+.pnw-mk text { fill: var(--on-dark); font: 400 14px var(--mono); text-anchor: middle; }
+/* The drawing shrinks on phones; its numbers do not get smaller than the steps they point to. */
+@media (max-width: 699px) { .pnw-mk circle { r: 15px; } .pnw-mk text { font-size: 18px; } }
+/* Each drawing inks itself in when it reaches the screen. */
+@media (prefers-reduced-motion: no-preference) {
+  .js .pnw-rig .ln { stroke-dasharray: 1; transition: stroke-dashoffset var(--d-4) var(--ease-io) calc(var(--i, 0) * 120ms + .15s); }
+  .js .pnw-rig:not(.is-in) .ln { stroke-dashoffset: 1; }
+  .js .pnw-rig .dash, .js .pnw-rig .dots, .js .pnw-rig .load, .js .pnw-rig .load__band, .js .pnw-rig .pnw-mk { transition: opacity .6s var(--ease) calc(var(--i, 0) * 120ms + 1.1s); }
+  .js .pnw-rig:not(.is-in) .dash, .js .pnw-rig:not(.is-in) .dots, .js .pnw-rig:not(.is-in) .load, .js .pnw-rig:not(.is-in) .load__band, .js .pnw-rig:not(.is-in) .pnw-mk { opacity: 0; }
+}
+@media (min-width: 900px) { .pnw-rigs { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.pnw-drop__foot { display: grid; gap: 1.25rem; justify-items: start; margin-top: clamp(2rem, 4vw, 3.5rem); padding-top: 1.5rem; border-top: 1px solid var(--rule-2); }
+.pnw-drop__foot .lede { color: var(--on-dark); }
+@media (max-width: 599px) { .pnw-drop__foot .btn { width: 100%; } }
+@media (min-width: 760px) { .pnw-drop__foot { grid-template-columns: minmax(0, 1fr) auto; align-items: center; } }
+.pnw-drop__photo { margin-top: var(--section); }
+.pnw-drop__photo .fig__cap { padding-bottom: 1.25rem; }
+
+/* ---------- 04 Remote and export: the chart, cut close to Kent ---------- */
+.pnw-north__grid { display: grid; gap: 2.5rem var(--col-gap); }
+.pnw-north__map { min-width: 0; }
+.pnw-chart__wrap { margin: 0; }
+.pnw-chart { --x: 664; --y: 370; --w: 440; --h: 460; position: relative; aspect-ratio: 440 / 460; overflow: hidden; background: var(--water); border: 1px solid var(--ink); outline: 1px solid var(--ink); outline-offset: 3px; margin: 4px; }
+.pnw-chart__sheet { position: absolute; left: calc(var(--x) / var(--w) * -100%); top: calc(var(--y) / var(--h) * -100%); width: calc(1200 / var(--w) * 100%); aspect-ratio: 1200 / 880; }
+.pnw-chart__sheet > img, .pnw-chart__sheet > svg { position: absolute; inset: 0; width: 100%; height: 100%; max-width: none; }
+.pnw-chart .sea { stroke-width: 3.2; }
+.pnw-chart .sea--minor { stroke-width: 2.1; }
+.pnw-chart .town { stroke-width: 1.2; }
+.pnw-chart__yard, .pnw-chart__town { position: absolute; white-space: nowrap; line-height: 1; }
+.pnw-chart__yard { display: inline-flex; align-items: baseline; gap: .5em; padding: .42em .6em .4em; background: var(--ink); color: var(--paper); font-size: .875rem; transform: translate(calc(-100% - 1.35em), -50%); }
+.pnw-chart__yard b { font-weight: 600; }
+.pnw-chart__yard i { font: 400 .8em/1 var(--mono); color: var(--glacier); }
+.pnw-chart__town { font-size: .75rem; font-weight: 500; color: var(--ink); text-shadow: 0 0 .25em var(--paper-3), 0 0 .25em var(--paper-3), 0 0 .35em var(--paper-3); transform: translate(1.1em, -50%); }
+.pnw-chart__town[data-side="w"] { transform: translate(calc(-100% - .5em), -50%); }
+.pnw-chart__town[data-side="n"] { transform: translate(-50%, calc(-100% - .4em)); }
+.pnw-chart__town[data-side="s"] { transform: translate(-50%, .4em); }
+.pnw-chart__title { position: absolute; right: .75rem; top: .75rem; display: grid; gap: .3em; justify-items: end; padding: .8em .9em .85em; background: var(--paper-3); border: 1px solid var(--ink); outline: 1px solid var(--ink); outline-offset: 2px; font-size: .75rem; text-align: right; }
+.pnw-chart__title span { font-family: var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--ink-3); }
+.pnw-chart__title b { font: 400 1.75em/1 var(--serif); letter-spacing: -.02em; }
+.pnw-chart__title i { font: italic 400 1.15em/1.1 var(--serif); color: var(--ink-2); }
+/* Sits in the open water under the lane, clear of it at every crop. */
+.pnw-chart__to { position: absolute; left: 56%; top: 84.7%; display: inline-flex; align-items: center; gap: .45em; padding: .4em .55em; background: var(--sea); color: var(--paper); font: 400 .75rem/1 var(--mono); letter-spacing: .04em; white-space: nowrap; }
+.pnw-chart__to i { font-style: normal; color: var(--glacier); }
+.pnw-chart__to .i { rotate: -147deg; }
+.pnw-north .fig__cap { padding-left: 4px; }
+@media (max-width: 619px) { .pnw-chart__to i { display: none; } }
+@media (max-width: 379px) { .pnw-chart__to { display: none; } }
+@media (min-width: 620px) and (max-width: 999px) { .pnw-chart { --x: 604; --y: 434; --w: 540; --h: 396; aspect-ratio: 540 / 396; } }
+@media (min-width: 1000px) { .pnw-chart { --x: 628; --y: 408; --w: 520; --h: 420; aspect-ratio: 520 / 420; } }
+@media (prefers-reduced-motion: no-preference) {
+  .js .pnw-chart .lane { transition: stroke-dashoffset var(--d-4) var(--ease-io) var(--d, 0s); }
+  .js .pnw-chart:not(.is-in) .lane { stroke-dashoffset: 1; transition: none; }
+}
+.pnw-north__head, .pnw-north__body { display: grid; gap: 1.25rem; justify-items: start; align-content: start; min-width: 0; }
+.pnw-north__head .shead__bar { justify-self: stretch; margin-bottom: .75rem; }
+.pnw-legs { justify-self: stretch; list-style: none; margin: .25rem 0 0; padding: 0; border-top: 1px solid var(--ink); }
+.pnw-legs li { display: grid; grid-template-columns: 4.5rem minmax(0, 1fr); gap: .1rem 1rem; align-items: baseline; padding: .7rem 0 .75rem; border-bottom: 1px solid var(--rule-2); }
+.pnw-legs__lat { grid-row: span 2; font: 400 var(--t-caption)/1.5 var(--mono); color: var(--ink-3); }
+.pnw-legs__name { font: 480 1.25rem/1.2 var(--serif); letter-spacing: -.01em; }
+.pnw-legs__name a { text-decoration-color: var(--rule-2); }
+@media (max-width: 999px), (pointer: coarse) { .pnw-legs__name a { display: inline-flex; align-items: center; min-height: 2.5rem; } .pnw-legs li:has(a) { padding-block: .2rem .55rem; } }
+.pnw-legs__how { grid-column: 2; font-size: .9375rem; color: var(--ink-2); line-height: 1.4; }
+.pnw-north__note { font: 400 var(--t-caption)/1.45 var(--mono); color: var(--ink-3); }
+@media (max-width: 599px) { .pnw-north .actions, .pnw-north .actions .btn { width: 100%; } }
+@media (min-width: 62.5em) {
+  .pnw-north__grid { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); grid-template-rows: auto 1fr; column-gap: clamp(2.5rem, 5vw, 5rem); grid-template-areas: "map head" "map body"; }
+  .pnw-north__head { grid-area: head; }
+  .pnw-north__body { grid-area: body; }
+  .pnw-north__map { grid-area: map; position: sticky; top: calc(var(--mast) + 1.5rem); align-self: start; }
+}

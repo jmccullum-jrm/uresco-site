@@ -1,0 +1,180 @@
+{
+ "hero-truck-denali": {
+  "widths": [
+   240,
+   640,
+   960,
+   1280,
+   1920,
+   2400
+  ],
+  "width": 2400,
+  "height": 1600,
+  "alt": "A truck on a highway through spruce forest with Denali rising behind it",
+  "focal": "60% 50%",
+  "credit": "Joseph Corl / Unsplash",
+  "page": "https://unsplash.com/photos/OVKRxZub9f4",
+  "standIn": false,
+  "cropOf": null,
+  "color": "#8a8a8a"
+ },
+ "anchorage": {
+  "widths": [
+   240,
+   640,
+   960,
+   1280,
+   1920,
+   2400
+  ],
+  "width": 2400,
+  "height": 865,
+  "alt": "The Anchorage skyline beneath the snow-covered Chugach Mountains",
+  "focal": "70% 50%",
+  "credit": "Yuhan Du / Unsplash",
+  "page": "https://unsplash.com/photos/8UCTwY4mrVA",
+  "standIn": false,
+  "cropOf": null,
+  "color": "#6d6d6d"
+ },
+ "tug-barge": {
+  "widths": [
+   240,
+   640,
+   960,
+   1280,
+   1920,
+   2400
+  ],
+  "width": 2400,
+  "height": 1601,
+  "alt": "A tug pushing a loaded freight barge",
+  "focal": "55% 60%",
+  "credit": "Royce Fonseca / Unsplash",
+  "page": "https://unsplash.com/photos/hvgb3lXdOKw",
+  "standIn": false,
+  "cropOf": null,
+  "color": "#acb0b5"
+ },
+ "uresco-truck": {
+  "widths": [
+   240,
+   314
+  ],
+  "width": 314,
+  "height": 322,
+  "alt": "A printed tag reading \u201cLumber by: UCM Uresco Construction Materials, Inc.\u201d on a load of plywood",
+  "focal": null,
+  "credit": "Uresco Construction Materials",
+  "page": null,
+  "standIn": false,
+  "cropOf": null,
+  "color": "#39312e"
+ },
+ "uresco-woodpile": {
+  "widths": [
+   214
+  ],
+  "width": 214,
+  "height": 200,
+  "alt": "Timber ends stacked in a Uresco yard",
+  "focal": null,
+  "credit": "Uresco Construction Materials",
+  "page": null,
+  "standIn": false,
+  "cropOf": null,
+  "color": "#b18c6f"
+ },
+ "custom-home": {
+  "widths": [
+   240,
+   480,
+   800,
+   1200,
+   1600
+  ],
+  "width": 1600,
+  "height": 1067,
+  "alt": "Looking up through new wood framing and trusses at a blue sky",
+  "focal": null,
+  "credit": "Nate Johnston / Unsplash",
+  "page": "https://unsplash.com/photos/QtF2v8BP46I",
+  "standIn": false,
+  "cropOf": null,
+  "color": "#c59d73"
+ },
+ "rainier-tacoma": {
+  "widths": [
+   240,
+   640,
+   960,
+   1280,
+   1920,
+   2400
+  ],
+  "width": 2400,
+  "height": 1600,
+  "alt": "Mount Rainier in alpenglow above the Tacoma waterfront",
+  "focal": "50% 45%",
+  "credit": "Gantavya Bhatt / Unsplash",
+  "page": "https://unsplash.com/photos/ytPJ4kppYWE",
+  "standIn": false,
+  "cropOf": null,
+  "color": "#696969"
+ },
+ "floatplane": {
+  "widths": [
+   240,
+   480,
+   800,
+   1200,
+   1600
+  ],
+  "width": 1600,
+  "height": 2134,
+  "alt": "Skiffs on a gravel beach below a mountain as a floatplane passes, Port Alsworth, Alaska",
+  "focal": "50% 70%",
+  "credit": "Brandy Willetts / Unsplash",
+  "page": "https://unsplash.com/photos/TFpqCU4b2dw",
+  "standIn": false,
+  "cropOf": null,
+  "color": "#8d99ac"
+ },
+ "barge-strip": {
+  "widths": [
+   240,
+   640,
+   960,
+   1280,
+   1920,
+   2400
+  ],
+  "width": 2400,
+  "height": 769,
+  "alt": "A tug pushing a loaded freight barge across gray water",
+  "focal": "50% 46%",
+  "credit": "Royce Fonseca / Unsplash",
+  "page": "https://unsplash.com/photos/hvgb3lXdOKw",
+  "standIn": false,
+  "cropOf": "tug-barge",
+  "color": "#a9a9a9"
+ },
+ "port-alsworth": {
+  "widths": [
+   240,
+   640,
+   960,
+   1280,
+   1920
+  ],
+  "width": 1920,
+  "height": 1280,
+  "alt": "Skiffs pulled up on a gravel beach as a small plane comes in below a mountain, Port Alsworth, Alaska",
+  "focal": "58% 50%",
+  "credit": "Brandy Willetts / Unsplash",
+  "page": "https://unsplash.com/photos/TFpqCU4b2dw",
+  "standIn": false,
+  "cropOf": "floatplane",
+  "color": "#7b7b7b"
+ }
+}

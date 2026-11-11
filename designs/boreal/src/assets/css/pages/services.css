@@ -1,0 +1,158 @@
+/* ================= Services =================
+   One line from plans to the delivered load. A dark "line map" indexes the six services as stops on
+   a freight line; below it each stop is a card (a drawing or a photograph, the service, what it comes
+   to), grouped into three legs: on paper, in the yard, on the way. Everything here is prefixed sv-. */
+
+/* ---------- The line map: six stops, one freight line, ending at your site ---------- */
+.sv-line { padding-inline: var(--edge); }
+.sv-line__card {
+  --ring: var(--yellow); --leg: 2.5rem;
+  position: relative; isolation: isolate; overflow: hidden; padding: clamp(1.75rem, 1rem + 3vw, 4rem) var(--column) clamp(2rem, 1.25rem + 2.6vw, 3.75rem); border-radius: var(--r-2xl); color: #fff;
+  background: radial-gradient(52% 70% at 78% -12%, rgba(227, 231, 230, .1), transparent 72%), var(--night);
+}
+.sv-line__head { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 1.5rem clamp(2rem, 6vw, 6rem); align-items: end; }
+.sv-line__card .eyebrow, .sv-line__card .h2 em { color: var(--haze); }
+.sv-line__lede { margin: 0; max-width: 30em; font-size: var(--t-lede); line-height: 1.5; color: var(--frost); }
+
+.sv-map { margin-top: clamp(2.25rem, 1.5rem + 3vw, 4.25rem); }
+.sv-map__stops { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)) max-content; list-style: none; }
+.sv-map__stop { position: relative; padding: var(--leg) 1.5rem 0 0; }
+/* The line, drawn stop to stop: each stop carries the stretch that leads to the next one. */
+.sv-map__stop::before { content: ''; position: absolute; left: 7px; right: -7px; top: calc(var(--leg) + 5.6px); height: 2.8px; border-radius: 2px; background: var(--yellow); transform-origin: 0 50%; }
+/* A leg's name rules off the two stops under it. */
+.sv-map__leg { position: absolute; top: 0; left: 0; right: calc(-100% + 1.5rem); display: flex; align-items: center; gap: .75rem; font-family: var(--mono); font-size: .75rem; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; color: var(--haze); white-space: nowrap; }
+.sv-map__leg::after { content: ''; flex: 1; height: 1px; background: var(--night-line); }
+.sv-map__go { display: none; }
+.sv-map__link { position: relative; display: grid; align-content: start; gap: .4rem; height: 100%; padding-top: 2.1rem; color: inherit; text-decoration: none; border-radius: 8px; }
+.sv-map__node { position: absolute; top: 0; left: 0; width: 14px; height: 14px; border-radius: 50%; background: var(--yellow); box-shadow: 0 0 0 3px var(--night), 0 0 0 4.5px rgba(245, 184, 0, .55); transition: transform var(--ui) var(--ease); }
+.sv-map__link:hover .sv-map__node, .sv-map__link:focus-visible .sv-map__node { transform: scale(1.3); }
+.sv-map__no { font-family: var(--mono); font-size: var(--t-micro); font-weight: 500; letter-spacing: .06em; color: var(--haze); }
+.sv-map__name { font-size: 1.0625rem; font-weight: 600; letter-spacing: -.015em; line-height: 1.25; text-wrap: balance; }
+.sv-map__link:hover .sv-map__name { text-decoration: underline; text-decoration-thickness: 2px; text-decoration-color: var(--yellow); text-underline-offset: .22em; }
+.sv-map__short { font-size: .875rem; line-height: 1.45; color: var(--haze); }
+/* The end of the line is marked the way the map marks a destination: a white dot and a white tag. */
+.sv-map__end { position: relative; padding-top: calc(var(--leg) - 7px); }
+.sv-map__end i { position: absolute; left: 1px; top: calc(var(--leg) + 1px); width: 12px; height: 12px; border-radius: 50%; background: #fff; box-shadow: 0 0 0 3px var(--night), 0 0 0 4.5px rgba(255, 255, 255, .6); }
+.sv-map__end i::after { content: ''; position: absolute; inset: -5px; border-radius: 50%; border: 1.5px solid #fff; opacity: 0; }
+.sv-map__end span { display: inline-flex; align-items: center; height: 28px; margin-left: 26px; padding: 0 .6rem; border-radius: 9px; background: #fff; color: var(--ink); font-size: .8125rem; font-weight: 600; white-space: nowrap; box-shadow: 0 6px 18px -4px rgba(0, 0, 0, .5); }
+@media (prefers-reduced-motion: no-preference) {
+  /* The line draws itself from the first stop to the last, once, as the stops arrive. */
+  .reveal-on .sv-map__stop.reveal::before { transform: scaleX(0); transition: transform .55s var(--ease-map); transition-delay: calc(var(--i, 0) * 120ms + .2s); }
+  .reveal-on .sv-map__stop.reveal.is-in::before { transform: none; }
+}
+@media (prefers-reduced-motion: no-preference) and (min-width: 43.75em) {
+  .sv-map__end i::after { animation: sv-beacon 2.4s var(--ease) 1.6s infinite; }
+}
+@keyframes sv-beacon { 0% { transform: scale(.6); opacity: .9; } 70%, 100% { transform: scale(2.6); opacity: 0; } }
+/* From 900 to 1099px six columns are narrow: the names carry the line on their own. */
+@media (max-width: 68.6875em) { .sv-map__stop { padding-right: 1rem; } .sv-map__short { display: none; } .sv-map__name { font-size: 1rem; } }
+/* Below 900px the line runs down the left edge and each stop is a row to tap. */
+@media (max-width: 56.1875em) {
+  .sv-line__head { grid-template-columns: minmax(0, 1fr); align-items: start; }
+  .sv-map__stops { grid-template-columns: minmax(0, 1fr); }
+  .sv-map__stop { padding: 0 0 0 2.25rem; }
+  .sv-map__stop::before { left: 5.6px; right: auto; top: calc(1.15rem + 7px); bottom: calc(-1.15rem - 7px); width: 2.8px; height: auto; transform-origin: 50% 0; }
+  .sv-map__leg { top: 1.15rem; left: auto; right: 2.25rem; }
+  .sv-map__leg::after { display: none; }
+  .sv-map__link { gap: .2rem; padding: 1rem 2.25rem 1.1rem 0; border-bottom: 1px solid var(--night-line); border-radius: 0; }
+  .sv-map__go { display: block; position: absolute; right: 0; top: 1.05rem; color: var(--haze); }
+  .sv-map__node { top: 1.15rem; left: -2.25rem; }
+  .sv-map__name { font-size: 1.125rem; }
+  .sv-map__short { display: block; max-width: 30em; font-size: .875rem; }
+  .sv-map__end { padding: 1rem 0 0 2.25rem; }
+  .sv-map__end i { top: calc(1.15rem + 1px); }
+  .sv-map__end span { margin-left: 0; }
+  @media (prefers-reduced-motion: no-preference) { .reveal-on .sv-map__stop.reveal::before { transform: scaleY(0); transition-delay: .15s; } }
+}
+@media (max-width: 43.6875em) { .sv-line__card { padding: 1.5rem 1.1rem 1.5rem; } }
+
+/* ---------- A leg of the line: two stops side by side ---------- */
+.sv-leg__grid { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 1.25rem; }
+.sv-leg__grid--even { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+/* A stop: built like the yard card. A picture inset at the top, the facts under hairlines, one action. */
+.sv-stop { position: relative; display: flex; flex-direction: column; border-radius: var(--r-xl); background: var(--white); box-shadow: var(--sh-1); scroll-margin-top: 1.5rem; }
+/* The deeper shadow under the pointer fades in on its own layer, so only opacity animates. */
+.sv-stop::after { content: ''; position: absolute; inset: 0; border-radius: inherit; box-shadow: var(--sh-2); opacity: 0; pointer-events: none; transition: opacity var(--ui) var(--ease); }
+.sv-stop:hover::after { opacity: 1; }
+/* Arriving from a link to one service (services/#crating): that card is marked. */
+.sv-stop:target { box-shadow: var(--sh-2), 0 0 0 2px var(--ink); }
+.sv-stop__media { position: relative; flex: none; overflow: hidden; height: clamp(15rem, 25vw, 21rem); margin: .5rem .5rem 0; border-radius: calc(var(--r-xl) - .5rem); }
+.sv-stop__media--night { --ring: var(--yellow); color: #fff; background: radial-gradient(70% 60% at 80% -10%, rgba(227, 231, 230, .1), transparent 70%), var(--night); }
+.sv-stop__bar { position: absolute; z-index: 2; top: 0; left: 0; right: 0; display: flex; justify-content: space-between; margin: 0; padding: 1.1rem 1.25rem 0; font-family: var(--mono); font-size: var(--t-micro); font-weight: 500; letter-spacing: .06em; text-transform: uppercase; color: var(--haze); }
+.sv-stop__bar b { color: #fff; font-weight: 500; }
+.sv-fig { position: absolute; left: 1rem; top: 2.25rem; width: calc(100% - 2rem); height: calc(100% - 2.75rem); }
+/* The take-off card is wide enough from 1200px to show the plans beside the list made from them. */
+.sv-fig--pair { display: none; }
+@media (min-width: 75em) { .sv-fig--pair { display: block; } .sv-fig--solo { display: none; } }
+@media (prefers-reduced-motion: no-preference) {
+  /* A drawing finishes itself as its card arrives: the take-off ticks its rows, the crate gets its bands. */
+  .reveal-on .sv-stop.reveal .sv-fig .tick { stroke-dasharray: 18; stroke-dashoffset: 18; transition: stroke-dashoffset .35s var(--ease) calc(.55s + var(--i, 0) * 130ms); }
+  .reveal-on .sv-stop.reveal .sv-fig .y.w { stroke-dasharray: 284; stroke-dashoffset: 284; transition: stroke-dashoffset 1s var(--ease-map) .5s; }
+  .reveal-on .sv-stop.reveal.is-in .sv-fig .tick, .reveal-on .sv-stop.reveal.is-in .sv-fig .y.w { stroke-dashoffset: 0; }
+}
+
+.sv-stop__body { display: flex; flex-direction: column; flex: 1; padding: 1.5rem 1.5rem 1.5rem; }
+.sv-stop__title { font-size: clamp(1.5rem, 1.3rem + .7vw, 1.875rem); font-weight: 500; letter-spacing: -.03em; line-height: 1.1; }
+.sv-stop__text { margin: .85rem 0 0; max-width: 33em; font-size: 1.0625rem; line-height: 1.5; color: var(--slate); }
+.sv-stop__side { margin-top: 1.4rem; }
+.sv-stop__acts { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem 1.5rem; margin-top: auto; padding-top: 1.5rem; }
+/* The wide stop of a leg: words on the left, the facts beside them. */
+.sv-stop--wide .sv-stop__body { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); grid-template-rows: auto 1fr; column-gap: clamp(1.5rem, 3vw, 2.75rem); }
+.sv-stop--wide .sv-stop__main { grid-area: 1 / 1; }
+.sv-stop--wide .sv-stop__side { grid-area: 1 / 2 / 3 / 3; margin-top: .35rem; }
+.sv-stop--wide .sv-stop__acts { grid-area: 2 / 1; align-self: end; justify-content: flex-start; }
+
+.sv-spec { margin: 0; border-top: 1px solid var(--mist); font-size: .9375rem; }
+.sv-spec > div { display: grid; grid-template-columns: 6.25rem minmax(0, 1fr); gap: .75rem; padding: .6rem 0; border-bottom: 1px solid var(--mist); }
+.sv-spec dt { padding-top: .15rem; font-family: var(--mono); font-size: .75rem; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; color: var(--slate); }
+.sv-spec dd { margin: 0; }
+
+/* What a complete package can carry: the nine product lines, as a checked list. */
+.sv-kit__lab { margin: 0 0 .6rem; font-family: var(--mono); font-size: .75rem; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; color: var(--slate); }
+.sv-kit__list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 1.25rem; list-style: none; border-top: 1px solid var(--mist); }
+.sv-kit__list li { border-bottom: 1px solid var(--mist); }
+.sv-kit__list a, .sv-kit__more { display: flex; align-items: center; gap: .55rem; min-height: 42px; padding: .4rem 0; font-size: .875rem; font-weight: 500; line-height: 1.25; text-decoration: none; }
+.sv-kit__list a:hover { text-decoration: underline; }
+.sv-kit__list .i { width: 20px; height: 20px; padding: 3px; border-radius: 6px; background: var(--ice); }
+.sv-kit__more { font-weight: 400; color: var(--slate); }
+
+.sv-modes { display: flex; flex-wrap: wrap; gap: .4rem; margin-bottom: 1.1rem; list-style: none; }
+.sv-modes .chip { height: 34px; gap: .45rem; padding: 0 .8rem 0 .65rem; }
+
+/* One of Uresco's own photographs, small, beside the thing it shows. */
+.sv-proof { display: flex; align-items: center; gap: .9rem; margin: 0; }
+.sv-proof img { flex: none; width: 112px; height: 112px; border-radius: 16px; object-fit: cover; }
+.sv-proof figcaption { display: grid; gap: .2rem; max-width: 15em; font-size: .875rem; line-height: 1.35; color: var(--slate); }
+.sv-proof figcaption span { font-family: var(--mono); font-size: .75rem; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; }
+
+/* Below 1200px the two stops of a leg are equals and the wide one reads top to bottom like the other. */
+@media (max-width: 74.9375em) {
+  .sv-leg__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .sv-stop--wide .sv-stop__body { display: flex; }
+  .sv-stop--wide .sv-stop__side { margin-top: 1.4rem; }
+  .sv-stop--wide .sv-stop__acts { align-self: auto; justify-content: space-between; }
+}
+/* Between 700 and 999px a leg stacks: the drawing as a wide band over the card, the words and the facts side by side under it. */
+@media (max-width: 62.4375em) {
+  .sv-leg__grid, .sv-leg__grid--even { grid-template-columns: minmax(0, 1fr); }
+  .sv-stop__media { height: clamp(15rem, 34vw, 19rem); }
+  .sv-stop__body, .sv-stop--wide .sv-stop__body { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); grid-template-rows: auto 1fr; column-gap: clamp(1.5rem, 3vw, 2.75rem); }
+  .sv-stop__main { grid-area: 1 / 1; }
+  .sv-stop__side, .sv-stop--wide .sv-stop__side { grid-area: 1 / 2 / 3 / 3; margin-top: .35rem; }
+  .sv-stop__acts, .sv-stop--wide .sv-stop__acts { grid-area: 2 / 1; align-self: end; justify-content: flex-start; }
+}
+@media (max-width: 43.6875em) {
+  .sv-leg__grid { gap: .75rem; }
+  .sv-stop__media { flex: none; height: auto; min-height: 0; aspect-ratio: 16 / 10; margin: .4rem .4rem 0; }
+  .sv-stop__body, .sv-stop--wide .sv-stop__body { display: flex; }
+  .sv-stop__side, .sv-stop--wide .sv-stop__side { margin-top: 1.4rem; }
+  .sv-stop__acts, .sv-stop--wide .sv-stop__acts { align-self: auto; justify-content: space-between; }
+  .sv-stop__bar { padding: .8rem 1rem 0; font-size: .75rem; }
+  .sv-fig { left: .5rem; top: 1.75rem; width: calc(100% - 1rem); height: calc(100% - 2rem); }
+  .sv-stop__body { padding: 1.15rem 1.1rem 1.25rem; }
+  .sv-stop__text { font-size: 1rem; }
+  .sv-stop__acts .btn { flex: 1 1 100%; }
+  .sv-spec > div { grid-template-columns: 5.5rem minmax(0, 1fr); }
+}
+@media (max-width: 23.6875em) { .sv-kit__list { grid-template-columns: minmax(0, 1fr); } }

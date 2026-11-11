@@ -1,0 +1,106 @@
+/* ==========================================================================
+   Locations: the switchboard, then each yard sorted by what you came to do.
+   ========================================================================== */
+
+/* ---------- The switchboard: who to call, before anything else ---------- */
+[data-page="locations"] .phero__title { max-width: none; }
+[data-page="locations"] .phero__row { grid-template-columns: minmax(0, 1fr); gap: clamp(1.25rem, 2.6vw, 2.25rem); padding-bottom: clamp(2rem, 4vw, 3.5rem); }
+[data-page="locations"] .phero__row .actions { display: block; }
+[data-page="locations"] .phero__lede { text-wrap: balance; }
+.lcx-board__q { display: flex; align-items: center; gap: .6rem; padding-bottom: .85rem; border-bottom: 1px solid var(--ink); font: 400 var(--t-label)/1.3 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--ink); }
+.lcx-board__q::before { content: ""; width: .55rem; height: .55rem; background: var(--yellow); }
+.lcx-board__rows { list-style: none; margin: 0; padding: 0; isolation: isolate; }
+.lcx-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: .4rem 1rem; align-items: baseline; padding: .8rem 0 .9rem; border-bottom: 1px solid var(--rule-2); text-decoration: none; position: relative; }
+.lcx-row::before { content: ""; position: absolute; z-index: -1; inset: 0 -.9rem; background: var(--paper-2); opacity: 0; transition: opacity var(--d-1); }
+.lcx-row:hover::before, .lcx-row:focus-visible::before { opacity: 1; }
+.lcx-row__if { grid-area: 1 / 1; font-size: .9375rem; line-height: 1.3; color: var(--ink-2); }
+.lcx-row .status { grid-area: 1 / 2; justify-self: end; }
+.lcx-row__num { grid-area: 2 / 2; }
+.lcx-row__city { grid-area: 2 / 1; font: 370 clamp(1.875rem, 1.5rem + 1.6vw, 3.25rem)/1 var(--serif); letter-spacing: -.024em; }
+.lcx-row__num { display: inline-flex; align-items: center; gap: .5rem; font-weight: 600; font-size: 1.25rem; letter-spacing: -.005em; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.lcx-row__num .i { color: var(--ink-3); }
+.lcx-row:hover .lcx-row__num, .lcx-row:focus-visible .lcx-row__num { text-decoration: underline; text-decoration-color: var(--yellow); text-decoration-thickness: 2px; text-underline-offset: .25em; }
+.lcx-row:focus-visible { outline-offset: 1px; }
+.lcx-board__foot { display: grid; gap: .5rem 2rem; padding-top: .9rem; font-size: .9375rem; line-height: 1.4; color: var(--ink-2); }
+.lcx-board__jump { display: flex; flex-wrap: wrap; align-items: baseline; gap: .1rem 1rem; }
+.lcx-board__jump span { color: var(--ink-3); }
+.lcx-board__jump a { display: inline-flex; align-items: center; justify-content: center; min-height: 2.75rem; min-width: 2.75rem; font-weight: 600; text-decoration-color: var(--rule-2); }
+@media (min-width: 1000px) and (pointer: fine) { .lcx-board__jump a { min-height: 0; min-width: 0; padding-block: .35rem; } }
+@media (max-width: 359px) { .lcx-row__num .i { display: none; } }
+@media (min-width: 760px) {
+  .lcx-row { grid-template-columns: minmax(0, 4.4fr) minmax(0, 3fr) minmax(4.5rem, .9fr) auto; align-items: center; padding: .85rem .25rem .95rem 0; }
+  .lcx-row__if, .lcx-row .status, .lcx-row__num, .lcx-row__city { grid-area: auto; }
+  .lcx-row__if { font-size: 1.0625rem; }
+  .lcx-row__num { font-size: clamp(1.25rem, 1rem + .7vw, 1.625rem); justify-self: end; }
+  .lcx-board__foot { grid-template-columns: minmax(0, 1fr) auto; }
+}
+
+/* ---------- A yard ---------- */
+.lcx-sec { padding-block: var(--section); }
+.lcx-yard .chead__bar { margin-bottom: clamp(1.5rem, 3.2vw, 3rem); }
+.lcx-yard .chead__kicker { color: var(--ink); }
+.lcx-yard__grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.5rem var(--col-gap); }
+.lcx-yard__head { display: grid; gap: .75rem; justify-items: start; align-content: start; }
+.lcx-yard__city { font: 350 clamp(3.25rem, 2rem + 6vw, 7rem)/.92 var(--serif); letter-spacing: -.035em; overflow-wrap: anywhere; }
+.lcx-yard__city span { color: var(--ink-3); font-size: .4em; letter-spacing: -.01em; margin-left: .1em; white-space: nowrap; }
+.lcx-yard__blurb { color: var(--ink-2); font-size: var(--t-lede); line-height: 1.45; max-width: 26em; }
+.lcx-yard__head .link { margin-top: .25rem; }
+/* The book: on phones it comes straight after the name, ahead of the photograph. */
+.lcx-book { order: 1; display: grid; gap: 0 var(--col-gap); border-top: 1px solid var(--ink); }
+.lcx-yard__photo { order: 2; }
+.lcx-book__col { display: grid; gap: .6rem; justify-items: start; align-content: start; padding: 1rem 0 1.4rem; border-bottom: 1px solid var(--rule-2); }
+.lcx-book__col:last-child { border-bottom: 0; padding-bottom: .5rem; }
+.lcx-book__col > h3 { color: var(--ink-3); }
+.lcx-tel { font-size: clamp(1.875rem, 1.5rem + 1.7vw, 2.75rem); font-weight: 600; line-height: 1.15; letter-spacing: -.014em; font-variant-numeric: tabular-nums; white-space: nowrap; text-decoration: underline; text-decoration-color: var(--yellow); text-decoration-thickness: 3px; text-underline-offset: .2em; padding-block: .15rem; }
+.lcx-tel:hover { text-decoration-color: var(--ink); }
+/* Only reached with enlarged browser text (a 320 px screen at normal text is 20em): the number may wrap at its space. */
+@media (max-width: 19.9em) { .lcx-tel { white-space: normal; font-size: 1.625rem; } }
+.lcx-tel2 { display: inline-flex; align-items: center; gap: .4em; min-height: 2.5rem; font-size: 1.125rem; font-weight: 600; font-variant-numeric: tabular-nums; text-decoration-color: var(--rule-2); }
+.lcx-tel2 small { font-weight: 400; color: var(--ink-3); }
+.lcx-now { display: flex; flex-wrap: wrap; align-items: baseline; gap: .15rem 1rem; min-height: 1.25rem; }
+.lcx-now small { font: 400 var(--t-label)/1.2 var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); }
+.lcx-addr { font-size: 1.1875rem; line-height: 1.35; }
+.lcx-hours { font-size: .9375rem; line-height: 1.45; color: var(--ink-2); }
+.lcx-hours .label { display: block; margin-bottom: .2rem; }
+.lcx-hours small { color: var(--ink-3); font-size: .875rem; }
+.lcx-write { justify-self: stretch; }
+.lcx-write > div { display: grid; grid-template-columns: 3.25rem minmax(0, 1fr); gap: 1rem; align-items: center; padding: .1rem 0; }
+.lcx-write dt { font: 400 var(--t-label)/1.7 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); }
+.lcx-write dd { overflow-wrap: anywhere; }
+.lcx-write a { display: inline-flex; align-items: center; min-height: 2.5rem; font-weight: 600; text-decoration-color: var(--rule-2); }
+/* A wide screen: photograph and name share a row; the three ways to reach the yard run under them. */
+@media (min-width: 700px) and (max-width: 999px) {
+  .lcx-book { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .lcx-book__col--call { grid-column: 1 / -1; }
+  .lcx-book__col { border-bottom: 0; }
+  .lcx-book__col + .lcx-book__col { border-top: 1px solid var(--rule-2); }
+}
+@media (min-width: 1000px) {
+  .lcx-yard__grid { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(2rem, 3.2vw, 3rem) clamp(2rem, 5vw, 5rem); align-items: end; }
+  .lcx-yard__photo { order: 0; }
+  /* The first column is never narrower than the number in it: the number does not wrap, so a fixed share would let it run into the address. */
+  .lcx-book { order: 1; grid-column: 1 / -1; grid-template-columns: minmax(min-content, 4.6fr) minmax(0, 3.4fr) minmax(0, 4fr); }
+  .lcx-book__col { padding: 1.1rem 1.25rem 0 0; border-bottom: 0; }
+  .lcx-book__col + .lcx-book__col { padding-left: clamp(1.25rem, 2.2vw, 2rem); border-left: 1px solid var(--rule-2); }
+  .lcx-yard--flip .lcx-yard__grid { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); }
+  .lcx-yard--flip .lcx-yard__head { order: 1; }
+  .lcx-yard--flip .lcx-yard__photo { order: 0; }
+  .lcx-yard--flip .lcx-book { order: 2; }
+}
+/* A small laptop: the name and the email address each keep to one line. */
+@media (min-width: 1000px) and (max-width: 1199px) {
+  .lcx-yard__grid { grid-template-columns: minmax(0, 5.6fr) minmax(0, 6.4fr); column-gap: 2rem; }
+  .lcx-yard--flip .lcx-yard__grid { grid-template-columns: minmax(0, 6.4fr) minmax(0, 5.6fr); }
+  .lcx-yard__city { font-size: 4.25rem; }
+  .lcx-book { grid-template-columns: minmax(min-content, 3.7fr) minmax(0, 3.5fr) minmax(0, 4.8fr); }
+  .lcx-tel { font-size: clamp(1.75rem, .25rem + 2.4vw, 2.375rem); }
+  .lcx-write > div { grid-template-columns: 2.75rem minmax(0, 1fr); gap: .75rem; }
+}
+.section--ice .lcx-book__col { border-color: var(--rule-2); }
+
+/* ---------- The chart ---------- */
+.lcx-chart .shead { margin-bottom: clamp(1.75rem, 3.5vw, 3rem); }
+/* The sheet is paper even on the dark section, so its labels keep the paper's inks. */
+.lcx-chart .plate__sheet { --ink-2: #36443E; --ink-3: #59645E; }
+
+/* ---------- Closing ---------- */

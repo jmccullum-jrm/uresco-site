@@ -1,0 +1,66 @@
+/* ---------- Contractor accounts ----------
+   The panel beside the heading is the three yards on the freight line, each number one tap away.
+   How an account works is not published here: the page sends those questions to the yard. */
+
+.ac-hero { padding-block: clamp(1rem, .5rem + 2vw, 2.75rem) clamp(1.25rem, .75rem + 2vw, 3rem); }
+.ac-hero .phero__lede { max-width: 26em; }
+
+.ac-card { --ring: var(--yellow); position: relative; isolation: isolate; display: grid; gap: 1.5rem; padding: clamp(1.25rem, .9rem + 1.6vw, 2.25rem); border-radius: var(--r-2xl); color: var(--frost); background: radial-gradient(70% 50% at 82% -8%, rgba(227, 231, 230, .11), transparent 72%), var(--night); }
+.ac-card__top { display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+.ac-card .fm-lab { color: var(--haze); }
+.ac-card__mark svg { width: 34px; height: 34px; }
+
+/* The three yards on one line. */
+.ac-line { position: relative; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); list-style: none; }
+.ac-line::before { content: ''; position: absolute; left: 8px; right: 33.33%; top: 7px; height: 2px; background: var(--yellow); }
+.ac-line li { position: relative; padding-top: 1.75rem; }
+.ac-line i { position: absolute; left: 0; top: 0; width: 16px; height: 16px; border-radius: 50%; background: var(--yellow); box-shadow: 0 0 0 3px var(--night), 0 0 0 4.5px rgba(245, 184, 0, .55); }
+.ac-line a { display: grid; gap: .1rem; text-decoration: none; }
+.ac-line__city { display: inline-flex; flex-wrap: wrap; align-items: center; gap: .05rem .55rem; font-size: 1.125rem; font-weight: 600; letter-spacing: -.015em; color: #fff; }
+.ac-line__num { font-size: 1rem; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--yellow); }
+.ac-line a:hover .ac-line__num { text-decoration: underline; text-decoration-color: var(--yellow); text-decoration-thickness: 2px; text-underline-offset: .22em; }
+.ac-line__lat { font-family: var(--mono); font-size: var(--t-micro); letter-spacing: .04em; color: var(--haze); }
+/* Three columns: the live status has its own line in each, so the numbers stay level whichever one would have wrapped. */
+@media (min-width: 35em) {
+  .ac-line__city { display: grid; grid-template-rows: auto 1.35rem; justify-items: start; gap: 0; }
+}
+.ac-card__note { margin: 0; padding-top: 1.25rem; border-top: 1px solid var(--night-line); color: var(--frost); line-height: 1.5; }
+
+.ac-how .shead { align-items: start; }
+
+/* Trade references: the title on its line and what the card needs on the next, the same in all three cards. */
+@media screen {
+  .ref__title { display: grid; justify-content: start; gap: .05rem; }
+  .ref__title .req { margin-left: 0; }
+}
+@media (min-width: 62.5em) and (max-width: 68.6875em) { .ref { padding-inline: .8rem; } }
+.ref__need { font-family: var(--mono); font-size: var(--t-micro); font-weight: 500; letter-spacing: .05em; text-transform: uppercase; color: var(--slate); }
+@media print { .ref__need { display: none; } }
+
+.ac-index { padding: 1.1rem 1.25rem .9rem; }
+.ac-index ol { display: grid; margin-top: .35rem; list-style: none; }
+.ac-index a { display: grid; grid-template-columns: 1.75rem minmax(0, 1fr) auto; align-items: baseline; gap: .25rem; padding-block: .5rem; border-bottom: 1px solid var(--night-line); text-decoration: none; }
+.ac-index li:last-child a { border-bottom: 0; }
+.ac-index__no { font-family: var(--mono); font-size: var(--t-micro); letter-spacing: .05em; color: var(--haze); }
+.ac-index b { font-size: .9375rem; font-weight: 500; color: #fff; }
+.ac-index a:hover b { text-decoration: underline; text-underline-offset: .2em; text-decoration-color: var(--yellow); }
+.ac-index small { font-family: var(--mono); font-size: var(--t-micro); letter-spacing: .02em; color: var(--haze); white-space: nowrap; }
+.ac-index small.is-done { color: var(--aurora); }
+@media (pointer: coarse) { .ac-index a { align-items: center; min-height: 40px; padding-block: .35rem; } }
+.ac-rail__print { margin-top: .85rem; }
+@media (min-width: 62.5em) and (max-height: 46.25em) { .ac-rail__print { display: none; } }
+
+@media (max-width: 62.4375em) {
+  .ac-card { margin-top: .25rem; }
+}
+/* Phones: the yards go vertical, numbers on the right where a thumb can find them. */
+@media (max-width: 34.9375em) {
+  .ac-hero .actions .btn { flex: 1 1 100%; }
+  .ac-card { padding: 1.25rem 1.15rem 1.35rem; gap: 1.25rem; }
+  .ac-line { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  .ac-line::before { top: 8px; bottom: 34px; left: 7px; right: auto; width: 2px; height: auto; }
+  .ac-line li { padding: 0 0 0 1.75rem; }
+  .ac-line a { grid-template-columns: minmax(0, 1fr) auto; align-items: baseline; gap: 0 .75rem; min-height: 54px; padding-block: 0 .85rem; }
+  .ac-line__lat { display: none; }
+  .ac-line__num { font-size: 1.0625rem; }
+}

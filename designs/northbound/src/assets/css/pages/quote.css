@@ -1,0 +1,7 @@
+/* ==========================================================================
+   Request a quote. The sheet, the manifest and the numbers are in 40-forms.css.
+   ========================================================================== */
+
+/* The first line of the materials cell is the line of product the visitor arrived from. */
+#materials { min-height: 11.25rem; }
+#notes { min-height: 5.625rem; }

@@ -1,0 +1,72 @@
+/* ---------- Services: the index line under the hero ---------- */
+/* Six stations on one line. Each is a link to its station further down the sheet. */
+.sv-index { margin-top: clamp(.25rem, 1vw, 1rem); }
+.sv-index ol { position: relative; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); column-gap: var(--gap); list-style: none; margin: 0; padding: 0; }
+.sv-index ol::before { content: ''; position: absolute; left: 0; right: 0; top: 6px; border-top: var(--line) solid var(--ink); }
+.sv-index ol::after { content: ''; position: absolute; right: -1px; top: 1px; width: 11px; height: 11px; background: var(--ink); clip-path: polygon(0 0, 100% 50%, 0 100%); }
+.sv-index a { position: relative; display: grid; gap: .15rem; align-content: start; height: 100%; padding: 1.75rem .5rem .35rem 0; text-decoration: none; }
+.sv-index a::before { content: ''; position: absolute; left: 0; top: 0; width: 13px; height: 13px; border: var(--line) solid var(--ink); border-radius: 50%; background: var(--yellow); }
+.sv-index a:hover::before, .sv-index a:focus-visible::before { background: var(--ink); }
+.sv-index__no { font-size: var(--fs-label); font-weight: 600; letter-spacing: .07em; color: var(--blue); }
+.sv-index b { font-size: clamp(1rem, .9rem + .45vw, 1.25rem); font-weight: 600; letter-spacing: -.028em; line-height: 1.15; }
+.sv-index a:hover b { text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: .18em; }
+.sv-index__phase { font-family: var(--mono); font-size: var(--fs-label); letter-spacing: .07em; text-transform: uppercase; color: var(--ink-3); }
+@media (max-width: 56.1875em) {
+  /* Too narrow for six on a line: the index becomes a ruled contents list, two across. */
+  .sv-index ol { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 0; border-top: var(--line) solid var(--ink); }
+  .sv-index ol::before, .sv-index ol::after, .sv-index a::before { display: none; }
+  .sv-index a { grid-template-columns: auto minmax(0, 1fr); align-items: center; align-content: center; column-gap: .7rem; min-height: 52px; padding: .5rem .5rem .5rem 0; border-bottom: 1px solid var(--rule-2); }
+  .sv-index li:nth-child(even) a { padding-left: .9rem; border-left: 1px solid var(--rule-2); }
+  .sv-index b { font-size: 1.0625rem; }
+  .sv-index__phase { display: none; }
+}
+
+/* ---------- Services: the line ---------- */
+/* A rail down the left, a station where each service starts, and a rule running from the station across the sheet. */
+.sv-line { --rail: 2.75rem; position: relative; list-style: none; margin: 0; padding: 0 0 0 var(--rail); }
+.sv-line::after { content: ''; position: absolute; left: 1px; bottom: -8px; width: 11px; height: 11px; background: var(--ink); clip-path: polygon(0 0, 100% 0, 50% 100%); }
+.sv-st { position: relative; padding-bottom: clamp(2.75rem, 1.5rem + 4vw, 5rem); }
+.sv-st::before { content: ''; position: absolute; left: calc(6px - var(--rail)); right: 0; top: 6px; border-top: var(--line) solid var(--ink); transform-origin: left; }
+.sv-st::after { content: ''; position: absolute; left: calc(6px - var(--rail)); top: 6px; bottom: -6px; border-left: var(--line) solid var(--ink); transform-origin: top; }
+.sv-st__dot { position: absolute; z-index: 1; left: calc(var(--rail) * -1); top: 0; width: 13px; height: 13px; border: var(--line) solid var(--ink); border-radius: 50%; background: var(--yellow); }
+.sv-st:target .sv-st__dot { background: var(--ink); }
+.sv-st__grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-rows: auto 1fr; grid-template-areas: "head body dwg" "acts body dwg"; column-gap: var(--gap); align-items: start; padding-top: 1.6rem; }
+.sv-st__head { grid-area: head; } .sv-st__body { grid-area: body; } .sv-st__acts { grid-area: acts; } .sv-dwg { grid-area: dwg; }
+.sv-st__bar { display: flex; align-items: baseline; gap: .85rem; margin: 0 0 .9rem; }
+.sv-st__no { font-size: .875rem; font-weight: 600; letter-spacing: .06em; color: var(--blue); }
+.sv-st:target .sv-st__no { background: var(--yellow); color: var(--ink); padding: .1em .4em; margin: -.1em -.4em; }
+.sv-st__name { font-size: clamp(1.75rem, 1.15rem + 1.9vw, 2.75rem); font-weight: 600; letter-spacing: -.042em; line-height: 1; text-wrap: balance; padding-right: .5rem; }
+.sv-st__lede { margin: 0 0 1.25rem; color: var(--ink-2); }
+.sv-spec { margin: 0; border-top: 1px solid var(--rule-2); font-size: .9375rem; line-height: 1.4; }
+.sv-spec div { display: grid; grid-template-columns: 5.25rem minmax(0, 1fr); gap: .75rem; padding: .55rem 0; border-bottom: 1px solid var(--rule); }
+.sv-spec dt { font-family: var(--mono); font-size: var(--fs-label); letter-spacing: .07em; text-transform: uppercase; color: var(--ink-3); padding-top: .15rem; }
+.sv-spec dd { margin: 0; font-weight: 500; }
+.sv-spec div:last-child dd { font-weight: 600; }
+.sv-st__acts { display: flex; flex-wrap: wrap; align-items: center; gap: .75rem 1.25rem; margin-top: clamp(1.25rem, 2vw, 1.75rem); }
+.sv-st__acts .link { font-size: .8125rem; }
+@media (max-width: 62.4375em), (pointer: coarse) { .sv-st__acts .link { min-height: 40px; } }
+.sv-dwg { margin: 0; }
+.sv-note { margin-top: clamp(2.5rem, 4vw, 3.5rem); margin-left: 2.75rem; }
+@media (max-width: 68.6875em) {
+  /* Two columns: the text on the left, the drawing beside it. */
+  .sv-st__grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-rows: auto auto 1fr; grid-template-areas: "head dwg" "body dwg" "acts dwg"; }
+  .sv-st__body { margin-top: 1.1rem; } .sv-dwg { margin-top: .35rem; }
+}
+@media (max-width: 47.9375em) {
+  /* One column. The rail stays; each drawing is a plate laid across it. */
+  .sv-line { --rail: 1.75rem; }
+  .sv-st__grid { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; grid-template-areas: "head" "body" "acts" "dwg"; padding-top: 1.45rem; }
+  .sv-dwg { position: relative; z-index: 1; margin: 1.75rem 0 0 calc(var(--rail) * -1); }
+  .sv-note { margin-left: 0; }
+}
+
+/* ---------- Services: motion ---------- */
+/* A station's rule draws across, its stretch of rail draws down, its lamp comes on and its drawing is plotted. */
+@media (prefers-reduced-motion: no-preference) {
+  html.js .sv-st[data-reveal]:not(.is-in)::before { transform: scaleX(0); }
+  html.js .sv-st[data-reveal]:not(.is-in)::after { transform: scaleY(0); }
+  html.js .sv-st[data-reveal]:not(.is-in) .sv-st__dot { opacity: 0; }
+  .sv-st::before { transition: transform var(--t-draw) linear; }
+  .sv-st::after { transition: transform 360ms linear 160ms; }
+  .sv-st__dot { transition: opacity 1ms steps(1); }
+}

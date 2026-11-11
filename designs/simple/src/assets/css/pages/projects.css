@@ -1,0 +1,169 @@
+/* ---------- Projects: the four sectors under the hero ---------- */
+/* The whole schedule at a glance: four columns, two kinds of work in each. Each is a link to its group. */
+.pj-index { margin-top: clamp(.25rem, 1vw, 1rem); }
+.pj-index ol { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); list-style: none; margin: 0; padding: 0; border-top: var(--line) solid var(--ink); }
+.pj-index li + li { border-left: 1px solid var(--rule-2); }
+.pj-index a { display: grid; align-content: start; gap: .6rem; height: 100%; padding: .95rem var(--gap) 1rem 0; text-decoration: none; }
+.pj-index li + li a { padding-left: var(--gap); }
+.pj-index__top { display: flex; align-items: center; gap: .7rem; }
+.pj-index b { font-size: clamp(1.0625rem, .95rem + .5vw, 1.3125rem); font-weight: 600; letter-spacing: -.028em; line-height: 1.1; }
+.pj-index__kinds { display: grid; gap: .1rem; font-size: .875rem; line-height: 1.35; color: var(--ink-2); }
+.pj-index a:hover b { text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: .18em; }
+.pj-index a:hover .bub, .pj-index a:focus-visible .bub { background: var(--yellow); }
+@media (max-width: 56.1875em) {
+  .pj-index ol { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .pj-index li:nth-child(odd) { border-left: 0; }
+  .pj-index li:nth-child(odd) a { padding-left: 0; }
+  .pj-index li:nth-child(n+3) { border-top: 1px solid var(--rule-2); }
+}
+/* On a phone the sector key, one screen further down, does this job; without the script it is not there, so the index stays. */
+@media (max-width: 37.4375em) {
+  html.js .pj-index { display: none; }
+  .pj-index ol { grid-template-columns: minmax(0, 1fr); }
+  .pj-index li + li { border-left: 0; border-top: 1px solid var(--rule-2); }
+  .pj-index li + li a { padding-left: 0; }
+}
+
+/* ---------- Projects: the schedule of work ---------- */
+/* The schedule on the left; its title block and sector key on the right, held in view while the schedule scrolls. */
+.pj-sheet { display: grid; grid-template-columns: minmax(0, 8fr) minmax(0, 4fr); grid-template-areas: "sched side"; column-gap: var(--gap); align-items: start; }
+.pj-sched { grid-area: sched; }
+.pj-side { grid-area: side; align-self: stretch; }
+.pj-side__in { background: var(--sheet); border: var(--line) solid var(--ink); }
+/* Held in view only where the whole key fits under the masthead; on a short screen it scrolls with the page. */
+@media (min-width: 75em) and (min-height: 41.25em) { .pj-side__in { position: sticky; top: calc(var(--mast) + 1.25rem); } }
+.pj-tblock .tblock__title { border-left: 0; }
+.pj-tblock .tblock__title b { font-size: clamp(1.5rem, 1.1rem + 1.2vw, 2rem); }
+
+/* The key is the filter: one sector, or all of them. */
+.pj-filter__label { padding: .75rem 1rem .5rem; }
+.pj-filter__btn { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: .8rem; width: 100%; min-height: 46px; padding: .4rem 1rem; background: none; border: 0; border-top: 1px solid var(--rule-2); border-radius: 0; text-align: left; font-size: 1rem; font-weight: 600; letter-spacing: -.015em; color: var(--ink); }
+.pj-filter__btn .num:last-child { font-size: .8125rem; font-weight: 500; color: var(--ink-3); }
+.pj-filter__btn:hover { background: var(--paper-2); }
+.pj-filter__btn[aria-pressed="true"] { background: var(--yellow); }
+.pj-filter__btn[aria-pressed="true"] .num:last-child { color: var(--ink); }
+.pj-filter__btn[aria-pressed="true"] .bub { background: var(--ink); border-color: var(--ink); color: var(--yellow); }
+.pj-filter__btn:focus-visible { outline-offset: -3px; }
+.pj-status { display: flex; flex-wrap: wrap; align-items: baseline; gap: .25rem .6rem; margin: 0; padding: .7rem 1rem; border-top: 1px solid var(--ink); font-size: .9375rem; font-weight: 500; }
+.pj-side__note { margin: 0; padding: .75rem 1rem; border-top: 1px solid var(--ink); font-family: var(--mono); font-size: .75rem; line-height: 1.45; letter-spacing: .01em; color: var(--ink-3); }
+/* Without the script the key cannot filter, so it is not offered. */
+html:not(.js) .pj-filter, html:not(.js) .pj-status { display: none; }
+
+/* The schedule: a column head, then each sector as a ruled group. */
+.pj-sched { border-top: var(--line) solid var(--ink); }
+.pj-cols, .pj-row { display: grid; grid-template-columns: 9.5rem minmax(0, 1.35fr) minmax(0, 1fr); column-gap: var(--gap); }
+.pj-cols { padding-block: .55rem; }
+.pj-group__head { display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: .85rem; row-gap: .35rem; align-items: center; padding: .9rem 1rem 1rem; background: var(--paper-2); border-top: var(--line) solid var(--ink); border-bottom: 1px solid var(--ink); }
+.pj-group__name { font-size: var(--fs-h3); font-weight: 600; letter-spacing: -.028em; line-height: 1.1; }
+.pj-group__note { grid-column: 2; margin: 0; font-size: .9375rem; line-height: 1.45; color: var(--ink-2); max-width: 44em; }
+.pj-row { align-items: start; padding-block: clamp(1.1rem, 2vw, 1.6rem); border-bottom: 1px solid var(--rule-2); }
+.pj-group .pj-row:last-child { border-bottom: 0; }
+.pj-row__mark { display: flex; align-items: center; gap: .9rem; padding-left: 1rem; }
+.pj-row__title { font-size: var(--fs-h3); font-weight: 600; letter-spacing: -.028em; line-height: 1.1; margin-bottom: .5rem; }
+.pj-row__where { margin-bottom: .5rem; color: var(--ink); }
+.pj-row__work p { margin: 0; font-size: .9375rem; color: var(--ink-2); max-width: 36em; }
+.pj-row__mark { grid-row: span 2; }
+.pj-row__pkg { grid-row: span 2; padding-top: .2rem; }
+.pj-row__pkg .label { display: none; }
+.pj-row__svc { grid-column: 2; display: flex; align-items: baseline; gap: .8rem; margin-top: .85rem; }
+.pj-row__svc .label { flex: none; }
+.pj-ask { display: grid; grid-template-columns: 9.5rem minmax(0, 1fr) auto; column-gap: var(--gap); align-items: center; min-height: 68px; padding: .9rem 1rem .9rem 0; border-block: var(--line) solid var(--ink); text-decoration: none; font-size: .9375rem; color: var(--ink-2); }
+.pj-ask b { color: var(--ink); font-weight: 600; }
+.pj-ask__no { padding-left: 1.6rem; font-size: 1.125rem; font-weight: 500; color: var(--ink); }
+.pj-ask:hover, .pj-ask:focus-visible { background: var(--yellow); color: var(--ink); }
+.pj-ask .i { transition: transform var(--t-ui) linear; }
+.pj-ask:hover .i { transform: translateX(3px); }
+
+/* Until the schedule's middle column is wide enough for a label beside its chips, the label goes above them. */
+@media (max-width: 89.9375em) { .pj-row__svc { flex-direction: column; gap: .4rem; } }
+@media (max-width: 74.9375em) {
+  /* One column: the key goes above the schedule. Title block across the top, then the sectors side by side. */
+  .pj-sheet { grid-template-columns: minmax(0, 1fr); grid-template-areas: "side" "sched"; row-gap: var(--gap); }
+  .pj-tblock { display: none; }  /* the section head says it; a yellow title over the yellow 'All work' row is one block too many */
+  .pj-filter { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .pj-filter__label { display: none; }
+  .pj-filter__btn { border-top: 0; border-bottom: 1px solid var(--rule-2); }
+  .pj-filter__btn--all { grid-column: 1 / -1; }
+  .pj-filter__btn:not(.pj-filter__btn--all) { gap: .5rem; padding-inline: .6rem; font-size: .9375rem; }
+  .pj-filter__btn:not(.pj-filter__btn--all) + .pj-filter__btn { border-left: 1px solid var(--rule-2); }
+  .pj-filter__btn:not(.pj-filter__btn--all) .num:last-child { display: none; }
+  .pj-status { border-top: 0; }
+  .pj-side__note { border-top-color: var(--rule-2); }
+  html:not(.js) .pj-tblock .tblock__title { border-bottom: 0; }
+  html:not(.js) .pj-side__note { border-top-color: var(--ink); }
+}
+@media (max-width: 47.9375em) {
+  /* Phone: the key is five buttons, then the schedule line by line. */
+  .pj-cols { display: none; }
+  .pj-sched { border-top: 0; }
+  .pj-filter { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .pj-filter__btn { font-size: .9375rem; }
+  .pj-filter .pj-filter__btn:nth-of-type(even) { border-left: 0; }  /* A and C start a row */
+  .pj-group__head { margin-inline: calc(var(--margin) * -1); padding-inline: var(--margin); }
+  .pj-row { grid-template-columns: minmax(0, 1fr); row-gap: .9rem; }
+  .pj-row__mark { padding-left: 0; gap: 1rem; grid-row: auto; }
+  .pj-row__pkg, .pj-row__svc { grid-row: auto; grid-column: auto; display: grid; grid-template-columns: minmax(0, 1fr); gap: .45rem; margin: 0; padding: 0; }
+  .pj-row__pkg .label { display: block; }
+  .pj-ask { grid-template-columns: auto minmax(0, 1fr) auto; column-gap: 1rem; padding-right: 0; }
+  .pj-ask__no { padding-left: .2rem; }
+  .pj-ask:hover, .pj-ask:focus-visible { background: none; }
+  html:not(.js) .pj-side__in { border: 0; background: none; }
+  html:not(.js) .pj-side__note { padding: 0; border: 0; }
+}
+
+/* ---------- Projects: load-outs, kind of work against product line ---------- */
+.pj-mx { --w: 15.5rem; border-top: var(--line) solid var(--ink); }
+.pj-mx__head, .pj-mx__row { display: grid; grid-template-columns: var(--w) minmax(0, 1fr); column-gap: var(--gap); align-items: center; }
+.pj-mx__head { align-items: end; padding-block: .8rem .5rem; border-bottom: 1px solid var(--ink); }
+.pj-mx__head > .label { padding-bottom: .4rem; }
+.pj-mx__head { grid-template-columns: var(--w) repeat(9, minmax(0, 1fr)); column-gap: 0; }
+.pj-mx__head > .label { padding-right: var(--gap); }
+.pj-mx__col { display: grid; grid-template-rows: auto auto minmax(2.4em, auto); justify-items: center; align-items: start; gap: .35rem; text-align: center; padding: .25rem .25rem .3rem; text-decoration: none; }
+.pj-mx__col:hover, .pj-mx__col:focus-visible { background: var(--yellow); }
+.pj-mx__col:hover .dw-h, .pj-mx__col:focus-visible .dw-h { fill: var(--sheet); }
+.pj-mx__col:hover .num, .pj-mx__col:focus-visible .num { color: var(--ink); }
+.pj-mx__col:focus-visible { outline-offset: -3px; }
+.pj-mx__col .num { font-size: var(--fs-label); font-weight: 600; letter-spacing: .05em; color: var(--ink-3); }
+.pj-mx__colname { font-size: .75rem; font-weight: 600; letter-spacing: -.01em; line-height: 1.2; text-wrap: balance; }
+.pj-mx__rows { list-style: none; margin: 0; padding: 0; }
+.pj-mx__row { column-gap: 0; border-bottom: 1px solid var(--rule-2); }
+.pj-mx__row.is-last { border-bottom-color: var(--ink); }  /* the last line of a sector */
+.pj-mx__row:last-child { border-bottom: var(--line) solid var(--ink); }
+.pj-mx__work { display: flex; align-items: center; gap: .8rem; margin: 0; padding: .5rem var(--gap) .5rem 0; font-size: 1.0625rem; font-weight: 600; letter-spacing: -.02em; line-height: 1.2; }
+.pj-mx__cells { display: grid; grid-template-columns: repeat(9, minmax(0, 1fr)); list-style: none; margin: 0; padding: 0; align-self: stretch; }
+.pj-mx__cells li { display: grid; place-items: center; min-height: 60px; border-left: 1px solid var(--rule-2); }
+.pj-mx__cells .is-off::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: var(--rule-2); }
+.pj-mx__cells .gl { position: relative; }
+.pj-mx__cells .is-on { position: relative; }
+.pj-mx__cells .is-on::before { content: ''; position: absolute; inset: 0; background: var(--sheet); transform-origin: left; }
+.pj-mx__key { display: none; }
+.pj-mx__note { margin: .9rem 0 0; font-family: var(--mono); font-size: .75rem; line-height: 1.45; letter-spacing: .01em; color: var(--ink-3); }
+@media (max-width: 68.6875em) {
+  /* No room for names over the columns: the pictograms are named in the key underneath. */
+  .pj-mx { --w: 12.5rem; }
+  .pj-mx__col { grid-template-rows: auto auto; }
+  .pj-mx__colname { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }  /* still names the link */
+  .pj-mx__col { position: relative; }
+  .pj-mx__work { font-size: 1rem; }
+  .pj-mx__key { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: var(--gap); list-style: none; margin: 1.25rem 0 0; padding: 0; border-top: 1px solid var(--rule-2); }
+  .pj-mx__key a { display: grid; grid-template-columns: 28px auto minmax(0, 1fr); align-items: center; gap: .6rem; min-height: 46px; padding-block: .3rem; border-bottom: 1px solid var(--rule-2); font-size: .875rem; font-weight: 600; letter-spacing: -.01em; line-height: 1.15; text-decoration: none; }
+  .pj-mx__key a:hover span:last-child { text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: .18em; }
+  .pj-mx__key .num { font-size: .75rem; font-weight: 500; color: var(--ink-3); }
+}
+@media (max-width: 47.9375em) {
+  /* Phone: each line of the schedule is a strip of nine cells; the pictograms are named in the key underneath. */
+  .pj-mx__head { display: none; }
+  .pj-mx__row { grid-template-columns: minmax(0, 1fr); padding-block: .9rem 1rem; }
+  .pj-mx__work { padding: 0 0 .7rem; }
+  .pj-mx__cells { border: 1px solid var(--rule-2); border-left: 0; background: var(--paper); }
+  .pj-mx__cells li { min-height: 0; aspect-ratio: 1; }
+  .pj-mx__cells .gl { width: 78%; height: auto; }
+  .pj-mx__key { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* ---------- Projects: motion ---------- */
+/* The load-outs are filled in a column at a time, the way the take-off sheet's quantities are. Only the fill moves. */
+@media (prefers-reduced-motion: no-preference) {
+  html.js .pj-mx[data-reveal]:not(.is-in) .is-on::before { transform: scaleX(0); }
+  .pj-mx__cells .is-on::before { transition: transform 140ms linear calc(var(--c, 0) * 45ms); }
+}

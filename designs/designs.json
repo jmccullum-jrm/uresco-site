@@ -1,0 +1,42 @@
+{
+  "featured": "manifest",
+  "hide": [],
+  "designs": [
+    {
+      "key": "northbound",
+      "name": "Northbound",
+      "blurb": "Editorial and cinematic. A serif headline, big photography and a latitude ruler that follows you north from Kent to the Arctic coast.",
+      "short": "Editorial: serif headlines, big photographs and a latitude ruler."
+    },
+    {
+      "key": "manifest",
+      "name": "Manifest",
+      "blurb": "Engineered and precise. Drawn like a shipping document, with technical drawings of the products and a live board for the three yards: local time, open or closed, and the number to call.",
+      "short": "Engineered: product drawings and a live board for the three yards."
+    },
+    {
+      "key": "yellow",
+      "name": "Yellow",
+      "blurb": "Bold poster branding. UCM yellow and black, very large type, and the yard phone numbers right under the headline.",
+      "short": "Bold poster branding in UCM yellow and black, with very large type."
+    },
+    {
+      "key": "boreal",
+      "name": "Boreal",
+      "blurb": "Calm and map-first. Opens on a map of Alaska that asks where you are building and names the yard to call.",
+      "short": "Calm and map-first: name the place, see which yard to call."
+    },
+    {
+      "key": "simple",
+      "name": "Simple",
+      "blurb": "Plain and fast. Big phone numbers, one clear next step, no decoration. Built for developers who just want to place the order.",
+      "short": "Plain and fast: big numbers, one next step."
+    },
+    {
+      "key": "funny",
+      "name": "Funny",
+      "blurb": "The same company, the same facts, and a lot of jokes. Every page is written to make a contractor laugh out loud.",
+      "short": "Same facts, many jokes."
+    }
+  ]
+}

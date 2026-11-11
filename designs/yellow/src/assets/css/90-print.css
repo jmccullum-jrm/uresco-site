@@ -1,0 +1,108 @@
+/* Print. Any page prints whole, in black on white: what arrives on scroll has arrived and the site's
+   chrome is left off. A page with a form prints only the form, ruled for writing on: the credit
+   application comes out as a paper form on two Letter pages. */
+.print-only { display: none; }
+@media print {
+  @page { size: letter; margin: 13mm 14mm 14mm; }
+  @page credit {
+    @bottom-left { content: "Uresco Construction Materials, Inc."; font: 500 7.5pt Archivo, Arial, sans-serif; }
+    @bottom-right { content: "Credit application, page " counter(page) " of " counter(pages); font: 500 7.5pt Archivo, Arial, sans-serif; }
+  }
+  .ac-apply { page: credit; }
+  .print-only { display: block; }
+  html, body { background: #fff; }
+  body { color: #000; }
+  a { color: #000; text-decoration: none; }
+
+  /* Every page: nothing waits for a scroll that will never happen, nothing moves. */
+  .js [data-reveal], .js .dmap__lanes { opacity: 1 !important; transform: none !important; clip-path: none !important; }
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  .skip, .utility, .masthead, .actionbar, dialog, .marquee, .rings, .divider, .seal, .sticker, [data-motion-toggle], .footer__word, .footer__legal button, .dmap__kent { display: none !important; }
+  /* The three fields print as paper: a black or yellow ground would leave pale type on white. */
+  .field-y, .field-k, .field-p, .section, .footer { background: #fff !important; color: #000 !important; --on: #000; --quiet: #333; --rule: #000; }
+  /* Quiet text on black is pale on purpose; on white paper it needs to go dark. */
+  .field-k :not(em), .footer :not(em) { color: #000 !important; }
+  .field-k .d1 em, .field-k .d2 em { -webkit-text-stroke-color: #000; }
+  .footer { padding-top: 12pt; border-top: 1pt solid #000; }
+  .footer__yard address, .footer__fax, .footer__yard small { color: #000; }
+  .phero__grid, .qband__grid { min-height: 0; }
+  .wrap { max-width: none; padding-inline: 0; }
+  .btn, .link { color: #000 !important; background: none !important; border-color: #000 !important; box-shadow: none !important; }
+
+  /* A page with a form: the form alone, on paper. */
+  body:has(form[data-form]) { font-size: 9.5pt; line-height: 1.3; }
+  body:has(form[data-form]) :is(.footer, .phero, .qband, .ac-perks, .ac-apply__head),
+  .fm-aside, .fm-card__head, .fm-restored, .form__foot, .drop, .files, [data-file-err], [data-done], [data-failed], .err, .fm-goes, .fm-help, .fm-filefield, .hint--screen, .qt-next { display: none !important; }
+  /* After sending, the form is hidden on screen, but it is what a paper copy needs. */
+  form[data-form][hidden] { display: block !important; }
+  body:has(form[data-form]) :is(.section, .fm-sec) { padding: 0 !important; background: #fff; }
+  .fm-layout { display: block; }
+  /* The application ticks its home yard on paper instead. */
+  .ac-apply .fm-yard { display: none !important; }
+
+  /* Letterhead */
+  .letterhead { display: flex; justify-content: space-between; align-items: flex-start; gap: 18pt; padding-bottom: 8pt; margin-bottom: 11pt; border-bottom: 2pt solid #000; }
+  .letterhead__brand { display: flex; align-items: center; gap: 9pt; }
+  .letterhead__brand svg { width: 38pt; height: 38pt; flex: none; }
+  .letterhead__title { margin: 0; font-size: 19pt; line-height: 1; font-weight: 900; font-stretch: 125%; letter-spacing: -.02em; text-transform: uppercase; }
+  .letterhead p:not(.letterhead__title) { margin: 3pt 0 0; font-size: 8.5pt; }
+  .letterhead__return { font-size: 8pt; line-height: 1.4; text-align: right; font-variant-numeric: tabular-nums; }
+
+  /* The ticket becomes plain ruled paper */
+  .fm-card { display: block; border: 0; border-radius: 0; overflow: visible; background: none; width: auto; margin: 0; }
+  .fieldset { display: grid; grid-template-columns: 1fr 1fr; gap: 6pt 14pt; padding: 0 0 10pt; box-shadow: none !important; break-inside: avoid; }
+  .fieldset + .fieldset legend::before { content: none; }
+  .fieldset--newpage { break-before: page; }
+  .fieldset legend { display: flex; align-items: center; gap: 6pt; padding: 0 0 5pt; font-size: 11.5pt; }
+  .fieldset legend span, .fieldset:focus-within legend span { width: 15pt; height: 15pt; padding: 0; border: 1pt solid #000; border-radius: 50%; background: none; color: #000; transform: none; font-size: 7.5pt; }
+  .field { gap: 1pt; }
+  .field label, .field .label { font-size: 8.5pt; font-weight: 700; }
+  .field .hint { font-size: 7.5pt; color: #333; }
+  .req { display: inline; width: auto; height: auto; margin-left: 1pt; padding: 0; background: none; border: 0; font-size: 9pt; font-weight: 900; }
+
+  /* Lines to write on. A filled-in form prints what was entered; an untouched one stays blank. */
+  .input, .field select, .field textarea { min-height: 24pt; padding: 0; font-size: 9.5pt; background: none !important; border: 0; border-bottom: .75pt solid #000; border-radius: 0; box-shadow: none !important; }
+  .field textarea { min-height: 52pt; border: .75pt solid #000; resize: none; }
+  .input::placeholder { color: transparent; }
+  .input::-webkit-calendar-picker-indicator { display: none; }
+  .field select { background-image: none; appearance: none; }
+  .field--boxes select { display: none; }
+  form:not([data-touched]) .field select { color: transparent; }
+  form:not([data-touched]) input[type="date"]::-webkit-datetime-edit { color: transparent; }
+
+  /* A select prints as a row of boxes (modules/forms.js ticks the choice on a filled-in copy). */
+  .pboxes { display: flex; flex-wrap: wrap; gap: 3pt 12pt; padding-top: 2pt; }
+  .pbox { display: inline-flex; align-items: center; gap: 4pt; font-size: 8.5pt; }
+  .pbox::before { content: ''; flex: none; width: 9pt; height: 9pt; border: .75pt solid #000; }
+  .pbox.is-on::before { box-shadow: inset 0 0 0 1.5pt #fff, inset 0 0 0 5pt #000; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+
+  /* Radios print as tick boxes, ticked only on a form someone has filled in. */
+  .seg { display: flex; flex-wrap: wrap; gap: 3pt 14pt; padding-top: 2pt; }
+  .seg label, .seg label:has(input:checked) { display: inline-flex; min-height: 0; padding: 0; gap: 4pt; font-size: 8.5pt; font-weight: 500; background: none; border: 0; }
+  .seg label:has(input:checked)::after { content: none; }
+  .seg input { position: static; opacity: 1; appearance: none; flex: none; width: 9pt; height: 9pt; margin: 0; border: .75pt solid #000; border-radius: 0; }
+  form[data-touched] .seg input:checked { box-shadow: inset 0 0 0 1.5pt #fff, inset 0 0 0 5pt #000; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+  .fm-half { grid-column: span 1; }
+
+  /* References */
+  /* The last box would otherwise end exactly on the page edge and lose its border. */
+  .refs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8pt; padding-right: 1pt; }
+  .ref { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8pt; padding: 8pt 9pt 11pt; background: none; border: .75pt solid #000; border-radius: 0; }
+  .ref__title { margin: 0; font-size: 8.5pt; font-weight: 800; }
+  .ref .field { gap: 2pt; }
+  .ref .input { min-height: 34pt; background: none; }
+
+  /* Certify and sign */
+  .check { padding: 6pt 8pt; gap: 7pt; background: none; border: .75pt solid #000; border-radius: 0; font-size: 8.5pt; font-weight: 500; }
+  .check:has(input:checked) { background: none; }
+  .check input { width: 10pt; height: 10pt; margin-top: 1pt; appearance: none; border: .75pt solid #000; }
+  .check input:checked { box-shadow: inset 0 0 0 1.5pt #fff, inset 0 0 0 5pt #000; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+  .fm-sign { grid-column: span 1; }
+  .fm-sign .input, .fm-signdate .input { min-height: 46pt; font-style: normal; }
+
+  /* The yards, at the end of the last page */
+  .ac-return { margin-top: 18pt; padding-top: 8pt; border-top: 2pt solid #000; break-inside: avoid; }
+  .ac-return__k { margin: 0 0 5pt; font-size: 11.5pt; font-weight: 900; font-stretch: 125%; letter-spacing: -.015em; word-spacing: .14em; text-transform: uppercase; }
+  .ac-return__yards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14pt; font-size: 8.5pt; line-height: 1.4; font-variant-numeric: tabular-nums; }
+  .ac-return__yards p { margin: 0; }
+}

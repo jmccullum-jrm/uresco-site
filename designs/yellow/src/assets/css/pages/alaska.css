@@ -1,0 +1,192 @@
+/* ================= Alaska ================= */
+
+/* ---------- Hero: a question and a very large answer ---------- */
+.phero--yes { --Y: clamp(6rem, 17.6vw, calc(var(--wrap) * .192)); }
+.phero--yes .phero__copy { padding-top: clamp(1.75rem, 3.4vw, 3rem); }
+.phero--yes .phero__title { font-size: var(--Y); line-height: .78; letter-spacing: -.04em; margin-left: -.035em; white-space: nowrap; }
+/* The strap is set to the same measure as YES. */
+.yes__strap { display: block; margin: calc(var(--Y) * .03) 0 0 calc(var(--Y) * .04); font-size: calc(var(--Y) * .186); line-height: 1; letter-spacing: -.02em; }
+.phero--yes .motion-toggle { align-self: center; height: 46px; }
+.phero__jump { margin: .6rem 0 0; } .phero__jump .link { padding-top: .85rem; padding-bottom: .15rem; } .phero__jump .i { transform: rotate(90deg); } .phero__jump .link:hover .i { transform: rotate(90deg) translateX(4px); }
+@media (max-width: 899px) { .phero--yes { --Y: calc((100vw - var(--gutter) * 2) / 3.02); } }
+
+/* ---------- Route finder: one field, one answer, the map ---------- */
+.finder { padding-top: calc(var(--section) + clamp(70px, 13vw, 210px)); }
+.finder__grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.35fr); grid-template-areas: "head map" "pick map"; gap: clamp(1.75rem, 3vw, 2.75rem) clamp(2rem, 5vw, 5.5rem); align-items: start; }
+.finder__head { grid-area: head; container-type: inline-size; } .finder__head .lede { margin-top: 1rem; color: var(--paper); }
+/* Beside the map, the headline is sized from its column: a sentence to a line, and short enough that the field and the answer fit one screen. */
+@media (min-width: 1000px) { .finder__title { font-size: clamp(1.9rem, calc(100cqi / 11.85), 5rem); } }
+#lookup { scroll-margin-top: calc(var(--mast) + 1rem); }
+.finder__map { grid-area: map; position: sticky; top: calc(var(--mast) + 1.25rem); }
+.finder__sticker { position: absolute; right: 1%; top: 7%; font-size: clamp(.75rem, .55rem + .5vw, 1rem); }
+.finder__pick { position: relative; z-index: 3; grid-area: pick; min-width: 0; }
+
+/* The field: a big white pill, the one thing on black that asks to be used. */
+.finder__label { display: block; margin: 0 0 .8rem; font-size: var(--t-d4); font-weight: 800; font-stretch: var(--wide); letter-spacing: -.005em; text-transform: uppercase; line-height: 1.1; color: var(--yellow); }
+.finder__field { position: relative; scroll-margin-top: calc(var(--mast) + 1rem); }
+.finder__field > .i { position: absolute; left: 1.4rem; top: 50%; margin-top: -11px; color: var(--black); pointer-events: none; }
+.finder__input { width: 100%; height: 64px; padding: 0 3.6rem 0 3.6rem; border: var(--line) solid var(--white); border-radius: var(--r-pill); background: var(--white); color: var(--black); font: inherit; font-size: 1.125rem; font-weight: 700; }
+.finder__input::placeholder { color: var(--stone); font-weight: 500; opacity: 1; }
+.finder__input:hover { box-shadow: 0 0 0 3px var(--yellow); }
+.field-k .finder__input:focus-visible { outline: 3px solid var(--yellow); outline-offset: 3px; box-shadow: none; border-radius: var(--r-pill); }
+.finder__clear { position: absolute; right: .55rem; top: 50%; display: grid; place-items: center; width: 44px; height: 44px; margin-top: -22px; border: 0; border-radius: 50%; background: transparent; color: var(--black); }
+.finder__clear:hover { background: var(--black); color: var(--yellow); }
+.field-k .finder__clear:focus-visible { outline: 3px solid var(--black); outline-offset: -3px; box-shadow: none; border-radius: 50%; }
+/* The list hangs under the field; the row under the finger flips, as every row on the site does. */
+.finder__list { position: absolute; left: 0; right: 0; top: calc(100% + 8px); z-index: 5; max-height: min(19.5rem, 40vh); overflow: auto; padding: .4rem; background: var(--white); color: var(--black); border: var(--line) solid var(--black); border-radius: var(--r-m); box-shadow: var(--sh-float); }
+.finder__list li { display: flex; align-items: center; justify-content: space-between; gap: 1rem; min-height: 44px; padding: .4rem .85rem; border-radius: 12px; font-weight: 700; line-height: 1.15; cursor: pointer; }
+.finder__list small { flex: none; font-size: .8125rem; font-weight: 500; color: var(--stone); text-align: right; }
+.finder__list li:hover, .finder__list li[aria-selected="true"] { background: var(--black); color: var(--yellow); }
+.finder__list li:hover small, .finder__list li[aria-selected="true"] small { color: var(--ash); }
+.finder__list li.is-none { display: block; padding-block: .75rem; font-weight: 600; line-height: 1.35; }
+
+.towns { display: flex; flex-wrap: wrap; gap: .4rem; margin: .9rem 0 1.25rem; }
+
+/* The answer: a yellow card. */
+.way { display: grid; grid-template-columns: auto minmax(0, 1fr); grid-template-areas: "icon label" "icon name" "icon region" "text text" "how how" "yard yard" "quote quote" "note note"; column-gap: 1.1rem; padding: clamp(1.25rem, 2.2vw, 1.9rem); background: var(--yellow); color: var(--black); border-radius: var(--r-l); }
+.way__icon { grid-area: icon; align-self: center; display: grid; place-items: center; width: 66px; height: 66px; border-radius: 50%; background: var(--black); color: var(--yellow); }
+.way__icon > span { display: none; } .way:not([data-ico]) [data-ico="route"], .way[data-ico="truck"] [data-ico="truck"], .way[data-ico="ship"] [data-ico="ship"] { display: block; }
+.way__label { grid-area: label; align-self: end; margin: 0 0 .3rem; font-size: var(--t-label); font-weight: 800; font-stretch: 125%; letter-spacing: .08em; text-transform: uppercase; }
+.way__name { grid-area: name; align-self: start; font-size: clamp(1.4rem, 1rem + 1.7vw, 2.3rem); line-height: .96; font-weight: 900; font-stretch: var(--wide); letter-spacing: -.025em; text-transform: uppercase; overflow-wrap: anywhere; }
+.way__region { grid-area: region; margin: .35rem 0 0; font-weight: 600; line-height: 1.25; }
+.way__text { grid-area: text; margin: 1rem 0 0; font-weight: 500; line-height: 1.45; max-width: 52ch; }
+.way__how { grid-area: how; margin-top: 1.15rem; }
+.way__sub { margin: 0 0 .5rem; font-size: var(--t-label); font-weight: 800; font-stretch: 125%; letter-spacing: .08em; text-transform: uppercase; }
+.way__modes { display: flex; flex-wrap: wrap; gap: .5rem 1.4rem; }
+.way__modes li { display: inline-flex; align-items: center; gap: .55rem; font-weight: 700; line-height: 1.15; }
+.way__mode-ic { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: var(--black); color: var(--yellow); }
+.way__yard { grid-area: yard; margin-top: 1.15rem; }
+.way__quote { grid-area: quote; margin-top: .55rem; }
+.way__note { grid-area: note; margin: .85rem 0 0; font-size: .8125rem; line-height: 1.35; color: var(--umber); }
+.way .btn { flex-wrap: wrap; gap: .15em .6em; white-space: normal; text-align: center; line-height: 1.15; padding: .55em 1.1em; }
+.way .way__quote { flex-wrap: nowrap; }
+[data-way-phone] { white-space: nowrap; }
+@media (prefers-reduced-motion: no-preference) { .way.is-new { animation: way-new .45s var(--spring); } }
+@keyframes way-new { from { transform: scale(.94) rotate(-1.2deg); } }
+/* Without the script: the three yards. */
+.way--yards { display: block; }
+.way__list { margin: 1rem 0; border-top: var(--line) solid var(--black); }
+.way__list li { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .5rem 1rem; padding: .75rem 0; border-bottom: var(--line) solid var(--black); }
+.way__list span { display: grid; } .way__list b { font-weight: 900; font-stretch: 112%; } .way__list small { font-size: .875rem; line-height: 1.3; }
+
+/* The lit map: the place, and the yard to call. */
+.finder .dmap__town.is-on { display: block; }
+/* The towns on the map pick the place, as the chips do: the label is .dmap__pick (30-components); the dot gets a 40px target here. */
+.js .finder .dmap__town { cursor: pointer; }
+.js .finder .dmap__town::before { content: ''; position: absolute; left: -20px; top: -20px; width: 40px; height: 40px; }
+.finder .dmap__yard.is-on { z-index: 2; }
+.finder .dmap__yard.is-on > i { transform: scale(1.2); box-shadow: 0 0 0 2px var(--yellow); }
+.finder .dmap__yard.is-on > b { background: var(--black); color: var(--yellow); border-color: var(--yellow); }
+.finder .dmap[data-mode="local"] .dmap__kent { background: var(--black); color: var(--yellow); border-color: var(--yellow); }
+/* A narrow two-column map: the sticker gets out of Deadhorse's way. */
+@media (min-width: 1000px) and (max-width: 1239px) { .finder__sticker { top: 1%; right: -2%; font-size: .75rem; } }
+@media (max-width: 999px) {
+  .finder__grid { grid-template-columns: minmax(0, 1fr); grid-template-areas: "head" "pick" "map"; }
+  .finder__map { position: relative; top: auto; z-index: 1; }
+  .finder__sticker { top: .9rem; right: -.3rem; }
+}
+@media (max-width: 699px) {
+  .finder__sticker { display: none; }
+  .finder__input { height: 60px; }
+  .town { padding: 0 .85em; }
+  /* The card has to fit one screen with the field above it. */
+  .way { padding: 1.1rem 1.1rem 1rem; }
+  .way__icon { width: 54px; height: 54px; } .way__icon .i { width: 24px; height: 24px; }
+  .way__region { font-size: .9375rem; }
+  .way__sub { font-stretch: 112%; letter-spacing: .05em; }
+  .way__how, .way__yard { margin-top: .85rem; }
+  .way__modes { gap: .4rem 1rem; } .way__modes li { font-size: .9375rem; }
+  .way__mode-ic { width: 28px; height: 28px; } .way__mode-ic .i { width: 16px; height: 16px; }
+  /* Pull the map back a little so Southeast stays in the arch. */
+  .finder .dmap__inner { width: 152%; margin-left: -7%; margin-top: 4%; }
+  /* Names at the edge of the crop read inward. */
+  .finder .dmap__town[data-town="ketchikan"] > b { left: auto; right: 10px; transform-origin: 100% 50%; }
+  .finder .dmap__town[data-town="ketchikan"].is-on > b { transform: translate(-3px, -50%) scale(1.08); }
+  .finder .dmap__town[data-town="unalaska"] > b { transform: translateX(-32%); transform-origin: 32% 100%; }
+  .finder .dmap__town[data-town="unalaska"].is-on > b { transform: translate(-32%, -3px) scale(1.08); }
+}
+
+/* ---------- Four legs, one package: four stops on a dashed lane ---------- */
+.legs { position: relative; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.legs::before { content: ''; position: absolute; left: 0; right: 12%; top: 35px; border-top: 3px dashed var(--black); }
+.leg { position: relative; padding-right: clamp(1rem, 2.6vw, 2.75rem); }
+.leg__icon { position: relative; display: grid; place-items: center; width: 72px; height: 72px; margin-bottom: 1.6rem; border-radius: 50%; background: var(--yellow); border: var(--line) solid var(--black); box-shadow: 0 0 0 8px var(--paper); }
+.leg:last-child .leg__icon { background: var(--black); color: var(--yellow); }
+.leg__no { position: absolute; left: 92px; top: 25px; padding: 0 .6rem; background: var(--paper); font-size: .8rem; font-weight: 800; font-stretch: 125%; letter-spacing: .05em; line-height: 1.3; }
+.leg__name { margin-bottom: .6rem; font-size: clamp(1.1rem, .8rem + 1vw, 1.65rem); line-height: .98; font-weight: 900; font-stretch: 118%; letter-spacing: -.02em; text-transform: uppercase; text-wrap: balance; }
+.leg__text { margin: 0; color: var(--stone); max-width: 30ch; }
+@media (max-width: 859px) {
+  .legs { grid-template-columns: minmax(0, 1fr); gap: 1.6rem; }
+  .legs::before { left: 29px; right: auto; top: 10px; bottom: 40px; border-top: 0; border-left: 3px dashed var(--black); }
+  .leg { display: grid; grid-template-columns: 60px minmax(0, 1fr); grid-template-areas: "icon name" "icon text"; column-gap: 1.1rem; padding-right: 0; }
+  .leg__icon { grid-area: icon; width: 60px; height: 60px; margin: 0; box-shadow: 0 0 0 6px var(--paper); } .leg__icon .i { width: 24px; height: 24px; }
+  .leg__no { position: static; grid-area: name; justify-self: start; align-self: start; padding: 0; background: none; font-size: .75rem; }
+  .leg__name { grid-area: name; margin-top: 1.15rem; } .leg__text { grid-area: text; max-width: none; }
+}
+
+/* ---------- 71° north, and the tape ---------- */
+.north { position: relative; padding-top: var(--section); }
+.north__grid { display: grid; grid-template-columns: minmax(0, 1.8fr) minmax(0, 1fr); gap: clamp(2rem, 6vw, 6rem); align-items: start; padding-bottom: clamp(2.75rem, 5vw, 4.5rem); }
+.north__big { margin: 0 0 clamp(1.25rem, 2.6vw, 2.25rem); font-size: clamp(3.4rem, 18vw, 8.5rem); line-height: .78; font-weight: 900; font-stretch: 125%; letter-spacing: -.045em; text-transform: uppercase; }
+.north__big span { display: block; }
+@media (min-width: 900px) { .north__big { font-size: clamp(6rem, 11vw, 10.4rem); } }
+.north__fig { position: relative; justify-self: center; width: min(100%, 360px); margin: calc(var(--section) * -1) 0 0; }
+.north__win { aspect-ratio: 4 / 5.2; }
+/* The label sits above the truck, not on it. */
+.north__win > .wcap { bottom: 27%; }
+/* Latitude as a tape measure, 46° to 72° N, edge to edge. */
+.tape { --h: clamp(48px, 5.6vw, 76px); position: relative; height: calc(var(--h) + clamp(92px, 9vw, 124px)); }
+.tape::before { content: ''; position: absolute; left: 0; right: 0; top: 50%; height: var(--h); margin-top: calc(var(--h) / -2); border-block: var(--line) solid var(--black);
+  background: repeating-linear-gradient(90deg, var(--black) 0 2px, transparent 2px calc(100% / 26)) 0 0 / 100% 34% no-repeat, repeating-linear-gradient(90deg, var(--black) 0 1px, transparent 1px calc(100% / 130)) 0 0 / 100% 16% no-repeat, var(--white); }
+.tape__ticks span { position: absolute; left: var(--at); top: 50%; margin-top: calc(var(--h) / -2); height: var(--h); display: flex; align-items: flex-end; padding: 0 0 .28em .4em; border-left: 3px solid var(--black); font-size: clamp(.8rem, .5rem + .9vw, 1.35rem); font-weight: 900; font-stretch: 125%; letter-spacing: -.02em; line-height: 1; }
+.tape__stop { position: absolute; left: var(--at); top: 50%; display: grid; justify-items: center; gap: .1rem; width: max-content; transform: translate(-50%, calc(-100% - var(--h) / 2 - 12px)); }
+.tape__stop::after { content: ''; position: absolute; left: 50%; top: 100%; width: 3px; margin-left: -1.5px; height: calc(var(--h) / 2 + 12px); background: var(--black); }
+.tape__stop--low { transform: translate(-50%, calc(var(--h) / 2 + 12px)); }
+.tape__stop--low::after { top: auto; bottom: 100%; }
+.tape__stop b { padding: .45em .85em .4em; background: var(--white); border: var(--line) solid var(--black); border-radius: var(--r-pill); font-size: clamp(.75rem, .6rem + .2vw, .8rem); font-weight: 800; font-stretch: 125%; letter-spacing: .05em; text-transform: uppercase; line-height: 1; }
+.tape__stop--yard b { background: var(--black); color: var(--yellow); }
+.tape__stop i { font-style: normal; font-size: .75rem; font-weight: 700; order: -1; }
+.tape__stop--low i { order: 1; }
+.tape__stop:first-of-type { transform: translate(-18%, calc(-100% - var(--h) / 2 - 12px)); } .tape__stop:first-of-type::after { left: 18%; }
+.tape__stop:last-of-type { transform: translate(-90%, calc(-100% - var(--h) / 2 - 12px)); } .tape__stop:last-of-type::after { left: 90%; }
+/* On phones every other tick loses its number, and the last one reads to its left, so 70° stays on the page. */
+@media (max-width: 480px) {
+  .tape { height: calc(var(--h) + 128px); }
+  .tape__ticks span:nth-child(even) { font-size: 0; padding: 0; }
+  .tape__ticks span:last-child { transform: translateX(-100%); padding: 0 .4em .28em 0; border-left: 0; border-right: 3px solid var(--black); }
+  .tape__stop b { padding-inline: .6em; font-stretch: 100%; letter-spacing: .02em; }
+}
+@media (max-width: 899px) {
+  .north__grid { grid-template-columns: minmax(0, 1fr); gap: 2.25rem; padding-bottom: 2rem; }
+  .north__fig { order: -1; width: min(56vw, 250px); margin: calc(var(--section) * -1) auto 0 0; }
+}
+
+/* ---------- Road, sea or air ---------- */
+.modes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(.75rem, 1.5vw, 1.5rem); }
+.mode { position: relative; padding: 0 clamp(1.3rem, 2.4vw, 2.25rem) clamp(1.5rem, 2.6vw, 2.4rem); background: var(--black-2); border: var(--line) solid var(--black-3); border-radius: var(--r-l); }
+/* The icon hangs from the top edge in a small yellow U. */
+.mode__icon { display: grid; place-items: center; width: 96px; height: 118px; margin: -2px 0 1.7rem; padding-bottom: 10px; background: var(--yellow); color: var(--black); border-radius: 0 0 var(--r-pill) var(--r-pill); transition: transform .45s var(--spring); transform-origin: 50% 0; }
+.mode__icon .i { stroke-width: 1.9; }
+.mode:hover .mode__icon { transform: scaleY(1.08); }
+.mode__tag { position: absolute; right: clamp(1.3rem, 2.4vw, 2.25rem); top: 1.5rem; font-size: var(--t-label); font-weight: 800; font-stretch: 125%; letter-spacing: .09em; text-transform: uppercase; color: var(--yellow); }
+.mode__name { margin-bottom: .7rem; font-size: clamp(1.25rem, .9rem + 1.1vw, 1.8rem); line-height: .98; font-weight: 900; font-stretch: 118%; letter-spacing: -.02em; text-transform: uppercase; text-wrap: balance; }
+.mode p { margin: 0; color: var(--ash); }
+.season { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 1rem 1.5rem; margin-top: clamp(.75rem, 1.5vw, 1.5rem); padding: 1.2rem clamp(1.2rem, 2vw, 1.75rem); background: var(--yellow); color: var(--black); border-radius: var(--r-l); }
+.season__icon { display: grid; place-items: center; width: 60px; height: 60px; border-radius: 50%; background: var(--black); color: var(--yellow); }
+.season p { margin: 0; font-weight: 500; max-width: 70ch; } .season strong { font-weight: 900; font-stretch: 112%; text-transform: uppercase; letter-spacing: -.005em; }
+@media (max-width: 899px) {
+  .modes { grid-template-columns: minmax(0, 1fr); }
+  .mode { display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 1.2rem; padding: 0 1.2rem 1.3rem; border-radius: var(--r-m); }
+  .mode__icon { grid-row: 1 / span 2; width: 72px; height: 92px; margin-bottom: 0; } .mode__icon .i { width: 34px; height: 34px; }
+  .mode__tag { right: 1.2rem; top: 1.1rem; }
+  .mode__name { align-self: end; margin: 2.6rem 0 0; } .mode p { grid-column: 1 / -1; margin-top: 1rem; }
+  .season { grid-template-columns: auto minmax(0, 1fr); border-radius: var(--r-m); } .season .btn { grid-column: 1 / -1; }
+}
+
+@media (max-width: 359px) { .yards--2 .yard__quote { font-stretch: 100%; letter-spacing: 0; } .tape__stop b { padding-inline: .45em; letter-spacing: 0; } .tape__stop:nth-of-type(3) { transform: translate(-58%, calc(-100% - var(--h) / 2 - 12px)); } .tape__stop:nth-of-type(3)::after { left: 58%; } }
+
+/* ---------- FAQ ---------- */
+.faqsec { padding-top: calc(var(--section) + 1.5vw); }
+.faqsec__grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.35fr); gap: clamp(2rem, 6vw, 6.5rem); align-items: start; }
+.faqsec__head { position: sticky; top: calc(var(--mast) + 2rem); } .faqsec__head .lede { margin-top: 1.4rem; color: var(--stone); }
+@media (max-width: 899px) { .faqsec__grid { grid-template-columns: minmax(0, 1fr); } .faqsec__head { position: static; } }

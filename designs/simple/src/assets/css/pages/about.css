@@ -1,0 +1,77 @@
+/* ---------- About: the hero and the data sheet ---------- */
+.ab-hero .phero__grid { align-items: center; }
+.ab-rings { margin: 0; }
+.ab-rings .dw-c { stroke: var(--blue); }
+
+/* The data sheet: a vendor's details, with the one photograph stapled to it at its natural size. */
+.ab-data { display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: clamp(1.25rem, 3vw, 3rem); align-items: center; margin-top: clamp(1.75rem, 3vw, 2.75rem); padding-top: clamp(1.25rem, 2.5vw, 2rem); border-top: var(--line) solid var(--ink); }
+.ab-photo { width: 214px; }
+.ab-photo .plate__img { width: 214px; aspect-ratio: 214 / 200; }
+.ab-data__grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin: 0; border-top: 1px solid var(--rule-2); }
+.ab-data__grid div { padding: .8rem 1rem .9rem 0; border-bottom: 1px solid var(--rule-2); }
+.ab-data__grid div:not(:nth-child(3n+1)) { padding-left: 1rem; border-left: 1px solid var(--rule-2); }
+.ab-data__grid dt { font-family: var(--mono); font-size: var(--fs-label); letter-spacing: .07em; text-transform: uppercase; color: var(--ink-3); }
+.ab-data__grid dd { margin: .3rem 0 0; font-size: 1.0625rem; font-weight: 500; line-height: 1.3; letter-spacing: -.015em; }
+@media (max-width: 68.6875em) { .ab-data__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .ab-data__grid div:not(:nth-child(3n+1)) { padding-left: 0; border-left: 0; } .ab-data__grid div:nth-child(even) { padding-left: 1rem; border-left: 1px solid var(--rule-2); } }
+@media (max-width: 47.9375em) {
+  .ab-data { grid-template-columns: minmax(0, 1fr); row-gap: 1.25rem; }
+}
+@media (min-width: 23.75em) and (max-width: 47.9375em) {
+  /* The caption sits beside the photograph, which stays at its natural size. */
+  .ab-photo { display: grid; grid-template-columns: 214px minmax(0, 1fr); column-gap: .9rem; align-items: end; width: 100%; }
+  .ab-photo .plate__cap { padding-top: 0; }
+}
+
+/* ---------- About: general notes ---------- */
+.ab-notes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: clamp(2rem, 5vw, 5rem); list-style: none; margin: 0; padding: 0; border-top: var(--line) solid var(--ink); }
+.ab-note { display: grid; grid-template-columns: 3.25rem minmax(0, 1fr); column-gap: .5rem; padding: clamp(1.1rem, 2vw, 1.6rem) 0; border-bottom: 1px solid var(--rule-2); }
+.ab-note__no { font-size: 1.25rem; font-weight: 500; line-height: 1.3; color: var(--blue); letter-spacing: -.02em; }
+.ab-note .h3 { margin: 0 0 .4rem; }
+.ab-note p { margin: 0; color: var(--ink-2); max-width: 34em; }
+.ab-note__link { margin-top: .6rem; font-size: .8125rem; }
+@media (max-width: 53.6875em) { .ab-notes { grid-template-columns: minmax(0, 1fr); } }
+
+/* ---------- About: down the road, across an ocean ---------- */
+.ab-reach { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--gap); margin-top: clamp(1.5rem, 3vw, 2.5rem); }
+.ab-way { display: grid; grid-template-columns: minmax(0, 1fr); gap: .6rem; align-content: start; justify-items: start; }
+.ab-way .dwg { margin: 0 0 .9rem; width: 100%; }
+.ab-way > p { margin: 0; color: var(--ink-2); max-width: 34em; }
+.ab-way .h3 { font-size: clamp(1.5rem, 1.2rem + 1.2vw, 2.125rem); letter-spacing: -.04em; }
+.ab-way .link { font-size: .8125rem; }
+@media (max-width: 53.6875em) { .ab-reach { grid-template-columns: minmax(0, 1fr); row-gap: 2.75rem; } }
+
+/* ---------- About: the mission as a specification ---------- */
+.ab-spec { border-top: var(--line) solid var(--ink); }
+.ab-spec__row { display: grid; grid-template-columns: 3.25rem minmax(0, 6.5fr) minmax(0, 4.5fr); column-gap: var(--gap); align-items: baseline; padding: clamp(1.25rem, 2.4vw, 2rem) 0; border-bottom: 1px solid var(--rule-2); }
+.ab-spec__no { margin: 0; font-size: 1.25rem; font-weight: 500; color: var(--blue); letter-spacing: -.02em; }
+.ab-spec__claim { margin: 0; font-size: clamp(1.5rem, 1rem + 1.9vw, 2.5rem); font-weight: 600; letter-spacing: -.035em; line-height: 1.06; text-wrap: balance; }
+.ab-spec__proof { margin: 0; color: var(--ink-2); }
+.ab-spec__proof .link { font-size: .8125rem; margin-left: .25rem; }
+.ab-spec__result { margin: 0; padding: clamp(1.1rem, 2vw, 1.6rem) clamp(1rem, 2vw, 1.5rem); background: var(--yellow); font-size: clamp(1.25rem, 1rem + 1.1vw, 1.875rem); font-weight: 600; letter-spacing: -.03em; line-height: 1.15; }
+@media (max-width: 56.1875em) {
+  .ab-spec__row { grid-template-columns: 2.75rem minmax(0, 1fr); row-gap: .6rem; }
+  .ab-spec__proof { grid-column: 2; }
+}
+
+/* ---------- About: motion ---------- */
+@media (prefers-reduced-motion: no-preference) {
+  html.js .ab-rings[data-reveal]:not(.is-in) .dw-obj { clip-path: circle(0% at 50% 50%); }
+  html.js .ab-rings[data-reveal]:not(.is-in) .dw-ann { opacity: 0; }
+  .ab-rings.is-in .dw-obj { animation: ab-grow 560ms var(--ease) backwards; }
+  .ab-rings.is-in .dw-ann { animation: none; transition: opacity 1ms steps(1) 420ms; }
+}
+@keyframes ab-grow { from { clip-path: circle(0% at 50% 50%); } to { clip-path: circle(72% at 50% 50%); } }
+
+/* ---------- Not found ---------- */
+.nf-hero .phero__media { margin: 0; }
+.nf-index { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: clamp(1.5rem, 4vw, 4rem); list-style: none; margin: 0; padding: 0; border-top: var(--line) solid var(--ink); }
+.nf-index a { position: relative; isolation: isolate; display: grid; grid-template-columns: 2.75rem minmax(0, 1fr) auto; grid-template-areas: "no name go" "no what go"; column-gap: .5rem; padding: .9rem 0; border-bottom: 1px solid var(--rule-2); text-decoration: none; }
+.nf-index a::before { content: ''; position: absolute; inset: 0 calc(var(--gap) * -.5); z-index: -1; background: var(--yellow); transform: scaleX(0); transform-origin: left; transition: transform var(--t-row) var(--ease); }
+.nf-index a:hover::before, .nf-index a:focus-visible::before { transform: scaleX(1); }
+.nf-index .num { grid-area: no; font-size: .8125rem; font-weight: 600; letter-spacing: .06em; color: var(--blue); padding-top: .25rem; }
+.nf-index a:hover .num, .nf-index a:focus-visible .num { color: var(--ink); }
+.nf-index b { grid-area: name; font-size: clamp(1.125rem, 1rem + .6vw, 1.5rem); font-weight: 600; letter-spacing: -.03em; line-height: 1.15; }
+.nf-index small { grid-area: what; font-size: .9375rem; color: var(--ink-2); }
+.nf-index a:hover small, .nf-index a:focus-visible small { color: var(--ink); }
+.nf-index .i { grid-area: go; align-self: center; }
+@media (max-width: 47.9375em) { .nf-index { grid-template-columns: minmax(0, 1fr); } }

@@ -1,0 +1,40 @@
+/* ================= Alaska delivery =================
+   The page opens on the finder stage (routeStage, variant 'embed') with its own headline, then the
+   shared components: modes, steps, interlude, yard cards, FAQ, quoteBand. Only its adjustments live here. */
+
+/* The opening: the stage under the masthead, the answer in its headline. */
+.ak-open .hero__lede { max-width: 28em; }
+/* Southeast is one end of "from Sitka to Utqiaġvik": its lane has to read as clearly as the Arctic one. */
+.ak-open .lane--inside { stroke-opacity: .85; }
+
+/* When the camera flies in, land passes under the words: on wide screens a veil keeps them on open sea. */
+@media (min-width: 68.75em) {
+  .ak-open .stage__copy { position: relative; }
+  .ak-open .stage__copy::before { content: ''; position: absolute; z-index: -1; inset: -100vh -5rem -1.5rem -100vw; background: linear-gradient(90deg, var(--night) calc(100% - 9rem), transparent); -webkit-mask-image: linear-gradient(to top, transparent, #000 2.5rem); mask-image: linear-gradient(to top, transparent, #000 2.5rem); opacity: 0; pointer-events: none; transition: opacity var(--ui) var(--ease); }
+  .ak-open .stage:has(.map[data-zoomed]) .stage__copy::before { opacity: 1; }
+}
+
+/* What the lanes mean, right under the map. */
+.ak-lanes { margin-top: .75rem; font-size: var(--t-small); line-height: 1.5; color: var(--slate); }
+
+/* Band (700–1099): words left, Alaska right, the finder below, as on a phone. Nothing on the map can
+   sit under the headline, wherever the camera goes. */
+@media (min-width: 43.75em) and (max-width: 68.6875em) {
+  .ak-open .stage { display: grid; grid-template-columns: minmax(0, 44fr) minmax(0, 56fr); }
+  .ak-open .stage__ui { display: contents; }
+  .ak-open .stage__copy { grid-column: 1; grid-row: 1; align-self: center; position: relative; top: auto; left: auto; width: auto; padding: var(--pad) 0 calc(var(--pad) + 2rem) var(--pad); }
+  .ak-open .stage__map { grid-column: 2; grid-row: 1; aspect-ratio: 1060 / 880; overflow: hidden; }
+  .ak-open .stage__map .map { position: absolute; width: 169.8%; height: auto; aspect-ratio: 1.8; left: -69.8%; top: -7.95%; }
+  .ak-open .finder { grid-column: 1 / -1; grid-row: 2; margin: -2.5rem var(--pad) var(--pad); }
+  .ak-open .legend { grid-column: 1 / -1; grid-row: 3; }
+  .ak-open .map__dest .map__tag--dest, .ak-open .map__dest[data-side='w'] .map__tag--dest { left: 50%; right: auto; top: auto; bottom: 13px; transform: translateX(-50%); }
+  .ak-open .map__dest[data-vside='s'] .map__tag--dest { bottom: auto; top: 13px; }
+}
+/* In the band layout the graticule labels only compete with the headline and the pins. */
+@media (max-width: 68.6875em) {
+  .ak-open .map__grat { display: none; }
+}
+/* At the narrow end of the band the map is short: the finder lifts less far over it, so it clears the Kent pin. */
+@media (min-width: 43.75em) and (max-width: 53.6875em) {
+  .ak-open .finder { margin-top: -.75rem; }
+}

@@ -1,0 +1,143 @@
+/* ---------- Base ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+/* Focus and anchors stop clear of the sticky masthead above and the floating action bar below. */
+html { -webkit-text-size-adjust: 100%; scroll-padding-top: calc(var(--mast) + 1.25rem); scroll-padding-bottom: calc(var(--bar) + 1rem + env(safe-area-inset-bottom)); }
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+body {
+  margin: 0; background: var(--snow); color: var(--ink);
+  font-family: var(--font); font-size: var(--t-body); line-height: 1.6; font-weight: 400;
+  -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+  padding-bottom: var(--bar);
+}
+img, svg { display: block; max-width: 100%; }
+img { height: auto; }
+a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: .22em; }
+p { margin: 0 0 1em; text-wrap: pretty; }
+/* An element's own display rule must never beat the hidden attribute. */
+[hidden] { display: none !important; }
+h1, h2, h3, h4 { margin: 0; font-weight: 500; letter-spacing: -.03em; line-height: 1.08; text-wrap: balance; }
+address { font-style: normal; }
+button { font: inherit; color: inherit; cursor: pointer; }
+ul, ol { margin: 0; padding: 0; }
+:focus-visible { outline: 2px solid var(--ring); outline-offset: 3px; border-radius: 6px; }
+::selection { background: var(--yellow); color: var(--ink); }
+.sr-only { position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+.skip { position: absolute; left: 1rem; top: -100px; z-index: 100; background: var(--ink); color: #fff; padding: .75rem 1rem; border-radius: var(--r-sm); font-weight: 500; }
+.skip:focus { top: 1rem; }
+.i { flex: none; }
+/* With JavaScript, hide the plain fallbacks; without it, hide what only the script can drive.
+   The class is set in <head>, so neither state ever flashes or shifts the page. */
+.js .nojs { display: none !important; }
+html:not(.js) .jsonly { display: none !important; }
+
+.wrap { width: 100%; max-width: calc(var(--wrap) + var(--gutter) * 2); margin-inline: auto; padding-inline: var(--gutter); }
+
+/* ---------- Type ---------- */
+.display { font-size: var(--t-display); line-height: 1; letter-spacing: -.04em; font-weight: 500; }
+.h2 { font-size: var(--t-h2); line-height: 1.04; letter-spacing: -.035em; }
+.h3 { font-size: var(--t-h3); line-height: 1.2; letter-spacing: -.02em; font-weight: 600; }
+/* Two-tone headlines: <em> is the quieter half of the sentence, never italic. */
+.display em, .h2 em, .h3 em, .statement span { font-style: normal; color: var(--slate); }
+.lede { font-size: var(--t-lede); line-height: 1.5; color: var(--slate); max-width: 34em; margin: 0; }
+
+/* The eyebrow: mono, small, with the one yellow tick the page allows itself outside a button. */
+.eyebrow {
+  margin: 0 0 1.1rem;
+  font-family: var(--mono); font-size: var(--t-micro); font-weight: 500; line-height: 1.5; letter-spacing: .06em; text-transform: uppercase; color: var(--slate);
+}
+.eyebrow::before { content: ''; display: inline-block; width: 7px; height: 7px; margin-right: .6rem; border-radius: 2px; background: var(--yellow); vertical-align: .06em; }
+.eyebrow i { margin-inline: .35em; font-style: normal; opacity: .55; }
+
+.link { display: inline-flex; align-items: center; gap: .4rem; font-weight: 500; text-decoration: none; color: var(--ink); border-bottom: 1px solid var(--fog); padding-bottom: .15rem; transition: border-color var(--fast); }
+.link:hover { border-color: var(--ink); }
+.link .i { transition: transform var(--ui) var(--ease); }
+.link:hover .i { transform: translateX(3px); }
+.link--light { color: #fff; border-color: rgba(255, 255, 255, .35); }
+.link--light:hover { border-color: #fff; }
+
+/* ---------- Buttons ---------- */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: .5rem;
+  min-height: 44px; padding: 0 1.1rem; border-radius: 12px; border: 1px solid transparent;
+  background: var(--yellow); color: var(--ink); font-size: .9375rem; font-weight: 500; letter-spacing: -.005em;
+  text-decoration: none; white-space: nowrap; cursor: pointer;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .4), 0 1px 2px rgba(14, 14, 12, .18);
+  transition: background var(--fast), border-color var(--fast), transform var(--fast) var(--ease);
+}
+.btn:hover { background: var(--yellow-hi); }
+.btn:active { transform: scale(.98); }
+.btn .i { transition: transform var(--ui) var(--ease); }
+.btn:hover .i:last-child:not(:first-child) { transform: translateX(3px); }
+.btn--lg { min-height: 52px; padding: 0 1.4rem; font-size: 1rem; border-radius: 14px; }
+.btn--sm { min-height: 38px; padding: 0 .9rem; font-size: .875rem; border-radius: 10px; }
+.btn--block { display: flex; width: 100%; }
+.btn--dark { background: var(--ink); color: #fff; box-shadow: inset 0 1px 0 rgba(255, 255, 255, .1), 0 1px 2px rgba(14, 14, 12, .2); }
+.btn--dark:hover { background: var(--ink-hi); }
+.btn--line { background: transparent; color: var(--ink); border-color: var(--fog); box-shadow: none; }
+.btn--line:hover { background: var(--white); border-color: var(--ink); }
+.btn--glass { background: rgba(255, 255, 255, .08); color: #fff; border-color: rgba(255, 255, 255, .2); box-shadow: none; }
+.btn--glass:hover { background: rgba(255, 255, 255, .16); }
+.actions { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: 2rem; }
+
+.iconbtn { display: grid; place-items: center; width: 44px; height: 44px; border: 0; border-radius: 12px; background: var(--ice); color: var(--ink); }
+.iconbtn:hover { background: var(--mist); }
+
+/* Chips: small, quiet, pressable. */
+.chip {
+  display: inline-flex; align-items: center; gap: .35rem; flex: none; height: 30px; padding: 0 .7rem;
+  border-radius: 999px; border: 1px solid transparent; background: var(--ice); color: var(--ink);
+  font-size: .8125rem; font-weight: 500; white-space: nowrap;
+}
+button.chip { cursor: pointer; transition: background var(--fast), color var(--fast); }
+button.chip:hover { background: var(--mist); }
+button.chip[aria-pressed='true'] { background: var(--ink); color: #fff; }
+.chip--glass { background: rgba(14, 14, 12, .62); color: #fff; border-color: rgba(255, 255, 255, .16); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
+
+/* Live open/closed status: a dot and a word, in the yard's own time zone. */
+.status { display: inline-flex; align-items: center; gap: .4rem; font-size: .8125rem; font-weight: 500; color: var(--slate); white-space: nowrap; }
+.status::before { content: ''; flex: none; width: 7px; height: 7px; border-radius: 50%; background: var(--fog); }
+.status.is-open { color: var(--aurora-ink); }
+.status.is-open::before { background: #19B37D; box-shadow: 0 0 0 3px rgba(25, 179, 125, .18); }
+.clock { font-variant-numeric: tabular-nums; }
+
+/* ---------- Sections ---------- */
+.section { padding-block: var(--section); }
+.section--first { padding-top: calc(var(--section) * .8); }
+/* A section that is a surface: inset from the screen edge and rounded, like the map. */
+.section--ice { background: var(--ice); margin-inline: var(--edge); border-radius: var(--r-2xl); }
+.section--ice > .wrap { max-width: none; padding-inline: var(--column); }
+/* Surfaces that touch keep a seam the width of the inset; a surface before the footer does the same. */
+:is(.section--ice, .interlude, .cta, .remote, .hero) + :is(.section--ice, .interlude, .cta, .remote) { margin-top: var(--inset); }
+main:has(> :is(.section--ice, .interlude, .cta, .remote):last-child) + .footer { margin-top: var(--inset); }
+
+.shead { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 1.5rem clamp(2rem, 6vw, 6rem); align-items: end; margin-bottom: clamp(2.25rem, 1.5rem + 3vw, 4rem); }
+.shead--solo { grid-template-columns: minmax(0, 1fr); }
+.shead__aside { display: grid; gap: 1.25rem; justify-items: start; }
+@media (max-width: 53.75em) { .shead { grid-template-columns: minmax(0, 1fr); align-items: start; } }
+
+/* ---------- Photographs ----------
+   Always in a large rounded frame, graded a little cool so pictures from many cameras sit together. */
+.frame { position: relative; isolation: isolate; overflow: hidden; margin: 0; border-radius: var(--r-xl); background: var(--ice); }
+.frame img { width: 100%; height: 100%; object-fit: cover; filter: saturate(.86) contrast(1.03); }
+.frame::after { content: ''; position: absolute; inset: 0; z-index: 1; pointer-events: none; border-radius: inherit; background: linear-gradient(180deg, rgba(60, 130, 150, .10), rgba(14, 14, 12, .12)); box-shadow: inset 0 0 0 1px rgba(14, 14, 12, .08); }
+.frame__cap {
+  position: absolute; z-index: 2; left: 1rem; bottom: 1rem; margin: 0; display: inline-flex; gap: .6rem; align-items: center;
+  padding: .45rem .65rem; border-radius: 9px; background: rgba(14, 14, 12, .78); color: #fff;
+  -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+  font-family: var(--mono); font-size: var(--t-micro); font-weight: 500; letter-spacing: .05em; text-transform: uppercase;
+}
+.frame__cap span { color: var(--frost); }
+
+/* Reduced motion: nothing animates, whatever a later rule says. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; animation-delay: 0s !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+}
+
+/* ---------- Scroll reveal ----------
+   Hidden only once the reveal script is really running and only when motion is welcome: it sets
+   html.reveal-on just before it starts watching, so a script that never arrives hides nothing.
+   The script adds .is-in as things arrive. */
+@media (prefers-reduced-motion: no-preference) {
+  .reveal-on .reveal { opacity: 0; transform: translateY(18px); }
+  .reveal-on .reveal.is-in { opacity: 1; transform: none; transition: opacity var(--slow) var(--ease), transform var(--slow) var(--ease); transition-delay: calc(var(--i, 0) * 70ms); }
+}

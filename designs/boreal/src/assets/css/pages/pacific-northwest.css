@@ -1,0 +1,160 @@
+/* ================= Pacific Northwest =================
+   The sibling of the Alaska page, one zoom level in. It opens on a close-up of Puget Sound with the
+   Kent yard at its centre; then how a load comes off the truck, the product lines, and the lane
+   north. Shared pieces (.stage, .finder, .route__*, .legend, .map__*, .callout) keep their own rules;
+   everything here is prefixed pn-. */
+
+/* ---------- The opening: the stage under the masthead, as on the Alaska page ---------- */
+.pn-open .hero__lede { max-width: 28em; }
+
+/* The white panel is the finder's shell: who to call, where the job is, and the way forward. */
+.pn-panel { display: grid; gap: .9rem; padding: 1rem; }
+.pn-panel .route__yard { padding-block: .6rem; }
+.pn-panel__towns .finder__label { margin-bottom: .55rem; }
+.pn-panel__towns .finder__label span { font-weight: 400; color: var(--slate); }
+.pn-chips { display: flex; flex-wrap: wrap; gap: .3rem; list-style: none; }
+.pn-chips .chip { height: 32px; text-decoration: none; transition: background var(--fast), color var(--fast); }
+.pn-chips .chip:hover, .pn-chips .chip:focus-visible, .pn-chips .chip[data-on] { background: var(--ink); color: #fff; }
+.pn-panel .route__note { margin-top: -.2rem; }
+
+/* ---------- The close-up: land, the lines from Kent, the towns ---------- */
+.pn-plate__land { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.pn-plate__grat { fill: none; stroke: #E3E7E6; stroke-opacity: .07; }
+.pn-plate__shore { fill: none; stroke: #C9D2D2; stroke-opacity: .05; stroke-width: 18; stroke-linejoin: round; }
+.pn-plate__ground { fill: url(#pn-land); stroke: #8FA2A6; stroke-width: 1; stroke-linejoin: round; }
+.pn-spoke { fill: none; stroke: #fff; stroke-opacity: .7; stroke-width: 1.3px; vector-effect: non-scaling-stroke; stroke-dasharray: 6 7; stroke-linecap: round; transition: stroke-opacity var(--fast), stroke var(--fast); }
+.pn-spoke[data-on] { stroke: var(--yellow); stroke-opacity: 1; stroke-width: 2px; stroke-dasharray: none; }
+.pn-plate__lane { stroke-width: 2.8px; vector-effect: non-scaling-stroke; }
+.pn-town { display: block; }
+.pn-town .map__name { font-size: .75rem; color: rgba(240, 242, 241, .92); }
+.pn-town::before { background: #fff; opacity: .95; }
+.pn-town:hover .map__name, .pn-town[data-on] .map__name { color: #fff; }
+.pn-town[data-on]::before { transform: scale(2); background: var(--yellow); opacity: 1; }
+/* The lane leaves the frame at the top: this is where it says so. */
+/* A 40px link around a small tag, so the tag is easy to hit without shouting over the map. */
+.pn-exit { display: inline-flex; align-items: center; height: 40px; color: #fff; text-decoration: none; white-space: nowrap; z-index: 3; }
+.pn-exit span { display: inline-flex; align-items: center; gap: .3rem; height: 26px; padding: 0 .55rem 0 .4rem; border-radius: 9px; background: rgba(14, 14, 12, .84); border: 1px solid rgba(255, 255, 255, .16); font-size: .75rem; font-weight: 500; }
+.pn-exit .i { color: var(--yellow); }
+.pn-exit:hover span { border-color: var(--yellow); background: var(--night); }
+@media (prefers-reduced-motion: no-preference) {
+  .js .pn-spoke { opacity: 0; animation: pn-fade .5s var(--ease) forwards; animation-delay: calc(1.1s + var(--i, 0) * 60ms); }
+}
+@keyframes pn-fade { to { opacity: 1; } }
+
+@media (min-width: 43.75em) and (max-width: 68.6875em) {
+  /* The words come first in the markup, so the keyboard meets them first; the map still sits on top. */
+  .pn-sound { display: flex; flex-direction: column; align-items: stretch; }
+  .pn-sound .stage__map { order: 1; }
+  .pn-sound .stage__ui { order: 2; }
+  .pn-sound .legend { order: 3; }
+  .pn-open .stage__ui { margin-top: 0; }
+  .pn-panel { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 1.25rem; align-items: start; }
+  .pn-panel .route__yard, .pn-panel .btn--block { grid-column: 1; }
+  .pn-panel__towns { grid-column: 2; grid-row: 1 / span 3; }
+  .pn-panel .route__note { grid-column: 1; }
+}
+/* A band this narrow has no room east of Kent: the tag goes on the other side, the number on its own line. */
+@media (min-width: 43.75em) and (max-width: 56.1875em) {
+  .pn-plate .map__yard > .map__tag { left: auto; right: 17px; }
+}
+@media (max-width: 43.6875em) {
+  .pn-sound { --pad: 1.1rem; }
+  /* The crop is map x 960–1780, y 20–1000 of the 1800 × 1000 canvas: the towns, nothing wasted. */
+  .pn-sound .stage__map { aspect-ratio: 820 / 980; margin-top: .75rem; }
+  .pn-sound .stage__map .pn-plate { position: absolute; width: 219.5%; height: auto; aspect-ratio: 1.8; left: -117.07%; top: -2.04%; -webkit-mask-image: linear-gradient(to bottom, transparent 2%, #000 9%, #000 90%, transparent 100%); mask-image: linear-gradient(to bottom, transparent 2%, #000 9%, #000 90%, transparent 100%); }
+  .pn-town .map__name { display: block; }
+  .pn-sound .finder { margin-top: -.75rem; }
+  .pn-chips { gap: .35rem; }
+}
+@media (max-width: 43.6875em), (pointer: coarse) {
+  .pn-chips .chip { height: 40px; padding-inline: .85rem; font-size: .875rem; }
+}
+
+/* ---------- Two ways off the truck ---------- */
+.pn-gear { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem; }
+.pn-unit { display: flex; flex-direction: column; border-radius: var(--r-xl); background: var(--white); box-shadow: var(--sh-1); }
+.pn-unit__media { --ring: var(--yellow); position: relative; flex: none; overflow: hidden; height: clamp(15rem, 25vw, 21rem); margin: .5rem .5rem 0; border-radius: calc(var(--r-xl) - .5rem); background: radial-gradient(70% 60% at 80% -10%, rgba(227, 231, 230, .1), transparent 70%), var(--night); }
+.pn-fig { position: absolute; left: 1rem; top: .75rem; width: calc(100% - 2rem); height: calc(100% - 1.5rem); }
+.pn-unit__body { display: flex; flex-direction: column; flex: 1; padding: 1.5rem; }
+.pn-unit__title { font-size: clamp(1.5rem, 1.3rem + .7vw, 1.875rem); font-weight: 500; letter-spacing: -.03em; line-height: 1.1; }
+.pn-unit__text { margin: .85rem 0 0; max-width: 33em; font-size: 1.0625rem; line-height: 1.5; color: var(--slate); }
+@media (max-width: 53.75em) { .pn-gear { grid-template-columns: minmax(0, 1fr); gap: .75rem; } }
+@media (max-width: 43.6875em) {
+  .pn-unit__media { height: auto; aspect-ratio: 16 / 10; margin: .4rem .4rem 0; }
+  .pn-unit__body { padding: 1.15rem 1.1rem 1.25rem; }
+  .pn-unit__text { font-size: 1rem; }
+  .pn-fig { left: .5rem; top: .35rem; width: calc(100% - 1rem); height: calc(100% - .7rem); }
+}
+
+/* ---------- The product lines ---------- */
+.pn-load { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(2rem, 5vw, 5rem); align-items: start; }
+.pn-load__head { position: sticky; top: calc(var(--mast) + 2rem); }
+.pn-load__head .lede { margin-top: 1rem; }
+.pn-load__more { margin: 1.25rem 0 0; max-width: 34em; color: var(--slate); }
+.pn-load__more b { color: var(--ink); font-weight: 600; }
+.pn-load__proof { display: flex; align-items: center; gap: .9rem; margin: 1.75rem 0 0; }
+.pn-load__proof img { flex: none; width: 72px; height: 72px; border-radius: 14px; object-fit: cover; object-position: 50% 12%; filter: saturate(.86); }
+.pn-load__proof figcaption { display: grid; gap: .15rem; font-size: .875rem; line-height: 1.35; color: var(--slate); }
+.pn-load__proof figcaption span { font-family: var(--mono); font-size: var(--t-micro); font-weight: 500; letter-spacing: .06em; text-transform: uppercase; }
+.pn-bill { border-radius: var(--r-xl); background: var(--white); box-shadow: var(--sh-1); overflow: hidden; }
+.pn-bill__top { display: flex; align-items: center; gap: .9rem; padding: 1rem 1.25rem; border-bottom: 1px solid var(--mist); }
+.pn-bill__lab { margin: 0; font-family: var(--mono); font-size: var(--t-micro); font-weight: 500; letter-spacing: .06em; text-transform: uppercase; color: var(--slate); }
+.pn-bill__top .link { margin-left: auto; font-size: .9375rem; }
+.pn-bill__rows { list-style: none; }
+.pn-row { position: relative; display: grid; grid-template-columns: 2.25rem minmax(0, 1fr) auto; align-items: center; gap: .85rem; padding: .8rem 1rem .8rem 1.25rem; border-bottom: 1px solid var(--mist); transition: background var(--fast); }
+.pn-row:last-child { border-bottom: 0; }
+.pn-row:hover { background: var(--snow); }
+.pn-row__no { font-family: var(--mono); font-size: var(--t-micro); font-weight: 500; color: var(--slate); }
+.pn-row__name { font-size: 1.0625rem; font-weight: 600; letter-spacing: -.015em; line-height: 1.25; text-decoration: none; }
+.pn-row__name::after { content: ''; position: absolute; inset: 0; }
+.pn-row:hover .pn-row__name { text-decoration: underline; text-decoration-thickness: 1px; }
+.pn-row__name:focus-visible { outline: none; }
+.pn-row__name:focus-visible::after { outline: 2px solid var(--ring); outline-offset: -3px; border-radius: 4px; }
+.pn-row__items { margin: .2rem 0 0; font-size: .875rem; line-height: 1.4; color: var(--slate); }
+.pn-row__quote { position: relative; z-index: 1; display: inline-flex; align-items: center; min-height: 40px; padding: 0 .85rem; border-radius: 10px; background: var(--ice); font-size: .875rem; font-weight: 500; text-decoration: none; transition: background var(--fast), color var(--fast); }
+.pn-row__quote:hover { background: var(--ink); color: #fff; }
+@media (max-width: 62.4375em) {
+  .pn-load { grid-template-columns: minmax(0, 1fr); }
+  .pn-load__head { position: static; }
+}
+@media (max-width: 43.6875em) {
+  .pn-bill__top { padding: .9rem 1rem; flex-wrap: wrap; }
+  .pn-row { grid-template-columns: minmax(0, 1fr) auto; padding: .8rem .85rem .8rem 1rem; }
+  .pn-row__no { display: none; }
+}
+
+/* ---------- Alaska: the whole corridor ---------- */
+.section--ice + .pn-north { margin-top: var(--inset); }
+.pn-north__lede { margin: 1rem 0 0; font-size: 1.0625rem; line-height: 1.5; color: var(--frost); }
+.pn-north__points { list-style: none; margin-top: 1.25rem; border-top: 1px solid var(--night-line); }
+.pn-north__points a { display: flex; align-items: center; gap: .6rem; min-height: 46px; border-bottom: 1px solid var(--night-line); color: #fff; font-size: .9375rem; font-weight: 500; text-decoration: none; }
+.pn-north__points a > .i:first-child { color: var(--glacier); }
+.pn-north__points a > .i:last-child { margin-left: auto; color: var(--haze); transition: transform var(--ui) var(--ease); }
+.pn-north__points a:hover > .i:last-child { transform: translateX(3px); }
+.pn-north__points a:hover { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .22em; }
+.pn-north__stage .actions { margin-top: 1.5rem; }
+@media (max-width: 68.6875em) {
+  .pn-north__stage { display: flex; flex-direction: column; align-items: stretch; }
+  .pn-north__stage .stage__ui { order: 1; display: block; position: static; width: auto; margin: 0; padding: 0; }
+  .pn-north__stage .stage__copy { position: static; width: auto; padding: var(--pad) var(--pad) 0; }
+  .pn-north__stage .stage__map { order: 2; }
+  .pn-north__stage .legend { order: 3; }
+}
+@media (min-width: 43.75em) and (max-width: 68.6875em) {
+  .pn-north__points { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: 1.25rem; }
+}
+@media (max-width: 43.6875em) {
+  .pn-north__stage .stage__map { margin-top: 0; }
+  .pn-north__stage .actions .btn { flex: 1 1 100%; }
+}
+
+/* ---------- The Kent yard: one card ---------- */
+.pn-yard__grid { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); gap: 2rem clamp(2rem, 5vw, 5rem); align-items: start; }
+.pn-yard__head .lede { margin-top: 1.1rem; }
+.pn-yard__more { margin: 1.75rem 0 0; border-top: 1px solid var(--mist); font-size: .9375rem; }
+.pn-yard__more > div { display: grid; grid-template-columns: 5.5rem minmax(0, 1fr); gap: .75rem; padding: .6rem 0; border-bottom: 1px solid var(--mist); }
+.pn-yard__more dt { padding-top: .2rem; font-family: var(--mono); font-size: var(--t-micro); font-weight: 500; letter-spacing: .06em; text-transform: uppercase; color: var(--slate); }
+.pn-yard__more dd { margin: 0; overflow-wrap: anywhere; }
+.pn-yard__more a { display: inline-block; padding-block: .1rem; }
+@media (pointer: coarse) { .pn-yard__more a { padding-block: .6rem; margin-block: -.45rem; } }
+@media (max-width: 62.4375em) { .pn-yard__grid { grid-template-columns: minmax(0, 1fr); } }

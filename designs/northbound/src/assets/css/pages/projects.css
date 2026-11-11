@@ -1,0 +1,84 @@
+/* ==========================================================================
+   Projects: kinds of work, sector by sector. No project list exists, so the
+   page shows what the lists are for: each kind of work, and what goes on it.
+   ========================================================================== */
+
+/* ---------- The sector filter ---------- */
+.pjx-intro { padding-bottom: calc(var(--section) * .45); }
+.pjx-tools { display: grid; gap: 1rem; }
+.pjx-filters, .pjx-jump { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .5rem; list-style: none; margin: 0; padding: 0; }
+.pjx-filters button, .pjx-jump a {
+  display: flex; justify-content: space-between; align-items: center; gap: .75rem; width: 100%;
+  min-height: 3rem; padding: .5rem .9rem; background: transparent; color: var(--ink);
+  border: 1px solid var(--rule-2); border-radius: var(--r-1);
+  font: 400 var(--t-label)/1.3 var(--mono); letter-spacing: .08em; text-transform: uppercase; text-align: left; text-decoration: none;
+  transition: background-color var(--d-1), color var(--d-1), border-color var(--d-1);
+}
+.pjx-filters button:first-child { grid-column: 1 / -1; }
+@media (max-width: 359px) { .pjx-filters button, .pjx-jump a { padding-inline: .6rem; gap: .4rem; letter-spacing: .04em; } }
+.pjx-filters b, .pjx-jump__no { font-weight: 400; color: var(--ink-3); }
+.pjx-filters button:hover, .pjx-jump a:hover { border-color: var(--ink); background: var(--paper-2); }
+.pjx-filters button[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.pjx-filters button[aria-pressed="true"] b { color: var(--glacier); }
+.pjx-status { font: 400 var(--t-caption)/1.4 var(--mono); color: var(--ink-3); }
+/* Without JavaScript the filter cannot work, so the same row becomes links to each sector. */
+.no-js .pjx-filters, .js .pjx-jump { display: none; }
+.pjx-jump a { justify-content: flex-start; }
+@media (min-width: 700px) {
+  .pjx-filters, .pjx-jump { display: flex; flex-wrap: wrap; }
+  .pjx-filters button, .pjx-jump a { width: auto; min-height: 2.75rem; padding-inline: 1rem; }
+}
+@media (min-width: 1100px) {
+  .pjx-tools { grid-template-columns: minmax(0, 1fr) auto; align-items: center; }
+  .pjx-status { text-align: right; }
+}
+
+/* ---------- A sector ---------- */
+.pjx-sector { padding-block: calc(var(--section) * .55) calc(var(--section) * .75); }
+.pjx-sector.section--ice { padding-block: var(--section); }
+.pjx-sector__bar { margin-bottom: clamp(1.5rem, 3.2vw, 3rem); }
+.pjx-sector__n { margin-left: auto; }
+.pjx-sector__head { display: grid; gap: 1.5rem var(--col-gap); margin-bottom: clamp(2.5rem, 5vw, 4.5rem); }
+.pjx-sector__name { font: 350 clamp(2.75rem, 1.35rem + 6vw, 6.5rem)/.92 var(--serif); letter-spacing: -.035em; }
+.pjx-sector__tail { margin-top: clamp(.6rem, 1.2vw, 1rem); font: italic 330 var(--t-h3)/1.1 var(--serif); letter-spacing: -.02em; color: var(--ink-2); }
+.pjx-sector__side { display: grid; gap: 1.25rem; justify-items: start; }
+@media (min-width: 900px) { .pjx-sector__head { grid-template-columns: minmax(0, 7.4fr) minmax(0, 4.6fr); align-items: end; } }
+
+/* The turn before the last sector: three sectors on the road system, then the one beyond it. */
+.pjx-turn { padding-top: calc(var(--section) * .25); }
+
+/* ---------- A kind of work ---------- */
+.pjx-kinds { display: grid; gap: 3.5rem var(--col-gap); }
+.pjx-kind { display: grid; gap: 1.1rem; align-content: start; min-width: 0; scroll-margin-top: calc(var(--mast) + 1.5rem); }
+.pjx-kind__body { display: grid; gap: .75rem; justify-items: start; }
+.pjx-kind__real { color: var(--ink); }
+.pjx-kind__title { font: 400 clamp(1.625rem, 1.3rem + 1.4vw, 2.5rem)/1.05 var(--serif); letter-spacing: -.018em; text-wrap: balance; }
+.pjx-kind__scope { max-width: 32em; color: var(--ink-2); }
+.pjx-kind__list { justify-self: stretch; display: grid; gap: .6rem; max-width: 36rem; margin-top: .75rem; }
+/* What goes on the list for this kind of work. */
+.pjx-kind__list ol { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--ink); }
+.pjx-kind__list li > * { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: baseline; column-gap: .4rem; padding: .7rem 0 .75rem; border-bottom: 1px dashed var(--rule-2); text-decoration: none; }
+.pjx-kind__item { font: 480 1.125rem/1.2 var(--serif); letter-spacing: -.004em; }
+.pjx-kind__go { align-self: center; color: var(--ink-3); transition: translate var(--d-2) var(--ease), color var(--d-1); }
+.pjx-kind__list a:hover .pjx-kind__go, .pjx-kind__list a:focus-visible .pjx-kind__go { translate: .3rem 0; color: var(--ink); }
+.pjx-kind__list a:hover .pjx-kind__item { text-decoration: underline; text-decoration-color: var(--yellow); text-decoration-thickness: 2px; text-underline-offset: .2em; }
+.pjx-kind__quote { margin-top: .5rem; }
+/* Phones and tablets: the first of a pair runs edge to edge, the second sits in from the left. */
+@media (max-width: 899px) {
+  .pjx-kind--wide .fig { margin-inline: calc(var(--gutter) * -1); }
+  .pjx-kind--wide .fig__cap { padding-inline: var(--gutter); }
+  .pjx-kind--tall .fig { width: min(76%, 26rem); margin-left: auto; }
+}
+/* A tablet has the width for the tall photograph and its words side by side. */
+@media (min-width: 600px) and (max-width: 899px) {
+  .pjx-kind--tall { grid-template-columns: minmax(0, 1fr) minmax(0, 22rem); column-gap: var(--col-gap); align-items: start; }
+  .pjx-kind--tall .fig { grid-column: 2; grid-row: 1; width: auto; margin-left: 0; }
+  .pjx-kind--tall .pjx-kind__body { grid-column: 1; grid-row: 1; }
+}
+@media (min-width: 900px) {
+  .pjx-kinds { grid-template-columns: repeat(12, minmax(0, 1fr)); grid-auto-flow: row dense; row-gap: 5rem; align-items: start; }
+  .pjx-kind--wide { grid-column: 1 / span 7; }
+  .pjx-kind--tall { grid-column: 9 / span 4; margin-top: clamp(3rem, 7vw, 7rem); }
+  .pjx-sector--flip .pjx-kind--wide { grid-column: 6 / span 7; }
+  .pjx-sector--flip .pjx-kind--tall { grid-column: 1 / span 4; }
+}

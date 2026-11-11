@@ -1,0 +1,80 @@
+/* Simple: white, black, system font, one yellow button. Loaded last; overrides the drafting look. */
+:root {
+  --paper: #fff; --paper-2: #fff; --sheet: #fff; --ink: #000; --ink-2: #111; --ink-3: #444;
+  --rule: #ccc; --rule-2: #888; --blue: #000;
+  --font: system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+  --mono: var(--font);
+  --fs-body: 1.125rem; --fs-lede: 1.25rem; --fs-label: 1rem; --fs-data: 1rem;
+  --fs-display: clamp(2rem, 1.4rem + 3vw, 3.25rem); --fs-h2: clamp(1.75rem, 1.3rem + 2vw, 2.5rem);
+  --section: 3rem; --radius: 0;
+  --t-ui: 0s; --t-row: 0s; --t-draw: 0s;
+}
+*, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+body { line-height: 1.6; font-size: 1.125rem; }
+.display, .h2, .h3 { letter-spacing: 0; line-height: 1.15; }
+.display em, .h2 em, .hl { background: none; }
+.label { text-transform: none; letter-spacing: 0; font-size: 1rem; }
+.num { font-family: var(--font); }
+.btn { background: #fff; color: #000; border: 2px solid #000; border-radius: 0; box-shadow: none; font-weight: 700; font-size: 1.125rem; min-height: 3rem; padding: .75rem 1.25rem; }
+.btn:hover { background: #eee; }
+.btn--line, .btn--dark { background: #fff; color: #000; }
+.masthead__cta, .simple-top .btn:not(.btn--line), .tb__cta .btn:not(.btn--line), .drawer__cta .btn:not(.btn--line), .actionbar__btn--primary { background: var(--yellow); color: #000; border-color: #000; }
+.utility, .masthead, .footer, .actionbar, .drawer, .sheet { background: #fff !important; color: #000 !important; }
+.utility { border-bottom: 1px solid #000; }
+.masthead { border-bottom: 1px solid #000; }
+.footer { border-top: 2px solid #000; }
+.footer *, .utility * { color: #000; }
+.simple-top { padding: 2.5rem 0 1.5rem; }
+.simple-sec { padding: 1.5rem 0 2rem; border-top: 1px solid var(--rule); }
+.simple-h { margin: 2rem 0 1rem; font-size: 1.5rem; }
+.simple-sec .simple-h { margin-top: 0; }
+.hero__title { max-width: 20ch; margin-bottom: 1rem; }
+.simple-top .actions { display: flex; flex-wrap: wrap; gap: 1rem; margin: 1.5rem 0 .5rem; }
+.simple-top .board__rows { list-style: none; margin: 0; padding: 0; border-top: 1px solid #000; }
+.simple-top .board__rows li { border-bottom: 1px solid #000; }
+.simple-top .board__row { display: grid; grid-template-columns: 1fr auto; gap: .25rem 1rem; align-items: center; padding: 1rem 0; text-decoration: none; min-height: 4rem; }
+.simple-top .board__yard { font-size: 1.25rem; font-weight: 600; }
+.simple-top .board__status { grid-row: 2; font-size: 1rem; }
+.simple-top .board__num { grid-row: 1 / 3; grid-column: 2; font-size: clamp(1.5rem, 1rem + 2.5vw, 2.25rem); font-weight: 700; text-decoration: underline; }
+.simple-list { list-style: none; margin: 0 0 1rem; padding: 0; columns: 18rem; column-gap: 2rem; }
+.simple-list li { padding: .4rem 0; break-inside: avoid; }
+.simple-list a, .link { text-decoration: underline; font-weight: 600; }
+:focus-visible { outline: 3px solid #000; outline-offset: 3px; box-shadow: 0 0 0 6px #fff; }
+.mega { display: none !important; }
+.simple-top .board__row, .simple-top .board__row * { color: #000 !important; }
+.hero__title, h1.display { font-size: clamp(2rem, 1.4rem + 3vw, 3.25rem) !important; line-height: 1.12 !important; max-width: 22ch; }
+.btn, .masthead__call, .masthead__cta, .nav__link, .actionbar__btn { text-transform: none !important; letter-spacing: 0 !important; }
+.utility__time, .board__live { display: none !important; }
+.utility__city { font-weight: 600; }
+.simple-top .board__status * { font-size: 1rem; }
+.simple-top .board__row { grid-template-columns: minmax(0, 1fr) auto !important; grid-template-areas: "yard num" "status num" !important; row-gap: .15rem; padding: 1rem 0 !important; background: none !important; min-height: 4rem; }
+.simple-top .board__yard { grid-area: yard !important; text-transform: none; white-space: normal; font-size: 1.25rem; }
+.simple-top .board__status { grid-area: status !important; justify-self: start !important; }
+.simple-top .board__num { grid-area: num !important; font-size: clamp(1.375rem, 1rem + 2vw, 2.25rem) !important; white-space: nowrap; }
+.simple-top .board__row:hover { background: #f2f2f2 !important; }
+@media (max-width: 23.375em) { .simple-top .board__num { font-size: 1.125rem !important; } .simple-top .board__row { gap: .25rem .5rem; } }
+.simple-top .board__yard, .simple-top .board__status { justify-self: start !important; width: fit-content; }
+@media (min-width: 64em) {
+  .simple-top .wrap { display: grid; grid-template-columns: 1fr 1fr; column-gap: 4rem; align-items: start; }
+  .simple-top .wrap > h1, .simple-top .wrap > .lede, .simple-top .wrap > .actions { grid-column: 1; }
+  .simple-top .wrap > .simple-h, .simple-top .wrap > .board__rows { grid-column: 2; }
+  .simple-top .wrap > .simple-h { grid-row: 1; margin-top: .5rem; }
+  .simple-top .wrap > .board__rows { grid-row: 2 / 5; align-self: start; }
+  .simple-top { padding-top: 1.5rem; }
+}
+.pidx-tels a, .pln-tels a { flex-wrap: wrap !important; }
+.pidx-tels .num, .pln-tels .num { font-size: 1.0625rem !important; }
+.pidx-tels-city { min-width: 0; font-size: .9375rem !important; }
+@media (min-width: 64em) and (max-height: 800px) {
+  .simple-top .board__row { padding: .5rem 0 !important; min-height: 3.25rem; }
+  .simple-top { padding-top: .75rem; }
+  h1.display { font-size: 2.5rem !important; }
+}
+
+/* Tablet widths: the quote button lives in the action bar and the menu, so the masthead keeps only Call and Menu
+   (a wider system font would otherwise push the row past the screen). */
+@media (max-width: 62.5em) { .masthead__cta { display: none; } .masthead__row, .masthead__acts { flex-wrap: wrap; min-width: 0; } }
+
+/* Wider system fonts: let the yard name give way to the phone number rather than run under it. */
+.simple-top .board__yard, .simple-top .board__yard * { min-width: 0; overflow-wrap: anywhere; white-space: normal !important; }
+@media (min-width: 62.5em) and (max-width: 75em) { .simple-top .board__num { font-size: 1.5rem !important; } }

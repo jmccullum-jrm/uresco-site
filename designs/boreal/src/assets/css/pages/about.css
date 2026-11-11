@@ -1,0 +1,133 @@
+/* ================= About =================
+   A new customer's page: the company on one sheet, the mission a line at a time with what it means
+   on a job, and the reach as a ruler of latitude. Everything is prefixed ab-.
+   The not-found page shares this file (prefix nf-) because its module is about.mjs. */
+
+/* ---------- The company, on one sheet ---------- */
+.ab-sheet { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(2rem, 6vw, 6rem); align-items: start; }
+.ab-sheet__copy .lede { margin-top: 1.25rem; }
+.ab-own__lab { margin: 2rem 0 .6rem; font-family: var(--mono); font-size: var(--t-micro); font-weight: 500; letter-spacing: .06em; text-transform: uppercase; color: var(--slate); }
+.ab-own { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .75rem; list-style: none; max-width: 30rem; }
+.ab-own figure { margin: 0; }
+.ab-own img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: var(--r-md); filter: saturate(.86); }
+.ab-own figcaption { margin-top: .45rem; font-family: var(--mono); font-size: var(--t-micro); font-weight: 500; line-height: 1.35; letter-spacing: .03em; text-transform: uppercase; color: var(--slate); }
+.ab-card { border-radius: var(--r-xl); background: var(--white); box-shadow: var(--sh-1); padding: .5rem; }
+.ab-card__bar { --ring: var(--yellow); display: flex; justify-content: space-between; gap: 1rem; padding: .85rem 1.1rem; border-radius: calc(var(--r-xl) - .5rem); color: var(--haze); background: radial-gradient(80% 140% at 85% -40%, rgba(227, 231, 230, .12), transparent 70%), var(--night); font-family: var(--mono); font-size: var(--t-micro); font-weight: 500; letter-spacing: .06em; text-transform: uppercase; }
+.ab-card__bar span:last-child { color: #fff; }
+.ab-card__rows { margin: .25rem 0 0; padding-inline: 1.1rem; }
+.ab-card__rows > div { display: grid; grid-template-columns: 8.5rem minmax(0, 1fr); gap: .75rem; padding: .78rem 0; border-bottom: 1px solid var(--mist); }
+.ab-card__rows > div:last-child { border-bottom: 0; }
+.ab-card__rows dt { padding-top: .22rem; font-family: var(--mono); font-size: var(--t-micro); font-weight: 500; letter-spacing: .06em; text-transform: uppercase; color: var(--slate); }
+.ab-card__rows dd { margin: 0; font-size: 1.0625rem; line-height: 1.4; letter-spacing: -.01em; }
+.ab-card__foot { padding: .5rem 1.1rem 1rem; }
+@media (max-width: 62.4375em) { .ab-sheet { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 43.6875em), (pointer: coarse) {
+  .ab-card__rows dd a { display: inline-block; padding: .6rem .2rem; margin: -.45rem -.2rem; }
+}
+@media (max-width: 43.6875em) {
+  .ab-card__rows { padding-inline: .75rem; }
+  .ab-card__rows > div { grid-template-columns: minmax(0, 1fr); gap: .15rem; padding: .7rem 0; }
+  .ab-card__foot { padding: .5rem .75rem .9rem; }
+  .ab-own figcaption { letter-spacing: .02em; font-size: .75rem; text-transform: none; font-family: var(--font); font-weight: 400; }
+}
+
+/* ---------- The mission, in three parts ---------- */
+.ab-promises { list-style: none; border-top: 1px solid var(--fog); }
+.ab-promise { display: grid; grid-template-columns: 3rem minmax(0, 6fr) minmax(0, 5fr); gap: 1rem clamp(1.5rem, 4vw, 4rem); align-items: start; padding-block: clamp(1.75rem, 1.25rem + 1.6vw, 2.75rem); border-bottom: 1px solid var(--fog); }
+.ab-promise__no { padding-top: .55rem; font-family: var(--mono); font-size: var(--t-micro); font-weight: 500; letter-spacing: .06em; color: var(--slate); }
+.ab-promise__line { font-size: clamp(1.5rem, 1.2rem + 1.15vw, 2.25rem); font-weight: 500; line-height: 1.12; letter-spacing: -.03em; }
+.ab-promise__line em { font-style: normal; color: var(--slate); }
+.ab-promise__proof p { margin: 0 0 .9rem; color: var(--slate); }
+.ab-promises__end { margin: clamp(1.5rem, 1rem + 2vw, 2.5rem) 0 0; max-width: 30em; font-size: var(--t-lede); line-height: 1.45; color: var(--slate); }
+.ab-promises__end b { color: var(--ink); font-weight: 600; }
+@media (max-width: 53.75em) {
+  .ab-promise { grid-template-columns: 2rem minmax(0, 1fr); }
+  .ab-promise__proof { grid-column: 2; }
+}
+
+/* ---------- Remote delivery: three yards on a ruler of latitude ---------- */
+.section--ice + .ab-reach { margin-top: var(--inset); }
+.ab-reach { padding-inline: var(--edge); }
+.ab-reach__card { --ring: var(--yellow); position: relative; isolation: isolate; overflow: hidden; padding: clamp(1.75rem, 1rem + 3vw, 4rem) var(--column) clamp(2rem, 1.25rem + 2.6vw, 3.75rem); border-radius: var(--r-2xl); color: #fff; background: radial-gradient(52% 70% at 78% -12%, rgba(227, 231, 230, .1), transparent 72%), var(--night); }
+.ab-reach__card .eyebrow, .ab-reach__card .h2 em { color: var(--haze); }
+.ab-reach__head { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 1.5rem clamp(2rem, 6vw, 6rem); align-items: end; }
+.ab-reach__lede { margin: 0; max-width: 30em; font-size: var(--t-lede); line-height: 1.5; color: var(--frost); }
+.ab-ruler { --rule: 13.5rem; margin-top: clamp(2.5rem, 1.5rem + 3vw, 4.5rem); }
+/* The yards stand on the line; each mark's dot sits exactly on it. */
+.ab-ruler__yards { position: relative; height: var(--rule); list-style: none; }
+.ab-mark { position: absolute; left: var(--at); bottom: 0; display: grid; justify-items: start; gap: .15rem; padding-bottom: 1.35rem; }
+.ab-mark__dot { position: absolute; left: 0; bottom: -7px; width: 14px; height: 14px; border-radius: 50%; background: var(--yellow); box-shadow: 0 0 0 3px var(--night), 0 0 0 4.5px rgba(245, 184, 0, .55); z-index: 2; }
+.ab-mark::before { content: ''; position: absolute; left: 6.25px; top: 0; bottom: 6px; width: 1.5px; background: linear-gradient(180deg, transparent, var(--night-line) 40%); }
+.ab-mark__lat { padding-left: 1.1rem; font-family: var(--mono); font-size: var(--t-micro); font-weight: 500; letter-spacing: .06em; color: var(--haze); }
+.ab-mark__name { padding-left: 1.1rem; font-size: 1.5rem; font-weight: 500; letter-spacing: -.03em; line-height: 1.15; }
+.ab-mark__role { padding-left: 1.1rem; font-size: .875rem; line-height: 1.3; color: var(--haze); }
+.ab-mark__tel { margin: .3rem 0 0 1.1rem; display: inline-flex; align-items: center; min-height: 40px; color: #fff; font-size: 1.0625rem; font-weight: 500; letter-spacing: -.02em; font-variant-numeric: tabular-nums; text-decoration: none; }
+.ab-mark__tel:hover { text-decoration: underline; text-decoration-thickness: 2px; text-decoration-color: var(--yellow); text-underline-offset: .22em; }
+.ab-ruler__rule { position: relative; height: 2.25rem; }
+.ab-ruler__line { position: absolute; left: 1.72%; right: 2.8%; top: -1.4px; height: 2.8px; border-radius: 2px; background: var(--yellow); transform-origin: 0 50%; }
+.ab-ruler__grad { position: absolute; left: var(--at); top: .85rem; transform: translateX(-50%); font-family: var(--mono); font-size: var(--t-micro); font-weight: 500; letter-spacing: .04em; color: var(--haze); }
+.ab-ruler__grad::before { content: ''; position: absolute; left: 50%; top: -.85rem; width: 1px; height: .55rem; background: rgba(227, 231, 230, .32); }
+.ab-ruler__span { display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin: 1rem 0 0 var(--from); width: calc(var(--to) - var(--from)); padding-top: .8rem; border-top: 1px dashed rgba(227, 231, 230, .32); font-size: .9375rem; color: var(--frost); }
+.ab-ruler__span b { font-weight: 600; color: #fff; }
+.ab-ruler__mid { font-family: var(--mono); font-size: var(--t-micro); font-weight: 500; letter-spacing: .06em; text-transform: uppercase; color: var(--haze); }
+@media (prefers-reduced-motion: no-preference) {
+  .reveal-on .ab-ruler__line { transform: scaleX(0); animation: ab-draw 1.4s var(--ease-map) .2s forwards; animation-play-state: paused; }
+  .reveal-on .ab-ruler.is-in .ab-ruler__line { animation-play-state: running; }
+}
+@keyframes ab-draw { to { transform: scaleX(1); } }
+@media (max-width: 56.1875em) { .ab-reach__head { grid-template-columns: minmax(0, 1fr); align-items: start; } }
+/* Below 1100px the marks are too close to sit at their true latitudes: three equal columns on the line. */
+@media (max-width: 68.6875em) {
+  .ab-ruler { position: relative; }
+  .ab-ruler::before { content: ''; position: absolute; left: 0; right: 0; top: -1.4px; height: 2.8px; border-radius: 2px; background: var(--yellow); }
+  .ab-ruler__yards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; height: auto; padding-top: 1.1rem; }
+  .ab-mark { position: relative; left: auto; bottom: auto; padding-bottom: 0; }
+  .ab-mark::before { display: none; }
+  .ab-mark__dot { left: 0; bottom: auto; top: calc(-1.1rem - 7px); }
+  .ab-mark__lat, .ab-mark__name, .ab-mark__role, .ab-mark__tel { padding-left: 0; margin-left: 0; }
+  .ab-ruler__rule { display: none; }
+  .ab-ruler__span { margin: 1.5rem 0 0; width: auto; }
+}
+/* On a phone the line runs down the left edge. */
+@media (max-width: 43.6875em) {
+  .ab-reach__card { padding: 1.5rem 1.1rem 1.5rem; }
+  .ab-ruler { padding-left: 1.75rem; }
+  .ab-ruler::before { left: 6px; right: auto; top: .5rem; bottom: .5rem; width: 2.8px; height: auto; }
+  .ab-ruler__yards { grid-template-columns: minmax(0, 1fr); gap: 1.5rem; padding-top: 0; }
+  .ab-mark__dot { left: -1.75rem; top: .1rem; }
+  .ab-mark__tel { font-size: 1.125rem; }
+  .ab-ruler__span { flex-wrap: wrap; gap: .3rem 1rem; }
+  .ab-ruler__mid { order: 3; flex-basis: 100%; }
+}
+
+/* ---------- Not found ---------- */
+.nf { padding-block: clamp(1.5rem, 1rem + 2vw, 3rem) clamp(2.5rem, 1.5rem + 3vw, 4.5rem); }
+.nf__grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: clamp(2rem, 5vw, 5rem); align-items: center; }
+.nf__copy { padding-block: 1rem; }
+.nf__copy .display em { font-style: normal; color: var(--slate); }
+.nf__stage { display: block; margin: 0; min-height: 0; aspect-ratio: 1060 / 780; }
+.nf__stage::after { display: none; }
+.nf__stage .stage__map { position: absolute; inset: 0; width: auto; height: auto; transform: none; margin: 0; aspect-ratio: auto; overflow: hidden; }
+.nf__stage .stage__map .map { position: absolute; width: 169.8%; height: auto; aspect-ratio: 1.8; left: -69.8%; top: -9%; -webkit-mask-image: none; mask-image: none; }
+.nf__rows { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: clamp(2rem, 5vw, 5rem); margin-top: clamp(2rem, 1.25rem + 2vw, 3.5rem); }
+.nf__yards ul { list-style: none; border-top: 1px solid var(--mist); }
+.nf__yards li { display: flex; justify-content: space-between; align-items: center; gap: .75rem; padding: .7rem 0; border-bottom: 1px solid var(--mist); }
+.nf__who { display: flex; flex-wrap: wrap; align-items: center; gap: .1rem .6rem; }
+.nf__who b { font-size: 1.125rem; font-weight: 600; letter-spacing: -.02em; }
+.nf__who small { flex-basis: 100%; font-size: .875rem; color: var(--slate); }
+.nf__tel { display: inline-flex; align-items: center; gap: .45rem; min-height: 44px; padding: 0 .85rem; border-radius: 12px; background: var(--yellow); color: var(--ink); font-weight: 500; font-variant-numeric: tabular-nums; text-decoration: none; white-space: nowrap; box-shadow: inset 0 1px 0 rgba(255, 255, 255, .4), 0 1px 2px rgba(14, 14, 12, .18); }
+.nf__tel:hover { background: var(--yellow-hi); }
+.nf__links ul { list-style: none; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 1.25rem; border-top: 1px solid var(--mist); }
+.nf__links li { border-bottom: 1px solid var(--mist); }
+.nf__links a { display: flex; justify-content: space-between; align-items: center; min-height: 48px; font-weight: 500; text-decoration: none; }
+.nf__links a .i { color: var(--slate); transition: transform var(--ui) var(--ease); }
+.nf__links a:hover .i { transform: translateX(3px); }
+.nf__links a:hover { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .22em; }
+@media (max-width: 62.4375em) {
+  .nf__grid, .nf__rows { grid-template-columns: minmax(0, 1fr); }
+  .nf__copy { padding: 0; }
+}
+@media (max-width: 43.6875em) {
+  .nf__stage .map__dest .map__tag--dest { left: 16px; right: auto; top: 50%; bottom: auto; transform: translateY(-50%); }
+  .nf__copy .actions .btn { flex: 1 1 100%; }
+}

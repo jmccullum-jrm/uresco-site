@@ -1,0 +1,99 @@
+/* ==========================================================================
+   Paper. The credit application prints as a two-page Letter form someone can
+   fill in by hand and sign: no chrome, no colour fields, square boxes to tick.
+   Print ignores backgrounds by default, so every line here is a border.
+   ========================================================================== */
+
+@page { size: letter; margin: .5in .55in; }
+
+@media print {
+  :root { --ink: #000; --ink-2: #000; --ink-3: #333; --line: #000; }
+  html, body { background: #fff; color: #000; }
+  body { font-size: 10pt; line-height: 1.3; }
+  .skip { display: none; }
+  /* Nothing is left waiting for a reveal. */
+  .rv, .rv-img, .rv-img img { opacity: 1 !important; transform: none !important; clip-path: none !important; scale: 1 !important; }
+  a { text-decoration: none; }
+
+  /* Only the form goes on paper. */
+  .fp-hero, .fp-close, .ac-what, .fp-side, .ac-applyhead, .form__foot, .form__restored, .form__warn, .notice, .fp-screen-only, .err, .fp-dial, .drop, .files, .fp-yardnote, .fp-yardguide { display: none !important; }
+  .print-only { display: block; }
+  .fp-band, .fp-band.fp-band--apply { padding: 0; background: none; }
+  .wrap { width: auto; margin: 0; }
+  .fp-grid { display: block; }
+  .fp-band--apply .fp-sheet__head { display: none; }
+
+  /* ---------- The sheet ---------- */
+  .fp-sheet { --cell: .08in; margin: 0; background: none; border: 0; box-shadow: none; }
+  .fp-sheet__head { padding: 0 0 .06in; border-bottom: 1.5pt solid #000; }
+  .form { display: block; }
+  /* The right padding keeps the last column's rule on the sheet: cells overlap by half a point. */
+  .fieldset { grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 0; margin: 0 0 .14in; padding-right: 1pt; border: 0; background: none; break-inside: avoid; }
+  .fieldset legend { padding: .02in 0 .05in; background: none; font: 400 13pt/1.1 var(--serif); }
+  .fieldset legend > span:first-child { gap: 0; margin-right: .08in; font-size: 8pt; vertical-align: .2em; }
+  .fieldset legend > span:first-child::before { content: none; }
+  .fieldset--newpage { break-before: page; }
+
+  /* ---------- A cell ---------- */
+  .field, .field:not(.field--full) { display: block; grid-column: span 3; min-height: .54in; margin: 0 -.5pt -.5pt 0; padding: .05in var(--cell) .03in; background: none !important; border: .5pt solid #000; box-shadow: none !important; break-inside: avoid; }
+  .field.field--full { grid-column: 1 / -1; }
+  .field.field--third { grid-column: span 2; }
+  .field::before { content: none !important; }
+  .field > label, .field > .label { padding: 0 !important; font: 600 7.5pt/1.2 var(--sans); }
+  .hint { color: #333; font-weight: 400; }
+  .req { position: static; display: inline; margin-left: .02in; font-size: 0; }
+  .req::before { content: "*"; display: inline; width: auto; height: auto; background: none; font: 600 8pt/1 var(--sans); color: #000; }
+  .field input:not([type=radio], [type=checkbox], [type=file]), .field select, .field textarea { min-height: 0; height: .24in; padding: .02in 0 0; background: none; font: 400 10pt/1.2 var(--sans); color: #000; outline: 0; }
+  .field ::placeholder { color: transparent; }
+  .field input::-webkit-calendar-picker-indicator { display: none; }
+  /* An empty date prints as a blank cell, not as mm/dd/yyyy. */
+  .field input[type=date]:invalid::-webkit-datetime-edit { color: transparent; }
+  .field input[type=number]::-webkit-inner-spin-button { display: none; }
+  .field textarea { height: .6in; resize: none; }
+  .field--lined textarea { background: none; line-height: 1.3; }
+  .field--sign, .field--sign:not(.field--full) { grid-column: span 4; min-height: .85in; }
+  .field--sign input:not([type=radio], [type=checkbox], [type=file]) { height: .5in; padding-top: .16in; font: italic 400 16pt/1.1 var(--serif); }
+  .field--sign .hint { display: none; }
+  .field--signdate, .field--signdate:not(.field--full) { grid-column: span 2; min-height: .85in; }
+  .field--signdate input:not([type=radio], [type=checkbox], [type=file]) { height: .5in; padding-top: .17in; font-size: 11pt; }
+
+  /* ---------- Boxes to tick ---------- */
+  .field--paper, .field--paperline { display: flex; flex-wrap: wrap; align-items: center; gap: .05in .2in; min-height: .4in; }
+  .field--paper.print-only { display: flex; }
+  .field--paper > .label, .field--paperline > .label { flex: none; }
+  .fp-paper-opts, .seg { display: flex; flex-wrap: wrap; gap: .03in .18in; margin: 0; border: 0; background: none; }
+  .fp-paper-opt, .seg label, .seg__tile { display: inline-flex !important; align-items: center; flex-wrap: nowrap; gap: .05in; min-height: 0 !important; padding: 0 !important; background: none !important; color: #000 !important; font: 400 9pt/1.2 var(--sans); }
+  .fp-paper-opt i, .seg input, .seg input:checked { flex: none; display: block; width: .13in; height: .13in; margin: 0; background: none; border: .75pt solid #000; border-radius: 0; box-shadow: none !important; }
+  /* A choice made on screen prints solid: a border thick enough to fill its box. */
+  .fp-paper-opt.is-marked i, .seg label.is-marked input, .seg label.is-marked input:checked { border-width: .075in; }
+  .seg .i, .seg__tile .i { display: none; }
+  .seg__tile span { flex: none; }
+
+  /* ---------- References ---------- */
+  .refs, .field.refs { display: block; min-height: 0; padding: 0; border: 0; margin: 0 -.5pt 0 0; }
+  .ref { grid-template-columns: .9in minmax(0, 1fr) minmax(0, 1.25fr); gap: 0; break-inside: avoid; }
+  .ref__title { grid-column: 1; display: block; margin: 0 -.5pt -.5pt 0; padding: .05in var(--cell); background: none; border: .5pt solid #000; font: 600 7.5pt/1.2 var(--sans); letter-spacing: 0; text-transform: none; }
+  .ref__title span { display: block; font: 400 14pt/1 var(--serif); margin-bottom: .02in; }
+  .ref .field, .ref .field:not(.field--full) { grid-column: auto; min-height: .72in; }
+
+  /* ---------- Certification ---------- */
+  .field--check.field--full { display: block; padding-block: .08in .07in; }
+  .field--check .check { gap: .09in; font: 400 10pt/1.35 var(--sans); }
+  .check > span:first-of-type { padding-right: 0; }
+  .check input { width: .17in; height: .17in; background: none; border: .75pt solid #000; border-radius: 0; }
+  .check input:checked { border-width: .085in; }
+  .check input:checked::after { content: none; }
+  .check .req { display: none; }
+
+  /* ---------- Letterhead and running head ---------- */
+  .letterhead { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: .3in; align-items: end; padding-bottom: .09in; margin-bottom: .1in; border-bottom: 1.5pt solid #000; }
+  .letterhead__brand { display: flex; align-items: center; gap: .11in; }
+  .letterhead__brand svg { flex: none; width: .56in; height: .56in; }
+  .letterhead__brand p { font: 400 9pt/1.25 var(--sans); }
+  .letterhead__brand .letterhead__title { font: 400 22pt/1 var(--serif); letter-spacing: -.02em; }
+  .letterhead__return { font: 400 8pt/1.4 var(--sans); text-align: right; }
+  .letterhead__return b { font-weight: 600; }
+  .letterhead__note { font: 400 8pt/1.3 var(--sans); margin-top: .03in; }
+  .ac-cont { grid-column: 1 / -1; order: -1; display: flex; align-items: baseline; gap: .1in; margin-bottom: .12in; font: 400 8.5pt/1.2 var(--sans); }
+  .ac-cont i { flex: 1; min-height: 1.2em; border-bottom: .5pt solid #000; font-style: normal; font-size: 10pt; }
+}

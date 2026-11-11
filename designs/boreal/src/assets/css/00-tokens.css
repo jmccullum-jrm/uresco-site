@@ -1,0 +1,94 @@
+/* Uresco Construction Materials — BOREAL
+   Calm, cool and map-first. Tokens first; then base, chrome, components, pages.
+   The system is described in DESIGN.md at the repository root. */
+
+@font-face { font-family: 'Geist'; src: url(../fonts/geist-var.woff2) format('woff2'); font-weight: 400 700; font-display: swap; }
+@font-face { font-family: 'Geist Mono'; src: url(../fonts/geistmono-var.woff2) format('woff2'); font-weight: 400 600; font-display: swap; }
+/* Fallbacks sized to Geist, so the swap does not move the page. */
+@font-face { font-family: 'Geist Fallback'; src: local('Arial'); size-adjust: 104%; ascent-override: 92%; descent-override: 22%; line-gap-override: 0%; }
+
+/* The camera zoom of the map: registered so it can ease, and labels can counter-scale against it. */
+@property --z { syntax: '<number>'; inherits: true; initial-value: 1; }
+
+:root {
+  /* Light: snow, ice and mist. Text is the black of the logo. */
+  --snow: #F4F6F6;
+  --white: #FFFFFF;
+  --ice: #E8EEEF;
+  --mist: #D9E1E3;
+  --fog: #B4C1C5;
+  --field-line: #7E8F96;   /* the edge of a control at rest: 3.36:1 on white, 3.09:1 on snow */
+  --field-hint: #5C6D74;   /* placeholder text: 4.97:1 on snow */
+  --slate: #51636A;        /* muted text: 5.79:1 on snow, 6.28:1 on white */
+  --ink: #0E0E0C;          /* the black in the mark */
+  --ink-hi: #2C2C27;       /* a dark button under the pointer */
+
+  /* Dark: true black, the other half of the UCM yellow-and-black. Maps and other "screens" sit in it. */
+  --night: #0E0E0C;
+  --night-2: #1A1A17;
+  --night-3: #272823;
+  --night-line: rgba(255, 255, 255, .14);
+  --frost: #E3E7E6;        /* text on night */
+  --haze: #A9B3B3;         /* muted text on night: 9:1 */
+
+  /* Accents from the north. Yellow is UCM yellow: the primary action, the freight line, the yard
+     numbers on black and one large surface per page (the band at the top of the footer). */
+  --glacier: #7FC4D9;
+  --glacier-ink: #17657E;  /* glacier for text on light: 6.05:1 on snow */
+  --aurora: #5FE0B0;
+  --aurora-ink: #0A7250;   /* "open" on light: 5.94:1 on white */
+  --yellow: #F5B800;
+  --yellow-hi: #FFC829;
+
+  --font: 'Geist', 'Geist Fallback', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --mono: 'Geist Mono', ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+
+  /* Type scale */
+  --t-display: clamp(2.5rem, 1.6rem + 3.6vw, 4.5rem);
+  --t-h2: clamp(1.875rem, 1.35rem + 2.2vw, 3.25rem);
+  --t-h3: clamp(1.25rem, 1.15rem + .4vw, 1.5rem);
+  --t-lede: clamp(1.0625rem, 1rem + .3vw, 1.25rem);
+  --t-body: 1rem;
+  --t-small: .875rem;
+  --t-micro: .75rem;
+
+  /* Space: a 4px base. */
+  --s1: .25rem; --s2: .5rem; --s3: .75rem; --s4: 1rem; --s5: 1.5rem; --s6: 2rem; --s7: 3rem; --s8: 4rem; --s9: 6rem;
+  --section: clamp(4.5rem, 3rem + 6.5vw, 9rem);
+
+  /* The grid */
+  --wrap: 1280px;
+  --gutter: clamp(1rem, .1rem + 3.4vw, 2.5rem);
+  --inset: 12px;           /* how far the big rounded surfaces sit from the edge of the screen */
+  --surface: 1900px;       /* and how wide they may grow; beyond this they stay centred */
+  --edge: max(var(--inset), calc(50vw - var(--surface) / 2 + var(--inset)));
+  /* Inside a surface, the padding that lines its content up with the page column. */
+  --column: max(calc(var(--gutter) - var(--inset)), calc(min(100vw, var(--surface)) / 2 - var(--wrap) / 2 - var(--inset)));
+
+  /* Radius */
+  --r-sm: 10px; --r-md: 14px; --r-lg: 22px; --r-xl: 28px; --r-2xl: 32px;
+
+  /* Depth: fine borders first, shadows second. */
+  --line: 0 0 0 1px rgba(14, 14, 12, .07);
+  --sh-1: 0 0 0 1px rgba(14, 14, 12, .06), 0 1px 2px rgba(14, 14, 12, .05);
+  --sh-2: 0 0 0 1px rgba(14, 14, 12, .06), 0 2px 4px rgba(14, 14, 12, .04), 0 12px 28px -8px rgba(14, 14, 12, .14);
+  --sh-3: 0 0 0 1px rgba(14, 14, 12, .06), 0 4px 8px rgba(14, 14, 12, .05), 0 28px 56px -16px rgba(14, 14, 12, .32);
+
+  /* Motion */
+  --ease: cubic-bezier(.2, .7, .2, 1);
+  --ease-map: cubic-bezier(.45, 0, .15, 1);
+  --fast: .16s; --ui: .32s; --slow: .7s; --camera: 1.1s;
+
+  /* Chrome heights */
+  --util: 36px;
+  --mast: 68px;
+  --bar: 0px;
+  --ring: var(--ink);
+  color-scheme: light;
+}
+/* Width and height conditions are written in em, so a larger default text size in the browser collapses the
+   layout the same way a narrower window does. 1em here is the browser's default size, 16px unless changed. */
+/* The strip of phone numbers is a finger's height on a touch laptop. */
+@media (pointer: coarse) and (min-width: 62.5em) { :root { --util: 40px; } }
+@media (max-width: 62.4375em) { :root { --util: 0px; --mast: 60px; } }
+@media (max-width: 43.6875em) { :root { --inset: 8px; --bar: 76px; --r-xl: 22px; --r-2xl: 24px; --r-lg: 20px; } }

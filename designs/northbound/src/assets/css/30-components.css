@@ -1,0 +1,447 @@
+/* ==========================================================================
+   Components shared by every page.
+   ========================================================================== */
+
+/* ---------- Photographs ---------- */
+.fig { margin: 0; }
+.fig__frame { position: relative; overflow: hidden; background: var(--paper-2); }
+.fig__frame img, .fig__frame picture { width: 100%; height: 100%; }
+.fig__frame img { object-fit: cover; }
+.fig--cine .fig__frame { aspect-ratio: 21 / 9; }
+.fig--wide .fig__frame { aspect-ratio: 16 / 9; }
+.fig--land .fig__frame { aspect-ratio: 3 / 2; }
+.fig--port .fig__frame { aspect-ratio: 4 / 5; }
+.fig--tall .fig__frame { aspect-ratio: 3 / 4; }
+@media (max-width: 43.6875em) { .fig--cine .fig__frame { aspect-ratio: 4 / 3; } .fig--wide .fig__frame { aspect-ratio: 4 / 3; } }
+/* Captions read like a magazine's: what, then where and how far north. */
+.fig__cap { display: flex; justify-content: space-between; align-items: baseline; gap: .4rem 1.5rem; flex-wrap: wrap; padding-top: .75rem; font: 400 var(--t-caption)/1.4 var(--mono); color: var(--ink-3); }
+.fig__place { margin-left: auto; text-transform: uppercase; letter-spacing: .09em; font-size: var(--t-label); white-space: nowrap; }
+/* A long place line may wrap when the screen is narrow for the text size. */
+@media (max-width: 25em) { .fig__place { white-space: normal; } }
+.fig__place::before { content: ""; display: inline-block; width: .5rem; height: .5rem; margin-right: .6rem; background: var(--yellow); }
+/* The photographer's name: every stock picture says so, so none can be taken for Uresco's own. */
+.fig__credit { font-size: inherit; color: inherit; }
+/* A figure outside .wrap runs edge to edge; its caption stays on the column. */
+.fig--bleed .fig__cap { width: min(100% - 2 * var(--gutter), var(--max)); margin-inline: auto; }
+/* A frame whose picture drifts as it crosses the screen (site.js). The picture is cut a little
+   tall so there is something to drift into. */
+[data-parallax] { position: relative; overflow: hidden; }
+[data-parallax] img { position: absolute; left: 0; top: -7%; width: 100%; height: 114%; object-fit: cover; will-change: translate; }
+[data-parallax] picture { position: static; }
+
+/* ---------- Chapter and section openers ---------- */
+.chead { display: grid; gap: clamp(1.5rem, 3vw, 3rem); margin-bottom: clamp(2.5rem, 5vw, 5rem); }
+.chead__bar, .shead__bar { display: flex; flex-wrap: wrap; align-items: baseline; gap: .15rem 1rem; padding-bottom: .85rem; font: 400 var(--t-label)/1.3 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--ink); border-bottom: 1px solid var(--rule); }
+.chead__no { display: inline-flex; align-items: center; gap: .6rem; }
+.chead__no::before { content: ""; width: .55rem; height: .55rem; background: var(--yellow); }
+.chead__kicker { color: var(--ink-3); }
+.chead__lat { margin-left: auto; white-space: nowrap; }
+.chead__lat i { font-style: normal; color: var(--ink-3); margin-inline: .2em; }
+.chead__body { display: grid; gap: 1.25rem var(--col-gap); }
+/* The reading: the latitude the chapter arrives at, as large as a headline. */
+.chead__deg { display: grid; grid-template-columns: auto 1fr; align-items: start; justify-items: start; font: 300 clamp(4.75rem, 1.6rem + 13.4vw, 13.5rem)/.8 var(--serif); letter-spacing: -.05em; }
+.chead__deg sup { font-size: .3em; line-height: 1; letter-spacing: 0; margin: .2em 0 0 .18em; font-weight: 360; }
+.chead__deg span { margin-left: -.04em; }
+.chead__deg small { grid-column: 1 / -1; margin: 0 0 1.1rem; font: 400 var(--t-label)/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); white-space: nowrap; }
+.chead__text { display: grid; gap: clamp(1rem, 2vw, 1.75rem); align-content: start; }
+.chead__title em { display: block; }
+.chead__lede { max-width: 30em; }
+@media (min-width: 56.25em) {
+  .chead__body { grid-template-columns: minmax(0, 6.2fr) minmax(0, 5.8fr); align-items: start; padding-top: clamp(.5rem, 1.5vw, 1.5rem); }
+  .chead__text { padding-top: calc(var(--t-label) + 1.1rem); }
+}
+.shead { display: grid; gap: clamp(1.5rem, 3vw, 3rem); margin-bottom: clamp(2.25rem, 4.5vw, 4.5rem); }
+.shead__bar span + span { color: var(--ink-3); }
+.shead__body { display: grid; gap: 1.25rem var(--col-gap); }
+@media (min-width: 56.25em) { .shead__body { grid-template-columns: minmax(0, 7.4fr) minmax(0, 4.6fr); align-items: end; } }
+.shead__aside { display: grid; gap: 1.25rem; justify-items: start; }
+.shead--solo .shead__body { grid-template-columns: 1fr; }
+.section--deep .chead__bar, .section--deep .shead__bar { color: var(--on-dark); }
+
+/* ---------- Page hero (inner pages) ---------- */
+.phero { padding-top: clamp(1.75rem, 4vw, 4rem); }
+.crumbs ol { display: flex; flex-wrap: wrap; gap: .25rem .6rem; list-style: none; padding: 0; margin: 0 0 clamp(1.5rem, 3vw, 2.75rem); font: 400 var(--t-label)/1.3 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); }
+.crumbs li + li::before { content: "/"; margin-right: .6rem; color: var(--rule-2); }
+.crumbs a { text-decoration: none; }
+.crumbs a:hover { text-decoration: underline; }
+.crumbs [aria-current] { color: var(--ink); }
+.phero__eyebrow { display: flex; align-items: center; gap: .6rem; margin-bottom: 1.25rem; color: var(--ink); }
+.phero__eyebrow::before { content: ""; width: .55rem; height: .55rem; background: var(--yellow); }
+.phero__title { font-size: var(--t-h1); max-width: 10em; }
+.phero__row { display: grid; gap: 1.5rem var(--col-gap); margin-top: clamp(1.5rem, 3vw, 2.75rem); padding-bottom: clamp(2rem, 4.5vw, 4rem); }
+@media (min-width: 56.25em) { .phero__row { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); align-items: end; } .phero__row .actions { justify-content: flex-end; } }
+/* Where the two buttons would stack at different widths, they keep one row and the lede gives way. */
+@media (min-width: 56.25em) and (max-width: 74.9375em) { .phero__row { grid-template-columns: minmax(0, 1fr) auto; } .phero__row .actions { flex-wrap: nowrap; } }
+.phero__media { margin: 0; }
+.phero__frame { height: clamp(16rem, 58vw, 40rem); background: var(--paper-2); }
+@media (max-width: 37.4375em) { .phero__row .actions { display: grid; } }
+.phero__lede { margin-top: 1.25rem; }
+.phero__row .phero__lede { margin-top: 0; }
+.phero__media .fig__cap { padding-bottom: .25rem; }
+/* Plain variant, for pages that open on a form rather than a photograph. */
+.phero--plain { padding-bottom: clamp(2rem, 4vw, 3.5rem); border-bottom: 1px solid var(--rule-2); }
+
+/* ---------- Yard strip: latitude, city, number ---------- */
+.ystrip { display: grid; border-top: 1px solid var(--ink); }
+/* Each cell is its own container: what fits depends on the cell, not on the screen. */
+.ystrip__item { container-type: inline-size; display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: baseline; gap: .45rem 1rem; padding: .9rem 0 1rem; border-bottom: 1px solid var(--rule-2); text-decoration: none; }
+/* The latitude and the status share the first row, whatever the number below them needs. */
+.ystrip__lat { grid-area: 1 / 1 / 2 / -1; font: 400 var(--t-label)/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); white-space: nowrap; }
+.ystrip .status { grid-area: 1 / 1 / 2 / -1; justify-self: end; }
+.ystrip__city { display: flex; align-items: baseline; gap: .5rem; min-width: 0; }
+.ystrip__city b { font: 400 1.75rem/1 var(--serif); letter-spacing: -.02em; }
+.ystrip__city small { font: 400 var(--t-label)/1 var(--mono); letter-spacing: .08em; color: var(--ink-3); }
+.ystrip__num { grid-column: 2; display: inline-flex; align-items: center; gap: .5rem; font-weight: 600; font-size: 1.1875rem; letter-spacing: -.005em; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.ystrip__num .i { color: var(--ink-3); }
+.ystrip__item:hover .ystrip__num { text-decoration: underline; text-decoration-color: var(--yellow); text-decoration-thickness: 2px; text-underline-offset: .25em; }
+/* Three steps down as the cell narrows: the state and handset go, the type comes down a size, and
+   last the number takes its own row, because a yard name must never run into its number. */
+@container (max-width: 20.5rem) { .ystrip__city small, .ystrip__num .i { display: none; } }
+@container (max-width: 17.5rem) { .ystrip__city b { font-size: 1.5rem; } .ystrip__num { font-size: 1.0625rem; } }
+@container (max-width: 15.75rem) {
+  .ystrip__lat span { display: none; }
+  .ystrip__city, .ystrip__num { grid-column: 1 / -1; justify-self: start; }
+}
+@media (min-width: 47.5em) {
+  .ystrip { grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); border-bottom: 1px solid var(--rule-2); }
+  .ystrip li + li { border-left: 1px solid var(--rule-2); }
+  .ystrip__item { padding: .95rem clamp(.75rem, 1.6vw, 1.75rem) 1.05rem; border-bottom: 0; }
+  .ystrip li:first-child .ystrip__item { padding-left: 0; }
+  .ystrip li:last-child .ystrip__item { padding-right: 0; }
+}
+
+/* ---------- Steps ---------- */
+.steps { display: grid; gap: 0 var(--col-gap); counter-reset: step; }
+.steps li { display: grid; grid-template-columns: 3rem 1fr; gap: .3rem 0; padding: 1.25rem 0 1.4rem; border-top: 1px solid var(--rule-2); }
+.steps__no { grid-row: span 2; font: 400 var(--t-label)/1.8 var(--mono); letter-spacing: .08em; color: var(--ink-3); }
+.steps__title { font: 480 var(--t-h4)/1.15 var(--serif); letter-spacing: -.006em; }
+.steps p { grid-column: 2; color: var(--ink-2); font-size: 1rem; }
+@media (min-width: 56.25em) {
+  .steps { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .steps li { grid-template-columns: 1fr; align-content: start; gap: .9rem; padding: 1.1rem 1.25rem 0 0; border-top: 1px solid var(--ink); }
+  .steps__no { grid-row: auto; line-height: 1; }
+  .steps__title { font-size: 1.625rem; }
+  .steps p { grid-column: 1; }
+}
+.section--deep .steps li { border-top-color: var(--rule-2); }
+
+/* ---------- The manifest: the quote prompt, drawn as a freight form ---------- */
+.manifest { background: var(--paper-3); color: var(--ink); border: 1px solid var(--ink); box-shadow: .5rem .5rem 0 var(--yellow); --rule: rgba(18, 32, 27, .16); --rule-2: rgba(18, 32, 27, .34); --ink-2: #36443E; --ink-3: #59645E; }
+.manifest__head { display: flex; justify-content: space-between; gap: 1rem; padding: .8rem clamp(1.1rem, 3vw, 2.25rem); border-bottom: 1px solid var(--ink); }
+.manifest .label { color: var(--ink-3); }
+.manifest__body { display: grid; }
+.manifest__pitch { display: grid; gap: 1.1rem; justify-items: start; align-content: start; padding: clamp(1.5rem, 3.5vw, 3rem) clamp(1.1rem, 3vw, 2.25rem); }
+.manifest__title { max-width: 8em; }
+.manifest__pitch p { color: var(--ink-2); max-width: 30em; }
+.manifest__rows { display: grid; align-content: stretch; border-top: 1px solid var(--ink); }
+.manifest__rows div { display: grid; grid-template-columns: 5.25rem minmax(0, 1fr); gap: 1rem; align-items: baseline; padding: .95rem clamp(1.1rem, 3vw, 2.25rem); border-bottom: 1px dashed var(--rule-2); }
+.manifest__rows div:last-child { border-bottom: 0; }
+.manifest__rows dt { font: 400 var(--t-label)/1.4 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); }
+.manifest__rows dd { font: 480 1.1875rem/1.25 var(--serif); letter-spacing: -.002em; overflow-wrap: anywhere; }
+.manifest .btn:hover { background: var(--ink); color: var(--paper); }
+.manifest .btn--line { border-color: var(--ink); color: var(--ink); }
+.manifest .btn--line:hover { background: var(--ink); color: var(--paper); }
+.manifest :focus-visible { outline-color: var(--ink); }
+@media (max-width: 31.1875em) { .manifest__form { display: none; } .manifest { box-shadow: .35rem .35rem 0 var(--yellow); } }
+@media (min-width: 56.25em) {
+  .manifest__body { grid-template-columns: minmax(0, 6.5fr) minmax(0, 5.5fr); }
+  .manifest__rows { border-top: 0; border-left: 1px solid var(--ink); }
+  .manifest__rows div { align-items: center; }
+  .manifest__rows dd { font-size: 1.3125rem; }
+}
+
+/* ---------- FAQ ---------- */
+.faq { border-top: 1px solid var(--ink); }
+.faq details { border-bottom: 1px solid var(--rule-2); }
+.faq summary { display: flex; justify-content: space-between; align-items: center; gap: 1.5rem; padding: 1.2rem 0; cursor: pointer; list-style: none; font: 480 clamp(1.25rem, 1.1rem + .7vw, 1.75rem)/1.2 var(--serif); letter-spacing: -.012em; }
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary .i { flex: none; transition: transform var(--d-2) var(--ease); }
+.faq details[open] summary .i { transform: rotate(180deg); }
+.faq summary:hover span { text-decoration: underline; text-decoration-color: var(--yellow); text-decoration-thickness: 2px; text-underline-offset: .2em; }
+.faq p { max-width: 42em; padding: 0 3rem 1.6rem 0; color: var(--ink-2); }
+
+/* ---------- A yard's details: ruled rows of address, numbers and email ---------- */
+.yard__lines { justify-self: stretch; margin-top: .75rem; border-top: 1px solid var(--ink); }
+.yard__lines > div { display: grid; grid-template-columns: 5.5rem minmax(0, 1fr); gap: 1rem; padding: .7rem 0; border-bottom: 1px solid var(--rule); }
+.yard__lines .status { white-space: normal; }
+@media (max-width: 23.6875em) { .yard__lines > div { grid-template-columns: 4.5rem minmax(0, 1fr); gap: .75rem; } }
+.yard__lines dt { font: 400 var(--t-label)/1.7 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); }
+.yard__lines dd small { color: var(--ink-3); }
+.yard__lines a { text-decoration-color: var(--rule-2); }
+.yard__tz { margin-left: .5rem; font: 400 var(--t-label)/1.2 var(--mono); letter-spacing: .08em; text-transform: uppercase; white-space: nowrap; }
+/* On touch screens a number or an address is a control: at least 44px tall, without padding the rows out. */
+@media (max-width: 62.4375em), (pointer: coarse) {
+  .yard__lines > div:has(a) { align-items: baseline; padding-block: .05rem; }
+  .yard__lines dd a { display: inline-flex; align-items: center; min-height: 2.75rem; }
+  .yard__lines dd:has(.yard__tz) { display: flex; flex-wrap: wrap; align-items: center; gap: 0 .75rem; padding-bottom: .55rem; }
+  .yard__lines dd:has(.yard__tz) .yard__tel { margin-right: 0; }
+  .yard__tz { margin-left: 0; }
+  .crumbs a { display: inline-flex; align-items: center; min-height: 2.5rem; min-width: 2.5rem; }
+  .link { min-height: 2.5rem; }
+  .crumbs ol { align-items: center; row-gap: 0; }
+}
+.yard__tel { font-weight: 600; font-size: 1.1875rem; font-variant-numeric: tabular-nums; text-decoration: none; margin-right: .75rem; }
+.yard__actions { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: 1rem; }
+.yard__quote { margin-top: .75rem; }
+
+/* ---------- Yard spread: a photograph of the place beside the yard's details ---------- */
+.spread { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.75rem var(--col-gap); align-items: center; }
+.spread + .spread { margin-top: var(--section); }
+@media (max-width: 62.4375em) { .spread + .spread { margin-top: 4rem; padding-top: 4rem; border-top: 1px solid var(--rule-2); } }
+.spread__body { display: grid; gap: .6rem; justify-items: start; }
+.spread__lat { color: var(--ink); }
+.spread__city { font: 350 clamp(3.25rem, 2rem + 6vw, 7rem)/.9 var(--serif); letter-spacing: -.035em; margin: .2rem 0 .5rem; }
+.spread__blurb { color: var(--ink-2); max-width: 28em; }
+@media (min-width: 62.5em) {
+  .spread { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: var(--col-gap) clamp(2rem, 5vw, 5rem); }
+  .spread--flip { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); }
+  .spread--flip .spread__media { order: 2; }
+  .spread__media .fig__frame { aspect-ratio: 5 / 4; }
+}
+
+/* ---------- Pull line: one sentence, set large. Not a testimonial; never in quotation marks. ---------- */
+.pull { font: 340 clamp(2.25rem, 1.3rem + 4.2vw, 5rem)/.98 var(--serif); letter-spacing: -.028em; max-width: 9em; text-wrap: balance; }
+.pull::before { content: ""; display: block; width: 3.5rem; height: 3px; margin-bottom: 1.5rem; background: var(--yellow); }
+.pull em { font-style: italic; color: var(--ink-3); }
+
+/* ---------- Archive print: Uresco's own small photographs, shown as the small prints they are ---------- */
+.print { margin: 0; padding: .5rem .5rem .7rem; background: var(--paper-3); color: var(--ink); box-shadow: var(--shadow-2); --ink-3: #59645E; }
+/* Hung over the corner of a larger photograph. */
+.print--over { position: absolute; left: 0; bottom: 0; width: min(46%, 12.5rem); rotate: -3deg; }
+.print img { width: 100%; aspect-ratio: 1; object-fit: cover; }
+.print--inline { width: 12.5rem; margin-top: clamp(2rem, 4vw, 3.5rem); rotate: 2.5deg; }
+figure.print figcaption { padding-top: .55rem; font: 400 .75rem/1.35 var(--mono); color: var(--ink-3); }
+
+/* ---------- Interlude: one photograph, edge to edge, one line under it ---------- */
+.interlude__frame { height: clamp(16rem, 52vw, 44rem); background: var(--paper-2); }
+.interlude__text { padding-block: .25rem clamp(3rem, 6vw, 6rem); }
+.interlude__line { margin-top: clamp(2rem, 4vw, 4rem); font: 350 var(--t-h2)/1 var(--serif); letter-spacing: -.022em; max-width: 12em; text-wrap: balance; }
+.interlude__line em { font-style: italic; }
+.interlude .fig__cap { order: -1; }
+.interlude__text { display: flex; flex-direction: column; }
+
+/* ---------- Callout ---------- */
+.callout { display: grid; grid-template-columns: auto 1fr; gap: 1rem 1.25rem; align-items: start; padding: 1.5rem clamp(1.1rem, 3vw, 2rem); border: 1px solid var(--rule-2); border-left: 3px solid var(--yellow); }
+.callout .i { margin-top: .2rem; }
+.callout strong { font-weight: 600; }
+
+/* ---------- The route plate ---------- */
+.plate { margin: 0; }
+/* The map is pale whatever sheet it lies on, so its links take the dark ring. */
+.plate :focus-visible { outline-color: var(--ink); }
+/* width 0 + min-width 100%: the sheet inside never widens a grid or flex parent. The frame is the
+   container the crop below answers to; the sheet is the container the labels' sizes answer to. */
+.plate__scroll { container: plate-frame / inline-size; width: 0; min-width: 100%; background: var(--paper-3); border: 1px solid var(--rule-2); }
+.plate__sheet { position: relative; aspect-ratio: 1200 / 880; container-type: inline-size; }
+.plate__base { position: absolute; inset: 0; width: 100%; height: 100%; }
+.plate__lanes { position: absolute; inset: 0; width: 100%; height: 100%; }
+.plate__labels { position: absolute; inset: 0; font-family: var(--sans); color: var(--ink); }
+.plate__labels > * { position: absolute; white-space: nowrap; line-height: 1; }
+
+.lane { fill: none; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: 0; }
+.sea { stroke: var(--sea); stroke-width: 2.6; }
+.sea--minor { stroke-width: 1.7; }
+.roadbed { stroke: var(--ink); stroke-width: 4.4; }
+.roadbed--minor { stroke-width: 3.2; }
+.road { stroke: var(--paper-3); stroke-width: 1.7; }
+.road--minor { stroke-width: 1.1; }
+.barge { fill: none; stroke: var(--sea); stroke-width: 2.2; stroke-dasharray: 8 6; }
+.air { fill: none; stroke: var(--ink); stroke-width: 1.3; stroke-dasharray: .1 5.5; stroke-linecap: round; }
+.lane--mask { stroke: #fff; stroke-width: 9; }
+.town { fill: var(--paper-3); stroke: var(--ink); stroke-width: 1.6; transform-box: fill-box; transform-origin: center; transition: transform var(--d-2) var(--ease), fill var(--d-2), opacity var(--d-2); }
+.yardmark__disc { fill: var(--yellow); stroke: var(--ink); stroke-width: 1.8; }
+.yardmark__dot { fill: var(--ink); }
+.yardmark__pulse { fill: none; stroke: var(--ink); stroke-width: 1.2; opacity: 0; transform-box: fill-box; transform-origin: center; }
+.compass circle { fill: none; stroke: var(--sea); stroke-width: .9; }
+.compass .compass__in { stroke-dasharray: 1.5 3; }
+.compass__star { fill: var(--paper-3); stroke: var(--ink); stroke-width: .9; stroke-linejoin: round; }
+.compass__north { fill: var(--ink); }
+.compass__ticks { fill: none; stroke: var(--sea); stroke-width: .9; }
+.scalebar path { fill: none; stroke: var(--ink); stroke-width: 1.2; }
+.scalebar .scalebar__fill { stroke-width: 3.2; }
+/* The lanes draw themselves when the plate comes into view. */
+@media (prefers-reduced-motion: no-preference) {
+  .js .plate .lane { transition: stroke-dashoffset var(--d-4) var(--ease-io) var(--d, 0s); }
+  .js .plate:not(.is-in) .lane { stroke-dashoffset: 1; transition: none; }
+  .js .plate .town, .js .plate .plate__town { transition: opacity .7s var(--ease) .15s, transform var(--d-2) var(--ease), fill var(--d-2); }
+  .js .plate:not(.is-in) .town, .js .plate:not(.is-in) .plate__town { opacity: 0; transition: none; }
+  .plate.is-in .yardmark__pulse { animation: pulse 3.6s var(--ease) infinite; }
+  .plate.is-in .yardmark:nth-child(odd) .yardmark__pulse { animation-delay: 1.2s; }
+}
+@keyframes pulse { 0% { transform: scale(.5); opacity: .7; } 70%, 100% { transform: scale(1.5); opacity: 0; } }
+
+.plate__sea { font: italic 400 clamp(.75rem, 1.5cqw, 1.25rem)/1 var(--serif); letter-spacing: .22em; color: var(--sea); transform: translate(-50%, -50%); }
+.plate__land { font: 400 clamp(.625rem, .95cqw, .8125rem)/1 var(--mono); letter-spacing: .5em; text-transform: uppercase; color: var(--ink-3); transform: translate(-50%, -50%); }
+.plate__circle { font: italic 400 clamp(.625rem, .95cqw, .8125rem)/1 var(--serif); letter-spacing: .08em; color: var(--sea); transform: translate(-50%, -140%) rotate(-11deg); }
+.plate__deg, .plate__scale { font: 400 clamp(.5625rem, .85cqw, .6875rem)/1 var(--mono); letter-spacing: .04em; color: var(--ink); }
+.plate__deg--l { left: 2.4%; transform: translate(-100%, -50%); }
+.plate__deg--r { left: 97.6%; transform: translate(0, -50%); }
+.plate__deg--t { top: 3.1%; transform: translate(-50%, -100%); }
+.plate__deg--b { top: 96.9%; transform: translate(-50%, 0); }
+.plate__scale { color: var(--ink-2); }
+.plate__town { font-size: clamp(.6875rem, 1cqw, .8125rem); font-weight: 500; padding: .12em .3em; text-shadow: 0 0 .22em var(--paper-3), 0 0 .22em var(--paper-3), 0 0 .3em var(--paper-3), 0 0 .3em var(--paper-3), 0 0 .4em var(--paper-3); }
+.plate__town[data-side="e"], .plate__yard[data-side="e"] { transform: translate(.55em, -50%); }
+.plate__town[data-side="w"], .plate__yard[data-side="w"] { transform: translate(calc(-100% - .55em), -50%); }
+.plate__town[data-side="n"], .plate__yard[data-side="n"] { transform: translate(-50%, calc(-100% - .5em)); }
+.plate__town[data-side="s"], .plate__yard[data-side="s"] { transform: translate(-50%, .5em); }
+.plate__yard { display: inline-flex; align-items: baseline; gap: .5em; padding: .42em .6em .4em; background: var(--ink); color: var(--paper); font-size: clamp(.75rem, 1.1cqw, .9375rem); text-decoration: none; }
+/* The label is small; the thing you tap is not. */
+.plate__yard::after { content: ""; position: absolute; inset: -.75rem -.35rem; }
+.plate__yard[data-side="e"] { transform: translate(1.15em, -50%); }
+.plate__yard[data-side="w"] { transform: translate(calc(-100% - 1.15em), -50%); }
+.plate__yard b { font-weight: 600; }
+.plate__yard span:not(.sr-only) { font: 400 .8em/1 var(--mono); color: var(--glacier); }
+.plate__yard:hover { background: var(--sea); }
+.plate__title { right: 6.2%; top: 8.6%; display: grid; gap: .5em; justify-items: end; padding: 1.1em 1.3em 1.2em; background: var(--paper-3); border: 1px solid var(--ink); outline: 1px solid var(--ink); outline-offset: 3px; font-size: clamp(.6875rem, 1cqw, .8125rem); text-align: right; }
+.plate__title span { font-family: var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--ink-3); }
+.plate__title b { font: 380 2.4em/1 var(--serif); letter-spacing: -.02em; }
+.plate__title i { font: italic 400 1.25em/1.1 var(--serif); color: var(--ink-2); }
+@container (max-width: 56.25em) {
+  .plate__town--r3 { display: none; }
+  .plate__yard { padding: .4em .5em .38em; }
+  .plate__yard span:not(.sr-only) { display: none; }
+  .plate__yard[data-side="e"] { transform: translate(.95em, -50%); }
+  .plate__yard[data-side="w"] { transform: translate(calc(-100% - .95em), -50%); }
+}
+
+/* In a narrow frame the plate is re-cut rather than panned: the sheet's three layers are enlarged
+   and shifted so the frame shows Kent to Utqiaġvik, with the blank margin and the edge marks gone.
+   Crop: x 128 to 1086, y 60 to 826 of the 1200 x 880 sheet. contain: paint keeps the cut-off parts
+   out of the frame's scrollable area, so nothing pans. */
+@container plate-frame (max-width: 53.99rem) {
+  .plate__sheet { aspect-ratio: 958 / 766; contain: paint; }
+  .plate__base, .plate__lanes, .plate__labels { inset: auto; left: -13.361%; top: -7.833%; width: 125.261%; max-width: none; height: 114.883%; }
+  /* Linework and marks are drawn for the full sheet: a little heavier here, and heavier again in the phone cut. */
+  .sea { stroke-width: 3.4; } .sea--minor { stroke-width: 2.3; }
+  .roadbed { stroke-width: 5.6; } .roadbed--minor { stroke-width: 4; }
+  .road { stroke-width: 2.3; } .road--minor { stroke-width: 1.6; }
+  .barge { stroke-width: 2.8; stroke-dasharray: 10 7; }
+  .air { stroke-width: 2; stroke-dasharray: .1 7; }
+  .lane--mask { stroke-width: 12; }
+  .town { r: 5.5px; stroke-width: 2; }
+  .yardmark { transform-box: fill-box; transform-origin: center; transform: scale(1.25); }
+  /* What would be cut, or crowd the route, gives way. */
+  .plate__deg, .plate__scale, .scalebar, .plate__sea[data-sea="Bering Sea"] { display: none; }
+  .plate__sea { font-size: .75rem; letter-spacing: .14em; }
+  .plate__sea[data-sea="Gulf of Alaska"] { translate: -1.1rem 1.2rem; }
+  /* Clear of the top edge and of Utqiaġvik. (The Aleutians label flips so it is not cut at the left.) */
+  .plate__sea[data-sea="Arctic Ocean"] { translate: 10.3cqw 3.6cqw; }
+  .plate__town[data-side="n"][data-region="southwest"] { transform: translate(.55em, -50%); }
+  .plate__land { font-size: .75rem; letter-spacing: .34em; }
+  .plate__town, .plate__circle { font-size: .75rem; }
+  .plate__title { right: 12.5%; top: 9.5%; padding: .6em .75em .65em; font-size: .6875rem; gap: .25em; outline-offset: 2px; }
+  .plate__title b { font-size: 1.75em; }
+  .plate__title i, .plate__title span { display: none; }
+}
+/* The phone cut: only the places a load is routed to by name. */
+@container plate-frame (max-width: 38.99rem) {
+  .sea { stroke-width: 5; } .sea--minor { stroke-width: 3.4; }
+  .roadbed { stroke-width: 8; } .roadbed--minor { stroke-width: 6; }
+  .road { stroke-width: 3.4; } .road--minor { stroke-width: 2.4; }
+  .barge { stroke-width: 4; stroke-dasharray: 14 10; }
+  .air { stroke-width: 3; stroke-dasharray: .1 10; }
+  .lane--mask { stroke-width: 16; }
+  .town { r: 8.5px; stroke-width: 3; }
+  .yardmark { transform: scale(1.75); }
+  .plate__circle, .plate__sea[data-sea="Arctic Ocean"], .plate__sea[data-sea="Chukchi Sea"], .plate__town--r2 { display: none; }
+  .plate__land[data-land="Alaska"] { translate: 0 -.9rem; }
+  .plate__town[data-pside="e"] { transform: translate(.8em, -50%); }
+  .plate__yard[data-pside="e"] { transform: translate(1.2em, -50%); }
+  .plate__yard { font-size: .8125rem; padding: .3em .5em .28em; }
+}
+/* A phone gets the whole width of the screen for it. */
+@media (max-width: 43.6875em) {
+  .plate__scroll { width: auto; min-width: 0; margin-inline: calc(var(--gutter) * -1); border-inline: 0; }
+}
+.plate__legend { display: grid; gap: .9rem; padding-top: 1.1rem; font: 400 var(--t-caption)/1.4 var(--mono); color: var(--ink-3); }
+.plate__legend ul { display: flex; flex-wrap: wrap; gap: .6rem 1.75rem; list-style: none; padding: 0; color: var(--ink); }
+.section--deep .plate__legend { --ink: var(--on-dark); --sea: var(--glacier); }
+.plate__legend li { display: flex; align-items: center; gap: .6rem; }
+.lg { flex: none; display: inline-block; width: 1.75rem; height: 0; }
+.lg--sea { border-top: 2.5px solid var(--sea); }
+.lg--road { height: 6px; border-block: 1.6px solid var(--ink); background: var(--paper-3); }
+.lg--barge { border-top: 2.5px dashed var(--sea); }
+.lg--air { border-top: 2px dotted var(--ink); }
+.lg--yard { width: .9rem; height: .9rem; border: 1.5px solid var(--ink); border-radius: 50%; background: radial-gradient(var(--ink) 0 26%, var(--yellow) 30%); }
+.lg--town { width: .6rem; height: .6rem; border: 1.5px solid var(--ink); border-radius: 50%; background: var(--paper-3); }
+@media (min-width: 56.25em) { .plate__legend { grid-template-columns: 1fr auto; align-items: start; } .plate__legend p { max-width: 26rem; text-align: right; } }
+.section--ice .plate__scroll { border-color: var(--ink); }
+
+/* ---------- Stock list: the nine product lines, as an index ---------- */
+.stock { display: grid; gap: var(--col-gap); }
+.stock__view { display: none; }
+.stock__list { border-top: 1px solid var(--ink); }
+.stock__row { position: relative; isolation: isolate; display: grid; grid-template-columns: auto 1fr auto; align-items: center; column-gap: 1rem; padding: .8rem 0; border-bottom: 1px solid var(--rule-2); text-decoration: none; }
+.stock__thumb { width: 3.75rem; height: 3.75rem; object-fit: cover; background: var(--paper-2); }
+.stock__no { display: block; min-width: 1.75rem; font: 400 var(--t-label)/1 var(--mono); letter-spacing: .08em; color: var(--ink-3); }
+.stock__text { display: grid; gap: .3rem; min-width: 0; }
+.stock__name { font: 480 clamp(1.3125rem, 1.1rem + 1vw, 2.125rem)/1.08 var(--serif); letter-spacing: -.014em; }
+@media (max-width: 39.9375em) { .stock__name { font-weight: 480; } }
+/* Every item, however long: this is what the visitor came to read. */
+.stock__items { font-size: .875rem; line-height: 1.35; color: var(--ink-3); }
+.stock__go { color: var(--ink-3); transition: transform var(--d-2) var(--ease), color var(--d-1); }
+.stock__row:hover .stock__go, .stock__row:focus-visible .stock__go { transform: translateX(.35rem); color: var(--ink); }
+/* A row of the full list also has a quote link beside it, which carries the line to the form. */
+.stock__li { position: relative; }
+.stock__li .stock__row { padding-right: 4.5rem; }
+.stock__add { position: absolute; top: 0; right: 0; bottom: 1px; display: flex; align-items: center; justify-content: center; gap: .25em; width: 3.75rem; border-left: 1px solid var(--rule); font: 400 var(--t-label)/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink); text-decoration: none; }
+.stock__add::before { content: "+"; }
+.stock__add:hover { background: var(--paper-2); text-decoration: underline; text-decoration-color: var(--yellow); text-decoration-thickness: 2px; text-underline-offset: .3em; }
+.stocknote { margin-top: 1.25rem; max-width: 44em; color: var(--ink-2); }
+.stocknote a { font-weight: 600; white-space: nowrap; }
+@media (max-width: 62.4375em), (pointer: coarse) { .stocknote a { display: inline-flex; align-items: center; min-height: 2.75rem; } }
+@media (max-width: 62.4375em) {
+  .stock__li .stock__go { display: none; }
+  /* Below the frame's width, a thumbnailed row has no room for the number too. */
+  .stock__list--thumbs .stock__no { display: none; }
+}
+@media (min-width: 62.5em) {
+  .stock { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); align-items: start; }
+  .stock__view { display: block; position: sticky; top: calc(var(--mast) + 2rem); }
+  .stock__frame { position: relative; aspect-ratio: 4 / 5; overflow: hidden; background: var(--paper-2); }
+  .stock__frame img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity .7s var(--ease), scale 1.4s var(--ease); scale: 1.05; }
+  .stock__frame img.is-on { opacity: 1; scale: 1; }
+  /* The credit rides with its picture, on a paper tab so it never sits on the photograph itself. */
+  .stock__credit { position: absolute; left: 0; bottom: 0; padding: .35rem .6rem 0 0; background: var(--paper); font: 400 var(--t-caption)/1.3 var(--mono); color: var(--ink-3); opacity: 0; transition: opacity .7s var(--ease); }
+  .stock__frame img.is-on + .stock__credit { opacity: 1; }
+  .stock__thumb { display: none; }
+  .stock__no { width: 2.5rem; }
+  .stock__row { grid-template-columns: auto minmax(0, 1fr) auto; padding: 1.05rem .5rem 1.1rem 0; }
+  .stock__li .stock__row { padding-right: 5.25rem; }
+  .stock__add { width: 4.5rem; }
+  /* The band behind a row fades in; the text slides over a little. Nothing else moves. */
+  .stock__row::before { content: ""; position: absolute; z-index: -1; inset: 0; background: var(--paper-2); opacity: 0; transition: opacity var(--d-1); }
+  .stock__row > :not(.stock__go) { transition: translate var(--d-2) var(--ease); }
+  .stock__row:is(:hover, :focus-visible, .is-on)::before { opacity: 1; }
+  .stock__row:is(:hover, :focus-visible, .is-on) > :not(.stock__go) { translate: .9rem 0; }
+  .stock__row.is-on .stock__no { color: var(--ink); }
+  .stock__text { grid-template-columns: minmax(0, 1fr); }
+  /* A short list with no frame beside it keeps its thumbnails on wide screens too. */
+  .stock__list--thumbs .stock__thumb { display: block; }
+  .stock__list--thumbs .stock__row { grid-template-columns: auto auto minmax(0, 1fr) auto; column-gap: 1.25rem; }
+}
+.brandline { display: flex; flex-wrap: wrap; align-items: baseline; gap: .5rem 1.75rem; padding-top: 1.25rem; }
+.brandline ul { display: flex; flex-wrap: wrap; gap: .25rem 1.5rem; list-style: none; padding: 0; font: 480 1.1875rem/1.3 var(--serif); font-style: italic; color: var(--ink-2); }
+
+/* ---------- Service rows, on the dark sheet: icon, name, one line, an arrow ---------- */
+.svc__list { border-top: 1px solid var(--on-dark); }
+.svc__list a { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 1rem; padding: .9rem 0; border-bottom: 1px solid var(--rule-dark); text-decoration: none; }
+.svc__list a > .i:first-child { color: var(--glacier); }
+.svc__list a > span { display: grid; gap: .15rem; }
+.svc__list b { font: 480 1.25rem/1.15 var(--serif); letter-spacing: -.008em; }
+.svc__list small { color: var(--on-dark-2); font-size: .875rem; line-height: 1.35; }
+.svc__go { color: var(--glacier); transition: transform var(--d-2) var(--ease), color var(--d-1); }
+.svc__list a:hover .svc__go { transform: translateX(.35rem); color: var(--yellow); }
+.svc__list a:hover b { text-decoration: underline; text-decoration-color: var(--yellow); text-decoration-thickness: 2px; text-underline-offset: .2em; }
+/* A short list that has the width to itself. */
+.svc__list--lg a { gap: 1.1rem; padding: 1.15rem 0 1.25rem; }
+.svc__list--lg a > span { gap: .25rem; }
+.svc__list--lg b { font: 480 clamp(1.375rem, 1.2rem + .8vw, 1.875rem)/1.1 var(--serif); letter-spacing: -.012em; }
+.svc__list--lg small { font-size: .9375rem; line-height: 1.4; }
+
+/* ---------- Closing: the quote prompt, then the three numbers ---------- */
+.closing__call { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1rem; margin-top: clamp(3rem, 6vw, 5rem); }
+@media (min-width: 43.75em) {
+  .closing__call { grid-template-columns: minmax(0, 1fr) auto; align-items: baseline; }
+  .closing__call .ystrip { grid-column: 1 / -1; }
+}
