@@ -74,3 +74,7 @@ body { line-height: 1.6; font-size: 1.125rem; }
 /* Tablet widths: the quote button lives in the action bar and the menu, so the masthead keeps only Call and Menu
    (a wider system font would otherwise push the row past the screen). */
 @media (max-width: 62.5em) { .masthead__cta { display: none; } .masthead__row, .masthead__acts { flex-wrap: wrap; min-width: 0; } }
+
+/* Wider system fonts: let the yard name give way to the phone number rather than run under it. */
+.simple-top .board__yard, .simple-top .board__yard * { min-width: 0; overflow-wrap: anywhere; white-space: normal !important; }
+@media (min-width: 62.5em) and (max-width: 75em) { .simple-top .board__num { font-size: 1.5rem !important; } }
